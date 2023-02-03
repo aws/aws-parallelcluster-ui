@@ -6,7 +6,7 @@ Parameters:
     Default: aws-samples
   RepositoryName:
     Type: String
-    Default: pcluster-manager
+    Default: aws-parallelcluster-ui
 
 Resources:
   ProductionDeploy:

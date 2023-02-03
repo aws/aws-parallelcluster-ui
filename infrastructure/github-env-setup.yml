@@ -6,7 +6,7 @@ Parameters:
     Default: aws-samples
   RepositoryName:
     Type: String
-    Default: pcluster-manager
+    Default: aws-parallelcluster-ui
   OIDCProviderArn:
     Description: Arn for the GitHub OIDC Provider. If left empty a new OIDCProvider will be created.
     Default: ""
