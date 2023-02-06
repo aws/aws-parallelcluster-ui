@@ -1,3 +1,4 @@
+<!-- If the PR is tagged for release changelog inclusion, remember to provide a meaningful Title, sint it will be used as a changelog entry -->
 ## Description
 
 <!-- Summary of what this PR introduces and possibly why -->
@@ -5,10 +6,6 @@
 ## Changes
 
 <!-- List of relevant changes introduced -->
-
-## Changelog entry
-
-<!-- A sentence to be added to the next release's changelog that captures the changes in this PR -->
 
 ## How Has This Been Tested?
 
