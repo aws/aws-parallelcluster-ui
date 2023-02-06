@@ -96,7 +96,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
             Description
             <Link
               external
-              href="https://github.com/aws-samples/pcluster-manager/issues"
+              href="https://github.com/aws/aws-parallelcluster-ui/issues"
             >
               link
             </Link>
