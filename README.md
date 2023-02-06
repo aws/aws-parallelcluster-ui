@@ -119,7 +119,7 @@ It is possible to reuse a Cognito user pool across multiple PCUI instances to av
 
 ## Updating
 
-To update the the latest version, launch a new stack following the [Quickstart](#quickstart-15-mins-🚀).
+To update the latest version, launch a new stack following the [Quickstart](#quickstart-15-mins-🚀).
 
 ## Development
 
