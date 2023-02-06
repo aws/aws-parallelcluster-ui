@@ -18,7 +18,7 @@
 ## PR Quality Checklist
 
 - [ ] I added tests to new or existing code
-- [ ] I removed hardcoded strings and used our `i18n` solution instead (see [here](https://github.com/aws-samples/pcluster-manager/pull/175/commits/fdc6b77987c87a26f51dbc8da5d371d95ef80601))
+- [ ] I removed hardcoded strings and used [`react-i18next`](https://react.i18next.com/) library ([useTranslation hook](https://react.i18next.com/latest/usetranslation-hook) and/or [Trans component](https://react.i18next.com/latest/trans-component))
 - [ ] I made sure no sensitive info gets logged at any time in the codebase (see [here](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)) (e.g. no user info or details, no stacktraces, etc.)
 - [ ] I checked that infrastructure/update_infrastructure.sh runs without any error
 - [ ] I checked that `npm run build` builds without any error
