@@ -1,4 +1,4 @@
-<!-- If the PR is tagged for release changelog inclusion, remember to provide a meaningful Title, sint it will be used as a changelog entry -->
+<!-- If the PR is tagged for release changelog inclusion, remember to provide a meaningful title, since it will be used as a changelog entry -->
 ## Description
 
 <!-- Summary of what this PR introduces and possibly why -->
