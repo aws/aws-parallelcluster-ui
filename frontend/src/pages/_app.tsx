@@ -16,7 +16,7 @@ import '@cloudscape-design/global-styles/index.css'
 import './App.css'
 
 import {QueryClient, QueryClientProvider} from 'react-query'
-import {I18nextProvider} from 'react-i18next'
+import {I18nextProvider, useTranslation} from 'react-i18next'
 import {Provider} from 'react-redux'
 import ErrorBoundary from '../components/ErrorBoundary'
 
@@ -38,6 +38,8 @@ declare global {
 enableHttpLogs(axiosInstance, logger)
 
 function App({Component, pageProps}: AppProps) {
+  const {t} = useTranslation()
+
   const onAceLoad = useCallback(() => {
     window.editor = window.ace.edit('editor')
     window.ace.config.set('basePath', '/third-party/ace-1.4.13/')
@@ -51,7 +53,7 @@ function App({Component, pageProps}: AppProps) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AWS ParallelCluster UI</title>
+        <title>{t('global.projectDisplayName')}</title>
       </Head>
       <QueryClientProvider client={queryClient}>
         <I18nextProvider i18n={i18n}>

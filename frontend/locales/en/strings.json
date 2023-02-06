@@ -1,8 +1,9 @@
 {
   "global": {
+    "projectDisplayName": "AWS ParallelCluster",
     "projectName": "AWS ParallelCluster UI",
     "menu": {
-      "header": "$t(global.projectName)",
+      "header": "$t(global.projectDisplayName)",
       "clusters": "Clusters",
       "customImages": "Custom Images",
       "officialImages": "Official Images",
@@ -11,7 +12,7 @@
     },
     "topBar": {
       "signOut": "Sign out",
-      "logoAltText": "$t(global.projectName} logo",
+      "logoAltText": "$t(global.projectDisplayName} logo",
       "regionSelector": {
         "defaultRegionText": "Region",
         "ariaLabel": "Region"
