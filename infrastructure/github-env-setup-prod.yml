@@ -3,10 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   GitHubOrg:
     Type: String
-    Default: aws-samples
+    Default: aws
   RepositoryName:
     Type: String
-    Default: pcluster-manager
+    Default: aws-parallelcluster-ui
 
 Resources:
   ProductionDeploy:
