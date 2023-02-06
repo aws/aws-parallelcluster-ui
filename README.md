@@ -38,7 +38,7 @@ Launch the stack in your AWS account by clicking on one of the below regions (us
 | Sydney (ap-southeast-2) | [![Launch](https://samdengler.github.io/cloudformation-launch-stack-button-svg/images/ap-southeast-2.svg)](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/create/review?stackName=parallelcluster-ui&templateURL=https://pcm-release-us-east-1.s3.us-east-1.amazonaws.com/pcluster-manager.yaml) |  [![Launch](https://samdengler.github.io/cloudformation-launch-stack-button-svg/images/ap-southeast-2.svg)](https://ap-southeast-2.console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/create/review?stackName=parallelcluster-ui&templateURL=https://pcm-release-eu-west-1.s3.eu-west-1.amazonaws.com/pcluster-manager.yaml) |
 </details>
 
-Enter your email and wait (~15 mins) for the stack to go into **CREATE_COMPLETE**. Using the code from your email login to the Web UI at the address specified by the `PclusterManagerUrl` in the `Outputs` tab of the main `parallelcluster-ui` stack.
+Enter your email and wait (~15 mins) for the stack to go into **CREATE_COMPLETE**. Using the code from your email login to the Web UI at the address specified by the `ParallelClusterUIUrl` in the `Outputs` tab of the main `parallelcluster-ui` stack.
 
 ## Costs
 
