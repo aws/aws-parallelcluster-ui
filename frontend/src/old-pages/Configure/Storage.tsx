@@ -56,7 +56,7 @@ const errorsPath = ['app', 'wizard', 'errors', 'sharedStorage']
 type StorageTypeOption = [string, string]
 
 // Helper Functions
-function itemToIconOption([value, label]: StorageTypeOption) {
+function itemToOption([value, label]: StorageTypeOption) {
   return {value: value, label: label}
 }
 
@@ -1105,14 +1105,14 @@ function Storage() {
                   )}
                   selectedOption={
                     storageType &&
-                    itemToIconOption(
+                    itemToOption(
                       findFirst(storageTypes, s => s[0] === storageType)!,
                     )
                   }
                   onChange={({detail}) => {
                     setStorageType(detail.selectedOption.value)
                   }}
-                  options={storageTypes.map(itemToIconOption)}
+                  options={storageTypes.map(itemToOption)}
                 />
                 <Button onClick={addStorage} disabled={!storageType}>
                   {t('wizard.storage.container.addStorage')}
