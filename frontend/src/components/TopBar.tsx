@@ -137,7 +137,7 @@ export default function Topbar() {
     <div id="top-bar">
       <TopNavigation
         identity={{
-          title: t('global.projectName'),
+          title: t('global.projectDisplayName'),
           href: '/',
           logo: {
             src: '/img/pcluster.svg',
