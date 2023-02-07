@@ -98,6 +98,7 @@ function HelpToggle({name, configKey, description, help, defaultValue}: any) {
 }
 
 function AdditionalSssdOptions() {
+  const {t} = useTranslation()
   let additionalSssdConfigsErrors = useState([
     ...errorsPath,
     'additionalSssdConfigs',
@@ -112,7 +113,7 @@ function AdditionalSssdOptions() {
     if (!key || !value || key === '' || value === '') {
       setState(
         [...errorsPath, 'additionalSssdConfigs'],
-        'You must specify a value for both the key and value.',
+        t('wizard.cluster.multiUser.sssdParameters.validation'),
       )
     } else {
       setState([...dsPath, 'AdditionalSssdConfigs', key || ''], value || '')
@@ -133,8 +134,8 @@ function AdditionalSssdOptions() {
       <SpaceBetween direction="vertical" size="xs">
         <FormField
           errorText={additionalSssdConfigsErrors}
-          label="Additional SSSD Options"
-          description="Key-value pairs containing arbitrary SSSD parameters and values to write to the SSSD config file on cluster instances. "
+          label={t('wizard.cluster.multiUser.sssdParameters.name')}
+          description={t('wizard.cluster.multiUser.sssdParameters.description')}
         >
           <SpaceBetween size="s">
             <Input
@@ -149,7 +150,9 @@ function AdditionalSssdOptions() {
                 setState(['app', 'wizard', 'multiUser', 'value'], detail.value)
               }
             />
-            <Button onClick={addConfig}>Add</Button>
+            <Button onClick={addConfig}>
+              {t('wizard.cluster.multiUser.sssdParameters.addButton')}
+            </Button>
           </SpaceBetween>
         </FormField>
         <SpaceBetween direction="vertical" size="xs">
@@ -166,7 +169,9 @@ function AdditionalSssdOptions() {
               <div>
                 {key}: {String(additionalSssdConfigs[key])}
               </div>
-              <Button onClick={() => removeConfig(key)}>Remove</Button>
+              <Button onClick={() => removeConfig(key)}>
+                {t('wizard.cluster.multiUser.sssdParameters.removeButton')}
+              </Button>
             </div>
           ))}
         </SpaceBetween>
@@ -253,7 +258,9 @@ function MultiUser() {
             multiUserValidate()
           }}
         />
-        <ExpandableSection header="Advanced options">
+        <ExpandableSection
+          headerText={t('wizard.cluster.multiUser.advancedOptionsLabel')}
+        >
           <SpaceBetween direction="vertical" size="xs">
             <HelpTextInput
               name={t('wizard.cluster.multiUser.caCertificate.name')}
