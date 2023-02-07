@@ -15,9 +15,11 @@ import {Box, Button, Modal, SpaceBetween} from '@cloudscape-design/components'
 
 import {UpdateComputeFleet} from '../../model'
 import {setState, useState} from '../../store'
+import {useTranslation} from 'react-i18next'
 
 function StopDialog({clusterName}: any) {
   const open = useState(['app', 'clusters', 'clusterStop', 'dialog'])
+  const {t} = useTranslation()
 
   const cancel = () => {
     setState(['app', 'clusters', 'clusterStop', 'dialog'], false)
@@ -37,15 +39,16 @@ function StopDialog({clusterName}: any) {
       footer={
         <Box float="right">
           <SpaceBetween direction="horizontal" size="xs">
-            <Button onClick={cancel}>Cancel</Button>
-            <Button onClick={stopCluster}>Stop!</Button>
+            <Button onClick={cancel}>{t('cluster.list.actions.cancel')}</Button>
+            <Button onClick={stopCluster}>
+              {t('cluster.list.actions.stop')}
+            </Button>
           </SpaceBetween>
         </Box>
       }
-      header="Stop Cluster?"
+      header={t('cluster.list.dialogs.stop.title')}
     >
-      Are you sure you wish to stop cluster {clusterName}? This will terminate
-      all jobs that are running and terminate any compute nodes running.
+      {t('cluster.list.dialogs.stop.body', {clusterName: clusterName})}
     </Modal>
   )
 }

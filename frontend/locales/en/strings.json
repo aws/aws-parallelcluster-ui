@@ -220,9 +220,14 @@
         "delete": {
           "title": "Delete cluster",
           "body": "Are you sure you want to delete cluster {{clusterName}}?"
+        },
+        "stop": {
+          "title": "Stop compute fleet",
+          "body": "Are you sure you want to stop compute fleet of cluster {{clusterName}}? This will terminate all jobs that are running and terminate any compute nodes running."
         }
       },
       "actions": {
+        "cancel": "Cancel",
         "create": "Create",
         "edit": "Edit",
         "start": "Start fleet",
