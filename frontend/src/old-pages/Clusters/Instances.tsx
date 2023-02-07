@@ -256,7 +256,12 @@ export default function ClusterInstances() {
         <TextFilter
           {...filterProps}
           countText={`Results: ${filteredItemsCount}`}
-          filteringAriaLabel="Filter instances"
+          filteringAriaLabel={t(
+            'cluster.instances.filtering.filteringAriaLabel',
+          )}
+          filteringPlaceholder={t(
+            'cluster.instances.filtering.filteringPlaceholder',
+          )}
         />
       }
     />

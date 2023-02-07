@@ -401,7 +401,12 @@ export default function ClusterScheduling() {
               <TextFilter
                 {...filterProps}
                 countText={`Results: ${filteredItemsCount}`}
-                filteringAriaLabel={t('cluster.scheduling.filterJobs')}
+                filteringAriaLabel={t(
+                  'cluster.scheduling.filter.filteringAriaLabel',
+                )}
+                filteringPlaceholder={t(
+                  'cluster.scheduling.filter.filteringPlaceholder',
+                )}
               />
             }
           />

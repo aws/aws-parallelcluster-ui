@@ -202,6 +202,9 @@ export default function Filesystems() {
                 filteringAriaLabel={t(
                   'cluster.storage.filter.filteringAriaLabel',
                 )}
+                filteringPlaceholder={t(
+                  'cluster.storage.filter.filteringPlaceholder',
+                )}
               />
             }
           />
