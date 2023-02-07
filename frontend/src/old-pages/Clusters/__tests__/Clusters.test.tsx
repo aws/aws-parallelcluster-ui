@@ -97,7 +97,9 @@ describe('given a component to show the clusters list', () => {
           ),
         )
 
-        await userEvent.click(output.getByRole('button', {name: 'Create'}))
+        await userEvent.click(
+          output.getByRole('button', {name: 'Create cluster'}),
+        )
         expect(mockNavigate).toHaveBeenCalledWith('/configure')
       })
     })
