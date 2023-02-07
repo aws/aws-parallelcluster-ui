@@ -54,6 +54,7 @@
     }
   },
   "noMatch": {
+    "imageAlt": "Page not found",
     "title": "Page not found",
     "description": "You might have typed the address incorrectly or you might have used an outdated link. Check the link and try again.",
     "links": "Use the following links:",

@@ -31,7 +31,7 @@ export function NoMatch() {
     <Layout contentType="default">
       <ContentLayout header={<></>}>
         <Container>
-          <Image src={errorPage} height={100} />
+          <Image alt={t('noMatch.imageAlt')} src={errorPage} height={100} />
           <TextContent>
             <h1>{t('noMatch.title')}</h1>
             <p>{t('noMatch.description')}</p>
