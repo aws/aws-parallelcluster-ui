@@ -257,6 +257,16 @@ function CustomAMISettings({basePath, appPath, errorsPath, validate}: any) {
     [customAmi, customAmiPath],
   )
 
+  const helpPanelFooter = useMemo(
+    () => [
+      {
+        title: t('wizard.components.customAmi.helpPanel.imageLink.title'),
+        href: t('wizard.components.customAmi.helpPanel.imageLink.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <>
       <SpaceBetween direction="horizontal" size={'xxs'}>
@@ -272,15 +282,10 @@ function CustomAMISettings({basePath, appPath, errorsPath, validate}: any) {
           helpPanel={
             <TitleDescriptionHelpPanel
               title={t('wizard.components.customAmi.helpPanel.title')}
-              description={
-                <Trans i18nKey="wizard.components.customAmi.helpPanel.description">
-                  <a
-                    rel="noreferrer"
-                    target="_blank"
-                    href={t('wizard.components.customAmi.helpPanel.link')}
-                  />
-                </Trans>
-              }
+              description={t(
+                'wizard.components.customAmi.helpPanel.description',
+              )}
+              footerLinks={helpPanelFooter}
             />
           }
         />

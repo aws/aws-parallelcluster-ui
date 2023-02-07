@@ -131,7 +131,7 @@
     },
     "storage": {
       "id": "ID",
-      "mountPoint": "Mount point",
+      "mountPath": "Mount path",
       "name": "Name",
       "type": "Type",
       "noFilesystems": "No filesystems",
@@ -299,7 +299,7 @@
         },
         "template": {
           "label": "Existing template",
-          "description": "Choose this to use the wizard starting from an existing configuration or template file. This will proceed through the wizard process to allow you to customize any options before creating the cluster."
+          "description": "Start by uploading your own partial or complete YAML configuration file."
         },
         "cluster": {
           "label": "Existing cluster",
@@ -471,7 +471,7 @@
         "title":"SSM session",
         "label": "Add SSM session",
         "description": "Add an SSM session to access the head node. The required IAM policy is automatically added to the Additional IAM policies setting.",
-        "help": "You can access the head node by opening an SSM session from the $t(global.projectName) Clusters."
+        "help": "You can access the head node by opening an SSM session when you choose the cluster from the list of clusters and select <strong>Shell</strong>."
       },
       "instanceType": {
         "label": "Instance type"
@@ -764,13 +764,14 @@
       },
       "advancedOptions": {
         "iamPolicies": {
-          "label": "IAM Policies"        }
+          "label": "IAM Policies"
+        }
       },
       "addQueueButton": {
         "label": "Add queue"
       },
       "removeQueueButton": {
-        "label": "Add queue"
+        "label": "Remove queue"
       },
       "placementGroup": {
         "label": "Use placement group"
@@ -790,8 +791,9 @@
     },
     "create": {
       "title": "Create",
-      "description": "Review or edit your configuration and create your cluster.",
+      "description": "Review or edit your cluster configuration and create your cluster.",
       "configuration": {
+        "title": "Cluster configuration",
         "pending": "{{action}} request pending...",
         "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running.",
         "disableRollback": "Disable rollback: Retain the cluster resources in case of a cluster create failure."
@@ -822,8 +824,11 @@
         "label": "Custom Amazon Machine Image (AMI)",
         "helpPanel": {
           "title": "Custom Amazon Machine Image (AMI)",
-          "description": "Custom AMI's provide you a way to customize the cluster. See the <0>Image section</0> of the documentation for more information.",
-          "link": "https://docs.aws.amazon.com/parallelcluster/latest/ug/pcluster.build-image-v3.html"
+          "description": "Use a custom Amazon Machine Image (AMI) to customize your cluster.",
+          "imageLink": {
+            "title": "Image section",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/pcluster.build-image-v3.html"
+          }
         },
         "suggestLabel": "Custom AMI ID"
       },
@@ -909,7 +914,7 @@
   "customImages": {
     "header": {
       "title": "Custom images",
-      "description": "The list of custom images that you created. Custom images are customized AMIs that are used to build a <0>customized AWS ParallelCluster</0>"
+      "description": "The list of custom images that you created. Custom images are customized AMIs that are used to build a <0>customized AWS ParallelCluster</0>."
     },
     "actions": {
       "build": "Build image",
