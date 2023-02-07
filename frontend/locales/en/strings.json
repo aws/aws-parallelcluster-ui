@@ -228,7 +228,7 @@
       },
       "actions": {
         "cancel": "Cancel",
-        "create": "Create",
+        "create": "Create cluster",
         "edit": "Edit",
         "start": "Start fleet",
         "stop": "Stop fleet",

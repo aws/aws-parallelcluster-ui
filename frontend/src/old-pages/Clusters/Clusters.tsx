@@ -139,16 +139,7 @@ function ClusterList({clusters}: {clusters: ClusterInfoSummary[]}) {
           description={t('cluster.list.header.description')}
           counter={items && `(${items.length})`}
           info={<InfoLink helpPanel={<ClustersHelpPanel />} />}
-          actions={
-            <SpaceBetween direction="horizontal" size="xs">
-              {selectedClusterName && <Actions />}
-              {clusters && (
-                <Button onClick={configure} variant="primary">
-                  {t('cluster.list.actions.create')}
-                </Button>
-              )}
-            </SpaceBetween>
-          }
+          actions={<Actions />}
         >
           {t('cluster.list.header.title')}
         </Header>

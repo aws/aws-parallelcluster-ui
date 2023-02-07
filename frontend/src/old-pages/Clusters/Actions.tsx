@@ -37,6 +37,7 @@ import {
   hideDialog,
 } from '../../components/DeleteDialog'
 import {StopDialog, stopComputeFleet} from './StopDialog'
+import {wizardShow} from '../Configure/Configure'
 
 export default function Actions() {
   const clusterName = useState(['app', 'clusters', 'selected'])
@@ -73,11 +74,36 @@ export default function Actions() {
   ])
   const ssmEnabled = iamPolicies && findFirst(iamPolicies, isSsmPolicy)
 
-  const startFleet = () => {
-    UpdateComputeFleet(clusterName, 'START_REQUESTED')
-  }
+  const isHeadNode =
+    headNode && headNode.publicIpAddress && headNode.publicIpAddress !== ''
+  const isEditDisabled =
+    clusterStatus === ClusterStatus.CreateInProgress ||
+    clusterStatus === ClusterStatus.DeleteInProgress ||
+    clusterStatus === ClusterStatus.UpdateInProgress ||
+    clusterStatus === ClusterStatus.CreateFailed ||
+    clusterVersion !== apiVersion
+  const isStartFleetDisabled = fleetStatus !== 'STOPPED'
+  const isStopFleetDisabled = fleetStatus !== 'RUNNING'
+  const isDeleteDisabled =
+    !clusterName || clusterStatus === ClusterStatus.DeleteInProgress
+  const isSsmDisabled =
+    !isHeadNode ||
+    clusterStatus === ClusterStatus.DeleteInProgress ||
+    !ssmEnabled
+  const isDcvDisabled =
+    !isHeadNode ||
+    clusterStatus === ClusterStatus.DeleteInProgress ||
+    !dcvEnabled
 
-  const editConfiguration = () => {
+  const configure = React.useCallback(() => {
+    wizardShow(navigate)
+  }, [navigate])
+
+  const startFleet = React.useCallback(() => {
+    UpdateComputeFleet(clusterName, 'START_REQUESTED')
+  }, [clusterName])
+
+  const editConfiguration = React.useCallback(() => {
     setState(['app', 'wizard', 'clusterName'], clusterName)
     setState(['app', 'wizard', 'page'], 'cluster')
     setState(['app', 'wizard', 'editing'], true)
@@ -87,44 +113,64 @@ export default function Actions() {
     GetConfiguration(clusterName, (configuration: any) => {
       loadTemplate(jsyaml.load(configuration))
     })
-  }
+  }, [clusterName, navigate])
 
-  const deleteCluster = () => {
+  const deleteCluster = React.useCallback(() => {
     console.log(`Deleting: ${clusterName}`)
     DeleteCluster(clusterName, (_resp: any) => {
-      DescribeCluster(clusterName)
-      ListClusters()
+      navigate('/clusters')
     })
     hideDialog('deleteCluster')
-  }
+  }, [clusterName, navigate])
 
-  const shellCluster = (instanceId: any) => {
-    window.open(
-      `${consoleDomain(
-        region,
-      )}/systems-manager/session-manager/${instanceId}?region=${region}`,
-    )
-  }
-
-  const ssmFilesystem = (instanceId: any) => {
-    let user = clusterDefaultUser(cluster)
-    const path = encodeURIComponent(`/home/${user}/`)
-    window.open(
-      `${consoleDomain(
-        region,
-      )}/systems-manager/managed-instances/${instanceId}/file-system?region=${region}&osplatform=Linux#%7B%22path%22%3A%22${path}%22%7D`,
-    )
-  }
-
-  const dcvConnect = (instance: any) => {
-    let callback = (dcvInfo: any) => {
+  const shellCluster = React.useCallback(
+    (instanceId: any) => {
       window.open(
-        `https://${instance.publicIpAddress}:${dcvInfo.port}?authToken=${dcvInfo.session_token}#${dcvInfo.session_id}`,
+        `${consoleDomain(
+          region,
+        )}/systems-manager/session-manager/${instanceId}?region=${region}`,
       )
-    }
-    let user = clusterDefaultUser(cluster)
-    GetDcvSession(instance.instanceId, user, callback)
-  }
+    },
+    [region],
+  )
+
+  const ssmFilesystem = React.useCallback(
+    (instanceId: any) => {
+      let user = clusterDefaultUser(cluster)
+      const path = encodeURIComponent(`/home/${user}/`)
+      window.open(
+        `${consoleDomain(
+          region,
+        )}/systems-manager/managed-instances/${instanceId}/file-system?region=${region}&osplatform=Linux#%7B%22path%22%3A%22${path}%22%7D`,
+      )
+    },
+    [cluster, region],
+  )
+
+  const dcvConnect = React.useCallback(
+    (instance: any) => {
+      let callback = (dcvInfo: any) => {
+        window.open(
+          `https://${instance.publicIpAddress}:${dcvInfo.port}?authToken=${dcvInfo.session_token}#${dcvInfo.session_id}`,
+        )
+      }
+      let user = clusterDefaultUser(cluster)
+      GetDcvSession(instance.instanceId, user, callback)
+    },
+    [cluster],
+  )
+
+  const onFileSystemClick = React.useCallback(() => {
+    ssmFilesystem(headNode.instanceId)
+  }, [headNode?.instanceId, ssmFilesystem])
+
+  const onShellClick = React.useCallback(() => {
+    shellCluster(headNode.instanceId)
+  }, [headNode?.instanceId, shellCluster])
+
+  const onDcvClick = React.useCallback(() => {
+    dcvConnect(headNode)
+  }, [dcvConnect, headNode])
 
   return (
     <div style={{marginLeft: '20px'}}>
@@ -138,75 +184,46 @@ export default function Actions() {
       <StopDialog clusterName={clusterName} />
       <SpaceBetween direction="horizontal" size="xs">
         <Button
-          className="action"
-          disabled={
-            clusterStatus === ClusterStatus.CreateInProgress ||
-            clusterStatus === ClusterStatus.DeleteInProgress ||
-            clusterStatus === ClusterStatus.CreateFailed ||
-            clusterVersion !== apiVersion
-          }
+          disabled={isEditDisabled}
           variant="normal"
           onClick={editConfiguration}
         >
           {t('cluster.list.actions.edit')}
         </Button>
-        {fleetStatus === 'STOPPED' && (
-          <Button variant="normal" onClick={startFleet}>
-            {t('cluster.list.actions.start')}
-          </Button>
-        )}
-        {fleetStatus === 'RUNNING' && (
-          <Button variant="normal" onClick={stopComputeFleet}>
-            {t('cluster.list.actions.stop')}
-          </Button>
-        )}
+        <Button disabled={isSsmDisabled} onClick={onFileSystemClick}>
+          {t('cluster.list.actions.filesystem')}
+        </Button>
+        <Button disabled={isSsmDisabled} onClick={onShellClick}>
+          {t('cluster.list.actions.shell')}
+        </Button>
+        <Button disabled={isDcvDisabled} onClick={onDcvClick}>
+          {t('cluster.list.actions.dcv')}
+        </Button>
         <Button
-          disabled={clusterStatus === ClusterStatus.DeleteInProgress}
+          variant="normal"
+          onClick={startFleet}
+          disabled={isStartFleetDisabled}
+        >
+          {t('cluster.list.actions.start')}
+        </Button>
+        <Button
+          variant="normal"
+          onClick={stopComputeFleet}
+          disabled={isStopFleetDisabled}
+        >
+          {t('cluster.list.actions.stop')}
+        </Button>
+        <Button
+          disabled={isDeleteDisabled}
           onClick={() => {
             showDialog('deleteCluster')
           }}
         >
           {t('cluster.list.actions.delete')}
         </Button>
-        {headNode &&
-          headNode.publicIpAddress &&
-          headNode.publicIpAddress !== '' &&
-          ssmEnabled && (
-            <Button
-              disabled={clusterStatus === ClusterStatus.DeleteInProgress}
-              onClick={() => {
-                ssmFilesystem(headNode.instanceId)
-              }}
-            >
-              {t('cluster.list.actions.filesystem')}
-            </Button>
-          )}
-        {headNode &&
-          headNode.publicIpAddress &&
-          headNode.publicIpAddress !== '' &&
-          ssmEnabled && (
-            <Button
-              disabled={clusterStatus === ClusterStatus.DeleteInProgress}
-              onClick={() => {
-                shellCluster(headNode.instanceId)
-              }}
-            >
-              {t('cluster.list.actions.shell')}
-            </Button>
-          )}
-        {headNode &&
-          headNode.publicIpAddress &&
-          headNode.publicIpAddress !== '' &&
-          dcvEnabled && (
-            <Button
-              disabled={clusterStatus === ClusterStatus.DeleteInProgress}
-              onClick={() => {
-                dcvConnect(headNode)
-              }}
-            >
-              {t('cluster.list.actions.dcv')}
-            </Button>
-          )}
+        <Button onClick={configure} variant="primary">
+          {t('cluster.list.actions.create')}
+        </Button>
       </SpaceBetween>
     </div>
   )
