@@ -35,7 +35,6 @@ import {
 import {getState, setState, useState, clearState} from '../../store'
 
 // Components
-import {LabeledIcon} from './Components'
 import {
   Storages,
   StorageType,
@@ -199,6 +198,16 @@ export function FsxLustreSettings({index}: any) {
     ).toString()
   }
 
+  const throughputFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Fsx.throughput.link.title'),
+        href: t('wizard.storage.Fsx.throughput.link.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <ColumnLayout columns={2} borders="vertical">
       <div key="capacity" style={{display: 'flex', flexDirection: 'column'}}>
@@ -327,15 +336,8 @@ export function FsxLustreSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Fsx.throughput.label')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Fsx.throughput.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-PerUnitStorageThroughput"
-                      ></a>
-                    </Trans>
-                  }
+                  description={t('wizard.storage.Fsx.throughput.help')}
+                  footerLinks={throughputFooterLinks}
                 />
               }
             />
@@ -411,6 +413,26 @@ function EfsSettings({index}: any) {
     if (!setEncrypted) clearState(kmsPath)
   }
 
+  const encryptionFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Efs.encrypted.encryptionLink.title'),
+        href: t('wizard.storage.Efs.encrypted.encryptionLink.href'),
+      },
+    ],
+    [t],
+  )
+
+  const provisionedFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Efs.provisioned.throughputLink.title'),
+        href: t('wizard.storage.Efs.provisioned.throughputLink.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <SpaceBetween direction="vertical" size="s">
       <ColumnLayout columns={2} borders="vertical">
@@ -421,15 +443,8 @@ function EfsSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Efs.encrypted.title')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Efs.encrypted.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-Encrypted"
-                      ></a>
-                    </Trans>
-                  }
+                  description={t('wizard.storage.Efs.encrypted.help')}
+                  footerLinks={encryptionFooterLinks}
                 />
               }
             />
@@ -488,15 +503,8 @@ function EfsSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Efs.provisioned.label')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Efs.provisioned.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-ThroughputMode"
-                      ></a>
-                    </Trans>
-                  }
+                  description={t('wizard.storage.Efs.provisioned.help')}
+                  footerLinks={provisionedFooterLinks}
                 />
               }
             />
@@ -579,6 +587,36 @@ function EbsSettings({index}: any) {
     if (!setEncrypted) clearState(kmsPath)
   }
 
+  const encryptionFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Ebs.encrypted.encryptionLink.title'),
+        href: t('wizard.storage.Ebs.encrypted.encryptionLink.href'),
+      },
+    ],
+    [t],
+  )
+
+  const snapshotFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Ebs.snapshotId.snapshotLink.title'),
+        href: t('wizard.storage.Ebs.snapshotId.snapshotLink.href'),
+      },
+    ],
+    [t],
+  )
+
+  const deletionFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Ebs.deletionPolicy.policyLink.title'),
+        href: t('wizard.storage.Ebs.deletionPolicy.policyLink.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <SpaceBetween direction="vertical" size="m">
       <ColumnLayout columns={2} borders="vertical">
@@ -634,15 +672,8 @@ function EbsSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Ebs.encrypted.title')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Ebs.encrypted.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-Encrypted"
-                      ></a>
-                    </Trans>
-                  }
+                  description={t('wizard.storage.Ebs.encrypted.help')}
+                  footerLinks={encryptionFooterLinks}
                 />
               }
             />
@@ -670,15 +701,8 @@ function EbsSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Ebs.snapshotId.label')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Ebs.snapshotId.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-SnapshotId"
-                      ></a>
-                    </Trans>
-                  }
+                  description={t('wizard.storage.Ebs.snapshotId.help')}
+                  footerLinks={snapshotFooterLinks}
                 />
               }
             />
@@ -708,15 +732,8 @@ function EbsSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Ebs.deletionPolicy.label')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Ebs.deletionPolicy.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-DeletionPolicy"
-                      ></a>
-                    </Trans>
-                  }
+                  description={t('wizard.storage.Ebs.deletionPolicy.help')}
+                  footerLinks={deletionFooterLinks}
                 />
               }
             />
@@ -792,6 +809,24 @@ function StorageInstance({index}: any) {
     return {label: id, value: id}
   }
 
+  const useExistingFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.instance.useExisting.fsxLink.title'),
+        href: t('wizard.storage.instance.useExisting.fsxLink.href'),
+      },
+      {
+        title: t('wizard.storage.instance.useExisting.efsLink.title'),
+        href: t('wizard.storage.instance.useExisting.efsLink.href'),
+      },
+      {
+        title: t('wizard.storage.instance.useExisting.ebsLink.title'),
+        href: t('wizard.storage.instance.useExisting.ebsLink.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <Container
       header={
@@ -843,25 +878,10 @@ function StorageInstance({index}: any) {
                   helpPanel={
                     <TitleDescriptionHelpPanel
                       title={t('wizard.storage.instance.useExisting.label')}
-                      description={
-                        <Trans i18nKey="wizard.storage.instance.useExisting.help">
-                          <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-FileSystemId"
-                          ></a>
-                          <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-FileSystemId"
-                          ></a>
-                          <a
-                            rel="noreferrer"
-                            target="_blank"
-                            href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-VolumeId"
-                          ></a>
-                        </Trans>
-                      }
+                      description={t(
+                        'wizard.storage.instance.useExisting.help',
+                      )}
+                      footerLinks={useExistingFooterLinks}
                     />
                   }
                 />
