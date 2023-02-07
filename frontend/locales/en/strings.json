@@ -569,7 +569,7 @@
         "addStorage": "Add storage"
       },
       "helpPanel": {
-        "title": "Shared storage properties",
+        "title": "$t(wizard.storage.title)",
         "description": "<p>Add and configure shared storage for your cluster. Shared storage is shared between the head node and compute nodes.</p><p>Choose <strong>Add storage</strong> to configure shared storage for your cluster.</p><p>When you <strong>Edit</strong> shared storage configuration settings, AWS ParallelCluster doesn't check your inputs as you enter them. If your inputs can cause errors, AWS ParallelCluster returns validation error messages when you create the cluster or submit a dry run.</p><p>To see what settings can't be edited, search on the text \"Update policy: If this setting is changed, the update is not allowed\" in the <strong>Shared Storage section</strong> of the AWS ParallelCluster configuration documentation.</p><p>You can configure external or AWS ParallelCluster managed shared storage.</p>",
         "section": {
           "external": {

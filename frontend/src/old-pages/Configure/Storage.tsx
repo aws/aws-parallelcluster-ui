@@ -229,7 +229,7 @@ export function FsxLustreSettings({index}: any) {
           <InfoLink
             helpPanel={
               <TitleDescriptionHelpPanel
-                title={t('wizard.storage.title')}
+                title={t('wizard.storage.Fsx.lustreType.label')}
                 description={
                   <Trans i18nKey="wizard.storage.Fsx.lustreType.help">
                     <a
@@ -266,7 +266,7 @@ export function FsxLustreSettings({index}: any) {
               <InfoLink
                 helpPanel={
                   <TitleDescriptionHelpPanel
-                    title={t('wizard.storage.title')}
+                    title={t('wizard.storage.Fsx.import.label')}
                     description={
                       <Trans i18nKey="wizard.storage.Fsx.import.help">
                         <a
@@ -293,7 +293,7 @@ export function FsxLustreSettings({index}: any) {
               <InfoLink
                 helpPanel={
                   <TitleDescriptionHelpPanel
-                    title={t('wizard.storage.title')}
+                    title={t('wizard.storage.Fsx.export.label')}
                     description={
                       <Trans i18nKey="wizard.storage.Fsx.export.help">
                         <a
@@ -326,7 +326,7 @@ export function FsxLustreSettings({index}: any) {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.title')}
+                  title={t('wizard.storage.Fsx.throughput.label')}
                   description={
                     <Trans i18nKey="wizard.storage.Fsx.throughput.help">
                       <a
@@ -361,7 +361,7 @@ export function FsxLustreSettings({index}: any) {
         <InfoLink
           helpPanel={
             <TitleDescriptionHelpPanel
-              title={t('wizard.storage.title')}
+              title={t('wizard.storage.Fsx.compression.label')}
               description={
                 <Trans i18nKey="wizard.storage.Fsx.compression.help">
                   <a
@@ -420,7 +420,7 @@ function EfsSettings({index}: any) {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.title')}
+                  title={t('wizard.storage.Efs.encrypted.title')}
                   description={
                     <Trans i18nKey="wizard.storage.Efs.encrypted.help">
                       <a
@@ -487,7 +487,7 @@ function EfsSettings({index}: any) {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.title')}
+                  title={t('wizard.storage.Efs.provisioned.label')}
                   description={
                     <Trans i18nKey="wizard.storage.Efs.provisioned.help">
                       <a
@@ -633,7 +633,7 @@ function EbsSettings({index}: any) {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.title')}
+                  title={t('wizard.storage.Ebs.encrypted.title')}
                   description={
                     <Trans i18nKey="wizard.storage.Ebs.encrypted.help">
                       <a
@@ -669,7 +669,7 @@ function EbsSettings({index}: any) {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.title')}
+                  title={t('wizard.storage.Ebs.snapshotId.label')}
                   description={
                     <Trans i18nKey="wizard.storage.Ebs.snapshotId.help">
                       <a
@@ -707,7 +707,7 @@ function EbsSettings({index}: any) {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.title')}
+                  title={t('wizard.storage.Ebs.deletionPolicy.label')}
                   description={
                     <Trans i18nKey="wizard.storage.Ebs.deletionPolicy.help">
                       <a
@@ -815,7 +815,7 @@ function StorageInstance({index}: any) {
               <InfoLink
                 helpPanel={
                   <TitleDescriptionHelpPanel
-                    title={t('wizard.storage.title')}
+                    title={t('wizard.storage.instance.mountPoint.label')}
                     description={t('wizard.storage.instance.mountPoint.help')}
                   />
                 }
@@ -842,7 +842,7 @@ function StorageInstance({index}: any) {
                 <InfoLink
                   helpPanel={
                     <TitleDescriptionHelpPanel
-                      title={t('wizard.storage.title')}
+                      title={t('wizard.storage.instance.useExisting.label')}
                       description={
                         <Trans i18nKey="wizard.storage.instance.useExisting.help">
                           <a
