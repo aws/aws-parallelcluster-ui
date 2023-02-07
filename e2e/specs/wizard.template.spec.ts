@@ -19,7 +19,7 @@ test.describe('environment: @demo', () => {
       test('user can perform a dry-run successfully', async ({ page }) => {
         await visitAndLogin(page)
 
-        await page.getByRole('button', { name: 'Create' }).first().click();
+        await page.getByRole('button', { name: 'Create cluster' }).first().click();
         await page.getByPlaceholder('Enter your cluster name').fill('sdasdasd');
 
         page.on("filechooser", (fileChooser: FileChooser) => {
