@@ -250,7 +250,7 @@ export default function ClusterInstances() {
       onSelectionChange={onSelectionChangeCallback}
       loading={instances === null}
       items={items}
-      loadingText="Loading instances..."
+      loadingText={t('cluster.instances.loadingText')}
       pagination={<Pagination {...paginationProps} />}
       filter={
         <TextFilter

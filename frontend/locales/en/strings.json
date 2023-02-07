@@ -117,6 +117,7 @@
         "start": "Start",
         "logs": "Logs"
       },
+      "loadingText": "Loading instances...",
       "filtering": {
         "filteringPlaceholder": "Find instances",
         "filteringAriaLabel": "Find instances",
