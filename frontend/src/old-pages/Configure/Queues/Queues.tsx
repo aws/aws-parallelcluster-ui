@@ -573,11 +573,7 @@ function Queues() {
       >
         <QueuesView />
         <Box float="right">
-          <Button
-            disabled={queues.length >= 5}
-            onClick={addQueue}
-            iconName={'add-plus'}
-          >
+          <Button disabled={queues.length >= 5} onClick={addQueue}>
             {t('wizard.queues.addQueueButton.label')}
           </Button>
         </Box>
