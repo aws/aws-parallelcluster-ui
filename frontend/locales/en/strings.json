@@ -20,10 +20,6 @@
       "overflowMenuTitleText": "All",
       "overflowMenuTriggerText": "More"
     },
-    "docs": {
-      "title": "$t(global.projectName) documentation",
-      "link": "https://pcluster.cloud/"
-    },
     "help": {
       "configurationProperties": {
         "title": "Configuration properties",
