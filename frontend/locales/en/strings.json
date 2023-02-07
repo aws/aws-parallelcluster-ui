@@ -286,7 +286,7 @@
         "description": "Choose the source for creating your cluster configuration and cluster. After you choose a source, you step through the $t(global.projectName) configuration options for review and edits, to create your cluster."
       },
       "helpPanel": {
-        "title": "Set up",
+        "title": "$t(wizard.source.title)",
         "description": "Name your cluster and choose a method for configuring your cluster.",
         "link": {
           "title": "Configuration properties",
