@@ -136,7 +136,7 @@ function AdditionalSssdOptions() {
           label="Additional SSSD Options"
           description="Key-value pairs containing arbitrary SSSD parameters and values to write to the SSSD config file on cluster instances. "
         >
-          <div style={{display: 'flex', flexDirection: 'row', gap: '16px'}}>
+          <SpaceBetween size="s">
             <Input
               value={key}
               onChange={({detail}) =>
@@ -149,8 +149,8 @@ function AdditionalSssdOptions() {
                 setState(['app', 'wizard', 'multiUser', 'value'], detail.value)
               }
             />
-            <Button onClick={addConfig}>+ Add</Button>
-          </div>
+            <Button onClick={addConfig}>Add</Button>
+          </SpaceBetween>
         </FormField>
         <SpaceBetween direction="vertical" size="xs">
           {Object.keys(additionalSssdConfigs).map((key, index) => (
