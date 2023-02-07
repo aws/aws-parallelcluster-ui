@@ -160,7 +160,7 @@ export default function Filesystems() {
             columnDefinitions={[
               {
                 id: 'mount',
-                header: t('cluster.storage.mountPoint'),
+                header: t('cluster.storage.mountPath'),
                 cell: item => {
                   const href = buildFilesystemLink(region, headNode, item)
                   const text = (item as any).MountDir

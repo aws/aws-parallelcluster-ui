@@ -290,7 +290,7 @@ function SsmSettings() {
             helpPanel={
               <TitleDescriptionHelpPanel
                 title={t('wizard.headNode.title')}
-                description={t('wizard.headNode.Ssm.help')}
+                description={<Trans i18nKey="wizard.headNode.Ssm.help" />}
               />
             }
           />

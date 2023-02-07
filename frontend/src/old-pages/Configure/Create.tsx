@@ -205,7 +205,9 @@ function Create() {
   useHelpPanel(<HelpPanelComponent />)
 
   return (
-    <Container>
+    <Container
+      header={<Header>{t('wizard.create.configuration.title')}</Header>}
+    >
       <ConfigView
         config={clusterConfig}
         pending={!clusterConfig}
