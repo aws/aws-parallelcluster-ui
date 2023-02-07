@@ -53,18 +53,11 @@ const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
 const errorsPath = ['app', 'wizard', 'errors', 'sharedStorage']
 
 // Types
-type StorageTypeOption = [string, string, string]
+type StorageTypeOption = [string, string]
 
 // Helper Functions
-function itemToIconOption([value, label, icon]: StorageTypeOption) {
-  return {value: value, label: label, iconUrl: icon}
-}
-
-function itemToDisplayIconOption([value, label, icon]: StorageTypeOption) {
-  return {
-    value: value,
-    label: icon ? <LabeledIcon label={label} icon={icon} /> : label,
-  }
+function itemToIconOption([value, label]: StorageTypeOption) {
+  return {value: value, label: label}
 }
 
 function strToOption(str: any) {
@@ -1007,15 +1000,13 @@ function Storage() {
     Activate ONTAP/OpenZFS only from ParallelCluster 3.2.0
    */
   const storageTypesSource: StorageTypeOption[] = [
-    ['FsxLustre', 'Amazon FSx for Lustre (FSX)', '/img/fsx.svg'],
+    ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
     isFsxOnTapActive
-      ? ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)', '/img/fsx.svg']
+      ? ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)']
       : false,
-    isFsxOpenZsfActive
-      ? ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)', '/img/fsx.svg']
-      : false,
-    ['Efs', 'Amazon Elastic File System (EFS)', '/img/efs.svg'],
-    ['Ebs', 'Amazon Elastic Block Store (EBS)', '/img/ebs.svg'],
+    isFsxOpenZsfActive ? ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)'] : false,
+    ['Efs', 'Amazon Elastic File System (EFS)'],
+    ['Ebs', 'Amazon Elastic Block Store (EBS)'],
   ].filter(Boolean) as StorageTypeOption[]
 
   const defaultCounts = {FsxLustre: 0, Efs: 0, Ebs: 0}
@@ -1114,7 +1105,7 @@ function Storage() {
                   )}
                   selectedOption={
                     storageType &&
-                    itemToDisplayIconOption(
+                    itemToIconOption(
                       findFirst(storageTypes, s => s[0] === storageType)!,
                     )
                   }
