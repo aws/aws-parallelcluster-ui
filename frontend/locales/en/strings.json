@@ -352,7 +352,19 @@
       "multiUser": {
         "title": "Multiple user management properties",
         "description": "Configure Active Directory access settings for multiple users on a cluster.",
-        "help": "If you don't have an existing Active Directory, you can create one by following <1>this tutorial</1>.",
+        "help": "<p>Configure access to your Active Directory by using LDAP.</p><p>Use your existing Active Directory or create one by using the quick create method in the tutorial in <strong>Learn more</strong>.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
+        "multiUserAccessLink": {
+          "title": "Multiple user access to clusters",
+          "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/multi-user-v3.html?icmpid=docs_parallelcluster_hp_multi_user_v1"
+        },
+        "adLink": {
+          "title": "Tutorial: Integrating Active Directory",
+          "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/tutorials_05_multi-user-ad.html?icmpid=docs_parallelcluster_hp_multi_user_v1"
+        },
+        "directoryServiceLink": {
+          "title": "Directory Service configuration",
+          "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/DirectoryService-v3.html?icmpid=docs_parallelcluster_hp_multi_user_v1"
+        },
         "checkbox": {
           "label": "Multiple users on a cluster.",
           "description": "Manage multiple cluster users in your Active Directory."
