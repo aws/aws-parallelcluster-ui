@@ -185,19 +185,15 @@ function MultiUser() {
   return (
     <Container
       header={
-        <Header variant="h2">{t('wizard.cluster.multiUser.title')}</Header>
+        <Header
+          variant="h2"
+          info={<InfoLink helpPanel={<MultiUserHelpPanel />} />}
+        >
+          {t('wizard.cluster.multiUser.title')}
+        </Header>
       }
     >
       <SpaceBetween direction="vertical" size="xs">
-        <Trans i18nKey="wizard.cluster.multiUser.help">
-          Description
-          <Link
-            external
-            href="https://docs.aws.amazon.com/parallelcluster/latest/ug/tutorials_05_multi-user-ad.html"
-          >
-            link
-          </Link>
-        </Trans>
         <HelpTextInput
           name={t('wizard.cluster.multiUser.domainName.name')}
           path={dsPath}
@@ -323,6 +319,34 @@ function MultiUser() {
         </ExpandableSection>
       </SpaceBetween>
     </Container>
+  )
+}
+
+export const MultiUserHelpPanel = () => {
+  const {t} = useTranslation()
+  const footerLinks = React.useMemo(
+    () => [
+      {
+        title: t('wizard.cluster.multiUser.multiUserAccessLink.title'),
+        href: t('wizard.cluster.multiUser.multiUserAccessLink.href'),
+      },
+      {
+        title: t('wizard.cluster.multiUser.adLink.title'),
+        href: t('wizard.cluster.multiUser.adLink.href'),
+      },
+      {
+        title: t('wizard.cluster.multiUser.directoryServiceLink.title'),
+        href: t('wizard.cluster.multiUser.directoryServiceLink.href'),
+      },
+    ],
+    [t],
+  )
+  return (
+    <TitleDescriptionHelpPanel
+      title={t('wizard.cluster.multiUser.title')}
+      description={<Trans i18nKey="wizard.cluster.multiUser.help" />}
+      footerLinks={footerLinks}
+    />
   )
 }
 
