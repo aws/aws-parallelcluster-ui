@@ -120,7 +120,6 @@ def run():
 
     @app.route("/manager/get_dcv_session")
     @authenticated(ADMINS_GROUP)
-    @csrf_needed
     @validated(params=GetDcvSession)
     def get_dcv_session_():
         return get_dcv_session()
