@@ -641,7 +641,11 @@
         },
         "throughput": {
           "label": "Per unit storage throughput",
-          "help": "Describes the amount of read and write throughput for each 1 TiB of storage, in MB/s/TiB. See <0>PerUnitStorageThroughput</0>."
+          "help": "Configure the amount of read and write throughput for each 1 tebibyte of storage, in MB/s/TiB.",
+          "link": {
+            "title": "PerUnitStorageThroughput",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-PerUnitStorageThroughput"
+          }
         },
         "compression": {
           "label": "Compress file system data",
@@ -653,7 +657,11 @@
         "encrypted": {
           "label": "Encrypted",
           "title": "Encryption",
-          "help": "Specifies a custom AWS KMS key to use for encryption. See <0>EFS Encryption.</0>",
+          "help": "A custom AWS KMS key is used for encryption.",
+          "encryptionLink": {
+            "title": "EFS encryption",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-Encrypted"
+          },
           "kmsId": "KMS ID"
         },
         "performanceMode": {
@@ -661,7 +669,11 @@
         },
         "provisioned": {
           "label": "Provisioned throughput",
-          "help": "Defines the provisioned throughput (from 1 to 1024 in MiB/s) of the Amazon EFS file system. If not provided the file system defaults to bursting mode. See <0>ThroughputMode section.</0>"
+          "help": "Configure the provisioned throughput (from 1-1024 in MiB/s) for the Amazon EFS file system. If not configured, the file system is created in bursting mode.",
+          "throughputLink": {
+            "title": "ThroughputMode section",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-ThroughputMode"
+          }
         }
       },
       "Ebs": {
@@ -673,27 +685,51 @@
         "encrypted": {
           "label": "Encrypted",
           "title": "Encryption",
-          "help": "Specifies a custom AWS KMS key to use for encryption. See <0>EBS Encryption.</o>",
+          "help": "A custom AWS KMS key is used for encryption.",
+          "encryptionLink": {
+            "title": "EBS encryption",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-Encrypted"
+          },
           "kmsId": "KMS ID"
         },
         "snapshotId": {
           "label": "Snapshot ID",
-          "help": "Specifies the Amazon EBS snapshot ID if you're using a snapshot as the source for the volume. See <0>SnapshotID</0>."
+          "help": "Enter the Amazon EBS snapshot ID if you're using a snapshot as the source for the volume.",
+          "snapshotLink": {
+            "title": "SnapshotID",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-SnapshotId"
+          }
         },
         "deletionPolicy": {
           "label": "Deletion policy",
-          "help": "Specifies whether the volume should be retained, deleted, or snapshotted when the cluster is deleted or the volume is removed. See <0>DeletionPolicy</0>."
+          "help": "Configure whether the volume should be retained, deleted, or snapshotted when a cluster is deleted.",
+          "policyLink": {
+            "title": "DeletionPolicy",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-DeletionPolicy"
+          }
         }
       },
       "instance": {
         "mountPoint": {
           "label": "Mount path",
-          "help": "Specify where to mount the shared storage on both the head node and compute instances."
+          "help": "Configure the mount path for the shared storage on both the head node and compute nodes."
         },
         "useExisting": {
           "label": "External file system",
-          "help": "Specify an external file system and mount it to all instances in the cluster. See <0>FSx file system ID</0>, <1>EFS file system ID</1>, <2>EBS Volume ID</2>",
-          "placeholder": "i.e. fsx-1234 or efs-1234"
+          "help": "Specify an external file system and mount it to all instances in the cluster.",
+          "placeholder": "i.e. fsx-1234 or efs-1234",
+          "fsxLink": {
+            "title": "FSx file system ID",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-FileSystemId"
+          },
+          "efsLink": {
+            "title": "EFS file system ID",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-FileSystemId"
+          },
+          "ebsLink": {
+            "title": "EBS Volume ID",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-VolumeId"
+          }
         }
       }
     },
