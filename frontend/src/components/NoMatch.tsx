@@ -40,15 +40,6 @@ export function NoMatch() {
               <li>
                 <Link href="/">{t('noMatch.home')}</Link>
               </li>
-              <li>
-                <Link
-                  external
-                  externalIconAriaLabel={t('global.openNewTab')}
-                  href={t('global.docs.link')}
-                >
-                  {t('global.docs.title')}
-                </Link>
-              </li>
             </ul>
           </TextContent>
         </Container>

@@ -26,40 +26,35 @@ function TitleDescriptionHelpPanel({
 }: TitleDescriptionHelpPanelProps) {
   const {t} = useTranslation()
 
-  const DEFAULT_FOOTER_LINKS = useMemo(
-    () => [
-      {
-        title: t('global.docs.title'),
-        href: t('global.docs.link'),
-      },
-    ],
-    [t],
-  )
+  const footerLinkProp = useMemo(() => {
+    if (!footerLinks) {
+      return undefined
+    }
+
+    return (
+      <div>
+        <h3>
+          {t('helpPanel.footer.learnMore')} <Icon name="external" />
+        </h3>
+        <ul>
+          {footerLinks.map(link => (
+            <li key={link.href}>
+              <Link
+                external
+                externalIconAriaLabel={t('global.openNewTab')}
+                href={link.href}
+              >
+                {link.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }, [footerLinks, t])
 
   return (
-    <HelpPanel
-      header={<h2>{title}</h2>}
-      footer={
-        <div>
-          <h3>
-            {t('helpPanel.footer.learnMore')} <Icon name="external" />
-          </h3>
-          <ul>
-            {(footerLinks || DEFAULT_FOOTER_LINKS).map(link => (
-              <li key={link.href}>
-                <Link
-                  external
-                  externalIconAriaLabel={t('global.openNewTab')}
-                  href={link.href}
-                >
-                  {link.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      }
-    >
+    <HelpPanel header={<h2>{title}</h2>} footer={footerLinkProp}>
       <div>{description}</div>
     </HelpPanel>
   )
