@@ -250,13 +250,18 @@ export default function ClusterInstances() {
       onSelectionChange={onSelectionChangeCallback}
       loading={instances === null}
       items={items}
-      loadingText="Loading instances..."
+      loadingText={t('cluster.instances.loadingText')}
       pagination={<Pagination {...paginationProps} />}
       filter={
         <TextFilter
           {...filterProps}
           countText={`Results: ${filteredItemsCount}`}
-          filteringAriaLabel="Filter instances"
+          filteringAriaLabel={t(
+            'cluster.instances.filtering.filteringAriaLabel',
+          )}
+          filteringPlaceholder={t(
+            'cluster.instances.filtering.filteringPlaceholder',
+          )}
         />
       }
     />

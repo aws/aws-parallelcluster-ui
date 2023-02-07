@@ -118,7 +118,10 @@
         "start": "Start",
         "logs": "Logs"
       },
+      "loadingText": "Loading instances...",
       "filtering": {
+        "filteringPlaceholder": "Find instances",
+        "filteringAriaLabel": "Find instances",
         "empty": {
           "title": "No instances",
           "subtitle": "No instances found"
@@ -140,10 +143,17 @@
       "noFilesystemsToDisplay": "No filesystems to display.",
       "filter": {
         "loading": "Loading Filesystems...",
-        "filteringAriaLabel": "Filter filesystems",
+        "filteringPlaceholder": "Find storage",
+        "filteringAriaLabel": "Find storage",
         "noMatches": "No matches",
         "noFilesystems": "No filesystems match the filters.",
         "clear": "Clear filter"
+      }
+    },
+    "stackEvents": {
+      "filter": {
+        "filteringPlaceholder": "Find stack events",
+        "filteringAriaLabel": "Find stack events"
       }
     },
     "accounting": {
@@ -170,7 +180,10 @@
       "state": "State",
       "schedulingEnabled": "Scheduling is only available in clusters with version 3.1.x and greater.",
       "ssmEnabled": "You must enable SSM to monitor jobs.",
-      "filterJobs": "Filter jobs",
+      "filter": {
+        "filteringAriaLabel": "Find jobs",
+        "filteringPlaceholder": "Find jobs"
+      },
       "loadingJobs": "Loading jobs..."
     },
     "logs": {
@@ -239,7 +252,7 @@
       "loadingText": "Loading clusters...",
       "countText": "Results:",
       "filteringAriaLabel": "Filter cluster",
-      "filteringPlaceholder": "Enter search text",
+      "filteringPlaceholder": "Find clusters",
       "splitPanel": {
         "noClusterSelectedText": "No cluster selected",
         "selectClusterText": "Select a cluster to see its details"
@@ -898,8 +911,8 @@
       "filtering": {
         "loadingText": "Loading users...",
         "countText": "Results: {{filteredItemsCount}}",
-        "filteringAriaLabel": "Enter search text",
-        "filteringPlaceholder": "Enter search text",
+        "filteringAriaLabel": "Find users",
+        "filteringPlaceholder": "Find users",
         "empty": {
           "title": "No users",
           "subtitle": "No users to display."
@@ -950,8 +963,8 @@
       "filtering": {
         "loadingText": "Loading images...",
         "countText": "Results: {{filteredItemsCount}}",
-        "filteringAriaLabel": "Enter search text",
-        "filteringPlaceholder": "Enter search text",
+        "filteringAriaLabel": "Find custom images",
+        "filteringPlaceholder": "Find custom images",
         "empty": {
           "title": "No images",
           "subtitle": "No images to display.",
@@ -982,8 +995,8 @@
         "filtering": {
           "loadingText": "Loading tags...",
           "countText": "Results: {{filteredItemsCount}}",
-          "filteringAriaLabel": "Enter search text",
-          "filteringPlaceholder": "Enter search text",
+          "filteringAriaLabel": "Find tags",
+          "filteringPlaceholder": "Find tags",
           "empty": {
             "title": "No tags",
             "subtitle": "No tags to display."
@@ -1058,8 +1071,8 @@
       "filtering": {
         "loadingText": "Loading images...",
         "countText": "Results: {{filteredItemsCount}}",
-        "filteringAriaLabel": "Enter search text",
-        "filteringPlaceholder": "Enter search text",
+        "filteringAriaLabel": "Find official images",
+        "filteringPlaceholder": "Find official images",
         "empty": {
           "title": "No images",
           "subtitle": "No images to display."

@@ -42,6 +42,7 @@ import {StackEventStatusIndicator} from '../../components/Status'
 import DateView from '../../components/date/DateView'
 import Loading from '../../components/Loading'
 import EmptyState from '../../components/EmptyState'
+import {useTranslation} from 'react-i18next'
 
 function EventStatus(stackEvent: StackEvent) {
   const {logicalResourceId, resourceStatus} = stackEvent
@@ -95,6 +96,7 @@ function EventStatus(stackEvent: StackEvent) {
 }
 
 export default function ClusterStackEvents() {
+  const {t} = useTranslation()
   const clusterName: ClusterName = useState(['app', 'clusters', 'selected'])
   const events: StackEvents = useState([
     'clusters',
@@ -252,7 +254,12 @@ export default function ClusterStackEvents() {
             filterProps.onChange(e)
           }}
           countText={`Results: ${filteredItemsCount}`}
-          filteringAriaLabel="Filter logs"
+          filteringAriaLabel={t(
+            'cluster.stackEvents.filter.filteringAriaLabel',
+          )}
+          filteringPlaceholder={t(
+            'cluster.stackEvents.filter.filteringPlaceholder',
+          )}
         />
       }
       preferences={
