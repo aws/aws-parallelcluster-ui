@@ -289,8 +289,8 @@ function SsmSettings() {
           <InfoLink
             helpPanel={
               <TitleDescriptionHelpPanel
-                title={t('wizard.headNode.title')}
-                description={<Trans i18nKey="wizard.headNode.Ssm.help" />}
+                title={t('wizard.headNode.Ssm.title')}
+                description={t('wizard.headNode.Ssm.help')}
               />
             }
           />
@@ -346,7 +346,7 @@ function DcvSettings() {
           <InfoLink
             helpPanel={
               <TitleDescriptionHelpPanel
-                title={t('wizard.headNode.title')}
+                title={t('wizard.headNode.Dcv.label')}
                 description={t('wizard.headNode.Dcv.help')}
               />
             }
@@ -461,7 +461,7 @@ function HeadNode() {
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.headNode.title')}
+                  title={t('wizard.headNode.imdsSecured.label')}
                   description={
                     <Trans i18nKey="wizard.headNode.imdsSecured.help">
                       <a
@@ -481,7 +481,7 @@ function HeadNode() {
               <InfoLink
                 helpPanel={
                   <TitleDescriptionHelpPanel
-                    title={t('wizard.headNode.title')}
+                    title={t('wizard.headNode.securityGroups.label')}
                     description={t('wizard.headNode.securityGroups.help')}
                   />
                 }
