@@ -1080,25 +1080,8 @@ function Storage() {
           )}
 
           {canEditFilesystems && storageTypes.length > 0 && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '16px',
-                  alignItems: 'center',
-                  marginTop: '10px',
-                }}
-              >
-                <TextContent>
-                  {t('wizard.storage.container.storageType')}
-                </TextContent>
+            <SpaceBetween size="s">
+              <FormField label={t('wizard.storage.container.storageType')}>
                 <Select
                   placeholder={t(
                     'wizard.storage.container.storageTypePlaceholder',
@@ -1114,11 +1097,11 @@ function Storage() {
                   }}
                   options={storageTypes.map(itemToOption)}
                 />
-                <Button onClick={addStorage} disabled={!storageType}>
-                  {t('wizard.storage.container.addStorage')}
-                </Button>
-              </div>
-            </div>
+              </FormField>
+              <Button onClick={addStorage} disabled={!storageType}>
+                {t('wizard.storage.container.addStorage')}
+              </Button>
+            </SpaceBetween>
           )}
         </div>
       </SpaceBetween>
