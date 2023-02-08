@@ -69,12 +69,12 @@ function CustomImageProperties() {
   const loadingText = t('global.loading')
 
   const copyImageConfigUrl = useCallback(() => {
-    navigator.clipboard.writeText(image.imageConfiguration.url)
-  }, [image.imageConfiguration.url])
+    navigator.clipboard.writeText(image.imageConfiguration?.url)
+  }, [image.imageConfiguration?.url])
 
   const copyAmiId = useCallback(() => {
-    navigator.clipboard.writeText(image.ec2AmiInfo.amiId)
-  }, [image.ec2AmiInfo.amiId])
+    navigator.clipboard.writeText(image.ec2AmiInfo?.amiId)
+  }, [image.ec2AmiInfo?.amiId])
 
   return (
     <Container
@@ -89,7 +89,7 @@ function CustomImageProperties() {
           <ValueWithLabel
             label={t('customImages.imageDetails.properties.creationTime')}
           >
-            <DateView date={image.creationTime} />
+            {image.creationTime ? <DateView date={image.creationTime} /> : '-'}
           </ValueWithLabel>
           <ValueWithLabel
             label={t('customImages.imageDetails.properties.architecture')}
@@ -129,8 +129,8 @@ function CustomImageProperties() {
                 variant="inline-icon"
               />
             </Popover>
-            <Link href={image.imageConfiguration.url}>
-              {truncate(image.imageConfiguration.url, {
+            <Link href={image.imageConfiguration?.url}>
+              {truncate(image.imageConfiguration?.url, {
                 length: 100,
               })}
             </Link>
