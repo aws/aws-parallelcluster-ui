@@ -164,7 +164,6 @@ def run():
 
     @app.route("/manager/cancel_job")
     @authenticated(ADMINS_GROUP)
-    @csrf_needed
     @validated(params=CancelJob)
     def cancel_job_():
         return cancel_job()
