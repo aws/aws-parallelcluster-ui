@@ -163,12 +163,7 @@ async function DescribeCluster(clusterName: string, errorCallback?: Callback) {
 function DeleteCluster(clusterName: any, callback?: Callback) {
   var url = `api?path=/v3/clusters/${clusterName}`
   request('delete', url)
-    .then((response: any) => {
-      if (response.status === 200) {
-        console.log('Delete Success', response)
-        callback && callback(response.data)
-      }
-    })
+    .then((response: any) => callback && callback(response.data))
     .catch((error: any) => {
       if (error.response)
         notify(
