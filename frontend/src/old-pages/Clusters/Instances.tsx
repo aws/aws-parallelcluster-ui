@@ -155,7 +155,6 @@ export default function ClusterInstances() {
         <EmptyState
           title={t('cluster.instances.filtering.empty.title')}
           subtitle={t('cluster.instances.filtering.empty.subtitle')}
-          action={<span>:(</span>}
         />
       ),
       noMatch: (
