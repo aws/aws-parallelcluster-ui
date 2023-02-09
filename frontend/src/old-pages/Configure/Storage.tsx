@@ -783,7 +783,7 @@ function StorageInstance({index}: any) {
 
   const removeStorage = () => {
     if (index === 0 && storages.length === 1) {
-      clearState(uiSettings)
+      clearState(['app', 'wizard', 'storage', 'ui'])
       clearState(storagePath)
     } else {
       clearState(uiSettingsForStorage)
