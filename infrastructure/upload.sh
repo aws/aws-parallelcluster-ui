@@ -24,14 +24,14 @@ then
   exit 1;
 fi
 
-FILES=(SSMSessionProfile-cfn.yaml pcluster-manager-cognito.yaml pcluster-manager.yaml)
+FILES=(SSMSessionProfile-cfn.yaml parallelcluster-ui-cognito.yaml parallelcluster-ui.yaml)
 
 for INDEX in "${!BUCKETS[@]}"
 do
   echo Uploading to: "${BUCKETS[INDEX]}"
   #FIXME For other partitions we should also parametrize the partition in the URL
   TEMPLATE_URL="https:\/\/${BUCKETS[INDEX]}\.s3\.${REGIONS[INDEX]}\.amazonaws\.com"
-  sed -i "s/PLACEHOLDER/${TEMPLATE_URL}/g" "${SCRIPT_DIR}/pcluster-manager.yaml"
+  sed -i "s/PLACEHOLDER/${TEMPLATE_URL}/g" "${SCRIPT_DIR}/parallelcluster-ui.yaml"
   for FILE in "${FILES[@]}"
   do
       aws s3 cp "${SCRIPT_DIR}/${FILE}" "s3://${BUCKETS[INDEX]}/${FILE}"
