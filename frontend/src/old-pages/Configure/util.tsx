@@ -14,6 +14,8 @@ import {setState, getState, clearState} from '../../store'
 import {LoadAwsConfig} from '../../model'
 import {getIn, setIn} from '../../util'
 import {mapComputeResources} from './Queues/queues.mapper'
+import {mapStorageToUiSettings} from './Storage/storage.mapper'
+import {Storages} from './Storage.types'
 
 function loadTemplateLazy(config: any, callback?: () => void) {
   const loadingPath = ['app', 'wizard', 'source', 'loading']
@@ -50,15 +52,9 @@ function loadTemplateLazy(config: any, callback?: () => void) {
     setState(['app', 'wizard', 'multiUser'], true)
   else clearState(['app', 'wizard', 'multiUser'])
 
-  // Support existing filesystems
-  const storages = getIn(config, ['SharedStorage']) || []
-  for (let i = 0; i < storages.length; i++) {
-    const storage = storages[i]
-    if (storage.StorageType === 'FsxLustre') {
-      let fsid = getIn(storage, ['FsxLustreSettings', 'FileSystemId'])
-      if (fsid) setState(['app', 'wizard', 'storage', i, 'useExisting'], true)
-    }
-  }
+  const storages = (getIn(config, ['SharedStorage']) as Storages) || []
+  const uiSettings = mapStorageToUiSettings(storages)
+  setState(['app', 'wizard', 'storage', 'ui'], uiSettings)
 
   if (getIn(config, ['Scheduling', 'SlurmQueues'])) {
     let queues = getIn(config, ['Scheduling', 'SlurmQueues'])
