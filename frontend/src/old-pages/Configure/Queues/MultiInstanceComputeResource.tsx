@@ -216,6 +216,7 @@ export function ComputeResource({
               tokenLimit={3}
               onChange={setInstances}
               options={instanceOptions}
+              filteringType="auto"
             />
           </FormField>
           {enableMemoryBasedScheduling && (
