@@ -23,7 +23,6 @@ import {
   CheckboxProps,
   Container,
   FormField,
-  Header,
   Select,
   SpaceBetween,
 } from '@cloudscape-design/components'
@@ -38,7 +37,10 @@ import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import {createComputeResource as singleCreate} from './Queues/SingleInstanceComputeResource'
 import {createComputeResource as multiCreate} from './Queues/MultiInstanceComputeResource'
 import {MultiUser, multiUserValidate} from './MultiUser'
-import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import {
+  NonCancelableCustomEvent,
+  NonCancelableEventHandler,
+} from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {useCallback, useMemo} from 'react'
@@ -47,6 +49,7 @@ import {SelectProps} from '@cloudscape-design/components/select/interfaces'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
+const configPath = ['app', 'wizard', 'config']
 
 const selectQueues = (state: any) =>
   getState(state, ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'])
@@ -112,23 +115,34 @@ function RegionSelect() {
   const {t} = useTranslation()
   const region =
     useState(['app', 'wizard', 'config', 'Region']) || 'Please select a region.'
-  const queues = useSelector(selectQueues)
   const editing = useState(['app', 'wizard', 'editing'])
+  const config = useState(configPath)
+  const isMultipleInstanceTypesActive = useFeatureFlag(
+    'queues_multiple_instance_types',
+  )
 
-  const handleChange = ({detail}: any) => {
-    const chosenRegion =
-      detail.selectedOption.value === 'Default'
-        ? null
-        : detail.selectedOption.value
-    LoadAwsConfig(chosenRegion)
-    setState(['app', 'wizard', 'vpc'], null)
-    setState(['app', 'wizard', 'headNode', 'subnet'], null)
-    if (queues)
-      queues.forEach((_queue: any, i: any) => {
-        clearState(['app', 'wizard', 'queues', i, 'subnet'])
-      })
-    setState(['app', 'wizard', 'config', 'Region'], chosenRegion)
-  }
+  const handleChange = useCallback(
+    ({detail}: NonCancelableCustomEvent<SelectProps.ChangeDetail>) => {
+      const chosenRegion = detail.selectedOption.value
+
+      if (!chosenRegion) return
+
+      /**
+       * Clear wizard state
+       *
+       * We keep the part of the state that is necessary
+       * to continue with the experience
+       */
+      const {page, source, clusterName, errors} =
+        getState(['app', 'wizard']) || {}
+      setState(['app', 'wizard'], {page, source, clusterName, errors})
+
+      initWizardState(config, chosenRegion, isMultipleInstanceTypesActive)
+
+      LoadAwsConfig(chosenRegion)
+    },
+    [config, isMultipleInstanceTypesActive],
+  )
 
   const supportedRegions = [
     'af-south-1',
@@ -178,6 +192,35 @@ function RegionSelect() {
         />
       </FormField>
     </>
+  )
+}
+
+function initWizardState(
+  config: Record<string, unknown>,
+  region: string,
+  isMultipleInstanceTypesActive: boolean,
+) {
+  const customAMIEnabled = getIn(config, ['Image', 'CustomAmi']) ? true : false
+  setState(['app', 'wizard', 'customAMI', 'enabled'], customAMIEnabled)
+  setState([...configPath, 'HeadNode', 'InstanceType'], 't2.micro')
+  setState([...configPath, 'Scheduling', 'Scheduler'], 'slurm')
+  setState([...configPath, 'Region'], region)
+  setState([...configPath, 'Image', 'Os'], 'alinux2')
+  setState(
+    [...configPath, 'Scheduling', 'SlurmQueues'],
+    [
+      {
+        Name: 'queue0',
+        AllocationStrategy: isMultipleInstanceTypesActive
+          ? 'lowest-price'
+          : undefined,
+        ComputeResources: [
+          isMultipleInstanceTypesActive
+            ? multiCreate(0, 0)
+            : singleCreate(0, 0),
+        ],
+      },
+    ],
   )
 }
 
@@ -341,7 +384,6 @@ function VpcSelect() {
 function Cluster() {
   const {t} = useTranslation()
   const editing = useState(['app', 'wizard', 'editing'])
-  const configPath = ['app', 'wizard', 'config']
   let config = useState(configPath)
   let clusterConfig = useState(['app', 'wizard', 'clusterConfigYaml']) || ''
   let wizardLoaded = useState(['app', 'wizard', 'loaded'])
@@ -357,7 +399,6 @@ function Cluster() {
   useHelpPanel(<ClusterPropertiesHelpPanel />)
 
   React.useEffect(() => {
-    const configPath = ['app', 'wizard', 'config']
     // Don't overwrite the config if we go back, still gets overwritten
     // after going forward so need to consider better way of handling this
     if (clusterConfig) return
@@ -366,46 +407,12 @@ function Cluster() {
     if (!wizardLoaded) {
       setState(['app', 'wizard', 'loaded'], true)
       if (!config) {
-        const customAMIEnabled = getIn(config, ['Image', 'CustomAmi'])
-          ? true
-          : false
-        setState(['app', 'wizard', 'customAMI', 'enabled'], customAMIEnabled)
-        setState([...configPath, 'HeadNode', 'InstanceType'], 't2.micro')
-        setState([...configPath, 'Scheduling', 'Scheduler'], 'slurm')
-        setState([...configPath, 'Region'], region)
-        setState([...configPath, 'Image', 'Os'], 'alinux2')
-        setState(
-          [...configPath, 'Scheduling', 'SlurmQueues'],
-          [
-            {
-              Name: 'queue0',
-              AllocationStrategy: isMultipleInstanceTypesActive
-                ? 'lowest-price'
-                : undefined,
-              ComputeResources: [
-                isMultipleInstanceTypesActive
-                  ? multiCreate(0, 0)
-                  : singleCreate(0, 0),
-              ],
-            },
-          ],
-        )
-      }
-    }
-
-    // Load these values when we get a new config as well (e.g. changing region)
-    if (awsConfig && awsConfig.keypairs && awsConfig.keypairs.length > 0) {
-      const keypairs = getState(['aws', 'keypairs']) || []
-      const keypairNames = new Set(keypairs.map((kp: any) => kp.KeyName))
-      const headNodeKPPath = [...configPath, 'HeadNode', 'Ssh', 'KeyName']
-      if (keypairs.length > 0 && !keypairNames.has(getState(headNodeKPPath))) {
-        setState(headNodeKPPath, awsConfig.keypairs[0].KeyName)
+        initWizardState(config, region, isMultipleInstanceTypesActive)
       }
     }
   }, [
     region,
     config,
-    awsConfig,
     clusterConfig,
     wizardLoaded,
     isMultipleInstanceTypesActive,
