@@ -37,7 +37,10 @@ import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import {createComputeResource as singleCreate} from './Queues/SingleInstanceComputeResource'
 import {createComputeResource as multiCreate} from './Queues/MultiInstanceComputeResource'
 import {MultiUser, multiUserValidate} from './MultiUser'
-import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import {
+  NonCancelableCustomEvent,
+  NonCancelableEventHandler,
+} from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {useCallback, useMemo} from 'react'
@@ -112,23 +115,34 @@ function RegionSelect() {
   const {t} = useTranslation()
   const region =
     useState(['app', 'wizard', 'config', 'Region']) || 'Please select a region.'
-  const queues = useSelector(selectQueues)
   const editing = useState(['app', 'wizard', 'editing'])
+  const config = useState(configPath)
+  const isMultipleInstanceTypesActive = useFeatureFlag(
+    'queues_multiple_instance_types',
+  )
 
-  const handleChange = ({detail}: any) => {
-    const chosenRegion =
-      detail.selectedOption.value === 'Default'
-        ? null
-        : detail.selectedOption.value
-    LoadAwsConfig(chosenRegion)
-    setState(['app', 'wizard', 'vpc'], null)
-    setState(['app', 'wizard', 'headNode', 'subnet'], null)
-    if (queues)
-      queues.forEach((_queue: any, i: any) => {
-        clearState(['app', 'wizard', 'queues', i, 'subnet'])
-      })
-    setState(['app', 'wizard', 'config', 'Region'], chosenRegion)
-  }
+  const handleChange = useCallback(
+    ({detail}: NonCancelableCustomEvent<SelectProps.ChangeDetail>) => {
+      const chosenRegion = detail.selectedOption.value
+
+      if (!chosenRegion) return
+
+      /**
+       * Clear wizard state
+       *
+       * We keep the part of the state that is necessary
+       * to continue with the experience
+       */
+      const {page, source, clusterName, errors} =
+        getState(['app', 'wizard']) || {}
+      setState(['app', 'wizard'], {page, source, clusterName, errors})
+
+      initWizardState(config, chosenRegion, isMultipleInstanceTypesActive)
+
+      LoadAwsConfig(chosenRegion)
+    },
+    [config, isMultipleInstanceTypesActive],
+  )
 
   const supportedRegions = [
     'af-south-1',
