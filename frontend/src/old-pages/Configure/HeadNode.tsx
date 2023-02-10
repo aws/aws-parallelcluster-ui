@@ -15,6 +15,7 @@ import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
 import {useSelector} from 'react-redux'
 import {findFirst, getIn} from '../../util'
+import safeGet from 'lodash/get'
 
 // UI Elements
 import {
@@ -61,6 +62,7 @@ import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 // Constants
 const headNodePath = ['app', 'wizard', 'config', 'HeadNode']
 const errorsPath = ['app', 'wizard', 'errors', 'headNode']
+const keypairPath = [...headNodePath, 'Ssh', 'KeyName']
 
 function headNodeValidate() {
   const subnetPath = [...headNodePath, 'Networking', 'SubnetId']
@@ -210,12 +212,18 @@ function enableSsm(enable: any) {
     }
   }
 }
+const setKeyPair = (kpValue?: string) => {
+  if (kpValue) setState(keypairPath, kpValue)
+  else {
+    clearState([...headNodePath, 'Ssh'])
+    enableSsm(true)
+  }
+}
 
 function KeypairSelect() {
   const {t} = useTranslation()
-  const keypairs = useState(['aws', 'keypairs']) || []
-  const keypairPath = [...headNodePath, 'Ssh', 'KeyName']
-  const keypair = useState(keypairPath) || ''
+  const keypairsInAWSConfig = useState(['aws', 'keypairs'])
+  const selectedKeypairName = useState(keypairPath)
   const editing = useState(['app', 'wizard', 'editing'])
   const keypairToOption = (kp: any) => {
     if (kp === 'None' || kp === null || kp === undefined)
@@ -223,15 +231,15 @@ function KeypairSelect() {
     else return {label: kp.KeyName, value: kp.KeyName}
   }
 
-  const keypairsWithNone = ['None', ...keypairs]
+  const keypairsWithNone = ['None', ...keypairsInAWSConfig]
 
-  const setKeyPair = (kpValue: any) => {
-    if (kpValue) setState(keypairPath, kpValue)
-    else {
-      clearState([...headNodePath, 'Ssh'])
-      enableSsm(true)
+  React.useEffect(() => {
+    const firstAvailableKeypair = safeGet(keypairsInAWSConfig, ['0', 'KeyName'])
+    if (!selectedKeypairName && firstAvailableKeypair) {
+      setKeyPair(firstAvailableKeypair)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keypairsInAWSConfig])
 
   return (
     <FormField
@@ -241,8 +249,8 @@ function KeypairSelect() {
       <Select
         disabled={editing}
         selectedOption={keypairToOption(
-          findFirst(keypairs, (x: any) => {
-            return x.KeyName === keypair
+          findFirst(keypairsInAWSConfig, (x: any) => {
+            return x.KeyName === selectedKeypairName
           }),
         )}
         onChange={({detail}) => {
