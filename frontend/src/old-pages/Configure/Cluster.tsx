@@ -410,20 +410,9 @@ function Cluster() {
         initWizardState(config, region, isMultipleInstanceTypesActive)
       }
     }
-
-    // Load these values when we get a new config as well (e.g. changing region)
-    if (awsConfig && awsConfig.keypairs && awsConfig.keypairs.length > 0) {
-      const keypairs = getState(['aws', 'keypairs']) || []
-      const keypairNames = new Set(keypairs.map((kp: any) => kp.KeyName))
-      const headNodeKPPath = [...configPath, 'HeadNode', 'Ssh', 'KeyName']
-      if (keypairs.length > 0 && !keypairNames.has(getState(headNodeKPPath))) {
-        setState(headNodeKPPath, awsConfig.keypairs[0].KeyName)
-      }
-    }
   }, [
     region,
     config,
-    awsConfig,
     clusterConfig,
     wizardLoaded,
     isMultipleInstanceTypesActive,
