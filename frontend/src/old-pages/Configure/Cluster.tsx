@@ -23,7 +23,6 @@ import {
   CheckboxProps,
   Container,
   FormField,
-  Header,
   Select,
   SpaceBetween,
 } from '@cloudscape-design/components'
@@ -47,6 +46,7 @@ import {SelectProps} from '@cloudscape-design/components/select/interfaces'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
+const configPath = ['app', 'wizard', 'config']
 
 const selectQueues = (state: any) =>
   getState(state, ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'])
@@ -178,6 +178,35 @@ function RegionSelect() {
         />
       </FormField>
     </>
+  )
+}
+
+function initWizardState(
+  config: Record<string, unknown>,
+  region: string,
+  isMultipleInstanceTypesActive: boolean,
+) {
+  const customAMIEnabled = getIn(config, ['Image', 'CustomAmi']) ? true : false
+  setState(['app', 'wizard', 'customAMI', 'enabled'], customAMIEnabled)
+  setState([...configPath, 'HeadNode', 'InstanceType'], 't2.micro')
+  setState([...configPath, 'Scheduling', 'Scheduler'], 'slurm')
+  setState([...configPath, 'Region'], region)
+  setState([...configPath, 'Image', 'Os'], 'alinux2')
+  setState(
+    [...configPath, 'Scheduling', 'SlurmQueues'],
+    [
+      {
+        Name: 'queue0',
+        AllocationStrategy: isMultipleInstanceTypesActive
+          ? 'lowest-price'
+          : undefined,
+        ComputeResources: [
+          isMultipleInstanceTypesActive
+            ? multiCreate(0, 0)
+            : singleCreate(0, 0),
+        ],
+      },
+    ],
   )
 }
 
@@ -341,7 +370,6 @@ function VpcSelect() {
 function Cluster() {
   const {t} = useTranslation()
   const editing = useState(['app', 'wizard', 'editing'])
-  const configPath = ['app', 'wizard', 'config']
   let config = useState(configPath)
   let clusterConfig = useState(['app', 'wizard', 'clusterConfigYaml']) || ''
   let wizardLoaded = useState(['app', 'wizard', 'loaded'])
@@ -357,7 +385,6 @@ function Cluster() {
   useHelpPanel(<ClusterPropertiesHelpPanel />)
 
   React.useEffect(() => {
-    const configPath = ['app', 'wizard', 'config']
     // Don't overwrite the config if we go back, still gets overwritten
     // after going forward so need to consider better way of handling this
     if (clusterConfig) return
@@ -366,30 +393,7 @@ function Cluster() {
     if (!wizardLoaded) {
       setState(['app', 'wizard', 'loaded'], true)
       if (!config) {
-        const customAMIEnabled = getIn(config, ['Image', 'CustomAmi'])
-          ? true
-          : false
-        setState(['app', 'wizard', 'customAMI', 'enabled'], customAMIEnabled)
-        setState([...configPath, 'HeadNode', 'InstanceType'], 't2.micro')
-        setState([...configPath, 'Scheduling', 'Scheduler'], 'slurm')
-        setState([...configPath, 'Region'], region)
-        setState([...configPath, 'Image', 'Os'], 'alinux2')
-        setState(
-          [...configPath, 'Scheduling', 'SlurmQueues'],
-          [
-            {
-              Name: 'queue0',
-              AllocationStrategy: isMultipleInstanceTypesActive
-                ? 'lowest-price'
-                : undefined,
-              ComputeResources: [
-                isMultipleInstanceTypesActive
-                  ? multiCreate(0, 0)
-                  : singleCreate(0, 0),
-              ],
-            },
-          ],
-        )
+        initWizardState(config, region, isMultipleInstanceTypesActive)
       }
     }
 
