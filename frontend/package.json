@@ -1,6 +1,6 @@
 {
   "name": "aws-parallelcluster-ui",
-  "version": "3.3.0",
+  "version": "0.0.0",
   "private": true,
   "homepage": "/",
   "dependencies": {
