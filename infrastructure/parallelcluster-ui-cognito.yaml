@@ -86,6 +86,8 @@ Resources:
       UserAttributes:
         - Name: email
           Value: !Ref AdminUserEmail
+        - Name: email_verified
+          Value: True
       Username: !Ref AdminUserEmail
       UserPoolId: !Ref CognitoUserPool
 
