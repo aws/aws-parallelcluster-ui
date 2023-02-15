@@ -618,7 +618,7 @@ def create_user():
     cognito = boto3.client("cognito-idp")
     username = request.json.get("Username")
     phone_number = request.json.get("Phonenumber")
-    user_attributes = [{"Name": "email", "Value": username}]
+    user_attributes = [{"Name": "email", "Value": username}, {"Name": "email_verified", "Value": "True"}]
     if phone_number:
         user_attributes.append({"Name": "phone_number", "Value": phone_number})
     user = cognito.admin_create_user(
