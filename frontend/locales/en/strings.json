@@ -5,6 +5,7 @@
     "menu": {
       "header": "$t(global.projectDisplayName)",
       "clusters": "Clusters",
+      "images": "Images",
       "users": "Users",
       "viewLicense": "View License"
     },

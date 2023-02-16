@@ -23,6 +23,7 @@ import Users from '../old-pages/Users/Users'
 // Components
 import Loading from '../components/Loading'
 import {NoMatch} from '../components/NoMatch'
+import {Images} from '../old-pages/Images'
 
 export default function App() {
   const identity = useState(['identity'])
@@ -47,6 +48,7 @@ export default function App() {
               </Route>
             </Route>
             <Route path="configure" element={<Configure />} />
+            <Route path="images" element={<Images />} />
             <Route path="users" element={<Users />} />
             <Route path="*" element={<NoMatch />} />
           </Routes>
