@@ -196,10 +196,6 @@ function GetConfiguration(clusterName: any, callback?: Callback) {
     .then((response: any) => {
       console.log('Configuration Success', response)
       if (response.status === 200) {
-        setState(
-          ['clusters', 'index', clusterName, 'configuration'],
-          response.data,
-        )
         callback && callback(response.data)
       }
     })
