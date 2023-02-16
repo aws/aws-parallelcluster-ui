@@ -18,7 +18,6 @@ import {CreateUser, DeleteUser, ListUsers, notify} from '../../model'
 // UI Elements
 import {
   Button,
-  FormField,
   Header,
   Input,
   Pagination,
@@ -43,7 +42,7 @@ import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescript
 import InfoLink from '../../components/InfoLink'
 
 // Constants
-const errorsPath = ['app', 'wizard', 'errors', 'user']
+const usernamePath = ['app', 'users', 'newUser', 'Username']
 
 // selectors
 const selectUserIndex = (state: any) => state.users.index
@@ -74,7 +73,6 @@ export default function Users() {
   const [createUserInputValidated, setCreateUserInputValidated] =
     React.useState(true)
 
-  const usernamePath = ['app', 'users', 'newUser', 'Username']
   const username = useState(usernamePath)
 
   useHelpPanel(<UsersHelpPanel />)
@@ -213,12 +211,6 @@ export default function Users() {
           </Header>
         }
         columnDefinitions={[
-          {
-            id: 'username',
-            header: t('users.list.columns.username'),
-            cell: item => item.Username,
-            sortingField: 'Username',
-          },
           {
             id: 'email',
             header: t('users.list.columns.email'),

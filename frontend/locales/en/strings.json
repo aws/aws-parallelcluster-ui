@@ -933,10 +933,8 @@
     },
     "list": {
       "columns": {
-        "username": "Username",
         "email": "Email",
-        "created": "Created",
-        "action": "Action"
+        "created": "Created"
       },
       "dialogs": {
         "delete": {
