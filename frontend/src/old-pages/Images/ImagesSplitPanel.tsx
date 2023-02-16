@@ -12,7 +12,7 @@
 import {SplitPanel} from '@cloudscape-design/components'
 import {useTranslation} from 'react-i18next'
 import {useState} from '../../store'
-import CustomImageDetails from '../CustomImages/CustomImageDetails'
+import CustomImageDetails from './CustomImages/CustomImageDetails'
 import React from 'react'
 
 interface Props {

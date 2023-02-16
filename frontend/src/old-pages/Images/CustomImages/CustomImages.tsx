@@ -8,18 +8,18 @@
 // or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
-import {Ec2AmiState, ImageInfoSummary} from '../../types/images'
+import {Ec2AmiState, ImageInfoSummary} from '../../../types/images'
 import React, {useMemo} from 'react'
 import {useSelector} from 'react-redux'
 
-import {ListCustomImages, DescribeCustomImage} from '../../model'
+import {ListCustomImages, DescribeCustomImage} from '../../../model'
 
-import {setState, useState, getState, clearState} from '../../store'
+import {setState, useState, getState, clearState} from '../../../store'
 
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
 // Components
-import EmptyState from '../../components/EmptyState'
+import EmptyState from '../../../components/EmptyState'
 import ImageBuildDialog from './ImageBuildDialog'
 
 // UI Elements
@@ -33,10 +33,10 @@ import {
   Table,
   TextFilter,
 } from '@cloudscape-design/components'
-import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {TFunction, Trans, useTranslation} from 'react-i18next'
-import InfoLink from '../../components/InfoLink'
-import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
+import InfoLink from '../../../components/InfoLink'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 
 const imageBuildPath = ['app', 'customImages', 'imageBuild']
 

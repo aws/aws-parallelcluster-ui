@@ -8,11 +8,11 @@
 // or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
-import {ImageBuildStatus, ImageInfoSummary} from '../../types/images'
+import {ImageBuildStatus, ImageInfoSummary} from '../../../types/images'
 import React, {useCallback} from 'react'
 
-import {setState, getState, useState} from '../../store'
-import {GetCustomImageConfiguration} from '../../model'
+import {setState, getState, useState} from '../../../store'
+import {GetCustomImageConfiguration} from '../../../model'
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
 import {useTranslation} from 'react-i18next'
@@ -31,11 +31,11 @@ import {
   TextFilter,
 } from '@cloudscape-design/components'
 
-import Loading from '../../components/Loading'
-import DateView from '../../components/date/DateView'
+import Loading from '../../../components/Loading'
+import DateView from '../../../components/date/DateView'
 import CustomImageStackEvents from './CustomImageStackEvents'
-import {ValueWithLabel} from '../../components/ValueWithLabel'
-import EmptyState from '../../components/EmptyState'
+import {ValueWithLabel} from '../../../components/ValueWithLabel'
+import EmptyState from '../../../components/EmptyState'
 import {truncate} from 'lodash'
 
 const customImagesPath = ['app', 'customImages']

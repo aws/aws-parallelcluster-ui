@@ -10,7 +10,7 @@
 // limitations under the License.
 import React, {useMemo} from 'react'
 
-import {ListOfficialImages} from '../../model'
+import {ListOfficialImages} from '../../../model'
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
 // UI Elements
@@ -23,13 +23,13 @@ import {
 } from '@cloudscape-design/components'
 
 // Components
-import EmptyState from '../../components/EmptyState'
+import EmptyState from '../../../components/EmptyState'
 import {useQuery} from 'react-query'
-import {useState} from '../../store'
-import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import {useState} from '../../../store'
+import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {Trans, useTranslation} from 'react-i18next'
-import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
-import InfoLink from '../../components/InfoLink'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
+import InfoLink from '../../../components/InfoLink'
 
 type Image = {
   amiId: string

@@ -16,9 +16,9 @@ import {
 } from '@cloudscape-design/components'
 import {useCallback, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
-import CustomImages from '../CustomImages/CustomImages'
+import CustomImages from './CustomImages/CustomImages'
 import Layout from '../Layout'
-import OfficialImages from '../OfficialImages/OfficialImages'
+import OfficialImages from './OfficialImages/OfficialImages'
 import React from 'react'
 import {ImagesSplitPanel} from './ImagesSplitPanel'
 
