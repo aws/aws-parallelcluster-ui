@@ -982,6 +982,12 @@
       }
     }
   },
+  "images": {
+    "tabs": {
+      "officialImages": "Official",
+      "customImages": "Custom"
+    }
+  },
   "customImages": {
     "header": {
       "title": "Custom images",
