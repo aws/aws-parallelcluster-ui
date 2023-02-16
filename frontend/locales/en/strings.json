@@ -5,8 +5,6 @@
     "menu": {
       "header": "$t(global.projectDisplayName)",
       "clusters": "Clusters",
-      "customImages": "Custom Images",
-      "officialImages": "Official Images",
       "users": "Users",
       "viewLicense": "View License"
     },
