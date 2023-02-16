@@ -182,11 +182,9 @@ export default function Users() {
             info={<InfoLink helpPanel={<UsersHelpPanel />} />}
             actions={
               <SpaceBetween direction="horizontal" size="xs">
-                <Button
-                  className="action"
-                  onClick={refreshUsers}
-                  iconName={'refresh'}
-                />
+                <Button className="action" onClick={refreshUsers}>
+                  {t('users.actions.refresh')}
+                </Button>
                 <Button
                   disabled={isDeleteUserButtonDisabled()}
                   className="action"
