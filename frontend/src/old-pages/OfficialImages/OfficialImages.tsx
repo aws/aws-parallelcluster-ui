@@ -26,7 +26,6 @@ import {
 import EmptyState from '../../components/EmptyState'
 import {useQuery} from 'react-query'
 import {useState} from '../../store'
-import Layout from '../Layout'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {Trans, useTranslation} from 'react-i18next'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
@@ -99,8 +98,6 @@ function OfficialImagesList({images}: {images: Image[]}) {
       {...collectionProps}
       resizableColumns
       trackBy="amiId"
-      variant="full-page"
-      stickyHeader
       header={
         <Header
           variant="awsui-h1-sticky"
@@ -158,7 +155,6 @@ function OfficialImagesList({images}: {images: Image[]}) {
   )
 }
 
-const officialImagesSlug = 'officialImages'
 export default function OfficialImages() {
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
@@ -166,9 +162,5 @@ export default function OfficialImages() {
 
   useHelpPanel(<OfficialImagesHelpPanel />)
 
-  return (
-    <Layout pageSlug={officialImagesSlug}>
-      <OfficialImagesList images={data} />
-    </Layout>
-  )
+  return <OfficialImagesList images={data} />
 }
