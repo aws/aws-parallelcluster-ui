@@ -8,7 +8,7 @@
 // or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
-import React from 'react'
+import React, {useCallback, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 import {useCollection} from '@cloudscape-design/collection-hooks'
 import {clearState, setState, getState, useState} from '../../store'
@@ -77,15 +77,15 @@ export default function Users() {
 
   useHelpPanel(<UsersHelpPanel />)
 
-  React.useEffect(() => {
+  useEffect(() => {
     ListUsers()
   }, [])
 
-  const refreshUsers = () => {
+  const refreshUsers = useCallback(() => {
     ListUsers()
-  }
+  }, [])
 
-  const createUser = () => {
+  const createUser = useCallback(() => {
     const validated = userValidate()
     setCreateUserInputValidated(validated)
 
@@ -96,7 +96,7 @@ export default function Users() {
     } else {
       notify(t('users.list.createForm.invalidEmail'), 'error')
     }
-  }
+  }, [newUser, t])
 
   const {
     items,
@@ -131,14 +131,13 @@ export default function Users() {
     selection: {},
   })
 
-  const deleteUser = () => {
-    console.log(deletedUser)
+  const deleteUser = useCallback(() => {
     DeleteUser(deletedUser, (returned_user: any) => {
       clearState(['users', 'index', returned_user.Username])
       setSelectedUsers([])
     })
     hideDialog('deleteUser')
-  }
+  }, [deletedUser])
 
   const isDeleteUserButtonDisabled = () => {
     return (
@@ -147,11 +146,11 @@ export default function Users() {
     )
   }
 
-  const onSelectionChangeCallback = React.useCallback(({detail}) => {
+  const onSelectionChangeCallback = useCallback(({detail}) => {
     setSelectedUsers(detail.selectedItems)
   }, [])
 
-  const onCreateUserChangeCallback = React.useCallback(({detail}) => {
+  const onCreateUserChangeCallback = useCallback(({detail}) => {
     setState(usernamePath, detail.value)
     setCreateUserInputValidated(true)
   }, [])
