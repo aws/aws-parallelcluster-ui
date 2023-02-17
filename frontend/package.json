@@ -5,6 +5,7 @@
   "homepage": "/",
   "dependencies": {
     "@cloudscape-design/components": "^3.0.118",
+    "@cloudscape-design/design-tokens": "^3.0.9",
     "@cloudscape-design/global-styles": "^1.0.2",
     "@reduxjs/toolkit": "^1.6.1",
     "axios": "^0.21.4",

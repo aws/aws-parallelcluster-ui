@@ -43,6 +43,7 @@ const nextConfig = {
 
 const withTM = require("next-transpile-modules")([
   "@cloudscape-design/components",
+  "@cloudscape-design/design-tokens"
 ]);
 
 module.exports = withTM(nextConfig);  
