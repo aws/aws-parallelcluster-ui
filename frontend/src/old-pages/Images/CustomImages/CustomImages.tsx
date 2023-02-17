@@ -8,20 +8,19 @@
 // or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
-import {Ec2AmiState, ImageInfoSummary} from '../../types/images'
+import {Ec2AmiState, ImageInfoSummary} from '../../../types/images'
 import React, {useMemo} from 'react'
 import {useSelector} from 'react-redux'
 
-import {ListCustomImages, DescribeCustomImage} from '../../model'
+import {ListCustomImages, DescribeCustomImage} from '../../../model'
 
-import {setState, useState, getState, clearState} from '../../store'
+import {setState, useState, getState, clearState} from '../../../store'
 
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
 // Components
-import EmptyState from '../../components/EmptyState'
+import EmptyState from '../../../components/EmptyState'
 import ImageBuildDialog from './ImageBuildDialog'
-import CustomImageDetails from './CustomImageDetails'
 
 // UI Elements
 import {
@@ -31,15 +30,13 @@ import {
   Pagination,
   Select,
   SpaceBetween,
-  SplitPanel,
   Table,
   TextFilter,
 } from '@cloudscape-design/components'
-import Layout from '../Layout'
-import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {TFunction, Trans, useTranslation} from 'react-i18next'
-import InfoLink from '../../components/InfoLink'
-import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
+import InfoLink from '../../../components/InfoLink'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 
 const imageBuildPath = ['app', 'customImages', 'imageBuild']
 
@@ -113,8 +110,6 @@ function CustomImagesList() {
       {...collectionProps}
       resizableColumns
       trackBy="imageId"
-      variant="full-page"
-      stickyHeader
       header={
         <Header
           variant="awsui-h1-sticky"
@@ -279,14 +274,7 @@ function CustomImagesHelpPanel() {
   )
 }
 
-const customImageSlug = 'customImages'
-
 export default function CustomImages() {
-  const {t} = useTranslation()
-  const imageId = useState(['app', 'customImages', 'selected'])
-
-  const [splitOpen, setSplitOpen] = React.useState(true)
-
   useHelpPanel(<CustomImagesHelpPanel />)
 
   React.useEffect(() => {
@@ -295,56 +283,9 @@ export default function CustomImages() {
   }, [])
 
   return (
-    <Layout
-      pageSlug={customImageSlug}
-      splitPanelOpen={splitOpen}
-      onSplitPanelToggle={e => {
-        setSplitOpen(e.detail.open)
-      }}
-      splitPanel={
-        <SplitPanel
-          i18nStrings={{
-            preferencesTitle: t('global.splitPanel.preferencesTitle'),
-            preferencesPositionLabel: t(
-              'global.splitPanel.preferencesPositionLabel',
-            ),
-            preferencesPositionDescription: t(
-              'global.splitPanel.preferencesPositionDescription',
-            ),
-            preferencesPositionSide: t(
-              'global.splitPanel.preferencesPositionSide',
-            ),
-            preferencesPositionBottom: t(
-              'global.splitPanel.preferencesPositionBottom',
-            ),
-            preferencesConfirm: t('global.splitPanel.preferencesConfirm'),
-            preferencesCancel: t('global.splitPanel.preferencesCancel'),
-            closeButtonAriaLabel: t('global.splitPanel.closeButtonAriaLabel'),
-            openButtonAriaLabel: t('global.splitPanel.openButtonAriaLabel'),
-            resizeHandleAriaLabel: t('global.splitPanel.resizeHandleAriaLabel'),
-          }}
-          header={
-            imageId
-              ? t('customImages.splitPanel.imageSelectedText', {imageId})
-              : t('customImages.splitPanel.noImageSelectedText')
-          }
-        >
-          {imageId ? (
-            <CustomImageDetails />
-          ) : (
-            <div>
-              <h3 style={{userSelect: 'none'}}>
-                {t('customImages.splitPanel.selectImageText')}
-              </h3>
-            </div>
-          )}
-        </SplitPanel>
-      }
-    >
-      <>
-        <CustomImagesList />
-        <ImageBuildDialog />
-      </>
-    </Layout>
+    <>
+      <CustomImagesList />
+      <ImageBuildDialog />
+    </>
   )
 }

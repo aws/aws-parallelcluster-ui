@@ -10,7 +10,7 @@
 // limitations under the License.
 import React, {useMemo} from 'react'
 
-import {ListOfficialImages} from '../../model'
+import {ListOfficialImages} from '../../../model'
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
 // UI Elements
@@ -23,14 +23,13 @@ import {
 } from '@cloudscape-design/components'
 
 // Components
-import EmptyState from '../../components/EmptyState'
+import EmptyState from '../../../components/EmptyState'
 import {useQuery} from 'react-query'
-import {useState} from '../../store'
-import Layout from '../Layout'
-import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import {useState} from '../../../store'
+import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {Trans, useTranslation} from 'react-i18next'
-import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
-import InfoLink from '../../components/InfoLink'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
+import InfoLink from '../../../components/InfoLink'
 
 type Image = {
   amiId: string
@@ -99,8 +98,6 @@ function OfficialImagesList({images}: {images: Image[]}) {
       {...collectionProps}
       resizableColumns
       trackBy="amiId"
-      variant="full-page"
-      stickyHeader
       header={
         <Header
           variant="awsui-h1-sticky"
@@ -158,7 +155,6 @@ function OfficialImagesList({images}: {images: Image[]}) {
   )
 }
 
-const officialImagesSlug = 'officialImages'
 export default function OfficialImages() {
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
@@ -166,9 +162,5 @@ export default function OfficialImages() {
 
   useHelpPanel(<OfficialImagesHelpPanel />)
 
-  return (
-    <Layout pageSlug={officialImagesSlug}>
-      <OfficialImagesList images={data} />
-    </Layout>
-  )
+  return <OfficialImagesList images={data} />
 }

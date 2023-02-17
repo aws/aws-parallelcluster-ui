@@ -31,32 +31,14 @@ import BreadcrumbGroup from '@cloudscape-design/components/breadcrumb-group'
 import {useTranslation} from 'react-i18next'
 import map from 'lodash/map'
 
-type Slug =
-  | 'clusters'
-  | 'customImages'
-  | 'officialImages'
-  | 'users'
-  | 'clusterCreate'
-  | 'clusterUpdate'
+type Slug = 'clusters' | 'images' | 'users' | 'clusterCreate' | 'clusterUpdate'
 type BreadcrumbsProps = {
   pageSlug?: Slug
   slugOnClick?: CancelableEventHandler<BreadcrumbGroupProps.ClickDetail>
 }
-
-const pageBreadcrumbItems = {
+const pageBreadcrumbItems: Record<Slug, {transKey: string; href: string}[]> = {
   clusters: [{transKey: 'global.menu.clusters', href: '/clusters'}],
-  customImages: [
-    {
-      transKey: 'global.menu.customImages',
-      href: '/custom-images',
-    },
-  ],
-  officialImages: [
-    {
-      transKey: 'global.menu.officialImages',
-      href: '/official-images',
-    },
-  ],
+  images: [{transKey: 'global.menu.images', href: '/images'}],
   users: [{transKey: 'global.menu.users', href: '/users'}],
   clusterCreate: [
     {transKey: 'global.menu.clusters', href: '/clusters'},

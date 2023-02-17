@@ -11,15 +11,15 @@
 import React from 'react'
 
 // Model
-import {GetCustomImageStackEvents} from '../../model'
-import {getState, useState} from '../../store'
+import {GetCustomImageStackEvents} from '../../../model'
+import {getState, useState} from '../../../store'
 
 // UI Elements
 import {ExpandableSection} from '@cloudscape-design/components'
 
 // Components
-import DateView from '../../components/date/DateView'
-import Loading from '../../components/Loading'
+import DateView from '../../../components/date/DateView'
+import Loading from '../../../components/Loading'
 import {useTranslation} from 'react-i18next'
 
 type Event = {

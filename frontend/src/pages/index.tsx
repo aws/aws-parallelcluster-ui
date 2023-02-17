@@ -18,13 +18,12 @@ import {useState} from '../store'
 
 import Clusters from '../old-pages/Clusters/Clusters'
 import Configure from '../old-pages/Configure/Configure'
-import CustomImages from '../old-pages/CustomImages/CustomImages'
-import OfficialImages from '../old-pages/OfficialImages/OfficialImages'
 import Users from '../old-pages/Users/Users'
 
 // Components
 import Loading from '../components/Loading'
 import {NoMatch} from '../components/NoMatch'
+import {Images} from '../old-pages/Images'
 
 export default function App() {
   const identity = useState(['identity'])
@@ -49,8 +48,7 @@ export default function App() {
               </Route>
             </Route>
             <Route path="configure" element={<Configure />} />
-            <Route path="custom-images" element={<CustomImages />} />
-            <Route path="official-images" element={<OfficialImages />} />
+            <Route path="images" element={<Images />} />
             <Route path="users" element={<Users />} />
             <Route path="*" element={<NoMatch />} />
           </Routes>

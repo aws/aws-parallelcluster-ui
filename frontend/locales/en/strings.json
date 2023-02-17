@@ -5,8 +5,7 @@
     "menu": {
       "header": "$t(global.projectDisplayName)",
       "clusters": "Clusters",
-      "customImages": "Custom Images",
-      "officialImages": "Official Images",
+      "images": "Images",
       "users": "Users",
       "viewLicense": "View License"
     },
@@ -982,6 +981,12 @@
           "action": "Clear filter"
         }
       }
+    }
+  },
+  "images": {
+    "tabs": {
+      "officialImages": "Official",
+      "customImages": "Custom"
     }
   },
   "customImages": {

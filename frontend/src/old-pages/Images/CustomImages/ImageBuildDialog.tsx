@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import * as React from 'react'
-import {BuildImage} from '../../model'
+import {BuildImage} from '../../../model'
 
 // UI Elements
 import {
@@ -24,12 +24,12 @@ import {
 } from '@cloudscape-design/components'
 
 // Components
-import ValidationErrors from '../../components/ValidationErrors'
-import FileUploadButton from '../../components/FileChooser'
+import ValidationErrors from '../../../components/ValidationErrors'
+import FileUploadButton from '../../../components/FileChooser'
 
 // State
-import {setState, useState, getState, clearState} from '../../store'
-import ConfigView from '../../components/ConfigView'
+import {setState, useState, getState, clearState} from '../../../store'
+import ConfigView from '../../../components/ConfigView'
 import {useTranslation} from 'react-i18next'
 
 const buildImageErrorsPath = ['app', 'buildImage', 'errors']

@@ -35,16 +35,7 @@ export default function SideBar() {
     React.useMemo(() => {
       return [
         {type: 'link', text: t('global.menu.clusters'), href: '/clusters'},
-        {
-          type: 'link',
-          text: t('global.menu.customImages'),
-          href: '/custom-images',
-        },
-        {
-          type: 'link',
-          text: t('global.menu.officialImages'),
-          href: '/official-images',
-        },
+        {type: 'link', text: t('global.menu.images'), href: '/images'},
         {type: 'link', text: t('global.menu.users'), href: '/users'},
         {type: 'divider'},
         {
