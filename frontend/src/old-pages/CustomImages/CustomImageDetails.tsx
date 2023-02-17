@@ -40,6 +40,8 @@ import {truncate} from 'lodash'
 
 const customImagesPath = ['app', 'customImages']
 
+import {ReadonlyConfigView} from '../../components/ConfigView'
+
 function CustomImageConfiguration() {
   const configuration = useState([...customImagesPath, 'config'])
   React.useEffect(() => {
@@ -50,12 +52,7 @@ function CustomImageConfiguration() {
   }, [])
 
   return configuration ? (
-    <textarea
-      disabled={true}
-      readOnly
-      style={{width: '850px', height: '300px', display: 'block'}}
-      value={configuration}
-    />
+    <ReadonlyConfigView config={configuration} />
   ) : (
     <Loading />
   )

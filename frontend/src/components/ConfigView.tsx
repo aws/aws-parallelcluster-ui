@@ -13,9 +13,56 @@ import * as React from 'react'
 
 // UI Elements
 import {CodeEditor} from '@cloudscape-design/components'
+import {useTranslation} from 'react-i18next'
+import {useEffect, useMemo} from 'react'
+import {CodeEditorProps} from '@cloudscape-design/components/code-editor/interfaces'
+import {
+  borderRadiusItem,
+  colorBorderInputDefault,
+} from '@cloudscape-design/design-tokens'
 
 export default function ConfigView({config, pending, onChange}: any) {
-  const [preferences, setPreferences] = React.useState({theme: 'textmate'})
+  const {t} = useTranslation()
+  const [preferences, setPreferences] = React.useState({
+    theme: 'textmate',
+  } as Partial<CodeEditorProps.Preferences>)
+
+  const i18nStrings = useMemo(
+    () => ({
+      loadingState: t('cluster.codeEditor.loading'),
+      errorState: t('cluster.codeEditor.loadingError'),
+      errorStateRecovery: t('cluster.codeEditor.errorStateRecovery'),
+      editorGroupAriaLabel: t('cluster.codeEditor.editorGroupAriaLabel'),
+      statusBarGroupAriaLabel: t('cluster.codeEditor.statusBarGroupAriaLabel'),
+      cursorPosition: (row: any, column: any) =>
+        `${t('cluster.codeEditor.line')} ${row}, ${t(
+          'cluster.codeEditor.column',
+        )} ${column}`,
+      errorsTab: t('cluster.codeEditor.errorsTab'),
+      warningsTab: t('cluster.codeEditor.warningsTab'),
+      preferencesButtonAriaLabel: t(
+        'cluster.codeEditor.preferencesButtonAriaLabel',
+      ),
+      paneCloseButtonAriaLabel: t(
+        'cluster.codeEditor.paneCloseButtonAriaLabel',
+      ),
+      preferencesModalHeader: t('cluster.codeEditor.preferencesModalHeader'),
+      preferencesModalCancel: t('cluster.codeEditor.preferencesModalCancel'),
+      preferencesModalConfirm: t('cluster.codeEditor.preferencesModalConfirm'),
+      preferencesModalWrapLines: t(
+        'cluster.codeEditor.preferencesModalWrapLines',
+      ),
+      preferencesModalTheme: t('cluster.codeEditor.preferencesModalTheme'),
+      preferencesModalLightThemes: t(
+        'cluster.codeEditor.preferencesModalLightThemes',
+      ),
+      preferencesModalDarkThemes: t(
+        'cluster.codeEditor.preferencesModalDarkThemes',
+      ),
+    }),
+    [t],
+  )
+
   return (
     <CodeEditor
       ace={window.ace}
@@ -23,30 +70,41 @@ export default function ConfigView({config, pending, onChange}: any) {
       value={config || ''}
       onChange={e => {}}
       onDelayedChange={onChange}
-      // @ts-expect-error TS(2322) FIXME: Type '{ theme: string; }' is not assignable to typ... Remove this comment to see the full error message
       preferences={preferences}
       onPreferencesChange={e => setPreferences(e.detail)}
       onValidate={e => {}}
       loading={pending ? true : false}
-      i18nStrings={{
-        loadingState: 'Loading code editor',
-        errorState: 'There was an error loading the code editor.',
-        errorStateRecovery: 'Retry',
-        editorGroupAriaLabel: 'Code editor',
-        statusBarGroupAriaLabel: 'Status bar',
-        cursorPosition: (row, column) => `Ln ${row}, Col ${column}`,
-        errorsTab: 'Errors',
-        warningsTab: 'Warnings',
-        preferencesButtonAriaLabel: 'Preferences',
-        paneCloseButtonAriaLabel: 'Close',
-        preferencesModalHeader: 'Preferences',
-        preferencesModalCancel: 'Cancel',
-        preferencesModalConfirm: 'Confirm',
-        preferencesModalWrapLines: 'Wrap lines',
-        preferencesModalTheme: 'Theme',
-        preferencesModalLightThemes: 'Light themes',
-        preferencesModalDarkThemes: 'Dark themes',
-      }}
+      i18nStrings={i18nStrings}
     />
+  )
+}
+
+export function ReadonlyConfigView({config}: any) {
+  useEffect(() => {
+    if (config) {
+      const editor = window.ace.edit('customImageConfig', {
+        mode: 'ace/mode/yaml',
+      })
+      editor.setReadOnly(true)
+      editor.setValue(config.trim())
+      editor.setHighlightActiveLine(true)
+      editor.gotoLine(0, 0, false)
+      editor.setTheme('ace/theme/textmate')
+    }
+  }, [config])
+
+  return (
+    <div id="customImageConfig">
+      <style jsx>{`
+        #customImageConfig {
+          font-size: 14px;
+          min-height: 380px;
+          width: 100%;
+          max-width: 800px;
+          border: ${colorBorderInputDefault} solid 2px;
+          border-radius: ${borderRadiusItem};
+        }
+      `}</style>
+    </div>
   )
 }
