@@ -10,7 +10,7 @@
 // limitations under the License.
 import React, {useMemo} from 'react'
 
-import {useState, setState} from '../store'
+import {useState, setState, clearAllState} from '../store'
 import {LoadInitialState} from '../model'
 
 // UI Elements
@@ -118,6 +118,7 @@ export default function Topbar() {
     let newRegion = region.detail.id
     setState(['app', 'selectedRegion'], newRegion)
     clearClusterOnRegionChange(location.pathname, navigate)
+    clearAllState()
     LoadInitialState()
     queryClient.invalidateQueries()
   }
