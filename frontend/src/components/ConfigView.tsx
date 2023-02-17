@@ -82,7 +82,7 @@ export default function ConfigView({config, pending, onChange}: any) {
 export function ReadonlyConfigView({config}: any) {
   useEffect(() => {
     if (config) {
-      const editor = window.ace.edit('customImageConfig', {
+      const editor = window.ace.edit('readOnlyConfigViewer', {
         mode: 'ace/mode/yaml',
       })
       editor.setReadOnly(true)
@@ -94,9 +94,9 @@ export function ReadonlyConfigView({config}: any) {
   }, [config])
 
   return (
-    <div id="customImageConfig">
+    <div id="readOnlyConfigViewer">
       <style jsx>{`
-        #customImageConfig {
+        #readOnlyConfigViewer {
           font-size: 14px;
           min-height: 380px;
           width: 100%;
