@@ -37,10 +37,9 @@ import CustomImageStackEvents from './CustomImageStackEvents'
 import {ValueWithLabel} from '../../../components/ValueWithLabel'
 import EmptyState from '../../../components/EmptyState'
 import {truncate} from 'lodash'
+import {ReadonlyConfigView} from '../../../components/ConfigView'
 
 const customImagesPath = ['app', 'customImages']
-
-import {ReadonlyConfigView} from '../../components/ConfigView'
 
 function CustomImageConfiguration() {
   const configuration = useState([...customImagesPath, 'config'])
