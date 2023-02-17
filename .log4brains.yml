@@ -1,5 +1,5 @@
 project:
-  name: ParallelCluster Manager (PCM)
+  name: ParallelCluster UI (PCUI)
   tz: Europe/Rome
   adrFolder: ./decisions
   packages: []
