@@ -2,5 +2,6 @@
   "extends": [
     "next/core-web-vitals",
     "prettier"
-  ]
+  ],
+  "settings": {"import/core-modules": ["styled-jsx/css"] }
 }
