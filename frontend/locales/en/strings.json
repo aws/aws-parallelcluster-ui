@@ -262,6 +262,26 @@
         "noClusterSelectedText": "No cluster selected",
         "selectClusterText": "Select a cluster to see its details"
       }
+    },
+    "codeEditor": {
+      "line": "Line",
+      "column": "Column",
+      "loading": "Loading code editor",
+      "loadingError": "There was an error loading the code editor.",
+      "errorStateRecovery": "Retry",
+      "editorGroupAriaLabel": "Code editor",
+      "statusBarGroupAriaLabel": "Status bar",
+      "errorsTab": "Errors",
+      "warningsTab": "Warnings",
+      "preferencesButtonAriaLabel": "Preferences",
+      "paneCloseButtonAriaLabel": "Close",
+      "preferencesModalHeader": "Preferences",
+      "preferencesModalCancel": "Cancel",
+      "preferencesModalConfirm": "Confirm",
+      "preferencesModalWrapLines": "Wrap lines",
+      "preferencesModalTheme": "Theme",
+      "preferencesModalLightThemes": "Light themes",
+      "preferencesModalDarkThemes": "Dark themes"
     }
   },
   "wizard": {
