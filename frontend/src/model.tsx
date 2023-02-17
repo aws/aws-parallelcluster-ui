@@ -9,13 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import {ClusterInfoSummary} from './types/clusters'
-import {
-  clearAllState,
-  clearState,
-  getState,
-  setState,
-  updateState,
-} from './store'
+import {clearState, getState, setState, updateState} from './store'
 import {generateRandomId} from './util'
 
 // UI Elements
@@ -888,7 +882,6 @@ async function GetAppConfig() {
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
-  clearAllState()
   GetVersion()
   await GetAppConfig()
   GetIdentity(_ => {
