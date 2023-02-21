@@ -27,8 +27,8 @@ import {
   InputProps,
   Select,
   SpaceBetween,
-  TextContent,
   Checkbox,
+  Alert,
 } from '@cloudscape-design/components'
 
 // State
@@ -1062,6 +1062,8 @@ function Storage() {
   const isFsxOpenZsfActive = useFeatureFlag('fsx_openzsf')
   const canEditFilesystems = useDynamicStorage()
 
+  const hasAddedStorage = storages?.length > 0
+
   useHelpPanel(<StorageHelpPanel />)
 
   const storageMaxes: Record<string, number> = {
@@ -1141,20 +1143,14 @@ function Storage() {
   }
 
   return (
-    <Container>
-      <SpaceBetween direction="vertical" size="m">
-        <TextContent>{t('wizard.storage.container.title')}</TextContent>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-          {storages ? (
-            storages.map((_: any, i: any) => (
-              <StorageInstance key={i} index={i} />
-            ))
-          ) : (
-            <TextContent>
+    <SpaceBetween direction="vertical" size="xl">
+      <Container>
+        <SpaceBetween direction="vertical" size="m">
+          {!hasAddedStorage && (
+            <Alert statusIconAriaLabel="Info">
               {t('wizard.storage.container.noStorageSelected')}
-            </TextContent>
+            </Alert>
           )}
-
           {canEditFilesystems && storageTypes.length > 0 && (
             <SpaceBetween size="s">
               <FormField label={t('wizard.storage.container.storageType')}>
@@ -1179,9 +1175,14 @@ function Storage() {
               </Button>
             </SpaceBetween>
           )}
-        </div>
-      </SpaceBetween>
-    </Container>
+        </SpaceBetween>
+      </Container>
+      {hasAddedStorage
+        ? storages.map((_: any, i: any) => (
+            <StorageInstance key={i} index={i} />
+          ))
+        : null}
+    </SpaceBetween>
   )
 }
 
