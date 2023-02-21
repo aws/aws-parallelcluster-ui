@@ -1,8 +1,15 @@
-type ErrorKind = 'forbidden_keyword' | 'forbidden_chars' | 'max_length'
+type ErrorKind =
+  | 'forbidden_keyword'
+  | 'forbidden_chars'
+  | 'max_length'
+  | 'empty'
 
 export const STORAGE_NAME_MAX_LENGTH = 30
 
 export function validateStorageName(name: string): [boolean, ErrorKind?] {
+  if (!name) {
+    return [false, 'empty']
+  }
   if (name.length > STORAGE_NAME_MAX_LENGTH) {
     return [false, 'max_length']
   }

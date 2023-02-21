@@ -121,6 +121,11 @@ function storageValidate() {
               },
             )
             break
+          case 'empty':
+            errorMessage = i18next.t(
+              'wizard.storage.instance.sourceName.emptyError',
+            )
+            break
         }
         setState([...errorsPath, i, 'Name'], errorMessage)
         valid = false

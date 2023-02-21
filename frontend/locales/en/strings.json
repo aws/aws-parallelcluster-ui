@@ -742,7 +742,8 @@
           "label": "Shared source name",
           "maxLengthError": "Name can be at most {{maxChars}} characters",
           "forbiddenCharsError": "The name contains one or more forbidden characters",
-          "forbiddenKeywordError": "The name contains a forbidden keyword"
+          "forbiddenKeywordError": "The name contains a forbidden keyword",
+          "emptyError": "The name is required"
         },
         "useExisting": {
           "label": "External file system",

@@ -16,6 +16,12 @@ describe('Given a storage name', () => {
     })
   })
 
+  describe("when it's blank", () => {
+    it('should fail the validation', () => {
+      expect(validateStorageName('')).toEqual([false, 'empty'])
+    })
+  })
+
   describe("when the name is 'default'", () => {
     it('should fail the validation', () => {
       expect(validateStorageName('default')).toEqual([
