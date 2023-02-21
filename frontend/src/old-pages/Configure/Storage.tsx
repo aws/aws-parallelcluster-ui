@@ -52,16 +52,19 @@ import {
 } from './Storage/storage.validators'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {BaseChangeDetail} from '@cloudscape-design/components/input/interfaces'
+import {AddStorageForm} from './Storage/AddStorageForm'
+import {buildStorageEntries} from './Storage/buildStorageEntries'
 
 // Constants
 const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
 const errorsPath = ['app', 'wizard', 'errors', 'sharedStorage']
+const uiSettingsPath = ['app', 'wizard', 'storage', 'ui']
 
 // Types
-type StorageTypeOption = [string, string]
+export type StorageTypeOption = [StorageType, string]
 
 // Helper Functions
-function itemToOption([value, label]: StorageTypeOption) {
+export function itemToOption([value, label]: StorageTypeOption) {
   return {value: value, label: label}
 }
 
@@ -1057,7 +1060,6 @@ function Storage() {
   const {t} = useTranslation()
   const storages = useState(storagePath)
   const uiStorageSettings = useState(['app', 'wizard', 'storage', 'ui'])
-  const storageType = useState(['app', 'wizard', 'storage', 'type'])
   const isFsxOnTapActive = useFeatureFlag('fsx_ontap')
   const isFsxOpenZsfActive = useFeatureFlag('fsx_openzsf')
   const canEditFilesystems = useDynamicStorage()
@@ -1074,9 +1076,6 @@ function Storage() {
     Ebs: 5,
   }
 
-  /*
-    Activate ONTAP/OpenZFS only from ParallelCluster 3.2.0
-   */
   const storageTypesSource: StorageTypeOption[] = [
     ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
     isFsxOnTapActive
@@ -1108,39 +1107,24 @@ function Storage() {
     [],
   )
 
-  const addStorage = () => {
-    const newIndex = storages ? storages.length : 0
+  const onAddStorageSubmit = React.useCallback(
+    (selectedStorageTypes: StorageType[]) => {
+      const existingStorages = storages || []
+      const existingUiStorageSettings = uiStorageSettings || []
+      const [storageEntries, uiSettingsEntries] = buildStorageEntries(
+        existingStorages,
+        existingUiStorageSettings,
+        selectedStorageTypes,
+      )
 
-    const uiSettingsPath = ['app', 'wizard', 'storage', 'ui']
-    const useExisting = !canCreateStorage(
-      storageType,
-      storages,
-      uiStorageSettings,
-    )
-
-    if (!storages) {
-      setState(storagePath, [
-        {
-          Name: `${storageType}${newIndex}`,
-          StorageType: storageType,
-          MountDir: '/shared',
-        },
+      setState(storagePath, [...existingStorages, ...storageEntries])
+      setState(uiSettingsPath, [
+        ...existingUiStorageSettings,
+        ...uiSettingsEntries,
       ])
-      setState(uiSettingsPath, [{useExisting}])
-    } else {
-      setState([...storagePath, newIndex], {
-        Name: `${storageType}${newIndex}`,
-        StorageType: storageType,
-        MountDir: '/shared',
-      })
-      setState([...uiSettingsPath, newIndex], {useExisting})
-    }
-    clearState(['app', 'wizard', 'storage', 'type'])
-  }
-
-  const setStorageType = (newStorageType: any) => {
-    setState(['app', 'wizard', 'storage', 'type'], newStorageType)
-  }
+    },
+    [storages, uiStorageSettings],
+  )
 
   return (
     <SpaceBetween direction="vertical" size="xl">
@@ -1152,28 +1136,10 @@ function Storage() {
             </Alert>
           )}
           {canEditFilesystems && storageTypes.length > 0 && (
-            <SpaceBetween size="s">
-              <FormField label={t('wizard.storage.container.storageType')}>
-                <Select
-                  placeholder={t(
-                    'wizard.storage.container.storageTypePlaceholder',
-                  )}
-                  selectedOption={
-                    storageType &&
-                    itemToOption(
-                      findFirst(storageTypes, s => s[0] === storageType)!,
-                    )
-                  }
-                  onChange={({detail}) => {
-                    setStorageType(detail.selectedOption.value)
-                  }}
-                  options={storageTypes.map(itemToOption)}
-                />
-              </FormField>
-              <Button onClick={addStorage} disabled={!storageType}>
-                {t('wizard.storage.container.addStorage')}
-              </Button>
-            </SpaceBetween>
+            <AddStorageForm
+              storageTypes={storageTypes}
+              onSubmit={onAddStorageSubmit}
+            />
           )}
         </SpaceBetween>
       </Container>
