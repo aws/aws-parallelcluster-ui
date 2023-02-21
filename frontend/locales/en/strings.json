@@ -738,6 +738,13 @@
           "label": "Mount path",
           "help": "Configure the mount path for the shared storage on both the head node and compute nodes."
         },
+        "sourceName": {
+          "label": "Shared source name",
+          "maxLengthError": "Name can be at most {{maxChars}} characters",
+          "forbiddenCharsError": "The name contains one or more forbidden characters",
+          "forbiddenKeywordError": "The name contains a forbidden keyword",
+          "emptyError": "The name is required"
+        },
         "useExisting": {
           "label": "External file system",
           "help": "Specify an external file system and mount it to all instances in the cluster.",

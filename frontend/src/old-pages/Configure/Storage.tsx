@@ -11,7 +11,7 @@
 // limitations under the License.
 
 // Fameworks
-import * as React from 'react'
+import React, {useCallback} from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
 import {findFirst, clamp} from '../../util'
@@ -46,6 +46,12 @@ import InfoLink from '../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useMemo} from 'react'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import {
+  STORAGE_NAME_MAX_LENGTH,
+  validateStorageName,
+} from './Storage/storage.validators'
+import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import {BaseChangeDetail} from '@cloudscape-design/components/input/interfaces'
 
 // Constants
 const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
@@ -93,6 +99,40 @@ function storageValidate() {
         } else {
           clearState([...errorsPath, i, 'EbsSettings', 'Size'])
         }
+      }
+      const name = getState([...storagePath, i, 'Name'])
+      const [nameValid, error] = validateStorageName(name)
+      if (!nameValid) {
+        let errorMessage = ''
+        switch (error) {
+          case 'forbidden_chars':
+            errorMessage = i18next.t(
+              'wizard.storage.instance.sourceName.forbiddenCharsError',
+            )
+            break
+          case 'forbidden_keyword':
+            errorMessage = i18next.t(
+              'wizard.storage.instance.sourceName.forbiddenKeywordError',
+            )
+            break
+          case 'max_length':
+            errorMessage = i18next.t(
+              'wizard.storage.instance.sourceName.maxLengthError',
+              {
+                maxChars: STORAGE_NAME_MAX_LENGTH,
+              },
+            )
+            break
+          case 'empty':
+            errorMessage = i18next.t(
+              'wizard.storage.instance.sourceName.emptyError',
+            )
+            break
+        }
+        setState([...errorsPath, i, 'Name'], errorMessage)
+        valid = false
+      } else {
+        clearState([...errorsPath, i, 'Name'])
       }
     }
 
@@ -757,6 +797,7 @@ function StorageInstance({index}: any) {
   const uiSettingsForStorage = ['app', 'wizard', 'storage', 'ui', index]
   const storageType: StorageType = useState([...path, 'StorageType'])
   const storageName = useState([...path, 'Name']) || ''
+  const storageNameErrors = useState([...errorsPath, index, 'Name'])
   const mountPoint = useState([...path, 'MountDir'])
   const useExisting =
     useState([...uiSettingsForStorage, 'useExisting']) ||
@@ -809,6 +850,15 @@ function StorageInstance({index}: any) {
     return {label: id, value: id}
   }
 
+  const updateStorageName = useCallback<
+    NonCancelableEventHandler<BaseChangeDetail>
+  >(
+    ({detail}) => {
+      setState([...storagePath, index, 'Name'], detail.value)
+    },
+    [index],
+  )
+
   const useExistingFooterLinks = useMemo(
     () => [
       {
@@ -844,6 +894,12 @@ function StorageInstance({index}: any) {
     >
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
         <ColumnLayout columns={2} borders="vertical">
+          <FormField
+            label={t('wizard.storage.instance.sourceName.label')}
+            errorText={storageNameErrors}
+          >
+            <Input value={storageName} onChange={updateStorageName} />
+          </FormField>
           <FormField
             label={t('wizard.storage.instance.mountPoint.label')}
             info={
