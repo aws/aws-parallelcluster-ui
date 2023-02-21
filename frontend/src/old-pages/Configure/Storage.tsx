@@ -11,7 +11,7 @@
 // limitations under the License.
 
 // Fameworks
-import * as React from 'react'
+import React, {useCallback} from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
 import {findFirst, clamp} from '../../util'
@@ -50,6 +50,8 @@ import {
   STORAGE_NAME_MAX_LENGTH,
   validateStorageName,
 } from './Storage/storage.validators'
+import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import {BaseChangeDetail} from '@cloudscape-design/components/input/interfaces'
 
 // Constants
 const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
@@ -848,6 +850,15 @@ function StorageInstance({index}: any) {
     return {label: id, value: id}
   }
 
+  const updateStorageName = useCallback<
+    NonCancelableEventHandler<BaseChangeDetail>
+  >(
+    ({detail}) => {
+      setState([...storagePath, index, 'Name'], detail.value)
+    },
+    [index],
+  )
+
   const useExistingFooterLinks = useMemo(
     () => [
       {
@@ -887,12 +898,7 @@ function StorageInstance({index}: any) {
             label={t('wizard.storage.instance.sourceName.label')}
             errorText={storageNameErrors}
           >
-            <Input
-              value={storageName}
-              onChange={({detail}) => {
-                setState([...storagePath, index, 'Name'], detail.value)
-              }}
-            />
+            <Input value={storageName} onChange={updateStorageName} />
           </FormField>
           <FormField
             label={t('wizard.storage.instance.mountPoint.label')}
