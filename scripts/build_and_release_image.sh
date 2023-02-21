@@ -41,11 +41,6 @@ elif ! [[ $TAG =~ [0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+ ]]; then
   exit 1
 fi
 
-### TEST
-echo "Tag passed: $TAG"
-exit 0
-### TEST
-
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"
 
 pushd frontend
