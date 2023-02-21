@@ -10,7 +10,7 @@ describe('Given a storage name', () => {
     })
   })
 
-  describe("when it's less than 30 chars", () => {
+  describe("when it's less than or equal to 30 chars", () => {
     it('should be validated', () => {
       expect(validateStorageName(new Array(30).join('a'))).toEqual([true])
     })
@@ -31,7 +31,7 @@ describe('Given a storage name', () => {
     })
   })
 
-  describe('when zero or more bad characters are given', () => {
+  describe('when one or more bad characters are given', () => {
     it('should fail the validation', () => {
       expect(validateStorageName(';')).toEqual([false, 'forbidden_chars'])
       expect(validateStorageName('``')).toEqual([false, 'forbidden_chars'])
