@@ -3,6 +3,8 @@ name: Release to production
 on:
   push:
     tags: '*'
+    branches:
+      - 2023.02.01
 
 permissions:
   id-token: write
@@ -74,7 +76,4 @@ jobs:
           role-to-assume: ${{ secrets.ACTION_PRODUCTION_RELEASE_ROLE }}
 
       - name: Build and upload Docker image
-        run: ./scripts/build_and_release_image.sh --tag {{ github.ref_name }}
-      
-      - name: Upload infrastructure files to S3
-        run: ./infrastructure/release_infrastructure.sh
+        run: ./scripts/build_and_release_image.sh --tag ${{ github.ref_name }}
