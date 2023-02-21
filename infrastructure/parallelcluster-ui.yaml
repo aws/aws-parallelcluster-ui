@@ -81,7 +81,7 @@ Conditions:
 Mappings:
   ParallelClusterUI:
     Constants:
-      Version: 2023.02 # format YYYY.MM[.REVISION]
+      Version: 2023.02.0 # format YYYY.MM.REVISION
       ShortVersion: 2023.02 # format YYYY.MM
 
 Resources:
