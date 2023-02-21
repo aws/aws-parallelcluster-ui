@@ -1,11 +1,7 @@
 #!/bin/bash
 set -e
 
-USAGE="$(basename "$0") [-h] [--tag YYYY.MM (defaults to current year and month)] [--revision REVISION]"
-
-get_default_pcui_version() {
-  date +%Y.%m
-}
+USAGE="$(basename "$0") [-h] --tag YYYY.MM.REVISION"
 
 print_usage() {
   echo "$USAGE" 1>&2
@@ -43,10 +39,10 @@ done
 ECR_ENDPOINT="public.ecr.aws/pcm"
 
 if [ -z $TAG ]; then
-  TAG=`get_default_pcui_version`
-  echo "Using default versioning strategy, tag: $TAG" 1>&2
-elif ! [[ $TAG =~ [0-9]{4}\.(0[1-9]|1[0-2]) ]]; then
-  echo '`--tag` parameter must be a valid year and month combo of the following format `YYYY.MM`, exiting' 1>&2
+  echo 'No `--tag` parameter specified, exiting' 1>&2
+  exit 1
+elif ! [[ $TAG =~ [0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+ ]]; then
+  echo '`--tag` parameter must be a valid year, month and revision number combo of the following format `YYYY.MM.REVISION`, exiting' 1>&2
   exit 1
 fi
 
