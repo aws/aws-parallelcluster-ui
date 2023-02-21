@@ -18,9 +18,9 @@ function mapStorageToUiSetting(storage: Storage): UIStorageSettings[0] {
       return {useExisting: !!storage.EfsSettings?.FileSystemId}
     case 'FsxLustre':
       return {useExisting: !!storage.FsxLustreSettings?.FileSystemId}
-    case 'FsxOnTap':
-      return {useExisting: !!storage.FsxOnTapSettings?.VolumeId}
-    case 'FsxOpenZsf':
+    case 'FsxOntap':
+      return {useExisting: !!storage.FsxOntapSettings?.VolumeId}
+    case 'FsxOpenZfs':
       return {useExisting: !!storage.FsxOpenZfsSettings?.VolumeId}
   }
 }

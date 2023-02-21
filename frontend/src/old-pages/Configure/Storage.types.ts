@@ -115,12 +115,12 @@ export interface FsxLustreStorage extends CommonSharedStorageDetails {
 }
 
 export interface FsxOnTapStorage extends CommonSharedStorageDetails {
-  StorageType: 'FsxOnTap'
-  FsxOnTapSettings?: FsxOnTapSettings
+  StorageType: 'FsxOntap'
+  FsxOntapSettings?: FsxOnTapSettings
 }
 
 export interface FsxOpenZfsStorage extends CommonSharedStorageDetails {
-  StorageType: 'FsxOpenZsf'
+  StorageType: 'FsxOpenZfs'
   FsxOpenZfsSettings?: FsxOpenZfsSettings
 }
 
