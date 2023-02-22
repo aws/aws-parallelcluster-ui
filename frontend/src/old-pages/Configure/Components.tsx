@@ -11,7 +11,7 @@
 // limitations under the License.
 
 // Fameworks
-import React, {useCallback, useMemo} from 'react'
+import React, {ReactElement, useCallback, useMemo} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {useSelector} from 'react-redux'
 import {findFirst} from '../../util'
@@ -39,6 +39,7 @@ import {
   Select,
   InputProps,
   TextContent,
+  CheckboxProps,
 } from '@cloudscape-design/components'
 
 // Components
@@ -748,6 +749,23 @@ function HelpTextInput({
   )
 }
 
+type CheckboxWithInfoLinkProps = CheckboxProps & {
+  helpPanel: ReactElement
+}
+
+const CheckboxWithHelpPanel = ({
+  helpPanel,
+  children,
+  ...checkboxProps
+}: CheckboxWithInfoLinkProps) => {
+  return (
+    <SpaceBetween direction="horizontal" size="xs">
+      <Checkbox {...checkboxProps}>{children}</Checkbox>
+      <InfoLink helpPanel={helpPanel} />
+    </SpaceBetween>
+  )
+}
+
 export {
   SubnetSelect,
   SecurityGroups,
@@ -759,4 +777,5 @@ export {
   RootVolume,
   IamPoliciesEditor,
   HelpTextInput,
+  CheckboxWithHelpPanel,
 }
