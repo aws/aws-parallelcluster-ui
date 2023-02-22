@@ -602,7 +602,9 @@
         "storageType": "Storage type",
         "storageTypePlaceholder": "Select a file system type",
         "volumePlaceholder": "Select a volume",
-        "addStorage": "Add storage"
+        "addStorage": "Add storage",
+        "removeStorage": "Remove storage",
+        "sourceTitle": "Source {{index}} - {{name}}"
       },
       "helpPanel": {
         "title": "$t(wizard.storage.title)",

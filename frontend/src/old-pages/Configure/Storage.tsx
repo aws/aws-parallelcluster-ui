@@ -880,6 +880,10 @@ function StorageInstance({index}: any) {
     [t],
   )
 
+  const storageTypeDisplay = ALL_STORAGES.find(
+    ([type]) => type === storageType,
+  )?.[1]
+
   return (
     <Container
       header={
@@ -887,11 +891,14 @@ function StorageInstance({index}: any) {
           variant="h3"
           actions={
             <Button disabled={!canEditFilesystems} onClick={removeStorage}>
-              Remove
+              {t('wizard.storage.container.removeStorage')}
             </Button>
           }
         >
-          {storageName}
+          {t('wizard.storage.container.sourceTitle', {
+            index: index + 1,
+            name: storageTypeDisplay,
+          })}
         </Header>
       }
     >
@@ -923,7 +930,7 @@ function StorageInstance({index}: any) {
               }}
             />
           </FormField>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
+          <SpaceBetween direction="vertical" size="s">
             {STORAGE_TYPE_PROPS[storageType].maxToCreate > 0 ? (
               <SpaceBetween direction="horizontal" size="xs">
                 <Checkbox
@@ -949,16 +956,7 @@ function StorageInstance({index}: any) {
             {useExisting &&
               {
                 Ebs: (
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: '16px',
-                      marginTop: '10px',
-                    }}
-                  >
-                    {t('wizard.storage.Ebs.existing')}:
+                  <FormField label={t('wizard.storage.Ebs.existing')}>
                     <Input
                       placeholder={t(
                         'wizard.storage.instance.useExisting.placeholder',
@@ -968,7 +966,7 @@ function StorageInstance({index}: any) {
                         setState(existingPath, detail.value)
                       }}
                     />
-                  </div>
+                  </FormField>
                 ),
                 FsxLustre: (
                   <FormField label={t('wizard.storage.Fsx.existing.fsxLustre')}>
@@ -1041,7 +1039,7 @@ function StorageInstance({index}: any) {
                   </FormField>
                 ),
               }[storageType]}
-          </div>
+          </SpaceBetween>
         </ColumnLayout>
         {!useExisting &&
           {
@@ -1055,6 +1053,14 @@ function StorageInstance({index}: any) {
     </Container>
   )
 }
+
+const ALL_STORAGES: StorageTypeOption[] = [
+  ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
+  ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)'],
+  ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)'],
+  ['Efs', 'Amazon Elastic File System (EFS)'],
+  ['Ebs', 'Amazon Elastic Block Store (EBS)'],
+]
 
 function Storage() {
   const {t} = useTranslation()
@@ -1076,15 +1082,15 @@ function Storage() {
     Ebs: 5,
   }
 
-  const storageTypesSource: StorageTypeOption[] = [
-    ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
-    isFsxOnTapActive
-      ? ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)']
-      : false,
-    isFsxOpenZsfActive ? ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)'] : false,
-    ['Efs', 'Amazon Elastic File System (EFS)'],
-    ['Ebs', 'Amazon Elastic Block Store (EBS)'],
-  ].filter(Boolean) as StorageTypeOption[]
+  const supportedStorages = ALL_STORAGES.filter(([storageType]) => {
+    if (storageType === 'FsxOntap' && !isFsxOnTapActive) {
+      return false
+    }
+    if (storageType === 'FsxOpenZfs' && !isFsxOpenZsfActive) {
+      return false
+    }
+    return true
+  })
 
   const defaultCounts = {FsxLustre: 0, Efs: 0, Ebs: 0}
 
@@ -1097,7 +1103,7 @@ function Storage() {
     ? storages.reduce(storageReducer, defaultCounts)
     : defaultCounts
 
-  const storageTypes = storageTypesSource.reduce(
+  const storageTypes = supportedStorages.reduce(
     (newStorages: StorageTypeOption[], storageType: StorageTypeOption) => {
       const st = storageType[0]
       return storageCounts[st] >= storageMaxes[st]
