@@ -880,6 +880,10 @@ function StorageInstance({index}: any) {
     [t],
   )
 
+  const storageTypeDisplay = ALL_STORAGES.find(
+    ([type]) => type === storageType,
+  )?.[1]
+
   return (
     <Container
       header={
@@ -891,7 +895,10 @@ function StorageInstance({index}: any) {
             </Button>
           }
         >
-          {storageName}
+          {t('wizard.storage.container.sourceTitle', {
+            index: index + 1,
+            name: storageTypeDisplay,
+          })}
         </Header>
       }
     >
@@ -1047,6 +1054,14 @@ function StorageInstance({index}: any) {
   )
 }
 
+const ALL_STORAGES: StorageTypeOption[] = [
+  ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
+  ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)'],
+  ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)'],
+  ['Efs', 'Amazon Elastic File System (EFS)'],
+  ['Ebs', 'Amazon Elastic Block Store (EBS)'],
+]
+
 function Storage() {
   const {t} = useTranslation()
   const storages = useState(storagePath)
@@ -1067,15 +1082,15 @@ function Storage() {
     Ebs: 5,
   }
 
-  const storageTypesSource: StorageTypeOption[] = [
-    ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
-    isFsxOnTapActive
-      ? ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)']
-      : false,
-    isFsxOpenZsfActive ? ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)'] : false,
-    ['Efs', 'Amazon Elastic File System (EFS)'],
-    ['Ebs', 'Amazon Elastic Block Store (EBS)'],
-  ].filter(Boolean) as StorageTypeOption[]
+  const supportedStorages = ALL_STORAGES.filter(([storageType]) => {
+    if (storageType === 'FsxOntap' && !isFsxOnTapActive) {
+      return false
+    }
+    if (storageType === 'FsxOpenZfs' && !isFsxOpenZsfActive) {
+      return false
+    }
+    return true
+  })
 
   const defaultCounts = {FsxLustre: 0, Efs: 0, Ebs: 0}
 
@@ -1088,7 +1103,7 @@ function Storage() {
     ? storages.reduce(storageReducer, defaultCounts)
     : defaultCounts
 
-  const storageTypes = storageTypesSource.reduce(
+  const storageTypes = supportedStorages.reduce(
     (newStorages: StorageTypeOption[], storageType: StorageTypeOption) => {
       const st = storageType[0]
       return storageCounts[st] >= storageMaxes[st]
