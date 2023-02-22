@@ -887,7 +887,7 @@ function StorageInstance({index}: any) {
           variant="h3"
           actions={
             <Button disabled={!canEditFilesystems} onClick={removeStorage}>
-              Remove
+              {t('wizard.storage.container.removeStorage')}
             </Button>
           }
         >
