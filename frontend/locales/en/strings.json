@@ -681,7 +681,6 @@
         "existing": "EFS filesystem",
         "encrypted": {
           "label": "Encrypted",
-          "title": "Encryption",
           "help": "A custom AWS KMS key is used for encryption.",
           "encryptionLink": {
             "title": "EFS encryption",
@@ -693,7 +692,7 @@
           "label": "Performance mode:"
         },
         "provisioned": {
-          "label": "Provisioned throughput",
+          "label": "Provisioned throughput (1-1024 in MiB/s)",
           "help": "Configure the provisioned throughput (from 1-1024 in MiB/s) for the Amazon EFS file system. If not configured, the file system is created in bursting mode.",
           "throughputLink": {
             "title": "ThroughputMode section",
