@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
 
-USAGE="$(basename "$0") [-h] --tag YYYY.MM.REVISION"
+USAGE="$(basename "$0") [-h] --tag YYYY.MM.REVISION [--ecr-region REGION, defaults to 'us-east-1'] [--ecr-endpoint PUBLIC_ECR ENDPOINT, defaults to 'public.ecr.aws/pcm']"
 
 print_usage() {
   echo "$USAGE" 1>&2
 }
 
-ECR_REPO=parallelcluster-ui
-
+ECR_REPO="parallelcluster-ui"
+ECR_REGION="us-east-1"
+ECR_ENDPOINT="public.ecr.aws/pcm"
 
 while [[ $# -gt 0 ]]
 do
@@ -24,6 +25,16 @@ case $key in
     shift
     shift
     ;;
+    --ecr-endpoint)
+    ECR_ENDPOINT=$2
+    shift
+    shift
+    ;;
+    --ecr-region)
+    ECR_REGION=$2
+    shift
+    shift
+    ;;
     *)
     print_usage
     exit 1
@@ -31,7 +42,6 @@ case $key in
 esac
 done
 
-ECR_ENDPOINT="public.ecr.aws/pcm"
 
 if [ -z $TAG ]; then
   echo 'No `--tag` parameter specified, exiting' 1>&2
@@ -41,7 +51,7 @@ elif ! [[ $TAG =~ [0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+ ]]; then
   exit 1
 fi
 
-aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"
+aws ecr-public get-login-password --region "$ECR_REGION" | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"
 
 pushd frontend
 if [ ! -d node_modules ]; then
