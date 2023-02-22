@@ -923,7 +923,7 @@ function StorageInstance({index}: any) {
               }}
             />
           </FormField>
-          <div style={{display: 'flex', flexDirection: 'column'}}>
+          <SpaceBetween direction="vertical" size="s">
             {STORAGE_TYPE_PROPS[storageType].maxToCreate > 0 ? (
               <SpaceBetween direction="horizontal" size="xs">
                 <Checkbox
@@ -949,16 +949,7 @@ function StorageInstance({index}: any) {
             {useExisting &&
               {
                 Ebs: (
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: '16px',
-                      marginTop: '10px',
-                    }}
-                  >
-                    {t('wizard.storage.Ebs.existing')}:
+                  <FormField label={t('wizard.storage.Ebs.existing')}>
                     <Input
                       placeholder={t(
                         'wizard.storage.instance.useExisting.placeholder',
@@ -968,7 +959,7 @@ function StorageInstance({index}: any) {
                         setState(existingPath, detail.value)
                       }}
                     />
-                  </div>
+                  </FormField>
                 ),
                 FsxLustre: (
                   <FormField label={t('wizard.storage.Fsx.existing.fsxLustre')}>
@@ -1041,7 +1032,7 @@ function StorageInstance({index}: any) {
                   </FormField>
                 ),
               }[storageType]}
-          </div>
+          </SpaceBetween>
         </ColumnLayout>
         {!useExisting &&
           {
