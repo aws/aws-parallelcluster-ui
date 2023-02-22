@@ -54,6 +54,7 @@ import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/
 import {BaseChangeDetail} from '@cloudscape-design/components/input/interfaces'
 import {AddStorageForm} from './Storage/AddStorageForm'
 import {buildStorageEntries} from './Storage/buildStorageEntries'
+import {CheckboxWithHelpPanel} from './Components'
 
 // Constants
 const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
@@ -479,45 +480,7 @@ function EfsSettings({index}: any) {
   return (
     <SpaceBetween direction="vertical" size="s">
       <ColumnLayout columns={2} borders="vertical">
-        <FormField
-          label={t('wizard.storage.Efs.encrypted.title')}
-          info={
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Efs.encrypted.title')}
-                  description={t('wizard.storage.Efs.encrypted.help')}
-                  footerLinks={encryptionFooterLinks}
-                />
-              }
-            />
-          }
-        >
-          <Checkbox checked={encrypted} onChange={toggleEncrypted}>
-            {t('wizard.storage.Efs.encrypted.label')}
-          </Checkbox>
-
-          {encrypted ? (
-            <FormField label={t('wizard.storage.Efs.encrypted.kmsId')}>
-              <Input
-                value={kmsId}
-                onChange={({detail}) => {
-                  setState(kmsPath, detail.value)
-                }}
-              />
-            </FormField>
-          ) : null}
-        </FormField>
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-          }}
-        >
-          <Trans i18nKey="wizard.storage.Efs.performanceMode.label" />
+        <FormField label={t('wizard.storage.Efs.performanceMode.label')}>
           <Select
             selectedOption={strToOption(performanceMode)}
             onChange={({detail}) => {
@@ -525,65 +488,66 @@ function EfsSettings({index}: any) {
             }}
             options={performanceModes.map(strToOption)}
           />
-        </div>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-          <SpaceBetween direction="horizontal" size="xs">
-            <Checkbox
-              checked={throughputMode !== 'bursting'}
-              onChange={_event => {
-                setState(
-                  throughputModePath,
-                  throughputMode === 'bursting' ? 'provisioned' : 'bursting',
-                )
-                if (throughputMode === 'provisioned')
-                  setState(provisionedThroughputPath, 128)
+        </FormField>
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
+            checked={encrypted}
+            onChange={toggleEncrypted}
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Efs.encrypted.label')}
+                description={t('wizard.storage.Efs.encrypted.help')}
+                footerLinks={encryptionFooterLinks}
+              />
+            }
+          >
+            {t('wizard.storage.Efs.encrypted.label')}
+          </CheckboxWithHelpPanel>
+          {encrypted ? (
+            <Input
+              value={kmsId}
+              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
+              onChange={({detail}) => {
+                setState(kmsPath, detail.value)
               }}
-            >
-              <Trans i18nKey="wizard.storage.Efs.provisioned.label" />
-            </Checkbox>
-
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Efs.provisioned.label')}
-                  description={t('wizard.storage.Efs.provisioned.help')}
-                  footerLinks={provisionedFooterLinks}
-                />
-              }
             />
-          </SpaceBetween>
+          ) : null}
+        </SpaceBetween>
+
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Efs.provisioned.label')}
+                description={t('wizard.storage.Efs.provisioned.help')}
+                footerLinks={provisionedFooterLinks}
+              />
+            }
+            checked={throughputMode !== 'bursting'}
+            onChange={_event => {
+              setState(
+                throughputModePath,
+                throughputMode === 'bursting' ? 'provisioned' : 'bursting',
+              )
+              if (throughputMode === 'provisioned')
+                setState(provisionedThroughputPath, 128)
+            }}
+          >
+            {t('wizard.storage.Efs.provisioned.label')}
+          </CheckboxWithHelpPanel>
           {throughputMode === 'provisioned' && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: '16px',
+            <Input
+              type="number"
+              value={clamp(parseInt(provisionedThroughput), 1, 1024).toString()}
+              onChange={({detail}) => {
+                setState(
+                  provisionedThroughputPath,
+                  clamp(parseInt(detail.value), 1, 1024).toString(),
+                )
               }}
-            >
-              <div style={{display: 'flex', flexGrow: 1, flexShrink: 0}}>
-                Throughput (1-1024 in MiB/s):
-              </div>
-              <div style={{display: 'flex', flexShrink: 1}}>
-                <Input
-                  type="number"
-                  value={clamp(
-                    parseInt(provisionedThroughput),
-                    1,
-                    1024,
-                  ).toString()}
-                  onChange={({detail}) => {
-                    console.log('value: ', detail.value, parseInt(detail.value))
-                    setState(
-                      provisionedThroughputPath,
-                      clamp(parseInt(detail.value), 1, 1024).toString(),
-                    )
-                  }}
-                />
-              </div>
-            </div>
+            />
           )}
-        </div>
+        </SpaceBetween>
       </ColumnLayout>
     </SpaceBetween>
   )
@@ -930,9 +894,9 @@ function StorageInstance({index}: any) {
               }}
             />
           </FormField>
-          <SpaceBetween direction="vertical" size="s">
+          <SpaceBetween direction="vertical" size="xxs">
             {STORAGE_TYPE_PROPS[storageType].maxToCreate > 0 ? (
-              <SpaceBetween direction="horizontal" size="xs">
+              <SpaceBetween direction="horizontal" size="s">
                 <Checkbox
                   disabled={!canToggle}
                   checked={useExisting}
