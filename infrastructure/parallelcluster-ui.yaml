@@ -82,7 +82,6 @@ Mappings:
   ParallelClusterUI:
     Constants:
       Version: 2023.02.0 # format YYYY.MM.REVISION
-      ShortVersion: 2023.02 # format YYYY.MM
 
 Resources:
 
@@ -436,7 +435,7 @@ Resources:
       Name: !Sub
         - 'parallelcluster-ui-${Version}-${StackIdSuffix}'
         - { Version: !Join ['_', !Split ['.', !FindInMap [ParallelClusterUI, Constants, Version]]], StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-      Version: !Join [".", [ !FindInMap [ParallelClusterUI, Constants, ShortVersion], "00"]]
+      Version: !FindInMap [ParallelClusterUI, Constants, Version]
       ParentImage: !Ref PublicEcrImageUri
       PlatformOverride: Linux
       TargetRepository:
@@ -596,7 +595,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt EcrImageDeletionLambda.Arn
       EcrRepositoryName: !Ref PrivateEcrRepository
-      Version: !FindInMap [ParallelClusterUI, Constants, ShortVersion]
+      Version: !FindInMap [ParallelClusterUI, Constants, Version]
       EcrImagePipelineArn: !GetAtt EcrImagePipeline.Arn
 
   ParallelClusterUILambdaLogGroup:
