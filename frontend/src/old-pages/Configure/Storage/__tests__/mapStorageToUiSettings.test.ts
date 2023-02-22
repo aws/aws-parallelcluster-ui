@@ -79,15 +79,15 @@ const FsxLustreWithoutExternalVolume: FsxLustreStorage = {
 
 const FsxOnTapWithExternalVolume: FsxOnTapStorage = {
   ...commonStorageValues,
-  StorageType: 'FsxOnTap',
-  FsxOnTapSettings: {
+  StorageType: 'FsxOntap',
+  FsxOntapSettings: {
     VolumeId: 'some-id',
   },
 }
 
 const FsxOpenZfsWithExternalVolume: FsxOpenZfsStorage = {
   ...commonStorageValues,
-  StorageType: 'FsxOpenZsf',
+  StorageType: 'FsxOpenZfs',
   FsxOpenZfsSettings: {
     VolumeId: 'some-id',
   },
