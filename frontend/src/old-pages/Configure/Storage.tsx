@@ -37,9 +37,11 @@ import {getState, setState, useState, clearState} from '../../store'
 // Components
 import {
   Storages,
+  Storage,
   StorageType,
   STORAGE_TYPE_PROPS,
   UIStorageSettings,
+  EbsStorage,
 } from './Storage.types'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import InfoLink from '../../components/InfoLink'
@@ -47,7 +49,12 @@ import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescript
 import {useMemo} from 'react'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {
+  ebsErrorsMapping,
+  externalFsErrorsMapping,
+  storageNameErrorsMapping,
   STORAGE_NAME_MAX_LENGTH,
+  validateEbs,
+  validateExternalFileSystem,
   validateStorageName,
 } from './Storage/storage.validators'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
@@ -74,76 +81,64 @@ function strToOption(str: any) {
 }
 
 function storageValidate() {
-  const storageSettings = getState(storagePath)
+  const storages: Storages = getState(storagePath)
   let valid = true
 
-  if (storageSettings)
-    for (let i = 0; i < storageSettings.length; i++) {
-      const settingsType = getState([...storagePath, i, 'StorageType'])
-      if (settingsType === 'Ebs') {
-        const volumeId = getState([
-          ...storagePath,
-          i,
-          'EbsSettings',
-          'VolumeId',
-        ])
-        const volumeSize = getState([...storagePath, i, 'EbsSettings', 'Size'])
-        if (
-          !volumeId &&
-          (volumeSize === null ||
-            volumeSize === '' ||
-            volumeSize < 35 ||
-            volumeSize > 2048)
-        ) {
-          setState(
-            [...errorsPath, i, 'EbsSettings', 'Size'],
-            i18next.t('wizard.storage.validation.volumeSize'),
-          )
+  if (storages) {
+    storages.forEach((storage: Storage, index: number) => {
+      const settings = `${storage.StorageType}Settings`
+      const idType = STORAGE_TYPE_PROPS[storage.StorageType].mountFilesystem
+        ? 'FileSystemId'
+        : 'VolumeId'
+      const useExisting =
+        getState(['app', 'wizard', 'storage', 'ui', index, 'useExisting']) ||
+        !(STORAGE_TYPE_PROPS[storage.StorageType].maxToCreate > 0)
+
+      if (useExisting) {
+        const [externalFsValid, error] = validateExternalFileSystem(storage)
+        if (!externalFsValid) {
+          const errorMessage = i18next.t(externalFsErrorsMapping[error!])
+          setState([...errorsPath, index, settings, idType], errorMessage)
           valid = false
         } else {
-          clearState([...errorsPath, i, 'EbsSettings', 'Size'])
+          clearState([...errorsPath, index, settings, idType])
+        }
+      } else {
+        if (storage.StorageType === 'Ebs') {
+          const [ebsValid, error] = validateEbs(storage as EbsStorage)
+          if (!ebsValid) {
+            const errorMessage = i18next.t(ebsErrorsMapping[error!])
+            setState(
+              [...errorsPath, index, 'EbsSettings', 'Size'],
+              errorMessage,
+            )
+            valid = false
+          } else {
+            clearState([...errorsPath, index, 'EbsSettings', 'Size'])
+          }
         }
       }
-      const name = getState([...storagePath, i, 'Name'])
+
+      const name = getState([...storagePath, index, 'Name'])
       const [nameValid, error] = validateStorageName(name)
       if (!nameValid) {
-        let errorMessage = ''
-        switch (error) {
-          case 'forbidden_chars':
-            errorMessage = i18next.t(
-              'wizard.storage.instance.sourceName.forbiddenCharsError',
-            )
-            break
-          case 'forbidden_keyword':
-            errorMessage = i18next.t(
-              'wizard.storage.instance.sourceName.forbiddenKeywordError',
-            )
-            break
-          case 'max_length':
-            errorMessage = i18next.t(
-              'wizard.storage.instance.sourceName.maxLengthError',
-              {
-                maxChars: STORAGE_NAME_MAX_LENGTH,
-              },
-            )
-            break
-          case 'empty':
-            errorMessage = i18next.t(
-              'wizard.storage.instance.sourceName.emptyError',
-            )
-            break
+        let errorMessage: string
+        if (error === 'max_length') {
+          errorMessage = i18next.t(storageNameErrorsMapping[error], {
+            maxChars: STORAGE_NAME_MAX_LENGTH,
+          })
+        } else {
+          errorMessage = i18next.t(storageNameErrorsMapping[error!])
         }
-        setState([...errorsPath, i, 'Name'], errorMessage)
+        setState([...errorsPath, index, 'Name'], errorMessage)
         valid = false
       } else {
-        clearState([...errorsPath, i, 'Name'])
+        clearState([...errorsPath, index, 'Name'])
       }
-    }
+    })
+  }
 
   setState([...errorsPath, 'validated'], true)
-
-  const config = getState(['app', 'wizard', 'config'])
-  console.log(config)
   return valid
 }
 
@@ -733,14 +728,22 @@ function StorageInstance({index}: any) {
   const storageName = useState([...path, 'Name']) || ''
   const storageNameErrors = useState([...errorsPath, index, 'Name'])
   const mountPoint = useState([...path, 'MountDir'])
+  const settingsPath = [...path, `${storageType}Settings`]
+  const errorsInstancePath = [...errorsPath, index, `${storageType}Settings`]
+
   const useExisting =
     useState([...uiSettingsForStorage, 'useExisting']) ||
     !(STORAGE_TYPE_PROPS[storageType].maxToCreate > 0)
-  const settingsPath = [...path, `${storageType}Settings`]
   const existingPath = STORAGE_TYPE_PROPS[storageType].mountFilesystem
     ? [...settingsPath, 'FileSystemId']
     : [...settingsPath, 'VolumeId']
+  const existingPathError = useState(
+    STORAGE_TYPE_PROPS[storageType].mountFilesystem
+      ? [...errorsInstancePath, 'FileSystemId']
+      : [...errorsInstancePath, 'VolumeId'],
+  )
   const existingId = useState(existingPath) || ''
+
   const storages = useState(storagePath)
   const uiSettings = useState(['app', 'wizard', 'storage', 'ui'])
   const {t} = useTranslation()
@@ -887,7 +890,10 @@ function StorageInstance({index}: any) {
             {useExisting &&
               {
                 Ebs: (
-                  <FormField label={t('wizard.storage.Ebs.existing')}>
+                  <FormField
+                    label={t('wizard.storage.Ebs.existing')}
+                    errorText={existingPathError}
+                  >
                     <Input
                       placeholder={t(
                         'wizard.storage.instance.useExisting.placeholder',
@@ -900,7 +906,10 @@ function StorageInstance({index}: any) {
                   </FormField>
                 ),
                 FsxLustre: (
-                  <FormField label={t('wizard.storage.Fsx.existing.fsxLustre')}>
+                  <FormField
+                    label={t('wizard.storage.Fsx.existing.fsxLustre')}
+                    errorText={existingPathError}
+                  >
                     <Select
                       placeholder={t(
                         'wizard.storage.container.volumePlaceholder',
@@ -913,12 +922,14 @@ function StorageInstance({index}: any) {
                         value: fs.id,
                         label: fs.displayName,
                       }))}
+                      empty={t('wizard.storage.instance.useExisting.empty')}
                     />
                   </FormField>
                 ),
                 FsxOpenZfs: (
                   <FormField
                     label={t('wizard.storage.Fsx.existing.fsxOpenZfs')}
+                    errorText={existingPathError}
                   >
                     <Select
                       placeholder={t(
@@ -932,11 +943,15 @@ function StorageInstance({index}: any) {
                         value: vol.id,
                         label: vol.displayName,
                       }))}
+                      empty={t('wizard.storage.instance.useExisting.empty')}
                     />
                   </FormField>
                 ),
                 FsxOntap: (
-                  <FormField label={t('wizard.storage.Fsx.existing.fsxOnTap')}>
+                  <FormField
+                    label={t('wizard.storage.Fsx.existing.fsxOnTap')}
+                    errorText={existingPathError}
+                  >
                     <Select
                       placeholder={t(
                         'wizard.storage.container.volumePlaceholder',
@@ -949,13 +964,20 @@ function StorageInstance({index}: any) {
                         value: vol.id,
                         label: vol.displayName,
                       }))}
+                      empty={t('wizard.storage.instance.useExisting.empty')}
                     />
                   </FormField>
                 ),
                 Efs: (
-                  <FormField label="EFS Filesystem">
+                  <FormField
+                    label="EFS Filesystem"
+                    errorText={existingPathError}
+                  >
                     <Select
-                      selectedOption={idToOption(existingId || '')}
+                      placeholder={t(
+                        'wizard.storage.container.volumePlaceholder',
+                      )}
+                      selectedOption={existingId && idToOption(existingId)}
                       onChange={({detail}) => {
                         setState(existingPath, detail.selectedOption.value)
                       }}
@@ -966,6 +988,7 @@ function StorageInstance({index}: any) {
                             x.FileSystemId + (x.Name ? ` (${x.Name})` : ''),
                         }
                       })}
+                      empty={t('wizard.storage.instance.useExisting.empty')}
                     />
                   </FormField>
                 ),
