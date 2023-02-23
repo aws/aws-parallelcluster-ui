@@ -484,7 +484,7 @@ Resources:
               paginator = ecr.get_paginator('list_images')
               response_iterator = paginator.paginate(repositoryName=repository_name, filter={'tagStatus': 'TAGGED'})
               for response in response_iterator:
-                  image_digests.update([image_id['imageDigest'] for image_id in response['imageIds'] if f"{version}-" in image_id['imageTag']])
+                  image_digests.update([image_id['imageDigest'] for image_id in response['imageIds']])
               return list({'imageDigest': image_digest} for image_digest in image_digests)
 
           def get_imagebuilder_images(ecr_image_pipeline_arn):
