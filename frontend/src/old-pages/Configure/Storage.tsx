@@ -254,23 +254,6 @@ export function FsxLustreSettings({index}: any) {
 
   return (
     <ColumnLayout columns={2} borders="vertical">
-      <div key="capacity" style={{display: 'flex', flexDirection: 'column'}}>
-        <Trans
-          i18nKey="wizard.storage.Fsx.capacity.label"
-          values={{storageCapacity: storageCapacity}}
-        />
-        <Input
-          value={storageCapacity}
-          step={1200}
-          onChange={({detail}) => {
-            setState(storageCapacityPath, detail.value)
-          }}
-          onBlur={_e => {
-            setState(storageCapacityPath, clampCapacity(storageCapacity))
-          }}
-          type="number"
-        />
-      </div>
       <FormField
         label={
           <Trans
@@ -309,6 +292,19 @@ export function FsxLustreSettings({index}: any) {
             )
           }}
           options={lustreTypes.map(strToOption)}
+        />
+      </FormField>
+      <FormField label={t('wizard.storage.Fsx.capacity.label')}>
+        <Input
+          value={storageCapacity}
+          step={1200}
+          onChange={({detail}) => {
+            setState(storageCapacityPath, detail.value)
+          }}
+          onBlur={_e => {
+            setState(storageCapacityPath, clampCapacity(storageCapacity))
+          }}
+          type="number"
         />
       </FormField>
       {lustreType === 'PERSISTENT_1' && (
