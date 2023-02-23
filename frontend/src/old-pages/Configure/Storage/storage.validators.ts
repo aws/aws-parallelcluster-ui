@@ -1,12 +1,28 @@
-type ErrorKind =
-  | 'forbidden_keyword'
-  | 'forbidden_chars'
-  | 'max_length'
-  | 'empty'
+import {EbsStorage, Storage} from '../Storage.types'
+import {mapStorageToExternalFileSystem} from './storage.mapper'
 
 export const STORAGE_NAME_MAX_LENGTH = 30
+export const storageNameErrorsMapping = {
+  forbidden_keyword: 'wizard.storage.instance.sourceName.forbiddenKeywordError',
+  forbidden_chars: 'wizard.storage.instance.sourceName.forbiddenCharsError',
+  max_length: 'wizard.storage.instance.sourceName.maxLengthError',
+  empty: 'wizard.storage.instance.sourceName.emptyError',
+}
+type StorageNameErrorKind = keyof typeof storageNameErrorsMapping
 
-export function validateStorageName(name: string): [boolean, ErrorKind?] {
+export const ebsErrorsMapping = {
+  invalid_ebs_size: 'wizard.storage.validation.volumeSize',
+}
+type EbsErrorKind = keyof typeof ebsErrorsMapping
+
+export const externalFsErrorsMapping = {
+  external_fs_undefined: 'wizard.storage.instance.useExisting.error',
+}
+type ExternalFsErrorKind = keyof typeof externalFsErrorsMapping
+
+export function validateStorageName(
+  name: string,
+): [boolean, StorageNameErrorKind?] {
   if (!name) {
     return [false, 'empty']
   }
@@ -20,4 +36,21 @@ export function validateStorageName(name: string): [boolean, ErrorKind?] {
     return [false, 'forbidden_chars']
   }
   return [true]
+}
+
+export function validateEbs(ebsStorage: EbsStorage): [boolean, EbsErrorKind?] {
+  const volumeSize = ebsStorage.EbsSettings?.Size
+
+  if (volumeSize === undefined || volumeSize < 35 || volumeSize > 2048) {
+    return [false, 'invalid_ebs_size']
+  } else {
+    return [true]
+  }
+}
+
+export function validateExternalFileSystem(
+  storage: Storage,
+): [boolean, ExternalFsErrorKind?] {
+  const externalFileSystemId = mapStorageToExternalFileSystem(storage)
+  return externalFileSystemId ? [true] : [false, 'external_fs_undefined']
 }
