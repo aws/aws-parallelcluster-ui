@@ -648,7 +648,7 @@
           "fsxOnTap": "FSx NetApp ONTAP volume"
         },
         "capacity": {
-          "label": "Storage capacity: {{storageCapacity}} GB"
+          "label": "Storage capacity (GB)"
         },
         "lustreType": {
           "label": "FSx for Lustre",
