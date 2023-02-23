@@ -25,6 +25,25 @@ function mapStorageToUiSetting(storage: Storage): UIStorageSettings[0] {
   }
 }
 
+export function mapStorageToExternalFileSystem(
+  storage: Storage,
+): string | undefined {
+  switch (storage.StorageType) {
+    case 'Ebs':
+      return storage.EbsSettings?.VolumeId
+    case 'Efs':
+      return storage.EfsSettings?.FileSystemId
+    case 'FsxLustre':
+      return storage.FsxLustreSettings?.FileSystemId
+    case 'FsxOntap':
+      return storage.FsxOntapSettings?.VolumeId
+    case 'FsxOpenZfs':
+      return storage.FsxOpenZfsSettings?.VolumeId
+    default:
+      return undefined
+  }
+}
+
 export function mapStorageToUiSettings(storages: Storages): UIStorageSettings {
   return storages.map(mapStorageToUiSetting)
 }
