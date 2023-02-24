@@ -706,9 +706,11 @@
           "label": "Volume type",
           "placeholder": "Default ({{defaultVolumeType}})"
         },
+        "volumeSize": {
+          "label": "Volume Size (35-2048 in GB)"
+        },
         "encrypted": {
           "label": "Encrypted",
-          "title": "Encryption",
           "help": "A custom AWS KMS key is used for encryption.",
           "encryptionLink": {
             "title": "EBS encryption",
