@@ -260,16 +260,16 @@ function Configure() {
             info: <InfoLink helpPanel={<HeadNodePropertiesHelpPanel />} />,
           },
           {
-            title: t('wizard.storage.title'),
-            description: t('wizard.storage.description'),
-            content: <Storage />,
-            info: <InfoLink helpPanel={<StorageHelpPanel />} />,
-          },
-          {
             title: t('wizard.queues.title'),
             description: t('wizard.queues.description'),
             content: <Queues />,
             info: <InfoLink helpPanel={<QueuesHelpPanel />} />,
+          },
+          {
+            title: t('wizard.storage.title'),
+            description: t('wizard.storage.description'),
+            content: <Storage />,
+            info: <InfoLink helpPanel={<StorageHelpPanel />} />,
           },
           {
             title: editing
