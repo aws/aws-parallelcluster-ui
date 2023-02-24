@@ -800,7 +800,7 @@
       },
       "slurmMemorySettings": {
         "container": {
-          "title": "Slurm memory settings",
+          "title": "Slurm settings",
           "help": "<p>Use Slurm memory-based scheduling to specify the amount of memory per node required by a job with Slurm's --mem parameter.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
           "memorySchedulingLink": {
             "title": "How Slurm memory-based scheduling works with AWS ParallelCluster",
