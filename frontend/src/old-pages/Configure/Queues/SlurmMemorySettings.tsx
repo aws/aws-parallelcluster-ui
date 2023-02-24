@@ -17,12 +17,18 @@ import {
   Alert,
   Checkbox,
   SpaceBetween,
+  ColumnLayout,
 } from '@cloudscape-design/components'
 import {setState, getState, useState, clearState} from '../../../store'
 import {Queue} from './queues.types'
 import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../../components/InfoLink'
+import {
+  ScaledownIdleTimeForm,
+  validateScaledownIdleTime,
+} from '../SlurmSettings/ScaledownIdleTimeForm'
+import {QueueUpdateStrategyForm} from '../SlurmSettings/QueueUpdateStrategyForm'
 
 const slurmSettingsPath = [
   'app',
@@ -36,6 +42,15 @@ const memoryBasedSchedulingEnabledPath = [
   'EnableMemoryBasedScheduling',
 ]
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
+
+const scaledownIdleTimePath = [...slurmSettingsPath, 'ScaledownIdletime']
+const queueUpdateStrategyPath = [...slurmSettingsPath, 'QueueUpdateStrategy']
+
+function validateSlurmSettings() {
+  const scaledownIdleTime = getState(scaledownIdleTimePath)
+
+  return validateScaledownIdleTime(scaledownIdleTime)
+}
 
 const hasMultipleInstanceTypes = (queues: Queue[]): boolean => {
   return (
@@ -79,6 +94,24 @@ function SlurmMemorySettings() {
       : clearSlurmSettingsState()
   }
 
+  const scaledownIdleTime = useState(scaledownIdleTimePath)
+  const queueUpdateStrategy = useState(queueUpdateStrategyPath)
+
+  const onScaledownIdleTimeChange = React.useCallback(
+    (value: number | null) => {
+      if (!value) {
+        clearState(scaledownIdleTimePath)
+      } else {
+        setState(scaledownIdleTimePath, value)
+      }
+    },
+    [],
+  )
+
+  const onQueueUpdateStrategyChange = React.useCallback((value: string) => {
+    setState(queueUpdateStrategyPath, value)
+  }, [])
+
   return (
     <Container
       header={
@@ -103,6 +136,16 @@ function SlurmMemorySettings() {
             {t('wizard.queues.slurmMemorySettings.info.body')}
           </Alert>
         ) : null}
+        <ColumnLayout columns={2}>
+          <ScaledownIdleTimeForm
+            value={scaledownIdleTime}
+            onChange={onScaledownIdleTimeChange}
+          />
+          <QueueUpdateStrategyForm
+            value={queueUpdateStrategy}
+            onChange={onQueueUpdateStrategyChange}
+          />
+        </ColumnLayout>
       </SpaceBetween>
     </Container>
   )
@@ -142,4 +185,4 @@ const SlurmMemorySettingsHelpPanel = () => {
   )
 }
 
-export {SlurmMemorySettings, hasMultipleInstanceTypes}
+export {SlurmMemorySettings, hasMultipleInstanceTypes, validateSlurmSettings}

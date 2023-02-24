@@ -36,14 +36,13 @@ import {setState, getState, useState, clearState} from '../../../store'
 import {
   ActionsEditor,
   CustomAMISettings,
-  LabeledIcon,
   RootVolume,
   SecurityGroups,
   IamPoliciesEditor,
   SubnetSelect,
 } from '../Components'
 import {Trans, useTranslation} from 'react-i18next'
-import {SlurmMemorySettings} from './SlurmMemorySettings'
+import {SlurmMemorySettings, validateSlurmSettings} from './SlurmMemorySettings'
 import {
   isFeatureEnabled,
   useFeatureFlag,
@@ -53,7 +52,6 @@ import * as MultiInstanceCR from './MultiInstanceComputeResource'
 import {AllocationStrategy, ComputeResource} from './queues.types'
 import {SubnetMultiSelect} from './SubnetMultiSelect'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
-import Head from 'next/head'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 
@@ -210,6 +208,17 @@ function queueValidate(queueIndex: any) {
         setState([...errorsPath, 'computeResource', i, 'type'], null)
       }
     })
+  }
+
+  const isMemoryBasedSchedulingActive = isFeatureEnabled(
+    version,
+    'memory_based_scheduling',
+  )
+  if (isMemoryBasedSchedulingActive) {
+    const settingsValid = validateSlurmSettings()
+    if (!settingsValid) {
+      valid = false
+    }
   }
 
   return valid
