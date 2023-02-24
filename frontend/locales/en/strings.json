@@ -578,7 +578,7 @@
         },
         "scaledownIdleTime": {
           "label": "Scale down idle time (in minutes)",
-          "description": "The amount of time (in minutes) that a queue has no jobs before the Slurm node terminates.",
+          "description": "The amount of time that a queue has no jobs before the Slurm node terminates.",
           "placeholder": "10"
         },
         "queueUpdateStrategy": {

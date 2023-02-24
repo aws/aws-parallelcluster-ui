@@ -12,14 +12,9 @@
 import * as React from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
-import {Container, Header, ColumnLayout} from '@cloudscape-design/components'
-import {setState, getState, clearState, useState} from '../../../store'
+import {Container, Header} from '@cloudscape-design/components'
+import {setState, getState, clearState} from '../../../store'
 import {SlurmAccountingForm} from './SlurmAccountingForm'
-import {
-  ScaledownIdleTimeForm,
-  validateScaledownIdleTime,
-} from './ScaledownIdleTimeForm'
-import {QueueUpdateStrategyForm} from './QueueUpdateStrategyForm'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../../components/InfoLink'
 
@@ -38,9 +33,6 @@ const passwordPath = [...slurmSettingsPath, 'Database', 'PasswordSecretArn']
 const uriErrorPath = [...errorsPath, 'database', 'uri']
 const usernameErrorPath = [...errorsPath, 'database', 'username']
 const passwordErrorPath = [...errorsPath, 'database', 'password']
-
-const scaledownIdleTimePath = [...slurmSettingsPath, 'ScaledownIdletime']
-const queueUpdateStrategyPath = [...slurmSettingsPath, 'QueueUpdateStrategy']
 
 function slurmAccountingValidateAndSetErrors(): boolean {
   const errorMask: Array<boolean> = [uriPath, usernamePath, passwordPath].map(
@@ -84,36 +76,8 @@ function slurmAccountingSetErrors(
   )
 }
 
-function validateSlurmSettings() {
-  const scaledownIdleTime = getState(scaledownIdleTimePath)
-
-  const validSettings = [
-    slurmAccountingValidateAndSetErrors(),
-    validateScaledownIdleTime(scaledownIdleTime),
-  ]
-
-  return validSettings.filter(Boolean).length === validSettings.length
-}
-
 function SlurmSettings() {
   const {t} = useTranslation()
-  const scaledownIdleTime = useState(scaledownIdleTimePath)
-  const queueUpdateStrategy = useState(queueUpdateStrategyPath)
-
-  const onScaledownIdleTimeChange = React.useCallback(
-    (value: number | null) => {
-      if (!value) {
-        clearState(scaledownIdleTimePath)
-      } else {
-        setState(scaledownIdleTimePath, value)
-      }
-    },
-    [],
-  )
-
-  const onQueueUpdateStrategyChange = React.useCallback((value: string) => {
-    setState(queueUpdateStrategyPath, value)
-  }, [])
 
   return (
     <Container
@@ -140,16 +104,6 @@ function SlurmSettings() {
         passwordPath={passwordPath}
         passwordErrorPath={passwordErrorPath}
       />
-      <ColumnLayout columns={2}>
-        <ScaledownIdleTimeForm
-          value={scaledownIdleTime}
-          onChange={onScaledownIdleTimeChange}
-        />
-        <QueueUpdateStrategyForm
-          value={queueUpdateStrategy}
-          onChange={onQueueUpdateStrategyChange}
-        />
-      </ColumnLayout>
     </Container>
   )
 }
@@ -184,7 +138,6 @@ const SlurmSettingsHelpPanel = () => {
 
 export {
   SlurmSettings,
-  validateSlurmSettings,
   slurmAccountingValidateAndSetErrors,
   slurmAccountingValidateField,
   slurmAccountingSetErrors,
