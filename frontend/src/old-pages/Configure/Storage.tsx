@@ -623,15 +623,7 @@ function EbsSettings({index}: any) {
   return (
     <SpaceBetween direction="vertical" size="m">
       <ColumnLayout columns={2} borders="vertical">
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-          }}
-        >
-          <Trans i18nKey="wizard.storage.Ebs.volumeType.label" />:
+        <FormField label={t('wizard.storage.Ebs.volumeType.label')}>
           <Select
             placeholder={t('wizard.queues.validation.scriptWithArgs', {
               defaultVlumeType: defaultVolumeType,
@@ -642,83 +634,62 @@ function EbsSettings({index}: any) {
             }}
             options={volumeTypes.map(strToOption)}
           />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-          }}
-        >
-          <div style={{display: 'flex', flexGrow: 1, flexShrink: 0}}>
-            Volume Size (35-2048 in GB):
-          </div>
-          <div style={{display: 'flex', flexShrink: 1}}>
-            <FormField errorText={volumeErrors}>
-              <Input
-                inputMode={'decimal'}
-                type={'number' as InputProps.Type}
-                value={volumeSize}
-                onChange={({detail}) => {
-                  setState(volumeSizePath, detail.value)
-                  validated && storageValidate()
-                }}
-              />
-            </FormField>
-          </div>
-        </div>
-        <FormField
-          label={t('wizard.storage.Ebs.encrypted.title')}
-          info={
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Ebs.encrypted.title')}
-                  description={t('wizard.storage.Ebs.encrypted.help')}
-                  footerLinks={encryptionFooterLinks}
-                />
-              }
-            />
-          }
-        >
-          <Checkbox checked={encrypted} onChange={toggleEncrypted}>
-            {t('wizard.storage.Ebs.encrypted.label')}
-          </Checkbox>
-
-          {encrypted ? (
-            <FormField label={t('wizard.storage.Ebs.encrypted.kmsId')}>
-              <Input
-                value={kmsId}
-                onChange={({detail}) => {
-                  setState(kmsPath, detail.value)
-                }}
-              />
-            </FormField>
-          ) : null}
         </FormField>
         <FormField
-          label={t('wizard.storage.Ebs.snapshotId.label')}
-          info={
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Ebs.snapshotId.label')}
-                  description={t('wizard.storage.Ebs.snapshotId.help')}
-                  footerLinks={snapshotFooterLinks}
-                />
-              }
-            />
-          }
+          label={t('wizard.storage.Ebs.volumeSize.label')}
+          errorText={volumeErrors}
         >
-          <Checkbox
+          <Input
+            inputMode={'decimal'}
+            type={'number' as InputProps.Type}
+            value={volumeSize}
+            onChange={({detail}) => {
+              setState(volumeSizePath, detail.value)
+              validated && storageValidate()
+            }}
+          />
+        </FormField>
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
+            checked={encrypted}
+            onChange={toggleEncrypted}
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Ebs.encrypted.label')}
+                description={t('wizard.storage.Ebs.encrypted.help')}
+                footerLinks={encryptionFooterLinks}
+              />
+            }
+          >
+            {t('wizard.storage.Ebs.encrypted.label')}
+          </CheckboxWithHelpPanel>
+
+          {encrypted ? (
+            <Input
+              placeholder={t('wizard.storage.Ebs.encrypted.kmsId')}
+              value={kmsId}
+              onChange={({detail}) => {
+                setState(kmsPath, detail.value)
+              }}
+            />
+          ) : null}
+        </SpaceBetween>
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
             checked={snapshotId !== null}
             onChange={_event => {
               setState(snapshotIdPath, snapshotId === null ? '' : null)
             }}
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Ebs.snapshotId.label')}
+                description={t('wizard.storage.Ebs.snapshotId.help')}
+                footerLinks={snapshotFooterLinks}
+              />
+            }
           >
             {t('wizard.storage.Ebs.snapshotId.label')}
-          </Checkbox>
+          </CheckboxWithHelpPanel>
           {snapshotId !== null && (
             <Input
               value={snapshotId}
@@ -727,7 +698,7 @@ function EbsSettings({index}: any) {
               }}
             />
           )}
-        </FormField>
+        </SpaceBetween>
         <FormField
           label={t('wizard.storage.Ebs.deletionPolicy.label')}
           info={
