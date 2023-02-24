@@ -91,29 +91,18 @@ function SlurmMemorySettings() {
       }
     >
       <SpaceBetween size={'s'} direction={'vertical'}>
-        <div
-          key="memory-based-scheduling-enabled"
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+        <Checkbox
+          checked={memoryBasedSchedulingEnabled}
+          disabled={multipleInstancesTypesSelected}
+          onChange={toggleMemoryBasedSchedulingEnabled}
         >
-          <Checkbox
-            checked={memoryBasedSchedulingEnabled}
-            disabled={multipleInstancesTypesSelected}
-            onChange={toggleMemoryBasedSchedulingEnabled}
-          >
-            <Trans i18nKey="wizard.queues.slurmMemorySettings.toggle.label" />
-          </Checkbox>
-        </div>
-        <Alert
-          visible={multipleInstancesTypesSelected}
-          header={t('wizard.queues.slurmMemorySettings.info.header')}
-        >
-          {t('wizard.queues.slurmMemorySettings.info.body')}
-        </Alert>
+          <Trans i18nKey="wizard.queues.slurmMemorySettings.toggle.label" />
+        </Checkbox>
+        {multipleInstancesTypesSelected ? (
+          <Alert header={t('wizard.queues.slurmMemorySettings.info.header')}>
+            {t('wizard.queues.slurmMemorySettings.info.body')}
+          </Alert>
+        ) : null}
       </SpaceBetween>
     </Container>
   )
