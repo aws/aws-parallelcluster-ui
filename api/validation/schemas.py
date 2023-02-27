@@ -1,12 +1,12 @@
 from marshmallow import Schema, fields, validate, INCLUDE, validates_schema, ValidationError
 
-from api.validation.validators import comma_splittable, aws_region_validator, is_alphanumeric_with_hyphen, \
+from api.validation.validators import aws_region_validator, is_alphanumeric_with_hyphen, \
     valid_api_log_levels_predicate, size_not_exceeding
 
 
 class EC2ActionSchema(Schema):
     action = fields.String(required=True, validate=validate.OneOf(['stop_instances', 'start_instances']))
-    instance_ids = fields.String(required=True, validate=validate.And(comma_splittable, validate.Length(max=2048)))
+    instance_id = fields.String(required=True, validate=validate.Length(max=60))
     region = fields.String(validate=aws_region_validator)
 
 
