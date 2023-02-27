@@ -33,6 +33,13 @@ export const STORAGE_TYPE_PROPS = {
 
 export type StorageType = keyof typeof STORAGE_TYPE_PROPS
 
+export type DeletionPolicy =
+  | EbsDeletionPolicy
+  | EfsDeletionPolicy
+  | FsxLustreDeletionPolicy
+
+export type EbsDeletionPolicy = 'Delete' | 'Retain' | 'Snapshot'
+
 export interface EbsSettings {
   VolumeType?: string
   Iops?: number
@@ -42,12 +49,14 @@ export interface EbsSettings {
   SnapshotId?: string
   Throughput?: number
   VolumeId?: string
-  DeletionPolicy?: string
+  DeletionPolicy?: EbsDeletionPolicy
   Raid?: {
     Type: string
     NumberOfVolumes?: number
   }
 }
+
+export type EfsDeletionPolicy = 'Delete' | 'Retain'
 
 export interface EfsSettings {
   Encrypted?: boolean
@@ -58,8 +67,10 @@ export interface EfsSettings {
   ThroughputMode?: string
   ProvisionedThroughput: number
   FileSystemId?: string
-  DeletionPolicy?: string
+  DeletionPolicy?: EfsDeletionPolicy
 }
+
+export type FsxLustreDeletionPolicy = 'Delete' | 'Retain'
 
 /**
  * Please note: Some of the properties cannot coexist
@@ -83,7 +94,7 @@ export interface FsxLustreSettings {
   AutoImportPolicy?: string
   DriveCacheType?: string
   StorageType?: string
-  DeletionPolicy?: string
+  DeletionPolicy?: FsxLustreDeletionPolicy
 }
 
 export interface FsxOnTapSettings {
