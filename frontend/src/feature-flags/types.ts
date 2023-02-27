@@ -20,3 +20,6 @@ export type AvailableFeature =
   | 'multi_az'
   | 'on_node_updated'
   | 'dynamic_fs_mount'
+  | 'ebs_deletion_policy'
+  | 'efs_deletion_policy'
+  | 'lustre_deletion_policy'

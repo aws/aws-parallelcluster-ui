@@ -37,6 +37,7 @@ describe('given a feature flags provider and a list of rules', () => {
         'lustre_persistent2',
         'memory_based_scheduling',
         'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
       ])
     })
   })
@@ -51,9 +52,12 @@ describe('given a feature flags provider and a list of rules', () => {
         'lustre_persistent2',
         'memory_based_scheduling',
         'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
         'slurm_accounting',
         'queues_multiple_instance_types',
         'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
       ])
     })
   })

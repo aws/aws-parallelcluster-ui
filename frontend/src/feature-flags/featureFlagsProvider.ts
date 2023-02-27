@@ -19,11 +19,14 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
     'memory_based_scheduling',
     'multiuser_cluster',
     'slurm_queue_update_strategy',
+    'ebs_deletion_policy',
   ],
   '3.3.0': [
     'slurm_accounting',
     'queues_multiple_instance_types',
     'dynamic_fs_mount',
+    'efs_deletion_policy',
+    'lustre_deletion_policy',
   ],
   '3.4.0': ['multi_az', 'on_node_updated'],
 }
