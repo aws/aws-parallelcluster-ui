@@ -37,6 +37,7 @@ import {getState, setState, useState, clearState} from '../../store'
 // Components
 import {
   DeletionPolicy,
+  EbsDeletionPolicy,
   EfsDeletionPolicy,
   FsxLustreDeletionPolicy,
   Storages,
@@ -609,9 +610,11 @@ export function EfsSettings({index}: any) {
   )
 }
 
-function EbsSettings({index}: any) {
+export function EbsSettings({index}: any) {
   const {t} = useTranslation()
-  const ebsPath = [...storagePath, index, 'EbsSettings']
+  const isDeletionPolicyEnabled = useFeatureFlag('ebs_deletion_policy')
+
+  const ebsPath = useMemo(() => [...storagePath, index, 'EbsSettings'], [index])
   const volumeTypePath = [...ebsPath, 'VolumeType']
   const volumeTypes = ['gp3', 'gp2', 'io1', 'io2', 'sc1', 'st1', 'standard']
   const defaultVolumeType = 'gp3'
@@ -621,7 +624,11 @@ function EbsSettings({index}: any) {
   const snapshotIdPath = [...ebsPath, 'SnapshotId']
 
   const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
-  const deletionPolicies = ['Delete', 'Retain', 'Snapshot']
+  const supportedDeletionPolicies: EbsDeletionPolicy[] = [
+    'Delete',
+    'Retain',
+    'Snapshot',
+  ]
 
   const volumeErrors = useState([...errorsPath, index, 'EbsSettings', 'Size'])
 
@@ -635,14 +642,14 @@ function EbsSettings({index}: any) {
   let validated = useState([...errorsPath, 'validated'])
 
   React.useEffect(() => {
-    const ebsPath = [...storagePath, index, 'EbsSettings']
     const volumeTypePath = [...ebsPath, 'VolumeType']
     const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
     const volumeSizePath = [...ebsPath, 'Size']
     if (volumeType === null) setState(volumeTypePath, defaultVolumeType)
-    if (deletionPolicy === null) setState(deletionPolicyPath, 'Delete')
+    if (isDeletionPolicyEnabled && deletionPolicy === null)
+      setState(deletionPolicyPath, DEFAULT_DELETION_POLICY)
     if (volumeSize === null) setState(volumeSizePath, 35)
-  }, [volumeType, volumeSize, deletionPolicy, index])
+  }, [volumeType, volumeSize, deletionPolicy, isDeletionPolicyEnabled, ebsPath])
 
   const toggleEncrypted = () => {
     const setEncrypted = !encrypted
@@ -669,15 +676,12 @@ function EbsSettings({index}: any) {
     ],
     [t],
   )
-
-  const deletionFooterLinks = useMemo(
-    () => [
-      {
-        title: t('wizard.storage.Ebs.deletionPolicy.policyLink.title'),
-        href: t('wizard.storage.Ebs.deletionPolicy.policyLink.href'),
-      },
-    ],
-    [t],
+  const onDeletionPolicyChange = useCallback(
+    (selectedDeletionPolicy: DeletionPolicy) => {
+      const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
+      setState(deletionPolicyPath, selectedDeletionPolicy)
+    },
+    [ebsPath],
   )
 
   return (
@@ -759,28 +763,13 @@ function EbsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
-        <FormField
-          label={t('wizard.storage.Ebs.deletionPolicy.label')}
-          info={
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Ebs.deletionPolicy.label')}
-                  description={t('wizard.storage.Ebs.deletionPolicy.help')}
-                  footerLinks={deletionFooterLinks}
-                />
-              }
-            />
-          }
-        >
-          <Select
-            selectedOption={strToOption(deletionPolicy || 'Delete')}
-            onChange={({detail}) => {
-              setState(deletionPolicyPath, detail.selectedOption.value)
-            }}
-            options={deletionPolicies.map(strToOption)}
+        {isDeletionPolicyEnabled && (
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
           />
-        </FormField>
+        )}
       </ColumnLayout>
     </SpaceBetween>
   )
