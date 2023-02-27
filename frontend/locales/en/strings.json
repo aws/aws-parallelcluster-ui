@@ -748,6 +748,8 @@
         },
         "useExisting": {
           "label": "External file system",
+          "empty": "No options",
+          "error": "You must specify an external file system ID.",
           "help": "Specify an external file system and mount it to all instances in the cluster.",
           "placeholder": "i.e. fsx-1234 or efs-1234",
           "fsxLink": {
