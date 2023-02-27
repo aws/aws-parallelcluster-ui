@@ -211,14 +211,14 @@ def ec2_action():
         ec2 = boto3.client("ec2")
 
     try:
-        instance_ids = request.args.get("instance_ids").split(",")
+        instance_id = request.args.get("instance_id")
     except:
         return {"message": "You must specify instances."}, 400
 
     if request.args.get("action") == "stop_instances":
-        resp = ec2.stop_instances(InstanceIds=instance_ids)
+        resp = ec2.stop_instances(InstanceIds=[instance_id])
     elif request.args.get("action") == "start_instances":
-        resp = ec2.start_instances(InstanceIds=instance_ids)
+        resp = ec2.start_instances(InstanceIds=[instance_id])
     else:
         return {"message": "You must specify an action."}, 400
 
