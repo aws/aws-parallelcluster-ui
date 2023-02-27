@@ -17,7 +17,7 @@ import mock from 'jest-mock-extended/lib/Mock'
 import {Store} from '@reduxjs/toolkit'
 import {Provider} from 'react-redux'
 import {setState} from '../../../store'
-import {FsxLustreSettings} from '../Storage'
+import {EfsSettings, FsxLustreSettings} from '../Storage'
 
 jest.mock('../../../store', () => {
   const originalModule = jest.requireActual('../../../store')
@@ -236,6 +236,84 @@ describe('Given a Lustre storage component', () => {
           'SharedStorage',
           0,
           'FsxLustreSettings',
+          'DeletionPolicy',
+        ],
+        expect.any(String),
+      )
+    })
+
+    it('should not allow users to change the DeletionPolicy', () => {
+      expect(
+        screen.queryByLabelText('wizard.storage.instance.deletionPolicy.label'),
+      ).toBeNull()
+    })
+  })
+})
+
+describe('given a component to display an Efs storage instance', () => {
+  beforeEach(() => {
+    ;(setState as jest.Mock).mockClear()
+  })
+
+  describe('when efs_deletion_policy is enabled', () => {
+    let screen: RenderResult
+
+    beforeEach(() => {
+      mockUseFeatureFlag.mockImplementation(flag => {
+        if (flag === 'efs_deletion_policy') return true
+      })
+      screen = render(
+        <MockProviders>
+          <EfsSettings index={0} />
+        </MockProviders>,
+      )
+    })
+
+    it('should initialize the DeletionPolicy to Retain', () => {
+      expect(setState).toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'SharedStorage',
+          0,
+          'EfsSettings',
+          'DeletionPolicy',
+        ],
+        'Retain',
+      )
+    })
+
+    it('should allow users to change the DeletionPolicy', () => {
+      expect(
+        screen.queryByLabelText('wizard.storage.instance.deletionPolicy.label'),
+      ).toBeTruthy()
+    })
+  })
+
+  describe('when efs_deletion_policy is not enabled', () => {
+    let screen: RenderResult
+
+    beforeEach(() => {
+      mockUseFeatureFlag.mockImplementation(flag => {
+        if (flag === 'efs_deletion_policy') return false
+      })
+      screen = render(
+        <MockProviders>
+          <EfsSettings index={0} />
+        </MockProviders>,
+      )
+    })
+
+    it('should not initialize the DeletionPolicy', () => {
+      expect(setState).not.toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'SharedStorage',
+          0,
+          'EfsSettings',
           'DeletionPolicy',
         ],
         expect.any(String),

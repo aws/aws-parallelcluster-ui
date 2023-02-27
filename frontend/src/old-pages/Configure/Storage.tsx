@@ -37,6 +37,7 @@ import {getState, setState, useState, clearState} from '../../store'
 // Components
 import {
   DeletionPolicy,
+  EfsDeletionPolicy,
   FsxLustreDeletionPolicy,
   Storages,
   StorageType,
@@ -457,12 +458,13 @@ export function FsxLustreSettings({index}: any) {
   )
 }
 
-function EfsSettings({index}: any) {
-  const efsPath = [...storagePath, index, 'EfsSettings']
+export function EfsSettings({index}: any) {
+  const efsPath = useMemo(() => [...storagePath, index, 'EfsSettings'], [index])
   const encryptedPath = [...efsPath, 'Encrypted']
   const kmsPath = [...efsPath, 'KmsKeyId']
   const performancePath = [...efsPath, 'PerformanceMode']
   const performanceModes = ['generalPurpose', 'maxIO']
+  const deletionPolicyPath = [...efsPath, 'DeletionPolicy']
   const {t} = useTranslation()
 
   const throughputModePath = [...efsPath, 'ThroughputMode']
@@ -473,15 +475,22 @@ function EfsSettings({index}: any) {
   let performanceMode = useState(performancePath) || 'generalPurpose'
   let throughputMode = useState(throughputModePath)
   let provisionedThroughput = useState(provisionedThroughputPath)
+  const deletionPolicy = useState(deletionPolicyPath)
+
+  const isDeletionPolicyEnabled = useFeatureFlag('efs_deletion_policy')
+  const supportedDeletionPolicies: EfsDeletionPolicy[] = ['Delete', 'Retain']
 
   React.useEffect(() => {
     const efsPath = [...storagePath, index, 'EfsSettings']
     const throughputModePath = [...efsPath, 'ThroughputMode']
     const provisionedThroughputPath = [...efsPath, 'ProvisionedThroughput']
+    const deletionPolicyPath = [...efsPath, 'DeletionPolicy']
     if (throughputMode === null) setState(throughputModePath, 'bursting')
     else if (throughputMode === 'bursting')
       clearState([provisionedThroughputPath])
-  }, [index, throughputMode])
+    if (isDeletionPolicyEnabled && deletionPolicy === null)
+      setState(deletionPolicyPath, DEFAULT_DELETION_POLICY)
+  }, [deletionPolicy, index, isDeletionPolicyEnabled, throughputMode])
 
   const toggleEncrypted = () => {
     const setEncrypted = !encrypted
@@ -507,6 +516,14 @@ function EfsSettings({index}: any) {
       },
     ],
     [t],
+  )
+
+  const onDeletionPolicyChange = useCallback(
+    (selectedDeletionPolicy: DeletionPolicy) => {
+      const deletionPolicyPath = [...efsPath, 'DeletionPolicy']
+      setState(deletionPolicyPath, selectedDeletionPolicy)
+    },
+    [efsPath],
   )
 
   return (
@@ -580,6 +597,13 @@ function EfsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
+        {isDeletionPolicyEnabled && (
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
+          />
+        )}
       </ColumnLayout>
     </SpaceBetween>
   )
