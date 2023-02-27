@@ -9,15 +9,18 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {render} from '@testing-library/react'
+import {render, RenderResult} from '@testing-library/react'
 import {I18nextProvider} from 'react-i18next'
 import i18n from 'i18next'
 import {initReactI18next} from 'react-i18next'
 import mock from 'jest-mock-extended/lib/Mock'
 import {Store} from '@reduxjs/toolkit'
 import {Provider} from 'react-redux'
-jest.mock('../../store', () => {
-  const originalModule = jest.requireActual('../../store')
+import {setState} from '../../../store'
+import {FsxLustreSettings} from '../Storage'
+
+jest.mock('../../../store', () => {
+  const originalModule = jest.requireActual('../../../store')
 
   return {
     __esModule: true, // Use it when dealing with esModules
@@ -26,11 +29,11 @@ jest.mock('../../store', () => {
   }
 })
 
-jest.mock('../../feature-flags/useFeatureFlag', () => ({
-  useFeatureFlag: () => true,
+const mockUseFeatureFlag = jest.fn()
+
+jest.mock('../../../feature-flags/useFeatureFlag', () => ({
+  useFeatureFlag: (...args: unknown[]) => mockUseFeatureFlag(...args),
 }))
-import {setState} from '../../store'
-import {FsxLustreSettings} from './Storage'
 
 i18n.use(initReactI18next).init({
   resources: {},
@@ -171,6 +174,78 @@ describe('Given a Lustre storage component', () => {
           expect.any(Number),
         )
       })
+    })
+  })
+
+  describe('when lustre_deletion_policy is enabled', () => {
+    let screen: RenderResult
+
+    beforeEach(() => {
+      mockUseFeatureFlag.mockImplementation(flag => {
+        if (flag === 'lustre_deletion_policy') return true
+      })
+      screen = render(
+        <MockProviders>
+          <FsxLustreSettings index={0} />
+        </MockProviders>,
+      )
+    })
+
+    it('should initialize the DeletionPolicy to Retain', () => {
+      expect(setState).toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'SharedStorage',
+          0,
+          'FsxLustreSettings',
+          'DeletionPolicy',
+        ],
+        'Retain',
+      )
+    })
+
+    it('should allow users to change the DeletionPolicy', () => {
+      expect(
+        screen.queryByLabelText('wizard.storage.instance.deletionPolicy.label'),
+      ).toBeTruthy()
+    })
+  })
+
+  describe('when lustre_deletion_policy is not enabled', () => {
+    let screen: RenderResult
+
+    beforeEach(() => {
+      mockUseFeatureFlag.mockImplementation(flag => {
+        if (flag === 'lustre_deletion_policy') return false
+      })
+      screen = render(
+        <MockProviders>
+          <FsxLustreSettings index={0} />
+        </MockProviders>,
+      )
+    })
+
+    it('should not initialize the DeletionPolicy', () => {
+      expect(setState).not.toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'SharedStorage',
+          0,
+          'FsxLustreSettings',
+          'DeletionPolicy',
+        ],
+        expect.any(String),
+      )
+    })
+
+    it('should not allow users to change the DeletionPolicy', () => {
+      expect(
+        screen.queryByLabelText('wizard.storage.instance.deletionPolicy.label'),
+      ).toBeNull()
     })
   })
 })

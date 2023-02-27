@@ -36,6 +36,8 @@ import {getState, setState, useState, clearState} from '../../store'
 
 // Components
 import {
+  DeletionPolicy,
+  FsxLustreDeletionPolicy,
   Storages,
   StorageType,
   STORAGE_TYPE_PROPS,
@@ -55,6 +57,7 @@ import {BaseChangeDetail} from '@cloudscape-design/components/input/interfaces'
 import {AddStorageForm} from './Storage/AddStorageForm'
 import {buildStorageEntries} from './Storage/buildStorageEntries'
 import {CheckboxWithHelpPanel} from './Components'
+import {DeletionPolicyFormField} from './Storage/DeletionPolicyFormField'
 
 // Constants
 const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
@@ -157,13 +160,19 @@ const storageThroughputsP2 = [
   1000,
 ]
 
+const DEFAULT_DELETION_POLICY: DeletionPolicy = 'Retain'
+
 export function FsxLustreSettings({index}: any) {
   const {t} = useTranslation()
   const isLustrePersistent2Active = useFeatureFlag('lustre_persistent2')
+  const isDeletionPolicyEnabled = useFeatureFlag('lustre_deletion_policy')
   const useExisting =
     useState(['app', 'wizard', 'storage', 'ui', index, 'useExisting']) || false
 
-  const fsxPath = [...storagePath, index, 'FsxLustreSettings']
+  const fsxPath = useMemo(
+    () => [...storagePath, index, 'FsxLustreSettings'],
+    [index],
+  )
   const storageCapacityPath = [...fsxPath, 'StorageCapacity']
   const lustreTypePath = [...fsxPath, 'DeploymentType']
   // support FSx Lustre PERSISTENT_2 only in >= 3.2.0
@@ -177,6 +186,7 @@ export function FsxLustreSettings({index}: any) {
   const importPathPath = [...fsxPath, 'ImportPath']
   const exportPathPath = [...fsxPath, 'ExportPath']
   const compressionPath = [...fsxPath, 'DataCompressionType']
+  const deletionPolicyPath = [...fsxPath, 'DeletionPolicy']
 
   const storageCapacity = useState(storageCapacityPath)
   const lustreType = useState(lustreTypePath)
@@ -184,11 +194,21 @@ export function FsxLustreSettings({index}: any) {
   const importPath = useState(importPathPath) || ''
   const exportPath = useState(exportPathPath) || ''
   const compression = useState(compressionPath)
+  const deletionPolicy = useState(deletionPolicyPath)
+
+  const supportedDeletionPolicies: FsxLustreDeletionPolicy[] = [
+    'Delete',
+    'Retain',
+  ]
 
   React.useEffect(() => {
     const fsxPath = [...storagePath, index, 'FsxLustreSettings']
     const storageCapacityPath = [...fsxPath, 'StorageCapacity']
     const lustreTypePath = [...fsxPath, 'DeploymentType']
+    const deletionPolicyPath = [...fsxPath, 'DeletionPolicy']
+    const storageThroughputPath = [...fsxPath, 'PerUnitStorageThroughput']
+    if (isDeletionPolicyEnabled && deletionPolicy === null)
+      setState(deletionPolicyPath, DEFAULT_DELETION_POLICY)
     if (storageCapacity === null && !useExisting)
       setState(storageCapacityPath, 1200)
     if (!storageThroughput && !useExisting) {
@@ -204,7 +224,6 @@ export function FsxLustreSettings({index}: any) {
         lustreTypePath,
         isLustrePersistent2Active ? 'PERSISTENT_2' : 'PERSISTENT_1',
       )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     storageCapacity,
     lustreType,
@@ -212,6 +231,8 @@ export function FsxLustreSettings({index}: any) {
     index,
     useExisting,
     isLustrePersistent2Active,
+    deletionPolicy,
+    isDeletionPolicyEnabled,
   ])
 
   const toggleCompression = () => {
@@ -241,6 +262,14 @@ export function FsxLustreSettings({index}: any) {
       capacityStep,
     ).toString()
   }
+
+  const onDeletionPolicyChange = useCallback(
+    (selectedDeletionPolicy: DeletionPolicy) => {
+      const deletionPolicyPath = [...fsxPath, 'DeletionPolicy']
+      setState(deletionPolicyPath, selectedDeletionPolicy)
+    },
+    [fsxPath],
+  )
 
   const throughputFooterLinks = useMemo(
     () => [
@@ -417,6 +446,13 @@ export function FsxLustreSettings({index}: any) {
           }
         />
       </SpaceBetween>
+      {isDeletionPolicyEnabled && (
+        <DeletionPolicyFormField
+          options={supportedDeletionPolicies}
+          value={deletionPolicy}
+          onDeletionPolicyChange={onDeletionPolicyChange}
+        />
+      )}
     </ColumnLayout>
   )
 }
