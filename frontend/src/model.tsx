@@ -689,10 +689,8 @@ function GetVersion() {
     })
 }
 
-function Ec2Action(instanceIds: any, action: any, callback?: Callback) {
-  let url = `manager/ec2_action?instance_ids=${instanceIds.join(
-    ',',
-  )}&action=${action}`
+function Ec2Action(instanceId: any, action: any, callback?: Callback) {
+  let url = `manager/ec2_action?instance_id=${instanceId}&action=${action}`
 
   request('post', url)
     .then((response: any) => {
