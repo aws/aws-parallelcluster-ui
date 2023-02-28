@@ -795,6 +795,7 @@
         }
       },
       "validation": {
+        "emptyName": "Queue name cannot be null",
         "instanceTypeUnique": "Instance types must be unique within a queue.",
         "instanceTypeMissing": "Select at least one instance type.",
         "selectSubnet": "You must select a subnet.",
@@ -868,6 +869,9 @@
       },
       "placementGroup": {
         "label": "Use placement group"
+      },
+      "name": {
+        "label": "Queue name"
       },
       "subnet": {
         "label": {
