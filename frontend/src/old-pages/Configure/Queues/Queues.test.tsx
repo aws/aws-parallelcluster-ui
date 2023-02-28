@@ -73,7 +73,7 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe("when they're more than 10", () => {
+  describe("when they're 10 or more", () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
@@ -103,7 +103,7 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe("when they're 10 or less", () => {
+  describe("when they're less than 10", () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
@@ -133,7 +133,7 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe('when the compute resources of a queue are more than 5', () => {
+  describe('when the compute resources of a queue are 5', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
@@ -170,7 +170,7 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe('when the compute resources of a queue are 5 or less', () => {
+  describe('when the compute resources of a queue are less then 5', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
