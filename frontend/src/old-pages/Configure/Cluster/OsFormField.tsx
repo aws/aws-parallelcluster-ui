@@ -9,37 +9,34 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as React from 'react'
+import {FormField, Tiles, TilesProps} from '@cloudscape-design/components'
+import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import {useCallback} from 'react'
 import {useTranslation} from 'react-i18next'
-import {findFirst} from '../../../util'
-import {FormField, Select} from '@cloudscape-design/components'
 import {setState, useState} from '../../../store'
-import {useCallback, useMemo} from 'react'
-import {OptionDefinition} from '@cloudscape-design/components/internal/components/option/interfaces'
-import {itemToOption} from '../Cluster'
+
+const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
+
+const SUPPORTED_OSES_LIST: TilesProps.TilesDefinition[] = [
+  {value: 'alinux2', label: 'Amazon Linux 2'},
+  {value: 'centos7', label: 'CentOS 7'},
+  {value: 'ubuntu1804', label: 'Ubuntu 18.04'},
+  {value: 'ubuntu2004', label: 'Ubuntu 20.04'},
+]
 
 export function OsFormField() {
   const {t} = useTranslation()
-  const oses: [string, string][] = [
-    ['alinux2', 'Amazon Linux 2'],
-    ['centos7', 'CentOS 7'],
-    ['ubuntu1804', 'Ubuntu 18.04'],
-    ['ubuntu2004', 'Ubuntu 20.04'],
-  ]
-  const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
-  const os = useState(osPath) || 'alinux2'
   const editing = useState(['app', 'wizard', 'editing'])
+  const selectedOsValue = useState(osPath) || 'alinux2'
 
-  const osesOptions = useMemo(() => oses.map(itemToOption), [oses])
+  const osesList = editing
+    ? SUPPORTED_OSES_LIST.map(os => ({...os, disabled: true}))
+    : SUPPORTED_OSES_LIST
 
-  const selectedOs: OptionDefinition | null = useMemo(() => {
-    const selectedOsTuple = findFirst(oses, (x: any) => x[0] === os) || null
-    return itemToOption(selectedOsTuple)
-  }, [os, oses])
-
-  const handleChange = useCallback(({detail}: any) => {
-    setState(osPath, detail.selectedOption.value)
-  }, [])
+  const handleChange: NonCancelableEventHandler<TilesProps.ChangeDetail> =
+    useCallback(({detail}) => {
+      setState(osPath, detail.value)
+    }, [])
 
   return (
     <>
@@ -47,13 +44,10 @@ export function OsFormField() {
         label={t('wizard.cluster.os.label')}
         description={t('wizard.cluster.os.description')}
       >
-        <Select
-          disabled={editing}
-          selectedOption={selectedOs}
+        <Tiles
+          items={osesList}
+          value={selectedOsValue}
           onChange={handleChange}
-          // @ts-expect-error TS(2322) FIXME: Type '({ label: Element; value: string; } | undefi... Remove this comment to see the full error message
-          options={osesOptions}
-          selectedAriaLabel={t('wizard.cluster.os.selectedAriaLabel')}
         />
       </FormField>
     </>
