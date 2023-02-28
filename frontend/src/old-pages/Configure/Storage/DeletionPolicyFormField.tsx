@@ -45,8 +45,16 @@ export function DeletionPolicyFormField({
   const deletionFooterLinks = useMemo(
     () => [
       {
-        title: t('wizard.storage.instance.deletionPolicy.policyLink.title'),
-        href: t('wizard.storage.instance.deletionPolicy.policyLink.href'),
+        title: t('wizard.storage.instance.deletionPolicy.fsxLink.title'),
+        href: t('wizard.storage.instance.deletionPolicy.fsxLink.href'),
+      },
+      {
+        title: t('wizard.storage.instance.deletionPolicy.efsLink.title'),
+        href: t('wizard.storage.instance.deletionPolicy.efsLink.href'),
+      },
+      {
+        title: t('wizard.storage.instance.deletionPolicy.ebsLink.title'),
+        href: t('wizard.storage.instance.deletionPolicy.ebsLink.href'),
       },
     ],
     [t],

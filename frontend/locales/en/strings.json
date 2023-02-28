@@ -759,8 +759,16 @@
         "deletionPolicy": {
           "label": "Deletion policy",
           "help": "Configure whether the volume should be retained, deleted, or snapshotted when a cluster is deleted.",
-          "policyLink": {
-            "title": "DeletionPolicy",
+          "fsxLink": {
+            "title": "FSx DeletionPolicy",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DeletionPolicy"
+          },
+          "efsLink": {
+            "title": "EFS DeletionPolicy",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-DeletionPolicy"
+          },
+          "ebsLink": {
+            "title": "EBS DeletionPolicy",
             "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-DeletionPolicy"
           }
         }
