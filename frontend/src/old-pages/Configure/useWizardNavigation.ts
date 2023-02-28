@@ -2,7 +2,7 @@ import {getState, setState, updateState, useState} from '../../store'
 // @ts-expect-error TS(7016) FIXME: Could not find a declaration file for module 'js-y... Remove this comment to see the full error message
 import jsyaml from 'js-yaml'
 
-const pages = ['source', 'cluster', 'headNode', 'storage', 'queues', 'create']
+const pages = ['source', 'cluster', 'headNode', 'queues', 'storage', 'create']
 
 export const useWizardNavigation = (validate: (page: string) => boolean) => {
   const currentPage = useState(['app', 'wizard', 'page']) || 'source'
