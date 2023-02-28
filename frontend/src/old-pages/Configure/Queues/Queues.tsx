@@ -250,7 +250,9 @@ function ComputeResources({queue, index, canUseEFA}: any) {
     <Container>
       <Header
         variant="h3"
-        description={t('wizard.queues.computeResource.header.description')}
+        description={t('wizard.queues.computeResource.header.description', {
+          limit: MAX_COMPUTE_RESOURCES,
+        })}
       >
         {t('wizard.queues.computeResource.header.title')}
       </Header>
@@ -579,7 +581,9 @@ function Queues() {
         header={
           <Header
             variant="h2"
-            description={t('wizard.queues.container.description')}
+            description={t('wizard.queues.container.description', {
+              limit: MAX_QUEUES,
+            })}
           >
             {t('wizard.queues.container.title')}
           </Header>
