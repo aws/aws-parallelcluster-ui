@@ -400,13 +400,13 @@ function Cluster() {
         <SpaceBetween direction="vertical" size="s">
           <RegionSelect />
           <OsFormField />
-          <VpcSelect />
           <CustomAMISettings
             basePath={configPath}
             appPath={['app', 'wizard']}
             errorsPath={errorsPath}
             validate={clusterValidate}
           />
+          <VpcSelect />
           {isMultiuserClusterActive && (
             <FormField>
               <Checkbox

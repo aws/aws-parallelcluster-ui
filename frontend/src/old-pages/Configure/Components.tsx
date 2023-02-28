@@ -269,7 +269,7 @@ function CustomAMISettings({basePath, appPath, errorsPath, validate}: any) {
   )
 
   return (
-    <>
+    <SpaceBetween size="xxs">
       <SpaceBetween direction="horizontal" size={'xxs'}>
         <Checkbox
           checked={customAmiEnabled}
@@ -311,7 +311,7 @@ function CustomAMISettings({basePath, appPath, errorsPath, validate}: any) {
           />
         </FormField>
       )}
-    </>
+    </SpaceBetween>
   )
 }
 
