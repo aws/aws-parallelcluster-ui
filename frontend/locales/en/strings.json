@@ -806,7 +806,7 @@
       },
       "container": {
         "title": "Queues",
-        "description": "Configure up to 5 queues (Slurm partitions)."
+        "description": "Configure up to {{limit}} queues (Slurm partitions)."
       },
       "slurmMemorySettings": {
         "container": {
@@ -843,7 +843,7 @@
       "computeResource": {
         "header": {
           "title": "Compute resources",
-          "description": "Configure up to 3 compute resources."
+          "description": "Configure up to {{limit}} compute resources."
         },
         "addComputeResource": "Add compute resource",
         "staticNodes": "Static nodes",

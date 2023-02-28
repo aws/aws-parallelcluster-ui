@@ -59,6 +59,9 @@ import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
 
+const MAX_COMPUTE_RESOURCES = 5
+const MAX_QUEUES = 10
+
 function itemToOption([value, label]: string[]) {
   return {
     value: value,
@@ -247,7 +250,9 @@ function ComputeResources({queue, index, canUseEFA}: any) {
     <Container>
       <Header
         variant="h3"
-        description={t('wizard.queues.computeResource.header.description')}
+        description={t('wizard.queues.computeResource.header.description', {
+          limit: MAX_COMPUTE_RESOURCES,
+        })}
       >
         {t('wizard.queues.computeResource.header.title')}
       </Header>
@@ -401,7 +406,9 @@ function Queue({index}: any) {
             actions={
               <SpaceBetween direction="horizontal" size="xs">
                 <Button
-                  disabled={queue.ComputeResources.length >= 3}
+                  disabled={
+                    queue.ComputeResources.length >= MAX_COMPUTE_RESOURCES
+                  }
                   onClick={addComputeResource}
                 >
                   {t('wizard.queues.computeResource.addComputeResource')}
@@ -574,7 +581,9 @@ function Queues() {
         header={
           <Header
             variant="h2"
-            description={t('wizard.queues.container.description')}
+            description={t('wizard.queues.container.description', {
+              limit: MAX_QUEUES,
+            })}
           >
             {t('wizard.queues.container.title')}
           </Header>
@@ -582,7 +591,7 @@ function Queues() {
       >
         <QueuesView />
         <Box float="right">
-          <Button disabled={queues.length >= 5} onClick={addQueue}>
+          <Button disabled={queues.length >= MAX_QUEUES} onClick={addQueue}>
             {t('wizard.queues.addQueueButton.label')}
           </Button>
         </Box>
