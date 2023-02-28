@@ -36,6 +36,10 @@ import {getState, setState, useState, clearState} from '../../store'
 
 // Components
 import {
+  DeletionPolicy,
+  EbsDeletionPolicy,
+  EfsDeletionPolicy,
+  FsxLustreDeletionPolicy,
   Storages,
   Storage,
   StorageType,
@@ -62,6 +66,7 @@ import {BaseChangeDetail} from '@cloudscape-design/components/input/interfaces'
 import {AddStorageForm} from './Storage/AddStorageForm'
 import {buildStorageEntries} from './Storage/buildStorageEntries'
 import {CheckboxWithHelpPanel} from './Components'
+import {DeletionPolicyFormField} from './Storage/DeletionPolicyFormField'
 
 // Constants
 const storagePath = ['app', 'wizard', 'config', 'SharedStorage']
@@ -152,13 +157,19 @@ const storageThroughputsP2 = [
   1000,
 ]
 
+const DEFAULT_DELETION_POLICY: DeletionPolicy = 'Retain'
+
 export function FsxLustreSettings({index}: any) {
   const {t} = useTranslation()
   const isLustrePersistent2Active = useFeatureFlag('lustre_persistent2')
+  const isDeletionPolicyEnabled = useFeatureFlag('lustre_deletion_policy')
   const useExisting =
     useState(['app', 'wizard', 'storage', 'ui', index, 'useExisting']) || false
 
-  const fsxPath = [...storagePath, index, 'FsxLustreSettings']
+  const fsxPath = useMemo(
+    () => [...storagePath, index, 'FsxLustreSettings'],
+    [index],
+  )
   const storageCapacityPath = [...fsxPath, 'StorageCapacity']
   const lustreTypePath = [...fsxPath, 'DeploymentType']
   // support FSx Lustre PERSISTENT_2 only in >= 3.2.0
@@ -172,6 +183,7 @@ export function FsxLustreSettings({index}: any) {
   const importPathPath = [...fsxPath, 'ImportPath']
   const exportPathPath = [...fsxPath, 'ExportPath']
   const compressionPath = [...fsxPath, 'DataCompressionType']
+  const deletionPolicyPath = [...fsxPath, 'DeletionPolicy']
 
   const storageCapacity = useState(storageCapacityPath)
   const lustreType = useState(lustreTypePath)
@@ -179,11 +191,21 @@ export function FsxLustreSettings({index}: any) {
   const importPath = useState(importPathPath) || ''
   const exportPath = useState(exportPathPath) || ''
   const compression = useState(compressionPath)
+  const deletionPolicy = useState(deletionPolicyPath)
+
+  const supportedDeletionPolicies: FsxLustreDeletionPolicy[] = [
+    'Delete',
+    'Retain',
+  ]
 
   React.useEffect(() => {
     const fsxPath = [...storagePath, index, 'FsxLustreSettings']
     const storageCapacityPath = [...fsxPath, 'StorageCapacity']
     const lustreTypePath = [...fsxPath, 'DeploymentType']
+    const deletionPolicyPath = [...fsxPath, 'DeletionPolicy']
+    const storageThroughputPath = [...fsxPath, 'PerUnitStorageThroughput']
+    if (isDeletionPolicyEnabled && deletionPolicy === null)
+      setState(deletionPolicyPath, DEFAULT_DELETION_POLICY)
     if (storageCapacity === null && !useExisting)
       setState(storageCapacityPath, 1200)
     if (!storageThroughput && !useExisting) {
@@ -199,7 +221,6 @@ export function FsxLustreSettings({index}: any) {
         lustreTypePath,
         isLustrePersistent2Active ? 'PERSISTENT_2' : 'PERSISTENT_1',
       )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     storageCapacity,
     lustreType,
@@ -207,6 +228,8 @@ export function FsxLustreSettings({index}: any) {
     index,
     useExisting,
     isLustrePersistent2Active,
+    deletionPolicy,
+    isDeletionPolicyEnabled,
   ])
 
   const toggleCompression = () => {
@@ -236,6 +259,14 @@ export function FsxLustreSettings({index}: any) {
       capacityStep,
     ).toString()
   }
+
+  const onDeletionPolicyChange = useCallback(
+    (selectedDeletionPolicy: DeletionPolicy) => {
+      const deletionPolicyPath = [...fsxPath, 'DeletionPolicy']
+      setState(deletionPolicyPath, selectedDeletionPolicy)
+    },
+    [fsxPath],
+  )
 
   const throughputFooterLinks = useMemo(
     () => [
@@ -391,6 +422,13 @@ export function FsxLustreSettings({index}: any) {
           />
         </FormField>
       )}
+      {isDeletionPolicyEnabled && (
+        <DeletionPolicyFormField
+          options={supportedDeletionPolicies}
+          value={deletionPolicy}
+          onDeletionPolicyChange={onDeletionPolicyChange}
+        />
+      )}
       <SpaceBetween direction="horizontal" size="xs">
         <Checkbox checked={compression !== null} onChange={toggleCompression}>
           <Trans i18nKey="wizard.storage.Fsx.compression.label" />
@@ -416,12 +454,13 @@ export function FsxLustreSettings({index}: any) {
   )
 }
 
-function EfsSettings({index}: any) {
-  const efsPath = [...storagePath, index, 'EfsSettings']
+export function EfsSettings({index}: any) {
+  const efsPath = useMemo(() => [...storagePath, index, 'EfsSettings'], [index])
   const encryptedPath = [...efsPath, 'Encrypted']
   const kmsPath = [...efsPath, 'KmsKeyId']
   const performancePath = [...efsPath, 'PerformanceMode']
   const performanceModes = ['generalPurpose', 'maxIO']
+  const deletionPolicyPath = [...efsPath, 'DeletionPolicy']
   const {t} = useTranslation()
 
   const throughputModePath = [...efsPath, 'ThroughputMode']
@@ -432,15 +471,22 @@ function EfsSettings({index}: any) {
   let performanceMode = useState(performancePath) || 'generalPurpose'
   let throughputMode = useState(throughputModePath)
   let provisionedThroughput = useState(provisionedThroughputPath)
+  const deletionPolicy = useState(deletionPolicyPath)
+
+  const isDeletionPolicyEnabled = useFeatureFlag('efs_deletion_policy')
+  const supportedDeletionPolicies: EfsDeletionPolicy[] = ['Delete', 'Retain']
 
   React.useEffect(() => {
     const efsPath = [...storagePath, index, 'EfsSettings']
     const throughputModePath = [...efsPath, 'ThroughputMode']
     const provisionedThroughputPath = [...efsPath, 'ProvisionedThroughput']
+    const deletionPolicyPath = [...efsPath, 'DeletionPolicy']
     if (throughputMode === null) setState(throughputModePath, 'bursting')
     else if (throughputMode === 'bursting')
       clearState([provisionedThroughputPath])
-  }, [index, throughputMode])
+    if (isDeletionPolicyEnabled && deletionPolicy === null)
+      setState(deletionPolicyPath, DEFAULT_DELETION_POLICY)
+  }, [deletionPolicy, index, isDeletionPolicyEnabled, throughputMode])
 
   const toggleEncrypted = () => {
     const setEncrypted = !encrypted
@@ -468,6 +514,14 @@ function EfsSettings({index}: any) {
     [t],
   )
 
+  const onDeletionPolicyChange = useCallback(
+    (selectedDeletionPolicy: DeletionPolicy) => {
+      const deletionPolicyPath = [...efsPath, 'DeletionPolicy']
+      setState(deletionPolicyPath, selectedDeletionPolicy)
+    },
+    [efsPath],
+  )
+
   return (
     <SpaceBetween direction="vertical" size="s">
       <ColumnLayout columns={2} borders="vertical">
@@ -480,31 +534,13 @@ function EfsSettings({index}: any) {
             options={performanceModes.map(strToOption)}
           />
         </FormField>
-        <SpaceBetween direction="vertical" size="xxs">
-          <CheckboxWithHelpPanel
-            checked={encrypted}
-            onChange={toggleEncrypted}
-            helpPanel={
-              <TitleDescriptionHelpPanel
-                title={t('wizard.storage.Efs.encrypted.label')}
-                description={t('wizard.storage.Efs.encrypted.help')}
-                footerLinks={encryptionFooterLinks}
-              />
-            }
-          >
-            {t('wizard.storage.Efs.encrypted.label')}
-          </CheckboxWithHelpPanel>
-          {encrypted ? (
-            <Input
-              value={kmsId}
-              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
-              onChange={({detail}) => {
-                setState(kmsPath, detail.value)
-              }}
-            />
-          ) : null}
-        </SpaceBetween>
-
+        {isDeletionPolicyEnabled && (
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
+          />
+        )}
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             helpPanel={
@@ -539,14 +575,40 @@ function EfsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
+            checked={encrypted}
+            onChange={toggleEncrypted}
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Efs.encrypted.label')}
+                description={t('wizard.storage.Efs.encrypted.help')}
+                footerLinks={encryptionFooterLinks}
+              />
+            }
+          >
+            {t('wizard.storage.Efs.encrypted.label')}
+          </CheckboxWithHelpPanel>
+          {encrypted ? (
+            <Input
+              value={kmsId}
+              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
+              onChange={({detail}) => {
+                setState(kmsPath, detail.value)
+              }}
+            />
+          ) : null}
+        </SpaceBetween>
       </ColumnLayout>
     </SpaceBetween>
   )
 }
 
-function EbsSettings({index}: any) {
+export function EbsSettings({index}: any) {
   const {t} = useTranslation()
-  const ebsPath = [...storagePath, index, 'EbsSettings']
+  const isDeletionPolicyEnabled = useFeatureFlag('ebs_deletion_policy')
+
+  const ebsPath = useMemo(() => [...storagePath, index, 'EbsSettings'], [index])
   const volumeTypePath = [...ebsPath, 'VolumeType']
   const volumeTypes = ['gp3', 'gp2', 'io1', 'io2', 'sc1', 'st1', 'standard']
   const defaultVolumeType = 'gp3'
@@ -556,7 +618,11 @@ function EbsSettings({index}: any) {
   const snapshotIdPath = [...ebsPath, 'SnapshotId']
 
   const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
-  const deletionPolicies = ['Delete', 'Retain', 'Snapshot']
+  const supportedDeletionPolicies: EbsDeletionPolicy[] = [
+    'Delete',
+    'Retain',
+    'Snapshot',
+  ]
 
   const volumeErrors = useState([...errorsPath, index, 'EbsSettings', 'Size'])
 
@@ -570,14 +636,14 @@ function EbsSettings({index}: any) {
   let validated = useState([...errorsPath, 'validated'])
 
   React.useEffect(() => {
-    const ebsPath = [...storagePath, index, 'EbsSettings']
     const volumeTypePath = [...ebsPath, 'VolumeType']
     const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
     const volumeSizePath = [...ebsPath, 'Size']
     if (volumeType === null) setState(volumeTypePath, defaultVolumeType)
-    if (deletionPolicy === null) setState(deletionPolicyPath, 'Delete')
+    if (isDeletionPolicyEnabled && deletionPolicy === null)
+      setState(deletionPolicyPath, DEFAULT_DELETION_POLICY)
     if (volumeSize === null) setState(volumeSizePath, 35)
-  }, [volumeType, volumeSize, deletionPolicy, index])
+  }, [volumeType, volumeSize, deletionPolicy, isDeletionPolicyEnabled, ebsPath])
 
   const toggleEncrypted = () => {
     const setEncrypted = !encrypted
@@ -604,15 +670,12 @@ function EbsSettings({index}: any) {
     ],
     [t],
   )
-
-  const deletionFooterLinks = useMemo(
-    () => [
-      {
-        title: t('wizard.storage.Ebs.deletionPolicy.policyLink.title'),
-        href: t('wizard.storage.Ebs.deletionPolicy.policyLink.href'),
-      },
-    ],
-    [t],
+  const onDeletionPolicyChange = useCallback(
+    (selectedDeletionPolicy: DeletionPolicy) => {
+      const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
+      setState(deletionPolicyPath, selectedDeletionPolicy)
+    },
+    [ebsPath],
   )
 
   return (
@@ -694,28 +757,13 @@ function EbsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
-        <FormField
-          label={t('wizard.storage.Ebs.deletionPolicy.label')}
-          info={
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Ebs.deletionPolicy.label')}
-                  description={t('wizard.storage.Ebs.deletionPolicy.help')}
-                  footerLinks={deletionFooterLinks}
-                />
-              }
-            />
-          }
-        >
-          <Select
-            selectedOption={strToOption(deletionPolicy || 'Delete')}
-            onChange={({detail}) => {
-              setState(deletionPolicyPath, detail.selectedOption.value)
-            }}
-            options={deletionPolicies.map(strToOption)}
+        {isDeletionPolicyEnabled && (
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
           />
-        </FormField>
+        )}
       </ColumnLayout>
     </SpaceBetween>
   )
