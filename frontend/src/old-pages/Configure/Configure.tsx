@@ -22,7 +22,7 @@ import {
 } from '@cloudscape-design/components'
 
 import {Source, SourceHelpPanel, sourceValidate} from './Source'
-import {Cluster, ClusterPropertiesHelpPanel, clusterValidate} from './Cluster'
+import {Cluster, clusterValidate} from './Cluster'
 import {
   HeadNode,
   HeadNodePropertiesHelpPanel,
@@ -251,7 +251,6 @@ function Configure() {
             title: t('wizard.cluster.title'),
             description: t('wizard.cluster.description'),
             content: <Cluster />,
-            info: <InfoLink helpPanel={<ClusterPropertiesHelpPanel />} />,
           },
           {
             title: t('wizard.headNode.title'),

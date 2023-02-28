@@ -23,6 +23,7 @@ import {
   CheckboxProps,
   Container,
   FormField,
+  Header,
   Select,
   SpaceBetween,
 } from '@cloudscape-design/components'
@@ -50,6 +51,7 @@ import {
   slurmAccountingValidateAndSetErrors,
   SlurmSettings,
 } from './SlurmSettings/SlurmSettings'
+import InfoLink from '../../components/InfoLink'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
@@ -355,7 +357,6 @@ function Cluster() {
   let clusterConfig = useState(['app', 'wizard', 'clusterConfigYaml']) || ''
   let wizardLoaded = useState(['app', 'wizard', 'loaded'])
   let multiUserEnabled = useState(['app', 'wizard', 'multiUser']) || false
-  let awsConfig = useState(['aws'])
   let defaultRegion = useState(['aws', 'region']) || ''
   const region = useState(['app', 'selectedRegion']) || defaultRegion
   const isMultiuserClusterActive = useFeatureFlag('multiuser_cluster')
@@ -396,8 +397,17 @@ function Cluster() {
 
   return (
     <SpaceBetween direction="vertical" size="l">
-      <Container>
-        <SpaceBetween direction="vertical" size="s">
+      <Container
+        header={
+          <Header
+            variant="h2"
+            info={<InfoLink helpPanel={<ClusterPropertiesHelpPanel />} />}
+          >
+            {t('wizard.cluster.clusterProperties.title')}
+          </Header>
+        }
+      >
+        <SpaceBetween direction="vertical" size="m">
           <RegionSelect />
           <OsFormField />
           <CustomAMISettings
@@ -459,4 +469,4 @@ const ClusterPropertiesHelpPanel = () => {
   )
 }
 
-export {Cluster, clusterValidate, ClusterPropertiesHelpPanel, itemToOption}
+export {Cluster, clusterValidate, itemToOption}

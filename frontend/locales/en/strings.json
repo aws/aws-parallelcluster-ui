@@ -349,6 +349,9 @@
     "cluster": {
       "title": "Cluster",
       "description": "Configure the settings that apply to all cluster resources.",
+      "clusterProperties": {
+        "title": "Cluster properties"
+      },
       "help": {
         "main": "<p>Configure your cluster environment by selecting the AWS Region, operating system, and VPC.</p><p>Choose <strong>Multiple users on a cluster</strong> to use your Active Directory for managing multiple cluster users.</p><p>Choose <strong>Custom Amazon Machine Image (AMI)</strong> to use your custom AWS ParallelCluster image.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "networkLink": {
