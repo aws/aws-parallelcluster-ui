@@ -14,7 +14,17 @@ jest.mock('../../../store', () => {
 })
 
 import {setState} from '../../../store'
-import {setSubnetsAndValidate} from './Queues'
+import {Queues, setSubnetsAndValidate} from './Queues'
+import {mock} from 'jest-mock-extended'
+import {Store} from '@reduxjs/toolkit'
+import {Provider} from 'react-redux'
+import {I18nextProvider} from 'react-i18next'
+import i18n from '../../../i18n'
+import {fireEvent, render} from '@testing-library/react'
+
+afterEach(() => {
+  ;(setState as jest.Mock).mockRestore()
+})
 
 describe('Given a list of instances', () => {
   const subject = allInstancesSupportEFA
@@ -49,11 +59,151 @@ describe('Given a list of instances', () => {
   })
 })
 
+const mockStore = mock<Store>()
+const MockProviders = (props: any) => (
+  <Provider store={mockStore}>
+    <I18nextProvider i18n={i18n}>{props.children}</I18nextProvider>
+  </Provider>
+)
+
 describe('Given a list of queues', () => {
-  const subject = createComputeResource
   describe('when creating a new compute resource', () => {
     it('should create it with a default instance type', () => {
-      expect(subject(0, 0).Instances).toHaveLength(1)
+      expect(createComputeResource(0, 0).Instances).toHaveLength(1)
+    })
+  })
+
+  describe("when they're more than 10", () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          wizard: {
+            config: {
+              Scheduling: {
+                SlurmQueues: new Array(11).map(index => ({
+                  Name: `queue-${index}`,
+                  ComputeResources: [],
+                })),
+              },
+            },
+          },
+        },
+      })
+    })
+    it('should not allow to add more queues', () => {
+      const {getByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const button = getByText('Add queue')
+      fireEvent.click(button)
+      expect(setState).not.toHaveBeenCalled()
+    })
+  })
+
+  describe("when they're 10 or less", () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          wizard: {
+            config: {
+              Scheduling: {
+                SlurmQueues: new Array(5).map(index => ({
+                  Name: `queue-${index}`,
+                  ComputeResources: [],
+                })),
+              },
+            },
+          },
+        },
+      })
+    })
+    it('should allow to add more queues', () => {
+      const {getByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const button = getByText('Add queue')
+      fireEvent.click(button)
+      expect(setState).toHaveBeenCalled()
+    })
+  })
+
+  describe('when the compute resources of a queue are more than 5', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          wizard: {
+            config: {
+              Scheduling: {
+                SlurmQueues: [
+                  {
+                    Name: 'queue-0',
+                    ComputeResources: new Array(5).map(index => ({
+                      Name: `cr-${index}`,
+                    })),
+                  },
+                ],
+              },
+            },
+          },
+        },
+      })
+    })
+    it('should not allow to add more compute resources', () => {
+      const {getByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const button = getByText('Add compute resource')
+      fireEvent.click(button)
+      expect(setState).not.toHaveBeenCalledWith(
+        ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
+        expect.anything(),
+      )
+    })
+  })
+
+  describe('when the compute resources of a queue are 5 or less', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          wizard: {
+            config: {
+              Scheduling: {
+                SlurmQueues: [
+                  {
+                    Name: 'queue-0',
+                    ComputeResources: new Array(2).map(index => ({
+                      Name: `cr-${index}`,
+                    })),
+                  },
+                ],
+              },
+            },
+          },
+        },
+      })
+    })
+    it('should allow to add more compute resources', () => {
+      const {getByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const button = getByText('Add compute resource')
+      fireEvent.click(button)
+      expect(setState).toHaveBeenCalledWith(
+        ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
+        expect.anything(),
+      )
     })
   })
 })
