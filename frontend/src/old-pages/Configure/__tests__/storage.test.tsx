@@ -29,12 +29,6 @@ jest.mock('../../../store', () => {
   }
 })
 
-const mockUseFeatureFlag = jest.fn()
-
-jest.mock('../../../feature-flags/useFeatureFlag', () => ({
-  useFeatureFlag: (...args: unknown[]) => mockUseFeatureFlag(...args),
-}))
-
 i18n.use(initReactI18next).init({
   resources: {},
   lng: 'en',
@@ -177,12 +171,16 @@ describe('Given a Lustre storage component', () => {
     })
   })
 
-  describe('when lustre_deletion_policy is enabled', () => {
+  describe('when the version is at least 3.3.0', () => {
     let screen: RenderResult
 
     beforeEach(() => {
-      mockUseFeatureFlag.mockImplementation(flag => {
-        if (flag === 'lustre_deletion_policy') return true
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.3.0',
+          },
+        },
       })
       screen = render(
         <MockProviders>
@@ -213,12 +211,16 @@ describe('Given a Lustre storage component', () => {
     })
   })
 
-  describe('when lustre_deletion_policy is not enabled', () => {
+  describe('when the version is lesser than 3.3.0', () => {
     let screen: RenderResult
 
     beforeEach(() => {
-      mockUseFeatureFlag.mockImplementation(flag => {
-        if (flag === 'lustre_deletion_policy') return false
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.2.0',
+          },
+        },
       })
       screen = render(
         <MockProviders>
@@ -255,12 +257,16 @@ describe('given a component to display an Efs storage instance', () => {
     ;(setState as jest.Mock).mockClear()
   })
 
-  describe('when efs_deletion_policy is enabled', () => {
+  describe('when the version is at least 3.3.0', () => {
     let screen: RenderResult
 
     beforeEach(() => {
-      mockUseFeatureFlag.mockImplementation(flag => {
-        if (flag === 'efs_deletion_policy') return true
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.3.0',
+          },
+        },
       })
       screen = render(
         <MockProviders>
@@ -291,12 +297,16 @@ describe('given a component to display an Efs storage instance', () => {
     })
   })
 
-  describe('when efs_deletion_policy is not enabled', () => {
+  describe('when the version is lesser than 3.3.0', () => {
     let screen: RenderResult
 
     beforeEach(() => {
-      mockUseFeatureFlag.mockImplementation(flag => {
-        if (flag === 'efs_deletion_policy') return false
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.2.0',
+          },
+        },
       })
       screen = render(
         <MockProviders>
@@ -328,17 +338,21 @@ describe('given a component to display an Efs storage instance', () => {
   })
 })
 
-describe('given a component to display an Efs storage instance', () => {
+describe('given a component to display an Ebs storage instance', () => {
   beforeEach(() => {
     ;(setState as jest.Mock).mockClear()
   })
 
-  describe('when ebs_deletion_policy is enabled', () => {
+  describe('when the version is at least 3.2.0', () => {
     let screen: RenderResult
 
     beforeEach(() => {
-      mockUseFeatureFlag.mockImplementation(flag => {
-        if (flag === 'ebs_deletion_policy') return true
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.2.0',
+          },
+        },
       })
       screen = render(
         <MockProviders>
@@ -369,12 +383,16 @@ describe('given a component to display an Efs storage instance', () => {
     })
   })
 
-  describe('when ebs_deletion_policy is not enabled', () => {
+  describe('when the version is lesser than 3.2.0', () => {
     let screen: RenderResult
 
     beforeEach(() => {
-      mockUseFeatureFlag.mockImplementation(flag => {
-        if (flag === 'ebs_deletion_policy') return false
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.1.0',
+          },
+        },
       })
       screen = render(
         <MockProviders>
