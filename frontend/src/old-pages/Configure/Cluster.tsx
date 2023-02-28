@@ -43,9 +43,9 @@ import {
 } from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
-import {useCallback, useMemo} from 'react'
-import {OptionDefinition} from '@cloudscape-design/components/internal/components/option/interfaces'
+import {useCallback} from 'react'
 import {SelectProps} from '@cloudscape-design/components/select/interfaces'
+import {OsFormField} from './Cluster/OsFormField'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
@@ -224,48 +224,6 @@ function initWizardState(
   )
 }
 
-function OsSelect() {
-  const {t} = useTranslation()
-  const oses: [string, string][] = [
-    ['alinux2', 'Amazon Linux 2'],
-    ['centos7', 'CentOS 7'],
-    ['ubuntu1804', 'Ubuntu 18.04'],
-    ['ubuntu2004', 'Ubuntu 20.04'],
-  ]
-  const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
-  const os = useState(osPath) || 'alinux2'
-  const editing = useState(['app', 'wizard', 'editing'])
-
-  const osesOptions = useMemo(() => oses.map(itemToOption), [oses])
-
-  const selectedOs: OptionDefinition | null = useMemo(() => {
-    const selectedOsTuple = findFirst(oses, (x: any) => x[0] === os) || null
-    return itemToOption(selectedOsTuple)
-  }, [os, oses])
-
-  const handleChange = useCallback(({detail}: any) => {
-    setState(osPath, detail.selectedOption.value)
-  }, [])
-
-  return (
-    <>
-      <FormField
-        label={t('wizard.cluster.os.label')}
-        description={t('wizard.cluster.os.description')}
-      >
-        <Select
-          disabled={editing}
-          selectedOption={selectedOs}
-          onChange={handleChange}
-          // @ts-expect-error TS(2322) FIXME: Type '({ label: Element; value: string; } | undefi... Remove this comment to see the full error message
-          options={osesOptions}
-          selectedAriaLabel={t('wizard.cluster.os.selectedAriaLabel')}
-        />
-      </FormField>
-    </>
-  )
-}
-
 function VpcSelect() {
   const {t} = useTranslation()
   const vpcs = useState(['aws', 'vpcs']) || []
@@ -432,7 +390,7 @@ function Cluster() {
       <Container>
         <SpaceBetween direction="vertical" size="s">
           <RegionSelect />
-          <OsSelect />
+          <OsFormField />
           <VpcSelect />
           <CustomAMISettings
             basePath={configPath}
