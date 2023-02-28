@@ -54,6 +54,7 @@ import {SubnetMultiSelect} from './SubnetMultiSelect'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
+import {validateQueueName, queueNameErrorsMapping} from './queues.validators'
 
 // Constants
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
@@ -100,6 +101,15 @@ function queueValidate(queueIndex: any) {
     'enabled',
   ])
   const customAmi = getState([...queuesPath, queueIndex, 'Image', 'CustomAmi'])
+
+  const queueName = getState([...queuesPath, queueIndex, 'Name'])
+  const [queueNameValid, error] = validateQueueName(queueName)
+  if (!queueNameValid) {
+    setState([...errorsPath, 'name'], i18next.t(queueNameErrorsMapping[error!]))
+    valid = false
+  } else {
+    clearState([...errorsPath, 'name'])
+  }
 
   const rootVolumeSizePath = [
     ...queuesPath,
@@ -286,7 +296,6 @@ const useAllocationStrategyOptions = () => {
 function Queue({index}: any) {
   const {t} = useTranslation()
   const queues = useState(queuesPath)
-  const [editingName, setEditingName] = React.useState(false)
   const computeResourceAdapter = useComputeResourceAdapter()
   const queue = useState([...queuesPath, index])
   const enablePlacementGroupPath = React.useMemo(
@@ -302,6 +311,7 @@ function Queue({index}: any) {
 
   const errorsPath = [...queuesErrorsPath, index]
   const subnetError = useState([...errorsPath, 'subnet'])
+  const nameError = useState([...errorsPath, 'name'])
 
   const allocationStrategy: AllocationStrategy = useState([
     ...queuesPath,
@@ -415,27 +425,21 @@ function Queue({index}: any) {
             }
           >
             <SpaceBetween direction="horizontal" size="xs">
-              {editingName ? (
+              <FormField
+                label={t('wizard.queues.name.label')}
+                errorText={nameError}
+              >
                 <Input
                   value={queue.Name}
                   onKeyDown={e => {
                     if (e.detail.key === 'Enter' || e.detail.key === 'Escape') {
-                      setEditingName(false)
                       e.stopPropagation()
+                      queueValidate(index)
                     }
                   }}
                   onChange={({detail}) => renameQueue(detail.value)}
                 />
-              ) : (
-                <span>
-                  {queue.Name}{' '}
-                  <Button
-                    variant="icon"
-                    onClick={_e => setEditingName(true)}
-                    iconName={'edit'}
-                  ></Button>
-                </span>
-              )}
+              </FormField>
             </SpaceBetween>
           </Header>
         </Box>
@@ -557,7 +561,7 @@ function Queues() {
       [
         ...(queues || []),
         {
-          Name: `queue${queues.length}`,
+          Name: `Queue ${queues.length}`,
           ...defaultAllocationStrategy,
           ComputeResources: [adapter.createComputeResource(queues.length, 0)],
         },
