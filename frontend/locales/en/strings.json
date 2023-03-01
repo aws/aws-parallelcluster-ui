@@ -440,8 +440,7 @@
         },
         "generateSSHKeys": {
           "name": "Generate SSH keys",
-          "description": "Defines whether AWS ParallelCluster generates SSH key pairs for cluster users after they log in to the head node for the first time.",
-          "help": "The key pair is saved to the user home directory at /home/username/.ssh/. Users can use the SSH key pair for subsequent logins to the cluster head node and compute nodes. With AWS ParallelCluster, logins to cluster compute nodes are disabled by design. If a user hasn't logged into the head node, SSH keys aren't generated and the user won't be able to log in to compute nodes."
+          "help": "<p>Defines whether AWS ParallelCluster generates SSH key pairs for cluster users after they log in to the head node for the first time.</p><p>The key pair is saved to the user home directory at /home/username/.ssh/.</p><p>Users can use the SSH key pair for subsequent logins to the cluster head node and compute nodes.</p><p>With AWS ParallelCluster, logins to cluster compute nodes are disabled by design. If a user hasn't logged into the head node, SSH keys aren't generated and the user won't be able to log in to compute nodes.</p>"
         },
         "advancedOptionsLabel": "Advanced options",
         "sssdParameters": {
