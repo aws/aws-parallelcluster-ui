@@ -33,6 +33,13 @@ export function allInstancesSupportEFA(
   return instances.every(instance => efaInstances.has(instance.InstanceType))
 }
 
+function isHpcInstanceSelected(instances: ComputeResourceInstance[]): boolean {
+  if (!instances || !instances.length) {
+    return false
+  }
+  return instances.some(instance => instance.InstanceType.startsWith('hpc'))
+}
+
 export function ComputeResource({
   index,
   queueIndex,
@@ -64,8 +71,11 @@ export function ComputeResource({
   ]
   const enableMemoryBasedScheduling = useState(memoryBasedSchedulingEnabledPath)
 
-  const disableHTPath = [...path, 'DisableSimultaneousMultithreading']
-  const disableHT = useState(disableHTPath)
+  const multithreadingDisabledPath = useMemo(
+    () => [...path, 'DisableSimultaneousMultithreading'],
+    [path],
+  )
+  const multithreadingDisabled = useState(multithreadingDisabledPath)
 
   const efaInstances = new Set<string>(useState(['aws', 'efa_instance_types']))
   const enableEFA = useState([...path, 'Efa', 'Enabled']) || false
@@ -139,10 +149,13 @@ export function ComputeResource({
     }
   }
 
-  const setDisableHT = (disable: any) => {
-    if (disable) setState(disableHTPath, disable)
-    else clearState(disableHTPath)
-  }
+  const setDisableHT = useCallback(
+    (disable: any) => {
+      if (disable) setState(multithreadingDisabledPath, disable)
+      else clearState(multithreadingDisabledPath)
+    },
+    [multithreadingDisabledPath],
+  )
 
   const setEnableEFA = useCallback(
     (enable: any) => {
@@ -157,11 +170,19 @@ export function ComputeResource({
     [enablePlacementGroupPath, path],
   )
 
+  const hpcInstanceSelected = isHpcInstanceSelected(instances)
+
   useEffect(() => {
     if (!canUseEFA) {
       setEnableEFA(false)
     }
   }, [canUseEFA, setEnableEFA])
+
+  useEffect(() => {
+    if (hpcInstanceSelected) {
+      setDisableHT(false)
+    }
+  }, [hpcInstanceSelected, setDisableHT])
 
   const setInstances: NonCancelableEventHandler<MultiselectProps.MultiselectChangeDetail> =
     useCallback(
@@ -240,9 +261,10 @@ export function ComputeResource({
         </ColumnLayout>
         <div style={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
           <Checkbox
-            checked={disableHT}
+            checked={multithreadingDisabled}
+            disabled={hpcInstanceSelected}
             onChange={_e => {
-              setDisableHT(!disableHT)
+              setDisableHT(!multithreadingDisabled)
             }}
             description={t(
               'wizard.queues.computeResource.disableHT.description',
