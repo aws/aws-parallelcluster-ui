@@ -169,7 +169,7 @@ function MultiUser() {
         </Header>
       }
     >
-      <SpaceBetween direction="vertical" size="xs">
+      <SpaceBetween direction="vertical" size="s">
         <HelpTextInput
           name={t('wizard.cluster.multiUser.domainName.name')}
           path={dsPath}
@@ -180,7 +180,6 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.domainName.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'DomainName'], detail.value)
-            multiUserValidate()
           }}
         />
         <HelpTextInput
@@ -193,7 +192,6 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.domainAddress.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'DomainAddr'], detail.value)
-            multiUserValidate()
           }}
         />
         <HelpTextInput
@@ -210,7 +208,6 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.passwordSecretArn.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'PasswordSecretArn'], detail.value)
-            multiUserValidate()
           }}
         />
         <HelpTextInput
@@ -227,13 +224,12 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.domainReadOnlyUser.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'DomainReadOnlyUser'], detail.value)
-            multiUserValidate()
           }}
         />
         <ExpandableSection
           headerText={t('wizard.cluster.multiUser.advancedOptionsLabel')}
         >
-          <SpaceBetween direction="vertical" size="xs">
+          <SpaceBetween direction="vertical" size="s">
             <HelpTextInput
               name={t('wizard.cluster.multiUser.caCertificate.name')}
               path={dsPath}
@@ -246,7 +242,6 @@ function MultiUser() {
               help={t('wizard.cluster.multiUser.caCertificate.help')}
               onChange={({detail}) => {
                 setState([...dsPath, 'LdapTlsCaCert'], detail.value)
-                multiUserValidate()
               }}
             />
             <HelpTextInput
@@ -261,7 +256,6 @@ function MultiUser() {
               help={t('wizard.cluster.multiUser.requireCertificate.help')}
               onChange={({detail}) => {
                 setState([...dsPath, 'LdapTlsReqCert'], detail.value)
-                multiUserValidate()
               }}
             />
             <HelpTextInput
@@ -278,7 +272,6 @@ function MultiUser() {
               help={t('wizard.cluster.multiUser.LDAPAccessFilter.help')}
               onChange={({detail}) => {
                 setState([...dsPath, 'LdapAccessFilter'], detail.value)
-                multiUserValidate()
               }}
             />
             <CheckboxWithHelpPanel
