@@ -233,6 +233,116 @@ describe('Given a queue', () => {
       expect(queueValidate).toHaveBeenCalledWith(queueIndex)
     })
   })
+
+  describe('when an HPC instance is selected', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        aws: {
+          subnets: [],
+        },
+        app: {
+          version: {
+            full: '3.4.0',
+          },
+          wizard: {
+            config: {
+              Scheduling: {
+                SlurmQueues: [
+                  {
+                    Name: `queue-0`,
+                    ComputeResources: [
+                      {
+                        Instances: [{InstanceType: 'hpc6a.48xlarge'}],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      })
+    })
+    it('should not let the user select multithreading options', () => {
+      const {getByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const multithreadingCheckbox = getByText('Turn off multithreading')
+      fireEvent.click(multithreadingCheckbox)
+      expect(setState).not.toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'Scheduling',
+          'SlurmQueues',
+          0,
+          'ComputeResources',
+          0,
+          'DisableSimultaneousMultithreading',
+        ],
+        true,
+      )
+    })
+  })
+
+  describe('when an HPC instance is not selected', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        aws: {
+          subnets: [],
+        },
+        app: {
+          version: {
+            full: '3.4.0',
+          },
+          wizard: {
+            config: {
+              Scheduling: {
+                SlurmQueues: [
+                  {
+                    Name: `queue-0`,
+                    ComputeResources: [
+                      {
+                        Instances: [{InstanceType: 'c5n.large'}],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      })
+    })
+    it('should let the user select multithreading options', () => {
+      const {getByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const multithreadingCheckbox = getByText('Turn off multithreading')
+      fireEvent.click(multithreadingCheckbox)
+      expect(setState).toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'Scheduling',
+          'SlurmQueues',
+          0,
+          'ComputeResources',
+          0,
+          'DisableSimultaneousMultithreading',
+        ],
+        true,
+      )
+    })
+  })
 })
 
 describe('Given a list of compute resources', () => {
