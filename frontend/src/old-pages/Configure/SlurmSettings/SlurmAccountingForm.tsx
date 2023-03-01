@@ -112,10 +112,6 @@ export const SlurmAccountingForm: React.FC<Props> = ({
   passwordPath,
   passwordErrorPath,
 }) => {
-  const isSlurmAccountingEnabled = useFeatureFlag('slurm_accounting')
-
-  if (!isSlurmAccountingEnabled) return null
-
   return (
     <>
       <ColumnLayout columns={2}>

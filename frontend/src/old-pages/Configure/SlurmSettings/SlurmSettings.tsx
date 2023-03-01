@@ -17,6 +17,7 @@ import {setState, getState, clearState} from '../../../store'
 import {SlurmAccountingForm} from './SlurmAccountingForm'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../../components/InfoLink'
+import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 
 const slurmSettingsPath = [
   'app',
@@ -78,6 +79,10 @@ function slurmAccountingSetErrors(
 
 function SlurmSettings() {
   const {t} = useTranslation()
+
+  const isSlurmAccountingEnabled = useFeatureFlag('slurm_accounting')
+
+  if (!isSlurmAccountingEnabled) return null
 
   return (
     <Container
