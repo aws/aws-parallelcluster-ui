@@ -20,23 +20,24 @@ import {
   FormField,
   Header,
   Input,
-  Link,
   SpaceBetween,
-  Checkbox,
+  CheckboxProps,
 } from '@cloudscape-design/components'
 
 // State
 import {setState, useState, getState, clearState} from '../../store'
 
 // Components
-import {HelpTextInput} from './Components'
+import {CheckboxWithHelpPanel, HelpTextInput} from './Components'
 import {Trans, useTranslation} from 'react-i18next'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
+import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'multiUser']
 const dsPath = ['app', 'wizard', 'config', 'DirectoryService']
+const generateSshKeysPath = [...dsPath, 'GenerateSshKeysForUsers']
 
 function multiUserValidate() {
   let valid = true
@@ -58,43 +59,6 @@ function multiUserValidate() {
   checkRequired('DomainReadOnlyUser')
 
   return valid
-}
-
-function HelpToggle({name, configKey, description, help, defaultValue}: any) {
-  let value = useState([...dsPath, configKey])
-  let error = useState([...errorsPath, configKey])
-
-  return (
-    <FormField
-      label={name}
-      errorText={error}
-      description={description}
-      info={
-        <InfoLink
-          ariaLabel={name}
-          helpPanel={
-            <TitleDescriptionHelpPanel title={name} description={help} />
-          }
-        />
-      }
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{flexGrow: 1}}>
-          <Checkbox
-            checked={value === null ? defaultValue : value}
-            onChange={({detail}) => setState([...dsPath, configKey], !value)}
-          />
-        </div>
-      </div>
-    </FormField>
-  )
 }
 
 function AdditionalSssdOptions() {
@@ -182,6 +146,18 @@ function AdditionalSssdOptions() {
 
 function MultiUser() {
   const {t} = useTranslation()
+
+  const generateSshKeys = useState(generateSshKeysPath)
+
+  const onGenerateSshKeysChange: NonCancelableEventHandler<CheckboxProps.ChangeDetail> =
+    React.useCallback(({detail}) => {
+      setState(generateSshKeysPath, detail.checked)
+    }, [])
+
+  React.useEffect(() => {
+    if (generateSshKeys === null) setState(generateSshKeysPath, true)
+  }, [generateSshKeys])
+
   return (
     <Container
       header={
@@ -193,7 +169,7 @@ function MultiUser() {
         </Header>
       }
     >
-      <SpaceBetween direction="vertical" size="xs">
+      <SpaceBetween direction="vertical" size="s">
         <HelpTextInput
           name={t('wizard.cluster.multiUser.domainName.name')}
           path={dsPath}
@@ -204,7 +180,6 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.domainName.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'DomainName'], detail.value)
-            multiUserValidate()
           }}
         />
         <HelpTextInput
@@ -217,7 +192,6 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.domainAddress.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'DomainAddr'], detail.value)
-            multiUserValidate()
           }}
         />
         <HelpTextInput
@@ -234,7 +208,6 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.passwordSecretArn.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'PasswordSecretArn'], detail.value)
-            multiUserValidate()
           }}
         />
         <HelpTextInput
@@ -251,13 +224,12 @@ function MultiUser() {
           help={t('wizard.cluster.multiUser.domainReadOnlyUser.help')}
           onChange={({detail}) => {
             setState([...dsPath, 'DomainReadOnlyUser'], detail.value)
-            multiUserValidate()
           }}
         />
         <ExpandableSection
           headerText={t('wizard.cluster.multiUser.advancedOptionsLabel')}
         >
-          <SpaceBetween direction="vertical" size="xs">
+          <SpaceBetween direction="vertical" size="s">
             <HelpTextInput
               name={t('wizard.cluster.multiUser.caCertificate.name')}
               path={dsPath}
@@ -270,7 +242,6 @@ function MultiUser() {
               help={t('wizard.cluster.multiUser.caCertificate.help')}
               onChange={({detail}) => {
                 setState([...dsPath, 'LdapTlsCaCert'], detail.value)
-                multiUserValidate()
               }}
             />
             <HelpTextInput
@@ -285,7 +256,6 @@ function MultiUser() {
               help={t('wizard.cluster.multiUser.requireCertificate.help')}
               onChange={({detail}) => {
                 setState([...dsPath, 'LdapTlsReqCert'], detail.value)
-                multiUserValidate()
               }}
             />
             <HelpTextInput
@@ -302,18 +272,22 @@ function MultiUser() {
               help={t('wizard.cluster.multiUser.LDAPAccessFilter.help')}
               onChange={({detail}) => {
                 setState([...dsPath, 'LdapAccessFilter'], detail.value)
-                multiUserValidate()
               }}
             />
-            <HelpToggle
-              name={t('wizard.cluster.multiUser.generateSSHKeys.name')}
-              configKey={'GenerateSshKeysForUsers'}
-              description={t(
-                'wizard.cluster.multiUser.generateSSHKeys.description',
-              )}
-              help={t('wizard.cluster.multiUser.generateSSHKeys.help')}
-              defaultValue={true}
-            />
+            <CheckboxWithHelpPanel
+              checked={generateSshKeys}
+              onChange={onGenerateSshKeysChange}
+              helpPanel={
+                <TitleDescriptionHelpPanel
+                  title={t('wizard.cluster.multiUser.generateSSHKeys.name')}
+                  description={
+                    <Trans i18nKey="wizard.cluster.multiUser.generateSSHKeys.help" />
+                  }
+                />
+              }
+            >
+              {t('wizard.cluster.multiUser.generateSSHKeys.name')}
+            </CheckboxWithHelpPanel>
             <AdditionalSssdOptions />
           </SpaceBetween>
         </ExpandableSection>
