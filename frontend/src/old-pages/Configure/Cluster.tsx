@@ -46,6 +46,10 @@ import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {useCallback} from 'react'
 import {SelectProps} from '@cloudscape-design/components/select/interfaces'
 import {OsFormField} from './Cluster/OsFormField'
+import {
+  slurmAccountingValidateAndSetErrors,
+  SlurmSettings,
+} from './SlurmSettings/SlurmSettings'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
@@ -90,6 +94,11 @@ function clusterValidate() {
     valid = false
   } else {
     clearState([...errorsPath, 'multiUser'])
+  }
+
+  const accountingValid = slurmAccountingValidateAndSetErrors()
+  if (!accountingValid) {
+    valid = false
   }
 
   return valid
@@ -386,7 +395,7 @@ function Cluster() {
   }
 
   return (
-    <SpaceBetween direction="vertical" size="s">
+    <SpaceBetween direction="vertical" size="l">
       <Container>
         <SpaceBetween direction="vertical" size="s">
           <RegionSelect />
@@ -413,6 +422,7 @@ function Cluster() {
         </SpaceBetween>
       </Container>
       {multiUserEnabled && <MultiUser />}
+      <SlurmSettings />
     </SpaceBetween>
   )
 }

@@ -51,10 +51,6 @@ import {
   ActionsEditor,
 } from './Components'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
-import {
-  slurmAccountingValidateAndSetErrors,
-  SlurmSettings,
-} from './SlurmSettings/SlurmSettings'
 import InfoLink from '../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
@@ -171,11 +167,6 @@ function headNodeValidate() {
     valid = false
   } else {
     clearState([...errorsPath, 'onUpdated'])
-  }
-
-  const accountingValid = slurmAccountingValidateAndSetErrors()
-  if (!accountingValid) {
-    valid = false
   }
 
   setState([...errorsPath, 'validated'], true)
@@ -522,7 +513,6 @@ function HeadNode() {
           </ExpandableSection>
         </SpaceBetween>
       </Container>
-      <SlurmSettings />
     </ColumnLayout>
   )
 }
