@@ -1135,7 +1135,7 @@ function Storage() {
   )
 
   return (
-    <SpaceBetween direction="vertical" size="xl">
+    <SpaceBetween direction="vertical" size="l">
       <Container>
         <SpaceBetween direction="vertical" size="m">
           {!hasAddedStorage && (
