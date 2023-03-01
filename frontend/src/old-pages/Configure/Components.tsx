@@ -270,27 +270,20 @@ function CustomAMISettings({basePath, appPath, errorsPath, validate}: any) {
 
   return (
     <SpaceBetween size="xxs">
-      <SpaceBetween direction="horizontal" size={'xxs'}>
-        <Checkbox
-          checked={customAmiEnabled}
-          disabled={editing}
-          onChange={toggleCustomAmi}
-        >
-          <Trans i18nKey="wizard.components.customAmi.label" />
-        </Checkbox>
-        <InfoLink
-          ariaLabel={t('wizard.components.customAmi.ariaLabel')}
-          helpPanel={
-            <TitleDescriptionHelpPanel
-              title={t('wizard.components.customAmi.helpPanel.title')}
-              description={t(
-                'wizard.components.customAmi.helpPanel.description',
-              )}
-              footerLinks={helpPanelFooter}
-            />
-          }
-        />
-      </SpaceBetween>
+      <CheckboxWithHelpPanel
+        checked={customAmiEnabled}
+        disabled={editing}
+        onChange={toggleCustomAmi}
+        helpPanel={
+          <TitleDescriptionHelpPanel
+            title={t('wizard.components.customAmi.helpPanel.title')}
+            description={t('wizard.components.customAmi.helpPanel.description')}
+            footerLinks={helpPanelFooter}
+          />
+        }
+      >
+        {t('wizard.components.customAmi.label')}
+      </CheckboxWithHelpPanel>
       {customAmiEnabled && (
         <FormField
           label={t('wizard.components.customAmi.suggestLabel')}
