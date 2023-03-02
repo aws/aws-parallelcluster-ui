@@ -88,7 +88,7 @@ describe('Given a function to validate if mutiple instance types have been selec
   describe('if default values are selected', () => {
     const queues: Queue[] = [
       {
-        Name: 'queue0',
+        Name: 'queue-0',
         AllocationStrategy: 'capacity-optimized',
         ComputeResources: [
           {
