@@ -221,7 +221,7 @@ function initWizardState(
     [...configPath, 'Scheduling', 'SlurmQueues'],
     [
       {
-        Name: 'queue0',
+        Name: 'queue-0',
         AllocationStrategy: isMultipleInstanceTypesActive
           ? 'lowest-price'
           : undefined,
