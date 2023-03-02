@@ -297,7 +297,7 @@ function ComputeResources({queue, index, canUseEFA}: any) {
           </SpaceBetween>
         }
       >
-        Compute resources
+        {t('wizard.queues.computeResource.header.title')}
       </Header>
       <ColumnLayout borders="horizontal">
         {queue.ComputeResources.map((computeResource: any, i: any) => (

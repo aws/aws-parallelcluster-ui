@@ -74,16 +74,24 @@ describe('Given a list of queues', () => {
   })
 
   describe("when they're 10 or more", () => {
+    const queues = new Array(11).fill(null).map((_, index) => ({
+      Name: `queue-${index}`,
+      ComputeResources: [],
+      ComputeSettings: {
+        LocalStorage: {
+          RootVolume: {
+            VolumeType: 'gp3',
+          },
+        },
+      },
+    }))
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
           wizard: {
             config: {
               Scheduling: {
-                SlurmQueues: new Array(11).map(index => ({
-                  Name: `queue-${index}`,
-                  ComputeResources: [],
-                })),
+                SlurmQueues: queues,
               },
             },
           },
@@ -104,16 +112,24 @@ describe('Given a list of queues', () => {
   })
 
   describe("when they're less than 10", () => {
+    const queues = new Array(5).fill(null).map((_, index) => ({
+      Name: `queue-${index}`,
+      ComputeResources: [],
+      ComputeSettings: {
+        LocalStorage: {
+          RootVolume: {
+            VolumeType: 'gp3',
+          },
+        },
+      },
+    }))
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
           wizard: {
             config: {
               Scheduling: {
-                SlurmQueues: new Array(5).map(index => ({
-                  Name: `queue-${index}`,
-                  ComputeResources: [],
-                })),
+                SlurmQueues: queues,
               },
             },
           },
@@ -143,7 +159,7 @@ describe('Given a list of queues', () => {
                 SlurmQueues: [
                   {
                     Name: 'queue-0',
-                    ComputeResources: new Array(5).map(index => ({
+                    ComputeResources: new Array(5).fill(null).map(index => ({
                       Name: `cr-${index}`,
                     })),
                   },
@@ -180,7 +196,7 @@ describe('Given a list of queues', () => {
                 SlurmQueues: [
                   {
                     Name: 'queue-0',
-                    ComputeResources: new Array(2).map(index => ({
+                    ComputeResources: new Array(2).fill(null).map(index => ({
                       Name: `cr-${index}`,
                     })),
                   },
