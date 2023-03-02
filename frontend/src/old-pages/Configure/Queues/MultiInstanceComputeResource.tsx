@@ -201,9 +201,18 @@ export function ComputeResource({
   return (
     <div className="compute-resource">
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <Box margin={{top: 'xs'}} textAlign="right">
-          {index > 0 && <Button onClick={remove}>Remove Resource</Button>}
-        </Box>
+        <ColumnLayout columns={2}>
+          <h4>{computeResource.Name}</h4>
+          <Box margin={{top: 'xs'}} textAlign="right">
+            {index > 0 && (
+              <Button onClick={remove}>
+                {t(
+                  'wizard.queues.computeResource.removeComputeResourceButton.label',
+                )}
+              </Button>
+            )}
+          </Box>
+        </ColumnLayout>
         <ColumnLayout columns={2}>
           <div style={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
             <FormField label={t('wizard.queues.computeResource.staticNodes')}>
@@ -294,7 +303,7 @@ export function createComputeResource(
   crIndex: number,
 ): MultiInstanceComputeResource {
   return {
-    Name: `queue${queueIndex}-compute-resource-${crIndex}`,
+    Name: `queue-${queueIndex}-cr-${crIndex}`,
     Instances: [
       {
         InstanceType: defaultInstanceType,
@@ -311,7 +320,7 @@ export function updateComputeResourcesNames(
 ): MultiInstanceComputeResource[] {
   return computeResources.map((cr, i) => ({
     ...cr,
-    Name: `${newQueueName}-compute-resource-${i}`,
+    Name: `${newQueueName}-cr-${i}`,
   }))
 }
 
