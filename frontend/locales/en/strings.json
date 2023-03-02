@@ -798,6 +798,8 @@
       },
       "validation": {
         "emptyName": "Queue name cannot be null",
+        "maxLengthName": "Name can be at most {{maxChars}} characters",
+        "forbiddenCharsName": "Name must start with a lowercase letter and can only contain lowercase letters, numbers and hyphens",
         "instanceTypeUnique": "Instance types must be unique within a queue.",
         "instanceTypeMissing": "Select at least one instance type.",
         "selectSubnet": "You must select a subnet.",
@@ -806,10 +808,6 @@
         "rootVolumeMinimum": "You must use an integer >= 35GB for root volume size.",
         "scriptWithArgs": "You must specify a script path if you specify args.",
         "customAmiSelect": "You must select an AMI ID if you use a custom AMI."
-      },
-      "container": {
-        "title": "Queues",
-        "description": "Configure up to {{limit}} queues (Slurm partitions)."
       },
       "slurmMemorySettings": {
         "container": {
@@ -847,6 +845,9 @@
         "header": {
           "title": "Compute resources",
           "description": "Configure up to {{limit}} compute resources."
+        },
+        "removeComputeResourceButton": {
+          "label": "Remove resource"
         },
         "addComputeResource": "Add compute resource",
         "staticNodes": "Static nodes",
