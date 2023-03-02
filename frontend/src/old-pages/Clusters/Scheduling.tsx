@@ -42,6 +42,7 @@ import {JobStatusIndicator} from '../../components/Status'
 import EmptyState from '../../components/EmptyState'
 import Loading from '../../components/Loading'
 import {useTranslation} from 'react-i18next'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 // Key:Value pair (label / children)
 const ValueWithLabel = ({
@@ -316,25 +317,27 @@ export default function ClusterScheduling() {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(jobs || [], {
-    filtering: {
-      empty: <EmptyState title="No jobs" subtitle="No jobs to display." />,
-      noMatch: (
-        <EmptyState
-          title="No matches"
-          subtitle="No jobs match the filters."
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              Clear filter
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    jobs || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: <EmptyState title="No jobs" subtitle="No jobs to display." />,
+        noMatch: (
+          <EmptyState
+            title="No matches"
+            subtitle="No jobs match the filters."
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                Clear filter
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <SpaceBetween direction="vertical" size="s">

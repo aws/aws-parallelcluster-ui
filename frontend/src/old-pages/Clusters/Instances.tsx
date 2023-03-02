@@ -32,6 +32,7 @@ import {useCollection} from '@cloudscape-design/collection-hooks'
 import {InstanceStatusIndicator} from '../../components/Status'
 import EmptyState from '../../components/EmptyState'
 import DateView from '../../components/date/DateView'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 function InstanceActions({instance}: {instance?: Instance}) {
   const {t} = useTranslation()
@@ -149,30 +150,32 @@ export default function ClusterInstances() {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(instances || [], {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('cluster.instances.filtering.empty.title')}
-          subtitle={t('cluster.instances.filtering.empty.subtitle')}
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('cluster.instances.filtering.noMatch.title')}
-          subtitle={t('cluster.instances.filtering.noMatch.subtitle')}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('cluster.instances.filtering.clearFilter')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    instances || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('cluster.instances.filtering.empty.title')}
+            subtitle={t('cluster.instances.filtering.empty.subtitle')}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('cluster.instances.filtering.noMatch.title')}
+            subtitle={t('cluster.instances.filtering.noMatch.subtitle')}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('cluster.instances.filtering.clearFilter')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <Table

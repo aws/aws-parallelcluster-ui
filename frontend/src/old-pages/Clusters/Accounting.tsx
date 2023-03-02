@@ -43,6 +43,7 @@ import {
 import InfoLink from '../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useTranslation} from 'react-i18next'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 // Key:Value pair (label / children)
 const ValueWithLabel = ({label, children}: any) => (
@@ -437,25 +438,27 @@ export default function ClusterAccounting() {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(jobs || [], {
-    filtering: {
-      empty: <EmptyState title="No jobs" subtitle="No jobs to display." />,
-      noMatch: (
-        <EmptyState
-          title="No matches"
-          subtitle="No jobs match the filters."
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              Clear filter
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    jobs || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: <EmptyState title="No jobs" subtitle="No jobs to display." />,
+        noMatch: (
+          <EmptyState
+            title="No matches"
+            subtitle="No jobs match the filters."
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                Clear filter
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   const selectJob = (job_id: any) => {
     setState(['clusters', 'index', clusterName, 'accounting', 'dialog'], true)
