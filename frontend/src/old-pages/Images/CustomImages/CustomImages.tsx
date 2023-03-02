@@ -37,6 +37,7 @@ import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {TFunction, Trans, useTranslation} from 'react-i18next'
 import InfoLink from '../../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
+import {extendCollectionsOptions} from '../../../shared/extendCollectionsOptions'
 
 const imageBuildPath = ['app', 'customImages', 'imageBuild']
 
@@ -75,35 +76,37 @@ function CustomImagesList() {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(images || [], {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('customImages.list.filtering.empty.title')}
-          subtitle={t('customImages.list.filtering.empty.subtitle')}
-          action={
-            <Button onClick={buildImage}>
-              {t('customImages.list.filtering.empty.action')}
-            </Button>
-          }
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('customImages.list.filtering.noMatch.title')}
-          subtitle={t('customImages.list.filtering.noMatch.subtitle')}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('customImages.list.filtering.noMatch.action')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    images || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('customImages.list.filtering.empty.title')}
+            subtitle={t('customImages.list.filtering.empty.subtitle')}
+            action={
+              <Button onClick={buildImage}>
+                {t('customImages.list.filtering.empty.action')}
+              </Button>
+            }
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('customImages.list.filtering.noMatch.title')}
+            subtitle={t('customImages.list.filtering.noMatch.subtitle')}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('customImages.list.filtering.noMatch.action')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <Table

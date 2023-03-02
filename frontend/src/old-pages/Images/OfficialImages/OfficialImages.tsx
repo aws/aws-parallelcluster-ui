@@ -30,6 +30,7 @@ import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {Trans, useTranslation} from 'react-i18next'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../../components/InfoLink'
+import {extendCollectionsOptions} from '../../../shared/extendCollectionsOptions'
 
 type Image = {
   amiId: string
@@ -67,31 +68,33 @@ function OfficialImagesList({images}: {images: Image[]}) {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(images || [], {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('officialImages.list.filtering.empty.title')}
-          subtitle={t('officialImages.list.filtering.empty.subtitle')}
-          action={<></>}
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('officialImages.list.filtering.noMatch.title')}
-          subtitle={t('officialImages.list.filtering.noMatch.subtitle')}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('officialImages.list.filtering.noMatch.action')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    images || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('officialImages.list.filtering.empty.title')}
+            subtitle={t('officialImages.list.filtering.empty.subtitle')}
+            action={<></>}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('officialImages.list.filtering.noMatch.title')}
+            subtitle={t('officialImages.list.filtering.noMatch.subtitle')}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('officialImages.list.filtering.noMatch.action')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <Table

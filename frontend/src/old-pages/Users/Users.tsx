@@ -40,6 +40,7 @@ import {User} from '../../types/users'
 import {Trans, useTranslation} from 'react-i18next'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 // Constants
 const usernamePath = ['app', 'users', 'newUser', 'Username']
@@ -105,31 +106,33 @@ export default function Users() {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(users || [], {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('users.list.filtering.empty.title')}
-          subtitle={t('users.list.filtering.empty.subtitle')}
-          action={<></>}
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('users.list.filtering.noMatch.title')}
-          subtitle={t('users.list.filtering.noMatch.subtitle')}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('users.list.filtering.noMatch.action')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    users || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('users.list.filtering.empty.title')}
+            subtitle={t('users.list.filtering.empty.subtitle')}
+            action={<></>}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('users.list.filtering.noMatch.title')}
+            subtitle={t('users.list.filtering.noMatch.subtitle')}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('users.list.filtering.noMatch.action')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   const deleteUser = useCallback(() => {
     DeleteUser(deletedUser, (returned_user: any) => {

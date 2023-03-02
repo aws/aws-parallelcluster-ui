@@ -41,6 +41,7 @@ import Layout from '../Layout'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 export function onClustersUpdate(
   selectedClusterName: ClusterName,
@@ -98,35 +99,37 @@ function ClusterList({clusters}: {clusters: ClusterInfoSummary[]}) {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(clusters || [], {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('cluster.list.filtering.empty.title')}
-          subtitle={t('cluster.list.filtering.empty.subtitle')}
-          action={
-            <Button onClick={configure}>
-              {t('cluster.list.filtering.empty.action')}
-            </Button>
-          }
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('cluster.list.filtering.noMatch.title')}
-          subtitle={t('cluster.list.filtering.noMatch.subtitle')}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('cluster.list.filtering.noMatch.action')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    clusters || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('cluster.list.filtering.empty.title')}
+            subtitle={t('cluster.list.filtering.empty.subtitle')}
+            action={
+              <Button onClick={configure}>
+                {t('cluster.list.filtering.empty.action')}
+              </Button>
+            }
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('cluster.list.filtering.noMatch.title')}
+            subtitle={t('cluster.list.filtering.noMatch.subtitle')}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('cluster.list.filtering.noMatch.action')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <Table
