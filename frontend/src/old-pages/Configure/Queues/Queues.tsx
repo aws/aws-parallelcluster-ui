@@ -65,7 +65,7 @@ const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
 
 const MAX_COMPUTE_RESOURCES = 5
-const MAX_QUEUES = 10
+export const MAX_QUEUES = 10
 
 function itemToOption([value, label]: string[]) {
   return {
@@ -117,9 +117,8 @@ function queueValidate(queueIndex: any) {
       errorMessage = i18next.t(queueNameErrorsMapping[error], {
         maxChars: QUEUE_NAME_MAX_LENGTH,
       })
-      console.log(errorMessage)
     } else {
-      errorMessage = i18next.t(queueNameErrorsMapping[error!])
+      errorMessage = i18next.t(queueNameErrorsMapping[error])
     }
     setState([...errorsPath, 'name'], errorMessage)
     valid = false
@@ -296,6 +295,9 @@ function ComputeResources({queue, index, canUseEFA}: any) {
             </Button>
           </SpaceBetween>
         }
+        description={t('wizard.queues.computeResource.header.description', {
+          limit: MAX_COMPUTE_RESOURCES,
+        })}
       >
         {t('wizard.queues.computeResource.header.title')}
       </Header>
@@ -431,7 +433,6 @@ function Queue({index}: any) {
     [index],
   )
 
-  const adapter = useComputeResourceAdapter()
   const defaultAllocationStrategy = useDefaultAllocationStrategy()
 
   const addQueue = () => {
@@ -442,7 +443,9 @@ function Queue({index}: any) {
         {
           Name: `queue-${queues.length}`,
           ...defaultAllocationStrategy,
-          ComputeResources: [adapter.createComputeResource(queues.length, 0)],
+          ComputeResources: [
+            computeResourceAdapter.createComputeResource(queues.length, 0),
+          ],
         },
       ],
     )
@@ -457,15 +460,14 @@ function Queue({index}: any) {
               variant="h2"
               actions={
                 <SpaceBetween direction="horizontal" size="xs">
-                  {index === 0 && (
+                  {index === 0 ? (
                     <Button
                       disabled={queues.length >= MAX_QUEUES}
                       onClick={addQueue}
                     >
                       {t('wizard.queues.addQueueButton.label')}
                     </Button>
-                  )}
-                  {index > 0 && (
+                  ) : (
                     <Button onClick={remove}>
                       {t('wizard.queues.removeQueueButton.label')}
                     </Button>
@@ -478,7 +480,7 @@ function Queue({index}: any) {
           }
         >
           <ColumnLayout borders="horizontal">
-            <Box>
+            <SpaceBetween direction="vertical" size="xs">
               <Box margin={{bottom: 'xs'}}>
                 <SpaceBetween direction="horizontal" size="xs">
                   <FormField
@@ -563,7 +565,7 @@ function Queue({index}: any) {
                   <Trans i18nKey="wizard.queues.placementGroup.label" />
                 </Checkbox>
               </Box>
-            </Box>
+            </SpaceBetween>
             <ComputeResources
               queue={queue}
               index={index}
