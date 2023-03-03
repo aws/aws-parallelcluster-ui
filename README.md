@@ -24,4 +24,4 @@ Please refer to our [Project Guidelines](PROJECT_GUIDELINES.md) before diving in
 
 This project is licensed under the Apache-2.0 License.
 
-[![PCUI ADRs](https://aws.github.io/aws-parallelcluster-ui/log4brains/badge.svg)](http://https://aws.github.io/aws-parallelcluster-ui/log4brains)
+[![PCUI ADRs](https://aws.github.io/aws-parallelcluster-ui/log4brains/badge.svg)](https://aws.github.io/aws-parallelcluster-ui/log4brains/)
