@@ -8,7 +8,7 @@ type QueueNameErrorKind = keyof typeof queueNameErrorsMapping
 
 export function validateQueueName(
   name: string,
-): [boolean, QueueNameErrorKind?] {
+): [true] | [false, QueueNameErrorKind] {
   if (!name) {
     return [false, 'empty']
   }
