@@ -1,6 +1,5 @@
-AWS ParallelCluster UI - Make HPC Easy
+AWS ParallelCluster UI
 ================================
-
 This project is a front-end for [AWS Parallel Cluster](https://github.com/aws/aws-parallelcluster)
 
 Quickly and easily create HPC cluster in AWS using AWS ParallelCluster UI. This UI uses the AWS ParallelCluster 3.x API to Create, Update and Delete Clusters as well as access, view logs, and build Amazon Machine Images (AMI's).
@@ -24,3 +23,5 @@ Please refer to our [Project Guidelines](PROJECT_GUIDELINES.md) before diving in
 ## License
 
 This project is licensed under the Apache-2.0 License.
+
+[![PCUI ADRs](https://aws.github.io/aws-parallelcluster-ui/log4brains/badge.svg)](http://https://aws.github.io/aws-parallelcluster-ui/log4brains)
