@@ -30,6 +30,7 @@ import {EC2Instance} from '../../types/instances'
 import {Region} from '../../types/base'
 import {Storages} from '../Configure/Storage.types'
 import {useTranslation} from 'react-i18next'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 function StorageId({storage}: any) {
   const {t} = useTranslation()
@@ -125,30 +126,32 @@ export default function Filesystems() {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(storage, {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('cluster.storage.noFilesystems')}
-          subtitle={t('cluster.storage.noFilesystemsToDisplay')}
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('cluster.storage.filter.noMatches')}
-          subtitle={t('cluster.storage.filter.noFilesystems')}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('cluster.storage.filter.clear')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    storage,
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('cluster.storage.noFilesystems')}
+            subtitle={t('cluster.storage.noFilesystemsToDisplay')}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('cluster.storage.filter.noMatches')}
+            subtitle={t('cluster.storage.filter.noFilesystems')}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('cluster.storage.filter.clear')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <>

@@ -38,6 +38,7 @@ import {ValueWithLabel} from '../../../components/ValueWithLabel'
 import EmptyState from '../../../components/EmptyState'
 import {truncate} from 'lodash'
 import {ReadonlyConfigView} from '../../../components/ConfigView'
+import {extendCollectionsOptions} from '../../../shared/extendCollectionsOptions'
 
 const customImagesPath = ['app', 'customImages']
 
@@ -205,34 +206,36 @@ function CustomImageTags({image}: CustomImageTagsProps) {
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(tags || [], {
-    filtering: {
-      empty: (
-        <EmptyState
-          title={t('customImages.imageDetails.tags.filtering.empty.title')}
-          subtitle={t(
-            'customImages.imageDetails.tags.filtering.empty.subtitle',
-          )}
-        />
-      ),
-      noMatch: (
-        <EmptyState
-          title={t('customImages.imageDetails.tags.filtering.noMatch.title')}
-          subtitle={t(
-            'customImages.imageDetails.tags.filtering.noMatch.subtitle',
-          )}
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              {t('customImages.imageDetails.tags.filtering.noMatch.action')}
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: {pageSize: 10},
-    sorting: {},
-    selection: {},
-  })
+  } = useCollection(
+    tags || [],
+    extendCollectionsOptions({
+      filtering: {
+        empty: (
+          <EmptyState
+            title={t('customImages.imageDetails.tags.filtering.empty.title')}
+            subtitle={t(
+              'customImages.imageDetails.tags.filtering.empty.subtitle',
+            )}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('customImages.imageDetails.tags.filtering.noMatch.title')}
+            subtitle={t(
+              'customImages.imageDetails.tags.filtering.noMatch.subtitle',
+            )}
+            action={
+              <Button onClick={() => actions.setFiltering('')}>
+                {t('customImages.imageDetails.tags.filtering.noMatch.action')}
+              </Button>
+            }
+          />
+        ),
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
 
   return (
     <Table
