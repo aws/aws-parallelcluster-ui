@@ -780,7 +780,7 @@
     },
     "queues": {
       "title": "Queues",
-      "description": "Configure the cluster queues.",
+      "description": "Configure up to {{limit}} cluster queues.",
       "help": {
         "main": "<p>Configure your cluster queues for job scheduling.</p><p>Add and remove queues and queue compute resources.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "schedulerLink": {

@@ -29,7 +29,12 @@ import {
   headNodeValidate,
 } from './HeadNode'
 import {Storage, StorageHelpPanel, storageValidate} from './Storage'
-import {Queues, QueuesHelpPanel, queuesValidate} from './Queues/Queues'
+import {
+  MAX_QUEUES,
+  Queues,
+  QueuesHelpPanel,
+  queuesValidate,
+} from './Queues/Queues'
 import {
   Create,
   CreateReviewHelpPanel,
@@ -260,7 +265,7 @@ function Configure() {
           },
           {
             title: t('wizard.queues.title'),
-            description: t('wizard.queues.description'),
+            description: t('wizard.queues.description', {limit: MAX_QUEUES}),
             content: <Queues />,
             info: <InfoLink helpPanel={<QueuesHelpPanel />} />,
           },
