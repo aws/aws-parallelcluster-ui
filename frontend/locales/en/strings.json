@@ -281,6 +281,20 @@
       "preferencesModalTheme": "Theme",
       "preferencesModalLightThemes": "Light themes",
       "preferencesModalDarkThemes": "Dark themes"
+    },
+    "fromClusterModal": {
+      "title": "Create Cluster From Another Cluster",
+      "description": "Use an existing cluster as starting point for the configuration of your new cluster. Only clusters whose version matches the version of AWS ParallelCluster can be selected.",
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create"
+      },
+      "clusterSelect": {
+        "placeholder": "Select a cluster",
+        "selectedAriaLabel": "Selected",
+        "empty": "No cluster available"
+      },
+      "closeAriaLabel": "Close"
     }
   },
   "wizard": {
