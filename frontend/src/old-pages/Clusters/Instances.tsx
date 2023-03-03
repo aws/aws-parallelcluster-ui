@@ -60,12 +60,12 @@ function InstanceActions({instance}: {instance?: Instance}) {
 
   const stopInstance = React.useCallback(() => {
     setStopPending(true)
-    Ec2Action([instance!.instanceId], 'stop_instances', refresh)
+    Ec2Action(instance!.instanceId, 'stop_instances', refresh)
   }, [instance, refresh])
 
   const startInstance = React.useCallback(() => {
     setStartPending(true)
-    Ec2Action([instance!.instanceId], 'start_instances', refresh)
+    Ec2Action(instance!.instanceId, 'start_instances', refresh)
   }, [instance, refresh])
 
   const navigateToLogTab = React.useCallback(

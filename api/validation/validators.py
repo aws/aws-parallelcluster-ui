@@ -16,15 +16,6 @@ PC_REGIONS = [
     'sa-east-1','us-gov-east-1','us-gov-west-1'
 ]
 
-
-def comma_splittable(arg: str):
-    try:
-        arg.split(',')
-        return True
-    except:
-        return False
-
-
 def is_alphanumeric_with_hyphen(arg: str):
     pattern = re.compile(r"^[a-zA-Z][a-zA-Z0-9-]+$")
     return bool(re.fullmatch(pattern, arg))
