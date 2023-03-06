@@ -44,16 +44,29 @@ Metadata:
         Parameters: 
           - AdminUserEmail
       - Label:
+          default: ParallelCluster UI
+        Parameters:
+          - PublicEcrImageUri
+      - Label:
           default: (Optional) External PCUI Cognito
         Parameters:
           - UserPoolId
           - UserPoolAuthDomain
           - SNSRole
       - Label:
-          default: (Optional) ParallelCluster API
+          default: ParallelCluster API
         Parameters:
           - Version
-          - PublicEcrImageUri
+      - Label:
+          default: (Optional) ImageBuilder Custom VPC
+        Parameters:
+          - ImageBuilderVpcId
+          - ImageBuilderSubnetId
+      - Label:
+          default: (Debugging only) Infrastructure S3 Bucket
+        Parameters:
+          - InfrastructureBucket
+
     ParameterLabels:
       AdminUserEmail:
         default: Admin's Email
