@@ -26,6 +26,7 @@ import Properties from './Properties'
 import Logs from './Logs'
 import Loading from '../../components/Loading'
 import {useTranslation} from 'react-i18next'
+import {Alert} from '@cloudscape-design/components'
 
 export default function ClusterTabs() {
   const {t} = useTranslation()
@@ -33,6 +34,7 @@ export default function ClusterTabs() {
   const clusterPath = ['clusters', 'index', clusterName]
   const cluster = useState(clusterPath)
   const selectedClusterName = useState(['app', 'clusters', 'selected'])
+  const apiVersion = useState(['app', 'version', 'full'])
 
   function isAccountingEnabled() {
     const accountingPath = [
@@ -50,49 +52,54 @@ export default function ClusterTabs() {
   let params = useParams()
 
   return cluster ? (
-    <Tabs
-      tabs={[
-        {
-          label: t('cluster.tabs.details'),
-          id: 'details',
-          content: <Properties />,
-        },
-        {
-          label: t('cluster.tabs.instances'),
-          id: 'instances',
-          content: <Instances />,
-        },
-        {
-          label: t('cluster.tabs.storage'),
-          id: 'storage',
-          content: <Filesystems />,
-        },
-        {
-          label: t('cluster.tabs.scheduling'),
-          id: 'scheduling',
-          content: <Scheduling />,
-        },
-        ...(accountingEnabled
-          ? [
-              {
-                label: t('cluster.tabs.accounting'),
-                id: 'accounting',
-                content: <Accounting />,
-              },
-            ]
-          : []),
-        {
-          label: t('cluster.tabs.stackEvents'),
-          id: 'stack-events',
-          content: <StackEvents />,
-        },
-        {label: t('cluster.tabs.logs'), id: 'logs', content: <Logs />},
-      ]}
-      onChange={({detail}) => {
-        navigate(`/clusters/${selectedClusterName}/${detail.activeTabId}`)
-      }}
-      activeTabId={params.tab || 'details'}
-    />
+    <>
+      {cluster.version !== apiVersion ? (
+        <Alert>{t('cluster.editAlert')}</Alert>
+      ) : null}
+      <Tabs
+        tabs={[
+          {
+            label: t('cluster.tabs.details'),
+            id: 'details',
+            content: <Properties />,
+          },
+          {
+            label: t('cluster.tabs.instances'),
+            id: 'instances',
+            content: <Instances />,
+          },
+          {
+            label: t('cluster.tabs.storage'),
+            id: 'storage',
+            content: <Filesystems />,
+          },
+          {
+            label: t('cluster.tabs.scheduling'),
+            id: 'scheduling',
+            content: <Scheduling />,
+          },
+          ...(accountingEnabled
+            ? [
+                {
+                  label: t('cluster.tabs.accounting'),
+                  id: 'accounting',
+                  content: <Accounting />,
+                },
+              ]
+            : []),
+          {
+            label: t('cluster.tabs.stackEvents'),
+            id: 'stack-events',
+            content: <StackEvents />,
+          },
+          {label: t('cluster.tabs.logs'), id: 'logs', content: <Logs />},
+        ]}
+        onChange={({detail}) => {
+          navigate(`/clusters/${selectedClusterName}/${detail.activeTabId}`)
+        }}
+        activeTabId={params.tab || 'details'}
+      />
+    </>
   ) : (
     <div style={{textAlign: 'center', paddingTop: '40px'}}>
       <Loading />
