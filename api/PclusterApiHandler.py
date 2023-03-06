@@ -532,7 +532,7 @@ def get_instance_types():
     filters = [
         {"Name": "current-generation", "Values": ["true"]},
         {"Name": "instance-type",
-         "Values": ["c5*", "c6*", "g4*", "g5*", "hpc*", "p3*", "p4*", "t2*", "t3*", "m6*", "r*"]},
+         "Values": ["c5*", "c6*", "c7*", "g4*", "g5*", "hpc*", "p3*", "p4*", "t2*", "t3*", "m6*", "r*"]},
     ]
     instance_paginator = ec2.get_paginator("describe_instance_types")
     instances_paginator = instance_paginator.paginate(Filters=filters)
