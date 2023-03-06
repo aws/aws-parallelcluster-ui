@@ -8,11 +8,7 @@ export const ValueWithLabel = ({
 }: PropsWithChildren<{label: string; info?: ReactElement}>) => (
   <div>
     <SpaceBetween direction="horizontal" size="s">
-      <Box
-        variant="awsui-key-label"
-        margin={{bottom: 'xxxs'}}
-        color="text-label"
-      >
+      <Box variant="awsui-key-label" color="text-label">
         {label}
       </Box>
       {info}

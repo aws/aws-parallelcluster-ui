@@ -75,6 +75,23 @@ export default function ClusterProperties() {
       <Container header={<Header variant="h3">Properties</Header>}>
         <ColumnLayout columns={3} variant="text-grid">
           <SpaceBetween size="l">
+            {cluster.clusterStatus !== ClusterStatus.CreateFailed && (
+              <ValueWithLabel
+                label={t('cluster.properties.configurationLabel')}
+              >
+                <Link
+                  href="#"
+                  onFollow={() =>
+                    setState(
+                      ['app', 'clusters', 'clusterConfig', 'dialog'],
+                      true,
+                    )
+                  }
+                >
+                  {t('cluster.properties.configurationLink')}
+                </Link>
+              </ValueWithLabel>
+            )}
             {headNode && headNode.publicIpAddress && (
               <ValueWithLabel
                 label={t('cluster.properties.sshcommand.label')}
@@ -130,51 +147,6 @@ export default function ClusterProperties() {
                 </div>
               </ValueWithLabel>
             )}
-            {cluster.clusterStatus !== ClusterStatus.CreateFailed && (
-              <ValueWithLabel
-                label={t('cluster.properties.configurationLabel')}
-              >
-                <Link
-                  href="#"
-                  onFollow={() =>
-                    setState(
-                      ['app', 'clusters', 'clusterConfig', 'dialog'],
-                      true,
-                    )
-                  }
-                >
-                  {t('cluster.properties.configurationLink')}
-                </Link>
-              </ValueWithLabel>
-            )}
-          </SpaceBetween>
-          <SpaceBetween size="l">
-            <ValueWithLabel label={t('cluster.properties.statusLabel')}>
-              <ClusterStatusIndicator cluster={cluster} />
-            </ValueWithLabel>
-            <ValueWithLabel
-              label={t('cluster.properties.computeFleetStatusLabel')}
-            >
-              <ComputeFleetStatusIndicator
-                status={cluster.computeFleetStatus}
-              />
-            </ValueWithLabel>
-            <ValueWithLabel label={t('cluster.properties.creationTimeLabel')}>
-              <DateView date={cluster.creationTime} />
-            </ValueWithLabel>
-          </SpaceBetween>
-          <SpaceBetween size="l">
-            <ValueWithLabel
-              label={t('cluster.properties.lastUpdatedTimeLabel')}
-            >
-              <DateView date={cluster.lastUpdatedTime} />
-            </ValueWithLabel>
-            <ValueWithLabel label={t('cluster.properties.regionLabel')}>
-              {cluster.region}
-            </ValueWithLabel>
-            <ValueWithLabel label={t('cluster.properties.versionLabel')}>
-              {cluster.version}
-            </ValueWithLabel>
             {headNode &&
               headNode.publicIpAddress &&
               headNode.publicIpAddress !== '' &&
@@ -230,6 +202,34 @@ export default function ClusterProperties() {
                   </Box>
                 </ValueWithLabel>
               )}
+          </SpaceBetween>
+          <SpaceBetween size="l">
+            <ValueWithLabel label={t('cluster.properties.statusLabel')}>
+              <ClusterStatusIndicator cluster={cluster} />
+            </ValueWithLabel>
+            <ValueWithLabel
+              label={t('cluster.properties.computeFleetStatusLabel')}
+            >
+              <ComputeFleetStatusIndicator
+                status={cluster.computeFleetStatus}
+              />
+            </ValueWithLabel>
+            <ValueWithLabel label={t('cluster.properties.versionLabel')}>
+              {cluster.version}
+            </ValueWithLabel>
+          </SpaceBetween>
+          <SpaceBetween size="l">
+            <ValueWithLabel label={t('cluster.properties.regionLabel')}>
+              {cluster.region}
+            </ValueWithLabel>
+            <ValueWithLabel label={t('cluster.properties.creationTimeLabel')}>
+              <DateView date={cluster.creationTime} />
+            </ValueWithLabel>
+            <ValueWithLabel
+              label={t('cluster.properties.lastUpdatedTimeLabel')}
+            >
+              <DateView date={cluster.lastUpdatedTime} />
+            </ValueWithLabel>
           </SpaceBetween>
         </ColumnLayout>
       </Container>
