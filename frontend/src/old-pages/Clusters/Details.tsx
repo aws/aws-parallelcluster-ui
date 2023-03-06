@@ -12,7 +12,6 @@ import React from 'react'
 import {useNavigate, useParams} from 'react-router-dom'
 
 import {getState, useState} from '../../store'
-import {getScripts} from './util'
 
 // UI Elements
 import Tabs from '@cloudscape-design/components/tabs'
@@ -33,12 +32,6 @@ export default function ClusterTabs() {
   const clusterName = useState(['app', 'clusters', 'selected'])
   const clusterPath = ['clusters', 'index', clusterName]
   const cluster = useState(clusterPath)
-  const customActions = useState([
-    ...clusterPath,
-    'config',
-    'HeadNode',
-    'CustomActions',
-  ])
   const selectedClusterName = useState(['app', 'clusters', 'selected'])
 
   function isAccountingEnabled() {
