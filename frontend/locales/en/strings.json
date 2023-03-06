@@ -73,6 +73,7 @@
     "ariaLabel": "Info"
   },
   "cluster": {
+    "editAlert": "This cluster cannot be edited as it was created using a different version of AWS ParallelCluster.",
     "tabs": {
       "details": "Details",
       "instances": "Instances",
