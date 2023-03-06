@@ -28,7 +28,7 @@ Parameters:
     Type: String
     Default: ''
   ImageBuilderSubnetId:
-    Description: (Optional) Select the subnet to use for building the container images. If not selected, Subnet in the default VPC will be used.
+    Description: (Optional) Select the subnet to use for building the container images (public subnets only). If not selected, Subnet in the default VPC will be used.
     Type: String
     Default: ''
   InfrastructureBucket:
@@ -44,16 +44,29 @@ Metadata:
         Parameters: 
           - AdminUserEmail
       - Label:
+          default: ParallelCluster UI
+        Parameters:
+          - PublicEcrImageUri
+      - Label:
           default: (Optional) External PCUI Cognito
         Parameters:
           - UserPoolId
           - UserPoolAuthDomain
           - SNSRole
       - Label:
-          default: (Optional) ParallelCluster API
+          default: ParallelCluster API
         Parameters:
           - Version
-          - PublicEcrImageUri
+      - Label:
+          default: (Optional) ImageBuilder Custom VPC
+        Parameters:
+          - ImageBuilderVpcId
+          - ImageBuilderSubnetId
+      - Label:
+          default: (Debugging only) Infrastructure S3 Bucket
+        Parameters:
+          - InfrastructureBucket
+
     ParameterLabels:
       AdminUserEmail:
         default: Admin's Email
