@@ -9,39 +9,62 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react'
-import {getState, setState} from '../store'
+import {useRef, useCallback, ChangeEventHandler, useEffect} from 'react'
 
-export function HiddenUploader({callbackPath, handleData, handleCancel}: any) {
-  const hiddenFileInput = React.useRef(null)
-  const handleClick = React.useCallback(
+interface Props {
+  open: boolean
+  onChange: (data: string) => void
+  onDismiss: () => void
+}
+
+export function HiddenFileUpload({onChange, onDismiss, open}: Props) {
+  const hiddenFileInput = useRef<HTMLInputElement>(null)
+
+  const handleClick = useCallback(() => {
+    if (!hiddenFileInput?.current) return
+
+    hiddenFileInput.current.click()
+  }, [hiddenFileInput])
+
+  const onFileChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     event => {
-      // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
-      hiddenFileInput.current.click()
+      const {
+        target: {files},
+      } = event
+
+      if (!files || files.length < 1) {
+        return
+      }
+
+      const [file] = files
+      const reader = new FileReader()
+      reader.onload = function () {
+        onChange(reader.result as string)
+      }
+      reader.readAsText(file)
     },
-    [hiddenFileInput],
+    [onChange],
   )
 
-  const handleChange = (event: any) => {
-    var file = event.target.files[0]
-    var reader = new FileReader()
-    reader.onload = function (e) {
-      // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
-      handleData(e.target.result)
+  useEffect(() => {
+    if (open) {
+      handleClick()
+      /**
+       * Immediately dismiss the selector,
+       * to allow callers to reset the `open` prop.
+       *
+       * This is needed as there is no way to intercept
+       * actual cancel event on the brower's file picker
+       */
+      onDismiss()
     }
-    reader.readAsText(file)
-  }
-
-  React.useEffect(() => {
-    if (!getState(callbackPath) || getState(callbackPath) !== handleClick)
-      setState(callbackPath, handleClick)
-  }, [callbackPath, handleClick])
+  }, [handleClick, onDismiss, open])
 
   return (
     <input
       type="file"
       ref={hiddenFileInput}
-      onChange={handleChange}
+      onInput={onFileChange}
       style={{display: 'none'}}
     />
   )
