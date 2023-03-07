@@ -11,16 +11,19 @@
 import { expect, test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
 
+const CLUSTER_NAME = Math.random().toString(20).substring(8)
+
 test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () => {
   test('a user should be able to login, navigate till the end of the cluster creation wizard, and perform a dry-run successfully', async ({ page }) => {
     await visitAndLogin(page)
   
     await page.getByRole('button', { name: 'Create cluster' }).first().click();
-    await expect(page.getByRole('heading', { name: 'Cluster name' })).toBeVisible()
-    await page.getByRole('textbox', { name: 'Enter your cluster name' }).fill("testcluster");
+    
+    await expect(page.getByRole('heading', { name: 'Source' })).toBeVisible()
     await page.getByRole('button', { name: 'Next' }).click();
     
     await expect(page.getByRole('heading', { name: 'Cluster', exact: true })).toBeVisible()
+    await page.getByPlaceholder('Enter your cluster name').fill(CLUSTER_NAME);
     await page.getByRole('button', { name: 'Select a VPC' }).click();
     await page.getByText(/vpc-.*/).first().click();
     await page.getByRole('button', { name: 'Next' }).click();
