@@ -21,8 +21,6 @@ import {
   GetConfiguration,
   GetDcvSession,
   DeleteCluster,
-  DescribeCluster,
-  ListClusters,
 } from '../../model'
 import {findFirst, clusterDefaultUser} from '../../util'
 import {loadTemplate} from '../Configure/util'
