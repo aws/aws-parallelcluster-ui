@@ -240,6 +240,7 @@
         "filesystem": "File system",
         "dcv": "DCV"
       },
+      "actionsLabel": "Actions",
       "filtering": {
         "empty": {
           "title": "No clusters",
