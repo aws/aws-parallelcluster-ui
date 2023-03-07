@@ -34,7 +34,7 @@ import {
 } from '@cloudscape-design/components'
 
 // Components
-import {HiddenUploader} from '../../components/FileChooser'
+import {DeprecatedHiddenUploader} from '../../components/FileChooser'
 import Loading from '../../components/Loading'
 
 // Types
@@ -294,7 +294,7 @@ function Source() {
                   },
                 ]}
               />
-              <HiddenUploader
+              <DeprecatedHiddenUploader
                 callbackPath={['app', 'wizard', 'source', 'upload']}
                 handleData={handleUpload}
               />
