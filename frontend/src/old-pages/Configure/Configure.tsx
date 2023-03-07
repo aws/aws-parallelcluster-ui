@@ -21,7 +21,6 @@ import {
   WizardProps,
 } from '@cloudscape-design/components'
 
-import {Source, SourceHelpPanel, sourceValidate} from './Source'
 import {Cluster, clusterValidate} from './Cluster'
 import {
   HeadNode,
@@ -50,13 +49,16 @@ import Layout from '../Layout'
 import {useWizardSectionChangeLog} from '../../navigation/useWizardSectionChangeLog'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import i18next from 'i18next'
-import {pages, useWizardNavigation} from './useWizardNavigation'
+import {
+  INITIAL_WIZARD_PAGE,
+  pages,
+  useWizardNavigation,
+} from './useWizardNavigation'
 import {ComputeFleetStatus} from '../../types/clusters'
 import {useClusterPoll} from '../../components/useClusterPoll'
 import InfoLink from '../../components/InfoLink'
 
 const validators: {[key: string]: (...args: any[]) => boolean} = {
-  source: sourceValidate,
   cluster: clusterValidate,
   headNode: headNodeValidate,
   storage: storageValidate,
@@ -73,9 +75,9 @@ function wizardShow(navigate: any) {
     clearState(['app', 'wizard', 'clusterConfigYaml'])
     clearState(['app', 'wizard', 'loaded'])
     setState(['app', 'wizard', 'editing'], false)
-    setState(['app', 'wizard', 'page'], 'source')
+    setState(['app', 'wizard', 'page'], INITIAL_WIZARD_PAGE)
   }
-  if (!page) setState(['app', 'wizard', 'page'], 'source')
+  if (!page) setState(['app', 'wizard', 'page'], INITIAL_WIZARD_PAGE)
   navigate('/configure')
 }
 const loadingPath = ['app', 'wizard', 'source', 'loading']
@@ -103,7 +105,7 @@ function Configure() {
   const open = useState(['app', 'wizard', 'dialog'])
   const clusterName = useState(['app', 'wizard', 'clusterName'])
   const editing = useState(['app', 'wizard', 'editing'])
-  const currentPage = useState(['app', 'wizard', 'page']) || 'source'
+  const currentPage = useState(['app', 'wizard', 'page']) || INITIAL_WIZARD_PAGE
   const [refreshing, setRefreshing] = React.useState(false)
   let navigate = useNavigate()
 
@@ -174,7 +176,7 @@ function Configure() {
   const showSecondaryActions = () => {
     return (
       <SpaceBetween direction="horizontal" size="xs">
-        {currentPage !== 'source' && currentPage !== 'create' && (
+        {currentPage !== 'create' && (
           <Button
             loading={refreshing}
             onClick={handleRefresh}
@@ -246,12 +248,6 @@ function Configure() {
         secondaryActions={showSecondaryActions()}
         isLoadingNextStep={refreshing}
         steps={[
-          {
-            title: t('wizard.source.title'),
-            description: t('wizard.source.description'),
-            content: <Source />,
-            info: <InfoLink helpPanel={<SourceHelpPanel />} />,
-          },
           {
             title: t('wizard.cluster.title'),
             description: t('wizard.cluster.description'),
