@@ -21,8 +21,6 @@ import {
   GetConfiguration,
   GetDcvSession,
   DeleteCluster,
-  DescribeCluster,
-  ListClusters,
 } from '../../model'
 import {findFirst, clusterDefaultUser} from '../../util'
 import {loadTemplate} from '../Configure/util'
@@ -38,6 +36,9 @@ import {
 } from '../../components/DeleteDialog'
 import {StopDialog, stopComputeFleet} from './StopDialog'
 import {wizardShow} from '../Configure/Configure'
+import {ButtonDropdown} from '@cloudscape-design/components'
+import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import {ButtonDropdownProps} from '@cloudscape-design/components/button-dropdown/interfaces'
 
 export default function Actions() {
   const clusterName = useState(['app', 'clusters', 'selected'])
@@ -160,7 +161,7 @@ export default function Actions() {
     [cluster],
   )
 
-  const onFileSystemClick = React.useCallback(() => {
+  const openFileSystem = React.useCallback(() => {
     ssmFilesystem(headNode.instanceId)
   }, [headNode?.instanceId, ssmFilesystem])
 
@@ -171,6 +172,44 @@ export default function Actions() {
   const onDcvClick = React.useCallback(() => {
     dcvConnect(headNode)
   }, [dcvConnect, headNode])
+
+  const onItemClick: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> =
+    React.useCallback(
+      item => {
+        switch (item.detail.id) {
+          case 'filesystem':
+            openFileSystem()
+            break
+          case 'edit':
+            editConfiguration()
+            break
+          case 'delete':
+            showDialog('deleteCluster')
+            break
+        }
+      },
+      [openFileSystem, editConfiguration],
+    )
+
+  const clusterActionsGroupButtonItems = React.useMemo(() => {
+    return [
+      {
+        id: 'filesystem',
+        text: t('cluster.list.actions.filesystem'),
+        disabled: isSsmDisabled,
+      },
+      {
+        id: 'edit',
+        text: t('cluster.list.actions.edit'),
+        disabled: isEditDisabled,
+      },
+      {
+        id: 'delete',
+        text: t('cluster.list.actions.delete'),
+        disabled: isDeleteDisabled,
+      },
+    ]
+  }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
   return (
     <div style={{marginLeft: '20px'}}>
@@ -183,44 +222,38 @@ export default function Actions() {
       </DeleteDialog>
       <StopDialog clusterName={clusterName} />
       <SpaceBetween direction="horizontal" size="xs">
-        <Button
-          disabled={isEditDisabled}
-          variant="normal"
-          onClick={editConfiguration}
-        >
-          {t('cluster.list.actions.edit')}
-        </Button>
-        <Button disabled={isSsmDisabled} onClick={onFileSystemClick}>
-          {t('cluster.list.actions.filesystem')}
-        </Button>
         <Button disabled={isSsmDisabled} onClick={onShellClick}>
           {t('cluster.list.actions.shell')}
         </Button>
         <Button disabled={isDcvDisabled} onClick={onDcvClick}>
           {t('cluster.list.actions.dcv')}
         </Button>
-        <Button
-          variant="normal"
-          onClick={startFleet}
-          disabled={isStartFleetDisabled}
+
+        {isStartFleetDisabled ? (
+          <Button
+            variant="normal"
+            onClick={stopComputeFleet}
+            disabled={isStopFleetDisabled}
+          >
+            {t('cluster.list.actions.stop')}
+          </Button>
+        ) : (
+          <Button
+            variant="normal"
+            onClick={startFleet}
+            disabled={isStartFleetDisabled}
+          >
+            {t('cluster.list.actions.start')}
+          </Button>
+        )}
+
+        <ButtonDropdown
+          onItemClick={onItemClick}
+          items={clusterActionsGroupButtonItems}
         >
-          {t('cluster.list.actions.start')}
-        </Button>
-        <Button
-          variant="normal"
-          onClick={stopComputeFleet}
-          disabled={isStopFleetDisabled}
-        >
-          {t('cluster.list.actions.stop')}
-        </Button>
-        <Button
-          disabled={isDeleteDisabled}
-          onClick={() => {
-            showDialog('deleteCluster')
-          }}
-        >
-          {t('cluster.list.actions.delete')}
-        </Button>
+          {t('cluster.list.actionsLabel')}
+        </ButtonDropdown>
+
         <Button onClick={configure} variant="primary">
           {t('cluster.list.actions.create')}
         </Button>

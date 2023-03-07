@@ -229,17 +229,18 @@
       "actions": {
         "cancel": "Cancel",
         "create": "Create cluster",
+        "edit": "Edit cluster",
         "createFromWizard": "Use interface",
         "createFromTemplate": "Upload a template",
         "createFromCluster": "From another cluster",
-        "edit": "Edit",
         "start": "Start fleet",
         "stop": "Stop fleet",
-        "delete": "Delete",
+        "delete": "Delete cluster",
         "shell": "Shell",
         "filesystem": "File system",
         "dcv": "DCV"
       },
+      "actionsLabel": "Actions",
       "filtering": {
         "empty": {
           "title": "No clusters",
