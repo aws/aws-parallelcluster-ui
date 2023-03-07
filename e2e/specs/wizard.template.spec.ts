@@ -12,7 +12,7 @@ import { expect, FileChooser, test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
 
 const TEMPLATE_PATH = './fixtures/wizard.template.yaml'
-const CLUSTER_NAME = Math.random().toString(20).substring(8)
+const CLUSTER_NAME = 'c' + Math.random().toString(20).substring(8)
 
 test.describe('environment: @demo', () => {
   test.describe('given a cluster configuration template created with single instance type', () => {
@@ -21,17 +21,15 @@ test.describe('environment: @demo', () => {
         await visitAndLogin(page)
 
         await page.getByRole('button', { name: 'Create cluster' }).first().click();
-
-        await expect(page.getByRole('heading', { name: 'Source' })).toBeVisible()
         
         page.on("filechooser", (fileChooser: FileChooser) => {
           fileChooser.setFiles([TEMPLATE_PATH]);
         })
-        await page.getByRole('radio', { name: 'Existing template' }).click();
-        await page.getByRole('button', { name: 'Next' }).click();
+        await page.getByRole('menuitem', { name: 'Upload a template' }).click();
         
         await expect(page.getByRole('heading', { name: 'Cluster', exact: true })).toBeVisible()
         await page.getByPlaceholder('Enter your cluster name').fill(CLUSTER_NAME);
+        await page.getByText(/vpc-.*/).waitFor({state: 'visible'})
         await page.getByRole('button', { name: 'Next' }).click();
 
         await expect(page.getByRole('heading', { name: 'Head node' })).toBeVisible()
