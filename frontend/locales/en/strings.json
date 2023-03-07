@@ -229,6 +229,7 @@
       "actions": {
         "cancel": "Cancel",
         "create": "Create cluster",
+        "createFromWizard": "Use interface",
         "edit": "Edit",
         "start": "Start fleet",
         "stop": "Stop fleet",
