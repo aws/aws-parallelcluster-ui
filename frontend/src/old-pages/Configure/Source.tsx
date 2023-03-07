@@ -71,32 +71,6 @@ function sourceValidate(suppressUpload = false) {
 
   setState([...sourceErrorsPath, 'validated'], true)
 
-  if (!clusterName || clusterName === '') {
-    setState(
-      [...sourceErrorsPath, 'clusterName'],
-      i18next.t('wizard.source.validation.cannotBeBlank'),
-    )
-    valid = false
-  } else if (clusterNames.has(clusterName)) {
-    setState(
-      [...sourceErrorsPath, 'clusterName'],
-      i18next.t('wizard.source.validation.alreadyExists', {
-        clusterName: clusterName,
-      }),
-    )
-    valid = false
-  } else if (!/^[a-zA-Z][a-zA-Z0-9-]+$/.test(clusterName)) {
-    setState(
-      [...sourceErrorsPath, 'clusterName'],
-      i18next.t('wizard.source.validation.doesntMatchRegex', {
-        clusterName: clusterName,
-      }),
-    )
-    valid = false
-  } else {
-    clearState([...sourceErrorsPath, 'clusterName'])
-  }
-
   if (
     source === 'cluster' &&
     (!sourceClusterName || sourceClusterName === '')
@@ -228,24 +202,6 @@ function Source() {
         <Loading />
       ) : (
         <SpaceBetween direction="vertical" size="m">
-          <SpaceBetween direction="vertical" size="xxs" key="cluster-name">
-            <Header
-              variant="h2"
-              description={t('wizard.source.clusterName.description')}
-            >
-              <Trans i18nKey="wizard.source.clusterName.label" />
-            </Header>
-            <FormField errorText={clusterNameError}>
-              <Input
-                onChange={({detail}) => {
-                  setState(['app', 'wizard', 'clusterName'], detail.value)
-                  validated && sourceValidate(true)
-                }}
-                value={clusterName}
-                placeholder={t('wizard.source.clusterName.placeholder')}
-              />
-            </FormField>
-          </SpaceBetween>
           <Container
             header={
               <Header

@@ -52,6 +52,8 @@ import {
   SlurmSettings,
 } from './SlurmSettings/SlurmSettings'
 import InfoLink from '../../components/InfoLink'
+import {ClusterNameField} from './Cluster/ClusterNameField'
+import {validateClusterNameAndSetErrors} from './Cluster/clusterName.validators'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
@@ -96,6 +98,11 @@ function clusterValidate() {
     valid = false
   } else {
     clearState([...errorsPath, 'multiUser'])
+  }
+
+  const clusterNameValid = validateClusterNameAndSetErrors()
+  if (!clusterNameValid) {
+    valid = false
   }
 
   const accountingValid = slurmAccountingValidateAndSetErrors()
@@ -408,6 +415,7 @@ function Cluster() {
         }
       >
         <SpaceBetween direction="vertical" size="m">
+          <ClusterNameField />
           <RegionSelect />
           <OsFormField />
           <CustomAMISettings
