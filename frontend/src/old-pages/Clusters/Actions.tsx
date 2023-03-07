@@ -161,7 +161,7 @@ export default function Actions() {
     [cluster],
   )
 
-  const onFileSystemClick = React.useCallback(() => {
+  const openFileSystem = React.useCallback(() => {
     ssmFilesystem(headNode.instanceId)
   }, [headNode?.instanceId, ssmFilesystem])
 
@@ -174,18 +174,39 @@ export default function Actions() {
   }, [dcvConnect, headNode])
 
   const onItemClick: CancelableEventHandler<ButtonDropdownProps.ItemClickDetails> =
-    React.useMemo(() => {
-      return item => {
+    React.useCallback(
+      item => {
         switch (item.detail.id) {
           case 'filesystem':
-            return onFileSystemClick
+            return openFileSystem
           case 'edit':
             return editConfiguration
           case 'delete':
             return () => showDialog('deleteCluster')
         }
-      }
-    }, [onFileSystemClick, editConfiguration])
+      },
+      [openFileSystem, editConfiguration],
+    )
+
+  const clusterActionsGroupButtonItems = React.useMemo(() => {
+    return [
+      {
+        id: 'filesystem',
+        text: t('cluster.list.actions.filesystem'),
+        disabled: isSsmDisabled,
+      },
+      {
+        id: 'edit',
+        text: t('cluster.list.actions.edit'),
+        disabled: isEditDisabled,
+      },
+      {
+        id: 'delete',
+        text: t('cluster.list.actions.delete'),
+        disabled: isDeleteDisabled,
+      },
+    ]
+  }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
   return (
     <div style={{marginLeft: '20px'}}>
@@ -225,23 +246,7 @@ export default function Actions() {
 
         <ButtonDropdown
           onItemClick={onItemClick}
-          items={[
-            {
-              id: 'filesystem',
-              text: t('cluster.list.actions.filesystem'),
-              disabled: isSsmDisabled,
-            },
-            {
-              id: 'edit',
-              text: t('cluster.list.actions.edit'),
-              disabled: isEditDisabled,
-            },
-            {
-              id: 'edit',
-              text: t('cluster.list.actions.delete'),
-              disabled: isDeleteDisabled,
-            },
-          ]}
+          items={clusterActionsGroupButtonItems}
         >
           {t('cluster.list.actionsLabel')}
         </ButtonDropdown>
