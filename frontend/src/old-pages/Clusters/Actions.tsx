@@ -178,11 +178,14 @@ export default function Actions() {
       item => {
         switch (item.detail.id) {
           case 'filesystem':
-            return openFileSystem
+            openFileSystem()
+            break
           case 'edit':
-            return editConfiguration
+            editConfiguration()
+            break
           case 'delete':
-            return () => showDialog('deleteCluster')
+            showDialog('deleteCluster')
+            break
         }
       },
       [openFileSystem, editConfiguration],
