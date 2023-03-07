@@ -17,7 +17,11 @@ import {Button} from '@cloudscape-design/components'
 import {setState, getState} from '../store'
 import {useTranslation} from 'react-i18next'
 
-function HiddenUploader({callbackPath, handleData, handleCancel}: any) {
+function DeprecatedHiddenUploader({
+  callbackPath,
+  handleData,
+  handleCancel,
+}: any) {
   const hiddenFileInput = React.useRef(null)
   const handleClick = React.useCallback(
     event => {
@@ -83,4 +87,4 @@ function FileUploadButton(props: any) {
   )
 }
 
-export {FileUploadButton as default, HiddenUploader}
+export {FileUploadButton as default, DeprecatedHiddenUploader}
