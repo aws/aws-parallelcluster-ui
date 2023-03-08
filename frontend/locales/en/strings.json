@@ -320,43 +320,6 @@
       "collapsedStepsLabel": "Step {{stepNumber}} of {{stepsCount}}",
       "steps": "Steps"
     },
-    "source": {
-      "title": "Source",
-      "description": "Choose a cluster name and configuration source.",
-      "validation": {
-        "specifySourceCopy": "You must select a cluster to copy from."
-      },
-      "clusterSelect": {
-        "placeholder": "Select a cluster."
-      },
-      "configurationSource": {
-        "label": "Source",
-        "description": "Choose the source for creating your cluster configuration and cluster. After you choose a source, you step through the $t(global.projectName) configuration options for review and edits, to create your cluster."
-      },
-      "helpPanel": {
-        "title": "$t(wizard.source.title)",
-        "description": "Name your cluster and choose a method for configuring your cluster.",
-        "link": {
-          "title": "Configuration properties",
-          "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/cluster-configuration-file-v3.html?icmpid=docs_parallelcluster_hp_cluster_source_v1"
-        }
-      },
-      "sourceOptions": {
-        "wizard": {
-          "label": "Interface",
-          "description": "Create a new cluster configuration by using the $t(global.projectName)."
-        },
-        "template": {
-          "label": "Existing template",
-          "description": "Start by uploading your own partial or complete YAML configuration file."
-        },
-        "cluster": {
-          "label": "Existing cluster",
-          "description": "Start by selecting an existing cluster for the configuration of your new cluster. The selected existing cluster version must match the $t(global.projectName) version.",
-          "empty": "No cluster available"
-        }
-      }
-    },
     "cluster": {
       "title": "Cluster",
       "description": "Configure the settings that apply to all cluster resources.",
