@@ -400,10 +400,65 @@ function DcvSettings() {
   )
 }
 
-function HeadNode() {
+function IMDSSecuredSettings() {
   const {t} = useTranslation()
   const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
-  const imdsSecured = useState(imdsSecuredPath)
+  const imdsSecured = useState(imdsSecuredPath) || false
+
+  const toggleImdsSecured = React.useCallback(() => {
+    const toggledImdsSecured = !imdsSecured
+    if (toggledImdsSecured) {
+      setState(imdsSecuredPath, toggledImdsSecured)
+    } else {
+      clearState(imdsSecuredPath)
+      if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0)
+        clearState([...headNodePath, 'Imds'])
+    }
+  }, [imdsSecured])
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <FormField
+        label={t('wizard.headNode.imdsSecured.label')}
+        description={t('wizard.headNode.imdsSecured.description')}
+        info={
+          <InfoLink
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.headNode.imdsSecured.label')}
+                description={
+                  <Trans i18nKey="wizard.headNode.imdsSecured.help">
+                    <a
+                      rel="noreferrer"
+                      target="_blank"
+                      href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
+                    ></a>
+                  </Trans>
+                }
+              />
+            }
+          />
+        }
+      >
+        <SpaceBetween size="xs" direction="horizontal">
+          <Checkbox checked={imdsSecured} onChange={toggleImdsSecured}>
+            <Trans i18nKey="wizard.headNode.imdsSecured.set" />
+          </Checkbox>
+        </SpaceBetween>
+      </FormField>
+    </div>
+  )
+}
+
+function HeadNode() {
+  const {t} = useTranslation()
 
   const subnetPath = [...headNodePath, 'Networking', 'SubnetId']
   const instanceTypeErrors = useState([...errorsPath, 'instanceType'])
@@ -413,16 +468,6 @@ function HeadNode() {
   const isOnNodeUpdatedActive = useFeatureFlag('on_node_updated')
 
   useHelpPanel(<HeadNodePropertiesHelpPanel />)
-
-  const toggleImdsSecured = () => {
-    const setImdsSecured = !imdsSecured
-    if (setImdsSecured) setState(imdsSecuredPath, setImdsSecured)
-    else {
-      clearState(imdsSecuredPath)
-      if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0)
-        clearState([...headNodePath, 'Imds'])
-    }
-  }
 
   return (
     <ColumnLayout columns={1}>
@@ -444,30 +489,7 @@ function HeadNode() {
           <RootVolume basePath={headNodePath} errorsPath={errorsPath} />
           <SsmSettings />
           <DcvSettings />
-          <SpaceBetween size="xs" direction="horizontal">
-            <Checkbox
-              checked={imdsSecured || false}
-              onChange={toggleImdsSecured}
-            >
-              <Trans i18nKey="wizard.headNode.imdsSecured.label" />
-            </Checkbox>
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.headNode.imdsSecured.label')}
-                  description={
-                    <Trans i18nKey="wizard.headNode.imdsSecured.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
-                      ></a>
-                    </Trans>
-                  }
-                />
-              }
-            />
-          </SpaceBetween>
+          <IMDSSecuredSettings />
           <FormField
             label={t('wizard.headNode.securityGroups.label')}
             info={
