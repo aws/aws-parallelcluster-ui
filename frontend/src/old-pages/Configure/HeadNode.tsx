@@ -368,20 +368,37 @@ function DcvSettings() {
   )
 }
 
+const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
+const persistentImdsSecuredPath = ['app', 'wizard', 'persistentImdsSecured']
+function clearImdsSecuredState() {
+  clearState(imdsSecuredPath)
+  if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0) {
+    clearState([...headNodePath, 'Imds'])
+  }
+}
+
+function handleImdsSecuredState(imdsSecured: boolean) {
+  setState(persistentImdsSecuredPath, imdsSecured)
+  if (imdsSecured) {
+    setState(imdsSecuredPath, imdsSecured)
+  } else {
+    clearImdsSecuredState()
+  }
+}
+
 function IMDSSecuredSettings() {
   const {t} = useTranslation()
-  const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
-  const imdsSecured = useState(imdsSecuredPath) || false
+  const initialImdsSecured = useState(persistentImdsSecuredPath)
+  const [imdsSecured, setImdsSecured] = React.useState(
+    initialImdsSecured ?? true,
+  )
+
+  handleImdsSecuredState(imdsSecured)
 
   const toggleImdsSecured = React.useCallback(() => {
     const toggledImdsSecured = !imdsSecured
-    if (toggledImdsSecured) {
-      setState(imdsSecuredPath, toggledImdsSecured)
-    } else {
-      clearState(imdsSecuredPath)
-      if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0)
-        clearState([...headNodePath, 'Imds'])
-    }
+    setImdsSecured(toggledImdsSecured)
+    handleImdsSecuredState(toggledImdsSecured)
   }, [imdsSecured])
 
   return (
