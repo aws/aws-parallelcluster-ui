@@ -54,10 +54,12 @@ import {
 import InfoLink from '../../components/InfoLink'
 import {ClusterNameField} from './Cluster/ClusterNameField'
 import {validateClusterNameAndSetErrors} from './Cluster/clusterName.validators'
+import Loading from '../../components/Loading'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
 const configPath = ['app', 'wizard', 'config']
+const loadingPath = ['app', 'wizard', 'source', 'loading']
 
 const selectQueues = (state: any) =>
   getState(state, ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'])
@@ -367,6 +369,7 @@ function Cluster() {
   let wizardLoaded = useState(['app', 'wizard', 'loaded'])
   let multiUserEnabled = useState(['app', 'wizard', 'multiUser']) || false
   let defaultRegion = useState(['aws', 'region']) || ''
+  const loading = !!useState(loadingPath)
   const region = useState(['app', 'selectedRegion']) || defaultRegion
   const isMultiuserClusterActive = useFeatureFlag('multiuser_cluster')
   const isMultipleInstanceTypesActive = useFeatureFlag(
@@ -404,7 +407,9 @@ function Cluster() {
     setState(['app', 'wizard', 'multiUser'], detail.checked)
   }
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <SpaceBetween direction="vertical" size="l">
       <Container
         header={
