@@ -523,9 +523,11 @@ function HeadNode() {
               onChange={(subnetId: any) => setState(subnetPath, subnetId)}
             />
           </Box>
-          <Alert statusIconAriaLabel="Info">
-            {t('wizard.headNode.networking.subnetId.alert')}
-          </Alert>
+          <Box>
+            <Alert statusIconAriaLabel="Info">
+              {t('wizard.headNode.networking.subnetId.alert')}
+            </Alert>
+          </Box>
         </SpaceBetween>
       </Container>
     </ColumnLayout>
