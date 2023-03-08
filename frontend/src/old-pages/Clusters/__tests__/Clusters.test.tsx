@@ -86,23 +86,6 @@ describe('given a component to show the clusters list', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/clusters/test-cluster')
       })
     })
-
-    describe('when the user clicks on "Create Cluster" button', () => {
-      it('should redirect to configure', async () => {
-        const output = await waitFor(() =>
-          render(
-            <MockProviders>
-              <Clusters />
-            </MockProviders>,
-          ),
-        )
-
-        await userEvent.click(
-          output.getByRole('button', {name: 'Create cluster'}),
-        )
-        expect(mockNavigate).toHaveBeenCalledWith('/configure')
-      })
-    })
   })
 
   describe('when there are no clusters available', () => {

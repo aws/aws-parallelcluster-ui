@@ -35,6 +35,7 @@ import {
   hideDialog,
 } from '../../components/DeleteDialog'
 import {StopDialog, stopComputeFleet} from './StopDialog'
+import {CreateButtonDropdown} from './CreateButtonDropdown/CreateButtonDropdown'
 import {wizardShow} from '../Configure/Configure'
 import {ButtonDropdown} from '@cloudscape-design/components'
 import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
@@ -212,7 +213,7 @@ export default function Actions() {
   }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
   return (
-    <div style={{marginLeft: '20px'}}>
+    <>
       <DeleteDialog
         id="deleteCluster"
         header={t('cluster.list.dialogs.delete.title')}
@@ -254,10 +255,8 @@ export default function Actions() {
           {t('cluster.list.actionsLabel')}
         </ButtonDropdown>
 
-        <Button onClick={configure} variant="primary">
-          {t('cluster.list.actions.create')}
-        </Button>
+        <CreateButtonDropdown openWizard={wizardShow} />
       </SpaceBetween>
-    </div>
+    </>
   )
 }
