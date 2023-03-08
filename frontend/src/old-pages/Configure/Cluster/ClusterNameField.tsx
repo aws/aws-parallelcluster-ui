@@ -23,11 +23,13 @@ const clusterNameErrorPath = [
   'source',
   'clusterName',
 ]
+const editingPath = ['app', 'wizard', 'editing']
 
 export function ClusterNameField() {
   const {t} = useTranslation()
   const clusterName = useState(clusterNamePath) || ''
   const clusterNameError = useState(clusterNameErrorPath)
+  const editing = !!useState(editingPath)
 
   const onChange: NonCancelableEventHandler<InputProps.ChangeDetail> =
     useCallback(({detail}) => {
@@ -41,6 +43,7 @@ export function ClusterNameField() {
       errorText={clusterNameError}
     >
       <Input
+        disabled={editing}
         onChange={onChange}
         value={clusterName}
         placeholder={t('wizard.cluster.clusterName.placeholder')}

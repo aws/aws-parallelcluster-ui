@@ -100,9 +100,11 @@ function clusterValidate() {
     clearState([...errorsPath, 'multiUser'])
   }
 
-  const clusterNameValid = validateClusterNameAndSetErrors()
-  if (!clusterNameValid) {
-    valid = false
+  if (!editing) {
+    const clusterNameValid = validateClusterNameAndSetErrors()
+    if (!clusterNameValid) {
+      valid = false
+    }
   }
 
   const accountingValid = slurmAccountingValidateAndSetErrors()
