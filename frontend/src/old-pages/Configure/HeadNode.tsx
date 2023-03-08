@@ -19,12 +19,14 @@ import safeGet from 'lodash/get'
 
 // UI Elements
 import {
+  Alert,
   Box,
   Checkbox,
   ColumnLayout,
   Container,
   ExpandableSection,
   FormField,
+  Header,
   Input,
   Select,
   SpaceBetween,
@@ -438,17 +440,6 @@ function HeadNode() {
               />
             </FormField>
           </Box>
-          <FormField
-            label={t('wizard.headNode.subnetId.label')}
-            errorText={subnetErrors}
-            description={t('wizard.headNode.subnetId.description')}
-          >
-            <SubnetSelect
-              disabled={editing}
-              value={subnetValue}
-              onChange={(subnetId: any) => setState(subnetPath, subnetId)}
-            />
-          </FormField>
           <KeypairSelect />
           <RootVolume basePath={headNodePath} errorsPath={errorsPath} />
           <SsmSettings />
@@ -511,6 +502,30 @@ function HeadNode() {
               <IamPoliciesEditor basePath={headNodePath} />
             </ExpandableSection>
           </ExpandableSection>
+        </SpaceBetween>
+      </Container>
+
+      <Container
+        header={
+          <Header variant="h2">{t('wizard.headNode.networking.header')}</Header>
+        }
+      >
+        <SpaceBetween direction="vertical" size="s">
+          <Box>
+            <FormField
+              label={t('wizard.headNode.networking.subnetId.label')}
+              errorText={subnetErrors}
+              description={t('wizard.headNode.networking.subnetId.description')}
+            ></FormField>
+            <SubnetSelect
+              disabled={editing}
+              value={subnetValue}
+              onChange={(subnetId: any) => setState(subnetPath, subnetId)}
+            />
+          </Box>
+          <Alert statusIconAriaLabel="Info">
+            {t('wizard.headNode.networking.subnetId.alert')}
+          </Alert>
         </SpaceBetween>
       </Container>
     </ColumnLayout>

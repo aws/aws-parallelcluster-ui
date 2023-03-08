@@ -543,9 +543,13 @@
         "label": "Instance metadata service (IMDS) secured",
         "help": "IMDS secured restricts access to IMDS (and thus instance credentials) to users with superuser permissions. For more information, see <0>How instance metadata service version 2 works</0> in the <i>Amazon EC2 User Guide for Linux Instances</i>."
       },
-      "subnetId": {
-        "label": "Subnet ID",
-        "description": "Subnet ID for head node."
+      "networking": {
+        "header": "Networking",
+        "subnetId": {
+          "label": "Subnet ID",
+          "description": "Subnet ID for head node.",
+          "alert": "If you don't have a default VPC or subnet, Amazon ParallelCluster UI will use defaults for your cluster."
+        }
       },
       "securityGroups": {
        "label": "Additional security groups",
