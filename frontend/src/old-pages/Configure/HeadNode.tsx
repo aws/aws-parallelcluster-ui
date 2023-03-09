@@ -285,28 +285,19 @@ function SsmSettings() {
   )
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
+    <CheckboxWithHelpPanel
+      checked={ssmEnabled}
+      onChange={ssmOnChange}
+      disabled={dcvEnabled}
+      helpPanel={
+        <TitleDescriptionHelpPanel
+          title={t('wizard.headNode.Ssm.title')}
+          description={<Trans i18nKey="wizard.headNode.Ssm.help" />}
+        />
+      }
     >
-      <CheckboxWithHelpPanel
-        checked={ssmEnabled}
-        onChange={ssmOnChange}
-        disabled={dcvEnabled}
-        helpPanel={
-          <TitleDescriptionHelpPanel
-            title={t('wizard.headNode.Ssm.title')}
-            description={<Trans i18nKey="wizard.headNode.Ssm.help" />}
-          />
-        }
-      >
-        <Trans i18nKey="wizard.headNode.Ssm.label" />
-      </CheckboxWithHelpPanel>
-    </div>
+      <Trans i18nKey="wizard.headNode.Ssm.label" />
+    </CheckboxWithHelpPanel>
   )
 }
 
@@ -343,46 +334,37 @@ function DcvSettings() {
   )
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <SpaceBetween direction="vertical" size="xxxs">
-        <CheckboxWithHelpPanel
-          disabled={editing}
-          checked={dcvEnabled}
-          onChange={toggleDcv}
-          helpPanel={
-            <TitleDescriptionHelpPanel
-              title={t('wizard.headNode.Dcv.label')}
-              description={t('wizard.headNode.Dcv.help')}
+    <>
+      <CheckboxWithHelpPanel
+        disabled={editing}
+        checked={dcvEnabled}
+        onChange={toggleDcv}
+        helpPanel={
+          <TitleDescriptionHelpPanel
+            title={t('wizard.headNode.Dcv.label')}
+            description={t('wizard.headNode.Dcv.help')}
+          />
+        }
+      >
+        {t('wizard.headNode.Dcv.add')}
+      </CheckboxWithHelpPanel>
+      <SpaceBetween direction="vertical" size="xs">
+        {dcvEnabled && (
+          <FormField label="Allowed IPs">
+            <Input value={allowedIps} onChange={allowedIPsOnChange} />
+          </FormField>
+        )}
+        {dcvEnabled && (
+          <FormField label="Port">
+            <Input
+              inputMode="decimal"
+              value={port}
+              onChange={allowedPortOnChange}
             />
-          }
-        >
-          {t('wizard.headNode.Dcv.add')}
-        </CheckboxWithHelpPanel>
-        <SpaceBetween direction="vertical" size="xs">
-          {dcvEnabled && (
-            <FormField label="Allowed IPs">
-              <Input value={allowedIps} onChange={allowedIPsOnChange} />
-            </FormField>
-          )}
-          {dcvEnabled && (
-            <FormField label="Port">
-              <Input
-                inputMode="decimal"
-                value={port}
-                onChange={allowedPortOnChange}
-              />
-            </FormField>
-          )}
-        </SpaceBetween>
+          </FormField>
+        )}
       </SpaceBetween>
-    </div>
+    </>
   )
 }
 
@@ -403,37 +385,26 @@ function IMDSSecuredSettings() {
   }, [imdsSecured])
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <SpaceBetween size="xs" direction="horizontal">
-        <CheckboxWithHelpPanel
-          checked={imdsSecured}
-          onChange={toggleImdsSecured}
-          helpPanel={
-            <TitleDescriptionHelpPanel
-              title={t('wizard.headNode.imdsSecured.label')}
-              description={
-                <Trans i18nKey="wizard.headNode.imdsSecured.help">
-                  <a
-                    rel="noreferrer"
-                    target="_blank"
-                    href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
-                  ></a>
-                </Trans>
-              }
-            />
+    <CheckboxWithHelpPanel
+      checked={imdsSecured}
+      onChange={toggleImdsSecured}
+      helpPanel={
+        <TitleDescriptionHelpPanel
+          title={t('wizard.headNode.imdsSecured.label')}
+          description={
+            <Trans i18nKey="wizard.headNode.imdsSecured.help">
+              <a
+                rel="noreferrer"
+                target="_blank"
+                href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
+              ></a>
+            </Trans>
           }
-        >
-          <Trans i18nKey="wizard.headNode.imdsSecured.set" />
-        </CheckboxWithHelpPanel>
-      </SpaceBetween>
-    </div>
+        />
+      }
+    >
+      <Trans i18nKey="wizard.headNode.imdsSecured.set" />
+    </CheckboxWithHelpPanel>
   )
 }
 
