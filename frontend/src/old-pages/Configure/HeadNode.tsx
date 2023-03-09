@@ -278,6 +278,12 @@ function SsmSettings() {
     ])
     return findFirst(iamPolicies, isSsmPolicy) || false
   })
+
+  const ssmOnChange = React.useCallback(
+    ({detail}) => enableSsm(!ssmEnabled),
+    [ssmEnabled],
+  )
+
   return (
     <div
       style={{
@@ -289,7 +295,7 @@ function SsmSettings() {
     >
       <CheckboxWithHelpPanel
         checked={ssmEnabled}
-        onChange={({detail}) => enableSsm(!ssmEnabled)}
+        onChange={ssmOnChange}
         disabled={dcvEnabled}
         helpPanel={
           <TitleDescriptionHelpPanel
@@ -326,6 +332,16 @@ function DcvSettings() {
     }
   }
 
+  const allowedIPsOnChange = React.useCallback(({detail}) => {
+    setState([...headNodePath, 'Dcv', 'AllowedIps'], detail.value)
+  }, [])
+
+  const allowedPortOnChange = React.useCallback(
+    ({detail}) =>
+      setState([...headNodePath, 'Dcv', 'Port'], parseInt(detail.value)),
+    [],
+  )
+
   return (
     <div
       style={{
@@ -352,12 +368,7 @@ function DcvSettings() {
         <SpaceBetween direction="vertical" size="xs">
           {dcvEnabled && (
             <FormField label="Allowed IPs">
-              <Input
-                value={allowedIps}
-                onChange={({detail}) => {
-                  setState([...headNodePath, 'Dcv', 'AllowedIps'], detail.value)
-                }}
-              />
+              <Input value={allowedIps} onChange={allowedIPsOnChange} />
             </FormField>
           )}
           {dcvEnabled && (
@@ -365,12 +376,7 @@ function DcvSettings() {
               <Input
                 inputMode="decimal"
                 value={port}
-                onChange={({detail}) =>
-                  setState(
-                    [...headNodePath, 'Dcv', 'Port'],
-                    parseInt(detail.value),
-                  )
-                }
+                onChange={allowedPortOnChange}
               />
             </FormField>
           )}
