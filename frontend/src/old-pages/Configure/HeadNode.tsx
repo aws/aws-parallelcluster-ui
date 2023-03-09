@@ -51,6 +51,7 @@ import {
   SubnetSelect,
   IamPoliciesEditor,
   ActionsEditor,
+  CheckboxWithHelpPanel,
 } from './Components'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import InfoLink from '../../components/InfoLink'
@@ -277,38 +278,26 @@ function SsmSettings() {
     ])
     return findFirst(iamPolicies, isSsmPolicy) || false
   })
+
+  const ssmOnChange = React.useCallback(
+    ({detail}) => enableSsm(!ssmEnabled),
+    [ssmEnabled],
+  )
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
+    <CheckboxWithHelpPanel
+      checked={ssmEnabled}
+      onChange={ssmOnChange}
+      disabled={dcvEnabled}
+      helpPanel={
+        <TitleDescriptionHelpPanel
+          title={t('wizard.headNode.Ssm.title')}
+          description={<Trans i18nKey="wizard.headNode.Ssm.help" />}
+        />
+      }
     >
-      <FormField
-        label={t('wizard.headNode.Ssm.title')}
-        description={t('wizard.headNode.Ssm.description')}
-        info={
-          <InfoLink
-            helpPanel={
-              <TitleDescriptionHelpPanel
-                title={t('wizard.headNode.Ssm.title')}
-                description={<Trans i18nKey="wizard.headNode.Ssm.help" />}
-              />
-            }
-          />
-        }
-      >
-        <Checkbox
-          checked={ssmEnabled}
-          onChange={({detail}) => enableSsm(!ssmEnabled)}
-          disabled={dcvEnabled}
-        >
-          <Trans i18nKey="wizard.headNode.Ssm.label" />
-        </Checkbox>
-      </FormField>
-    </div>
+      <Trans i18nKey="wizard.headNode.Ssm.label" />
+    </CheckboxWithHelpPanel>
   )
 }
 
@@ -334,76 +323,93 @@ function DcvSettings() {
     }
   }
 
+  const allowedIPsOnChange = React.useCallback(({detail}) => {
+    setState([...headNodePath, 'Dcv', 'AllowedIps'], detail.value)
+  }, [])
+
+  const allowedPortOnChange = React.useCallback(
+    ({detail}) =>
+      setState([...headNodePath, 'Dcv', 'Port'], parseInt(detail.value)),
+    [],
+  )
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <FormField
-        label={t('wizard.headNode.Dcv.label')}
-        description={t('wizard.headNode.Dcv.description')}
-        info={
-          <InfoLink
-            helpPanel={
-              <TitleDescriptionHelpPanel
-                title={t('wizard.headNode.Dcv.label')}
-                description={t('wizard.headNode.Dcv.help')}
-              />
-            }
+    <>
+      <CheckboxWithHelpPanel
+        disabled={editing}
+        checked={dcvEnabled}
+        onChange={toggleDcv}
+        helpPanel={
+          <TitleDescriptionHelpPanel
+            title={t('wizard.headNode.Dcv.label')}
+            description={t('wizard.headNode.Dcv.help')}
           />
         }
       >
-        <SpaceBetween direction="vertical" size="xxxs">
-          <Checkbox
-            disabled={editing}
-            checked={dcvEnabled}
-            onChange={toggleDcv}
-          >
-            {t('wizard.headNode.Dcv.add')}
-          </Checkbox>
-          <SpaceBetween direction="vertical" size="xs">
-            {dcvEnabled && (
-              <FormField label="Allowed IPs">
-                <Input
-                  value={allowedIps}
-                  onChange={({detail}) => {
-                    setState(
-                      [...headNodePath, 'Dcv', 'AllowedIps'],
-                      detail.value,
-                    )
-                  }}
-                />
-              </FormField>
-            )}
-            {dcvEnabled && (
-              <FormField label="Port">
-                <Input
-                  inputMode="decimal"
-                  value={port}
-                  onChange={({detail}) =>
-                    setState(
-                      [...headNodePath, 'Dcv', 'Port'],
-                      parseInt(detail.value),
-                    )
-                  }
-                />
-              </FormField>
-            )}
-          </SpaceBetween>
-        </SpaceBetween>
-      </FormField>
-    </div>
+        {t('wizard.headNode.Dcv.add')}
+      </CheckboxWithHelpPanel>
+      <SpaceBetween direction="vertical" size="xs">
+        {dcvEnabled && (
+          <FormField label="Allowed IPs">
+            <Input value={allowedIps} onChange={allowedIPsOnChange} />
+          </FormField>
+        )}
+        {dcvEnabled && (
+          <FormField label="Port">
+            <Input
+              inputMode="decimal"
+              value={port}
+              onChange={allowedPortOnChange}
+            />
+          </FormField>
+        )}
+      </SpaceBetween>
+    </>
+  )
+}
+
+function IMDSSecuredSettings() {
+  const {t} = useTranslation()
+  const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
+  const imdsSecured = useState(imdsSecuredPath) || false
+
+  const toggleImdsSecured = React.useCallback(() => {
+    const toggledImdsSecured = !imdsSecured
+    if (toggledImdsSecured) {
+      setState(imdsSecuredPath, toggledImdsSecured)
+    } else {
+      clearState(imdsSecuredPath)
+      if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0)
+        clearState([...headNodePath, 'Imds'])
+    }
+  }, [imdsSecured])
+
+  return (
+    <CheckboxWithHelpPanel
+      checked={imdsSecured}
+      onChange={toggleImdsSecured}
+      helpPanel={
+        <TitleDescriptionHelpPanel
+          title={t('wizard.headNode.imdsSecured.label')}
+          description={
+            <Trans i18nKey="wizard.headNode.imdsSecured.help">
+              <a
+                rel="noreferrer"
+                target="_blank"
+                href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
+              ></a>
+            </Trans>
+          }
+        />
+      }
+    >
+      <Trans i18nKey="wizard.headNode.imdsSecured.set" />
+    </CheckboxWithHelpPanel>
   )
 }
 
 function HeadNode() {
   const {t} = useTranslation()
-  const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
-  const imdsSecured = useState(imdsSecuredPath)
 
   const subnetPath = [...headNodePath, 'Networking', 'SubnetId']
   const instanceTypeErrors = useState([...errorsPath, 'instanceType'])
@@ -413,16 +419,6 @@ function HeadNode() {
   const isOnNodeUpdatedActive = useFeatureFlag('on_node_updated')
 
   useHelpPanel(<HeadNodePropertiesHelpPanel />)
-
-  const toggleImdsSecured = () => {
-    const setImdsSecured = !imdsSecured
-    if (setImdsSecured) setState(imdsSecuredPath, setImdsSecured)
-    else {
-      clearState(imdsSecuredPath)
-      if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0)
-        clearState([...headNodePath, 'Imds'])
-    }
-  }
 
   return (
     <ColumnLayout columns={1}>
@@ -444,30 +440,7 @@ function HeadNode() {
           <RootVolume basePath={headNodePath} errorsPath={errorsPath} />
           <SsmSettings />
           <DcvSettings />
-          <SpaceBetween size="xs" direction="horizontal">
-            <Checkbox
-              checked={imdsSecured || false}
-              onChange={toggleImdsSecured}
-            >
-              <Trans i18nKey="wizard.headNode.imdsSecured.label" />
-            </Checkbox>
-            <InfoLink
-              helpPanel={
-                <TitleDescriptionHelpPanel
-                  title={t('wizard.headNode.imdsSecured.label')}
-                  description={
-                    <Trans i18nKey="wizard.headNode.imdsSecured.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
-                      ></a>
-                    </Trans>
-                  }
-                />
-              }
-            />
-          </SpaceBetween>
+          <IMDSSecuredSettings />
           <FormField
             label={t('wizard.headNode.securityGroups.label')}
             info={
@@ -523,9 +496,11 @@ function HeadNode() {
               onChange={(subnetId: any) => setState(subnetPath, subnetId)}
             />
           </Box>
-          <Alert statusIconAriaLabel="Info">
-            {t('wizard.headNode.networking.subnetId.alert')}
-          </Alert>
+          <Box>
+            <Alert statusIconAriaLabel="Info">
+              {t('wizard.headNode.networking.subnetId.alert')}
+            </Alert>
+          </Box>
         </SpaceBetween>
       </Container>
     </ColumnLayout>
