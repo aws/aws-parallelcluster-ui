@@ -95,7 +95,6 @@ function clearWizardState(
     clearState(['app', 'wizard', 'vpc'])
     clearState(['app', 'wizard', 'multiUser'])
     clearState(['app', 'wizard', 'validated'])
-    clearState(['app', 'wizard', 'persistentImdsSecured'])
     clearState(loadingPath)
   }
   clearState(['app', 'wizard', 'errors'])

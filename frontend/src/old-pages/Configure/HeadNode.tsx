@@ -62,6 +62,7 @@ import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 const headNodePath = ['app', 'wizard', 'config', 'HeadNode']
 const errorsPath = ['app', 'wizard', 'errors', 'headNode']
 const keypairPath = [...headNodePath, 'Ssh', 'KeyName']
+const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
 
 function headNodeValidate() {
   const subnetPath = [...headNodePath, 'Networking', 'SubnetId']
@@ -368,37 +369,18 @@ function DcvSettings() {
   )
 }
 
-const imdsSecuredPath = [...headNodePath, 'Imds', 'Secured']
-const persistentImdsSecuredPath = ['app', 'wizard', 'persistentImdsSecured']
-function clearImdsSecuredState() {
-  clearState(imdsSecuredPath)
-  if (Object.keys(getState([...headNodePath, 'Imds'])).length === 0) {
-    clearState([...headNodePath, 'Imds'])
-  }
-}
-
-function handleImdsSecuredState(imdsSecured: boolean) {
-  setState(persistentImdsSecuredPath, imdsSecured)
-  if (imdsSecured) {
-    setState(imdsSecuredPath, imdsSecured)
-  } else {
-    clearImdsSecuredState()
-  }
-}
-
 function IMDSSecuredSettings() {
   const {t} = useTranslation()
-  const initialImdsSecured = useState(persistentImdsSecuredPath)
-  const [imdsSecured, setImdsSecured] = React.useState(
-    initialImdsSecured ?? true,
-  )
+  const imdsSecured = useState(imdsSecuredPath) ?? true
 
-  handleImdsSecuredState(imdsSecured)
+  console.log('WAS', useState(imdsSecuredPath))
+  React.useEffect(() => {
+    console.log('SETTING TO', imdsSecured)
+    setState(imdsSecuredPath, imdsSecured)
+  }, [])
 
   const toggleImdsSecured = React.useCallback(() => {
-    const toggledImdsSecured = !imdsSecured
-    setImdsSecured(toggledImdsSecured)
-    handleImdsSecuredState(toggledImdsSecured)
+    setState(imdsSecuredPath, !imdsSecured)
   }, [imdsSecured])
 
   return (
