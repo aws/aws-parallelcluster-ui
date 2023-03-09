@@ -421,16 +421,12 @@ function ActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
     <SpaceBetween direction="vertical" size="s">
       <ActionEditor
         label={t('wizard.components.actionsEditor.onStart.label')}
-        description={t('wizard.components.actionsEditor.onStart.description')}
-        errorPath={onStartErrors}
+        error={onStartErrors}
         path={onStartPath}
       />
       <ActionEditor
         label={t('wizard.components.actionsEditor.onConfigured.label')}
-        description={t(
-          'wizard.components.actionsEditor.onConfigured.description',
-        )}
-        errorPath={onConfiguredErrors}
+        error={onConfiguredErrors}
         path={onConfiguredPath}
       />
     </SpaceBetween>
@@ -453,26 +449,17 @@ function HeadNodeActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
     <SpaceBetween direction="vertical" size="s">
       <ActionEditor
         label={t('wizard.headNode.advancedOptions.scripts.onStart.label')}
-        description={t(
-          'wizard.headNode.advancedOptions.scripts.onStart.description',
-        )}
-        errorPath={onStartErrors}
+        error={onStartErrors}
         path={onStartPath}
       />
       <ActionEditor
         label={t('wizard.headNode.advancedOptions.scripts.onConfigured.label')}
-        description={t(
-          'wizard.headNode.advancedOptions.scripts.onConfigured.description',
-        )}
-        errorPath={onConfiguredErrors}
+        error={onConfiguredErrors}
         path={onConfiguredPath}
       />
       <ActionEditor
         label={t('wizard.headNode.advancedOptions.scripts.onUpdated.label')}
-        description={t(
-          'wizard.headNode.advancedOptions.scripts.onConfigured.description',
-        )}
-        errorPath={onUpdatedErrors}
+        error={onUpdatedErrors}
         path={onUpdatedPath}
       />
     </SpaceBetween>

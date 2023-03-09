@@ -523,16 +523,13 @@
         "label": "Advanced options",
         "scripts": {
           "onStart": {
-            "label": "Run script on node start",
-            "description": "The script runs on head node start, before node configuration."
+            "label": "Run script on node start"
           },
           "onConfigured": {
-            "label": "Run script on node configured",
-            "description": "The script runs after node configuration."
+            "label": "Run script on node configured"
           },
           "onUpdated": {
-            "label": "Run script on node updated",
-            "description": "The script runs after an update, after node configuration."
+            "label": "Run script on node updated"
           }
         },
         "iamPolicies": {
@@ -937,12 +934,10 @@
       },
       "actionsEditor": {
         "onStart": {
-          "label": "Run script on node start",
-          "description": "The script runs on head node start, before node configuration."
+          "label": "Run script on node start"
         },
         "onConfigured": {
-          "label": "Run script on node configured",
-          "description": "The script runs after node configuration."
+          "label": "Run script on node configured"
         },
         "addArgument": "Add argument",
         "argument": "Argument"
