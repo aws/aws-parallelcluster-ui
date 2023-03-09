@@ -513,6 +513,9 @@
           "alert": "If you don't have a default VPC or subnet, Amazon ParallelCluster UI will use defaults for your cluster."
         }
       },
+      "security": {
+        "header": "Security configuration and permissions"
+      },
       "securityGroups": {
        "label": "Additional security groups",
        "help": "Select one or more security groups.",

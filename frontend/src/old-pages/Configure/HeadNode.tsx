@@ -436,7 +436,6 @@ function HeadNode() {
               />
             </FormField>
           </Box>
-          <KeypairSelect />
           <RootVolume basePath={headNodePath} errorsPath={errorsPath} />
           <SsmSettings />
           <DcvSettings />
@@ -502,6 +501,14 @@ function HeadNode() {
             </Alert>
           </Box>
         </SpaceBetween>
+      </Container>
+
+      <Container
+        header={
+          <Header variant="h2">{t('wizard.headNode.security.header')}</Header>
+        }
+      >
+        <KeypairSelect />
       </Container>
     </ColumnLayout>
   )
