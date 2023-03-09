@@ -503,7 +503,7 @@
         "description": "Choose a key pair to connect the head node by using SSH."
       },
       "imdsSecured": {
-        "label": "IMDS secured",
+        "label": "IMDS",
         "set": "Set IMDS secured",
         "description": "Instance metadata service secured",
         "help": "IMDS secured restricts access to IMDS (and thus instance credentials) to users with superuser permissions. For more information, see <0>How instance metadata service version 2 works</0> in the <i>Amazon EC2 User Guide for Linux Instances</i>."
