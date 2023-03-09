@@ -486,14 +486,12 @@
       "Dcv": {
         "label": "Virtual desktop",
         "add": "Add DCV",
-        "description": "Add the DCV virtual desktop option on the head node. Increase your instance size if you add this option.",
-        "help": "Use the DCV virtual desktop to access the head node and visualize results."
+        "help": "Use the DCV virtual desktop to access the head node and visualize results. Increase your instance size if you add this option."
       },
       "Ssm": {
         "title":"SSM session",
         "label": "Add SSM session",
-        "description": "Add an SSM session to access the head node. The required IAM policy is automatically added to the Additional IAM policies setting.",
-        "help": "You can access the head node by opening an SSM session when you choose the cluster from the list of clusters and select <strong>Shell</strong>."
+        "help": "You can access the head node by opening an SSM session when you choose the cluster from the list of clusters and select <strong>Shell</strong>. The required IAM policy is automatically added to the Additional IAM policies setting."
       },
       "instanceType": {
         "label": "Instance type"
@@ -505,7 +503,6 @@
       "imdsSecured": {
         "label": "IMDS",
         "set": "Set IMDS secured",
-        "description": "Instance metadata service secured",
         "help": "IMDS secured restricts access to IMDS (and thus instance credentials) to users with superuser permissions. For more information, see <0>How instance metadata service version 2 works</0> in the <i>Amazon EC2 User Guide for Linux Instances</i>."
       },
       "networking": {
