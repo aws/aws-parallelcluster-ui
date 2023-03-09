@@ -41,6 +41,7 @@ import {
   TextContent,
   CheckboxProps,
   Multiselect,
+  MultiselectProps,
 } from '@cloudscape-design/components'
 
 // Components
@@ -458,35 +459,41 @@ function HeadNodeActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
   )
 }
 
-function SecurityGroups({basePath}: any) {
-  const {t} = useTranslation()
-  const sgPath = [...basePath, 'Networking', 'AdditionalSecurityGroups']
-  const selectedSgs = useState(sgPath) || []
-
-  const sgs = useState(['aws', 'security_groups']) || []
-
-  const itemToOption = (item: any) => {
-    return {
-      value: item.GroupId,
-      label: item.GroupId,
-      description: item.GroupName,
-    }
+const securityGroupToOption = (item: {GroupId: string; GroupName: string}) => {
+  return {
+    value: item.GroupId,
+    label: item.GroupId,
+    description: item.GroupName,
   }
+}
 
-  const options = sgs.map(itemToOption)
+function SecurityGroups({basePath}: {basePath: string[]}) {
+  const {t} = useTranslation()
+  const securityGroupsPath = useMemo(
+    () => [...basePath, 'Networking', 'AdditionalSecurityGroups'],
+    [basePath],
+  )
+  const selectedSecurityGroups: string[] = useState(securityGroupsPath) || []
+  const availableSecurityGroups = useState(['aws', 'security_groups']) || []
+  const options = availableSecurityGroups.map(securityGroupToOption)
+  const onChange: NonCancelableEventHandler<MultiselectProps.MultiselectChangeDetail> =
+    useCallback(
+      ({detail}) => {
+        setState(
+          securityGroupsPath,
+          detail.selectedOptions.map(option => option.value),
+        )
+      },
+      [securityGroupsPath],
+    )
 
   return (
     <Multiselect
       selectedOptions={options.filter((opt: any) =>
-        selectedSgs.includes(opt.value),
+        selectedSecurityGroups.includes(opt.value),
       )}
       placeholder={t('wizard.headNode.securityGroups.select')}
-      onChange={({detail}) => {
-        setState(
-          sgPath,
-          detail.selectedOptions.map(opt => opt.value),
-        )
-      }}
+      onChange={onChange}
       options={options}
     />
   )

@@ -516,8 +516,8 @@
       },
       "securityGroups": {
        "label": "Additional security groups",
-       "help": "Select a security group.",
-       "select": "Select a security group"
+       "help": "Select one or more security groups.",
+       "select": "Select one or more security groups"
       },
       "advancedOptions": {
         "label": "Advanced options",
