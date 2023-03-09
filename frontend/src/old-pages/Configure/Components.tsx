@@ -371,7 +371,6 @@ function ActionEditor({
 
   const toggleCheckbox = useCallback(() => {
     clearState(path)
-    clearEmptyNest(path, 3)
     setEnabled(!enabled)
   }, [enabled, setEnabled, path])
 
@@ -782,6 +781,7 @@ export {
   InstanceSelect,
   LabeledIcon,
   ActionsEditor,
+  ActionEditor,
   HeadNodeActionsEditor,
   CustomAMISettings,
   RootVolume,
