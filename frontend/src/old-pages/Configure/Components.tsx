@@ -40,6 +40,8 @@ import {
   InputProps,
   TextContent,
   CheckboxProps,
+  Multiselect,
+  MultiselectProps,
 } from '@cloudscape-design/components'
 
 // Components
@@ -457,70 +459,46 @@ function HeadNodeActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
   )
 }
 
-function SecurityGroups({basePath}: any) {
+const securityGroupToOption = (item: {GroupId: string; GroupName: string}) => {
+  return {
+    value: item.GroupId,
+    label: item.GroupId,
+    description: item.GroupName,
+  }
+}
+
+function SecurityGroups({basePath}: {basePath: string[]}) {
   const {t} = useTranslation()
-  const sgPath = [...basePath, 'Networking', 'AdditionalSecurityGroups']
-  const selectedSgs = useState(sgPath) || []
-  const sgSelected = useState(['app', 'wizard', 'sg-selected'])
+  const securityGroupsPath = useMemo(
+    () => [...basePath, 'Networking', 'AdditionalSecurityGroups'],
+    [basePath],
+  )
+  const selectedSecurityGroups: string[] = useState(securityGroupsPath) || []
+  const availableSecurityGroups = useState(['aws', 'security_groups'])
+  const options = useMemo(
+    () => (availableSecurityGroups || []).map(securityGroupToOption),
+    [availableSecurityGroups],
+  )
+  const onChange: NonCancelableEventHandler<MultiselectProps.MultiselectChangeDetail> =
+    useCallback(
+      ({detail}) => {
+        setState(
+          securityGroupsPath,
+          detail.selectedOptions.map(option => option.value),
+        )
+      },
+      [securityGroupsPath],
+    )
 
-  const sgs = useState(['aws', 'security_groups']) || []
-  const sgMap = sgs.reduce((acc: any, s: any) => {
-    acc[s.GroupId] = s.GroupName
-    return acc
-  }, {})
-
-  const itemToOption = (item: any) => {
-    return {
-      value: item.GroupId,
-      label: item.GroupId,
-      description: item.GroupName,
-    }
-  }
-  const removeSg = (i: any) => {
-    setState(sgPath, [...selectedSgs.slice(0, i), ...selectedSgs.slice(i + 1)])
-    if (getState(sgPath).length === 0) clearState(sgPath)
-  }
   return (
-    <SpaceBetween direction="vertical" size="xs">
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '16px',
-        }}
-      >
-        <Select
-          selectedOption={
-            sgSelected &&
-            findFirst(sgs, (x: any) => x.GroupId === sgSelected.value)
-              ? itemToOption(
-                  findFirst(sgs, (x: any) => x.GroupId === sgSelected.value),
-                )
-              : {label: t('wizard.headNode.securityGroups.select')}
-          }
-          onChange={({detail}) => {
-            setState(['app', 'wizard', 'sg-selected'], detail.selectedOption)
-          }}
-          triggerVariant={'option'}
-          options={sgs.map(itemToOption)}
-        />
-        <Button
-          disabled={!sgSelected}
-          onClick={() => setState(sgPath, [...selectedSgs, sgSelected.value])}
-        >
-          Add
-        </Button>
-      </div>
-      <TokenGroup
-        onDismiss={({detail: {itemIndex}}) => {
-          removeSg(itemIndex)
-        }}
-        items={selectedSgs.map((s: any) => {
-          return {label: s, dismissLabel: `Remove ${s}`, description: sgMap[s]}
-        })}
-      />
-    </SpaceBetween>
+    <Multiselect
+      selectedOptions={options.filter((opt: any) =>
+        selectedSecurityGroups.includes(opt.value),
+      )}
+      placeholder={t('wizard.headNode.securityGroups.select')}
+      onChange={onChange}
+      options={options}
+    />
   )
 }
 
