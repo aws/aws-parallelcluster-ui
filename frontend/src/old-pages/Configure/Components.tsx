@@ -345,7 +345,15 @@ function ArgEditor({path, i}: any) {
   )
 }
 
-function ActionEditor({label, errorPath, path}: any) {
+function ActionEditor({
+  label,
+  error,
+  path,
+}: {
+  label: string
+  error: string
+  path: string[]
+}) {
   const script = useState([...path, 'Script']) || ''
   const {t} = useTranslation()
   const args = useState([...path, 'Args']) || []
@@ -378,7 +386,7 @@ function ActionEditor({label, errorPath, path}: any) {
             className={styles.spaceBetweenCentered}
             style={{'--spacing': spaceScaledXs}}
           >
-            <FormField errorText={errorPath}>
+            <FormField errorText={error}>
               <Input
                 placeholder="/home/ec2-user/start.sh"
                 value={script}
