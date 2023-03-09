@@ -943,7 +943,9 @@
         "onConfigured": {
           "label": "Run script on node configured",
           "description": "The script runs after node configuration."
-        }
+        },
+        "addArgument": "Add argument",
+        "argument": "Argument"
       }
     }
   },

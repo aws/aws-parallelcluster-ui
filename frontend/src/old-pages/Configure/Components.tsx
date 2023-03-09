@@ -11,7 +11,12 @@
 // limitations under the License.
 
 // Fameworks
-import React, {ReactElement, useCallback, useMemo} from 'react'
+import React, {
+  ReactElement,
+  useCallback,
+  useMemo,
+  useState as useStateReact,
+} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {useSelector} from 'react-redux'
 import {findFirst} from '../../util'
@@ -47,6 +52,9 @@ import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
 import {subnetName} from './util'
+
+import styles from './Components.module.css'
+import {spaceScaledXs} from '@cloudscape-design/design-tokens'
 
 // Helper Functions
 function strToOption(str: any) {
@@ -321,24 +329,27 @@ function ArgEditor({path, i}: any) {
   }
 
   return (
-    <SpaceBetween direction="horizontal" size="s">
-      <div style={{marginLeft: '25px', width: '120px'}}>Arg:</div>
-      <div style={{width: '440px'}}>
-        <Input
-          value={arg}
-          onChange={({detail}) => {
-            setState([...path, i], detail.value)
-          }}
-        />
-      </div>
+    <div
+      className={styles.spaceBetweenCentered}
+      style={{'--spacing': spaceScaledXs}}
+    >
+      <span>{t('wizard.components.actionsEditor.argument')}</span>
+      <Input
+        value={arg}
+        onChange={({detail}) => {
+          setState([...path, i], detail.value)
+        }}
+      />
       <Button onClick={remove}>{t('wizard.actions.remove')}</Button>
-    </SpaceBetween>
+    </div>
   )
 }
 
-function ActionEditor({label, description, actionKey, errorPath, path}: any) {
+function ActionEditor({label, errorPath, path}: any) {
   const script = useState([...path, 'Script']) || ''
+  const {t} = useTranslation()
   const args = useState([...path, 'Args']) || []
+  const [enabled, setEnabled] = useStateReact(!!script)
 
   const addArg = (path: any) => {
     updateState(path, (old: any) => [...(old || []), ''])
@@ -350,38 +361,49 @@ function ActionEditor({label, description, actionKey, errorPath, path}: any) {
     clearEmptyNest(path, 3)
   }
 
+  const toggleCheckbox = useCallback(() => {
+    clearState(path)
+    clearEmptyNest(path, 3)
+    setEnabled(!enabled)
+  }, [enabled, setEnabled, path])
+
   return (
-    <FormField label={label} errorText={errorPath} description={description}>
-      <SpaceBetween direction="vertical" size="xs">
-        <div
-          key={actionKey}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-          }}
-        >
-          <div style={{flexGrow: 1}}>
-            <Input
-              placeholder="/home/ec2-user/start.sh"
-              value={script}
-              onChange={({detail}) =>
-                editScript([...path, 'Script'], detail.value)
-              }
-            />
+    <SpaceBetween direction="vertical" size="xs">
+      <Checkbox checked={enabled} onChange={toggleCheckbox}>
+        {label}
+      </Checkbox>
+      {enabled ? (
+        <>
+          <div
+            className={styles.spaceBetweenCentered}
+            style={{'--spacing': spaceScaledXs}}
+          >
+            <FormField errorText={errorPath}>
+              <Input
+                placeholder="/home/ec2-user/start.sh"
+                value={script}
+                onChange={({detail}) =>
+                  editScript([...path, 'Script'], detail.value)
+                }
+              />
+            </FormField>
+            <Button onClick={() => addArg([...path, 'Args'])}>
+              {t('wizard.components.actionsEditor.addArgument')}
+            </Button>
           </div>
-          <div style={{flexShrink: 1}}>
-            <Button onClick={() => addArg([...path, 'Args'])}>+ Arg</Button>
-          </div>
-        </div>
-        <SpaceBetween direction="vertical" size="xxs">
-          {args.map((a: any, i: any) => (
-            <ArgEditor key={`osa${i}`} arg={a} i={i} path={[...path, 'Args']} />
-          ))}
-        </SpaceBetween>
-      </SpaceBetween>
-    </FormField>
+          <SpaceBetween direction="vertical" size="xs">
+            {args.map((a: any, i: any) => (
+              <ArgEditor
+                key={`osa${i}`}
+                arg={a}
+                i={i}
+                path={[...path, 'Args']}
+              />
+            ))}
+          </SpaceBetween>
+        </>
+      ) : null}
+    </SpaceBetween>
   )
 }
 
@@ -396,7 +418,7 @@ function ActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
   const onConfiguredErrors = useState([...errorsPath, 'onConfigured'])
 
   return (
-    <SpaceBetween direction="vertical" size="xs">
+    <SpaceBetween direction="vertical" size="s">
       <ActionEditor
         label={t('wizard.components.actionsEditor.onStart.label')}
         description={t('wizard.components.actionsEditor.onStart.description')}
@@ -428,7 +450,7 @@ function HeadNodeActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
   const onUpdatedErrors = useState([...errorsPath, 'onUpdated'])
 
   return (
-    <SpaceBetween direction="vertical" size="xs">
+    <SpaceBetween direction="vertical" size="s">
       <ActionEditor
         label={t('wizard.headNode.advancedOptions.scripts.onStart.label')}
         description={t(
