@@ -31,4 +31,4 @@ def size_not_exceeding(data, size):
     bytes_ = bytes(json.dumps(data), 'utf-8')
     byte_size = len(bytes_)
     if byte_size > size:
-        raise ValidationError(f'Request body exceeded max size of {size}')
+        raise ValidationError(f'Request body exceeded max size of {size} bytes')

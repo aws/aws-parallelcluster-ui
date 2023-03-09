@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validate, INCLUDE, validates_schema, ValidationError
+from marshmallow import Schema, fields, validate, INCLUDE, validates_schema
 
 from api.validation.validators import aws_region_validator, is_alphanumeric_with_hyphen, \
     valid_api_log_levels_predicate, size_not_exceeding
@@ -131,4 +131,4 @@ class PCProxyBodySchema(Schema):
     def request_body_not_exceeding(self, data, **kwargs):
         size_not_exceeding(data, self.max_size)
 
-PCProxyBody = PCProxyBodySchema(max_size=8192,unknown=INCLUDE)
+PCProxyBody = PCProxyBodySchema(max_size=1000000,unknown=INCLUDE)
