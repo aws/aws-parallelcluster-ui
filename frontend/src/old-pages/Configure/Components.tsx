@@ -40,6 +40,7 @@ import {
   InputProps,
   TextContent,
   CheckboxProps,
+  Multiselect,
 } from '@cloudscape-design/components'
 
 // Components
@@ -461,13 +462,8 @@ function SecurityGroups({basePath}: any) {
   const {t} = useTranslation()
   const sgPath = [...basePath, 'Networking', 'AdditionalSecurityGroups']
   const selectedSgs = useState(sgPath) || []
-  const sgSelected = useState(['app', 'wizard', 'sg-selected'])
 
   const sgs = useState(['aws', 'security_groups']) || []
-  const sgMap = sgs.reduce((acc: any, s: any) => {
-    acc[s.GroupId] = s.GroupName
-    return acc
-  }, {})
 
   const itemToOption = (item: any) => {
     return {
@@ -476,51 +472,23 @@ function SecurityGroups({basePath}: any) {
       description: item.GroupName,
     }
   }
-  const removeSg = (i: any) => {
-    setState(sgPath, [...selectedSgs.slice(0, i), ...selectedSgs.slice(i + 1)])
-    if (getState(sgPath).length === 0) clearState(sgPath)
-  }
+
+  const options = sgs.map(itemToOption)
+
   return (
-    <SpaceBetween direction="vertical" size="xs">
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '16px',
-        }}
-      >
-        <Select
-          selectedOption={
-            sgSelected &&
-            findFirst(sgs, (x: any) => x.GroupId === sgSelected.value)
-              ? itemToOption(
-                  findFirst(sgs, (x: any) => x.GroupId === sgSelected.value),
-                )
-              : {label: t('wizard.headNode.securityGroups.select')}
-          }
-          onChange={({detail}) => {
-            setState(['app', 'wizard', 'sg-selected'], detail.selectedOption)
-          }}
-          triggerVariant={'option'}
-          options={sgs.map(itemToOption)}
-        />
-        <Button
-          disabled={!sgSelected}
-          onClick={() => setState(sgPath, [...selectedSgs, sgSelected.value])}
-        >
-          Add
-        </Button>
-      </div>
-      <TokenGroup
-        onDismiss={({detail: {itemIndex}}) => {
-          removeSg(itemIndex)
-        }}
-        items={selectedSgs.map((s: any) => {
-          return {label: s, dismissLabel: `Remove ${s}`, description: sgMap[s]}
-        })}
-      />
-    </SpaceBetween>
+    <Multiselect
+      selectedOptions={options.filter((opt: any) =>
+        selectedSgs.includes(opt.value),
+      )}
+      placeholder={t('wizard.headNode.securityGroups.select')}
+      onChange={({detail}) => {
+        setState(
+          sgPath,
+          detail.selectedOptions.map(opt => opt.value),
+        )
+      }}
+      options={options}
+    />
   )
 }
 
