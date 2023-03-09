@@ -474,8 +474,11 @@ function SecurityGroups({basePath}: {basePath: string[]}) {
     [basePath],
   )
   const selectedSecurityGroups: string[] = useState(securityGroupsPath) || []
-  const availableSecurityGroups = useState(['aws', 'security_groups']) || []
-  const options = availableSecurityGroups.map(securityGroupToOption)
+  const availableSecurityGroups = useState(['aws', 'security_groups'])
+  const options = useMemo(
+    () => (availableSecurityGroups || []).map(securityGroupToOption),
+    [availableSecurityGroups],
+  )
   const onChange: NonCancelableEventHandler<MultiselectProps.MultiselectChangeDetail> =
     useCallback(
       ({detail}) => {
