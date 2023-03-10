@@ -540,4 +540,9 @@ const HeadNodePropertiesHelpPanel = () => {
   )
 }
 
-export {HeadNode, headNodeValidate, HeadNodePropertiesHelpPanel}
+export {
+  HeadNode,
+  headNodeValidate,
+  HeadNodePropertiesHelpPanel,
+  IMDSSecuredSettings,
+}
