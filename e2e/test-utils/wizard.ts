@@ -29,7 +29,7 @@ export async function fillClusterSection(page: Page, selectVPC = true) {
 }
 
 export async function fillHeadNodeSection(page: Page) {
-  await expect(page.getByRole('heading', { name: 'Head node' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Head node', exact: true })).toBeVisible()
   
   await page.getByRole('button', { name: 'Next' }).click();
 }
