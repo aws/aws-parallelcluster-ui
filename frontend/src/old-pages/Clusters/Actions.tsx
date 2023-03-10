@@ -212,10 +212,7 @@ export default function Actions() {
     ]
   }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
-  const isActionsDisabled = React.useMemo(
-    () => isSsmDisabled && isEditDisabled && isDeleteDisabled,
-    [isSsmDisabled, isEditDisabled, isDeleteDisabled],
-  )
+  const isActionsDisabled = isSsmDisabled && isEditDisabled && isDeleteDisabled
 
   return (
     <>
