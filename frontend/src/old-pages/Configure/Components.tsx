@@ -633,9 +633,6 @@ function IamPoliciesEditor({basePath}: any) {
 
   return (
     <SpaceBetween direction="vertical" size="s">
-      <TextContent>
-        {t('wizard.components.IamPoliciesEditor.title')}
-      </TextContent>
       <FormField
         errorText={
           findFirst(policies, (x: any) => x.Policy === policy)

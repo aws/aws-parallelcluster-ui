@@ -463,13 +463,6 @@ function HeadNode() {
             ) : (
               <ActionsEditor basePath={headNodePath} errorsPath={errorsPath} />
             )}
-            <ExpandableSection
-              headerText={t(
-                'wizard.headNode.advancedOptions.iamPolicies.label',
-              )}
-            >
-              <IamPoliciesEditor basePath={headNodePath} />
-            </ExpandableSection>
           </ExpandableSection>
         </SpaceBetween>
       </Container>
@@ -505,7 +498,17 @@ function HeadNode() {
           <Header variant="h2">{t('wizard.headNode.security.header')}</Header>
         }
       >
-        <KeypairSelect />
+        <ColumnLayout borders="horizontal">
+          <Box margin={{bottom: 'xs'}}>
+            <KeypairSelect />
+          </Box>
+          <ExpandableSection
+            variant="footer"
+            headerText={t('wizard.headNode.advancedOptions.iamPolicies.label')}
+          >
+            <IamPoliciesEditor basePath={headNodePath} />
+          </ExpandableSection>
+        </ColumnLayout>
       </Container>
     </ColumnLayout>
   )
