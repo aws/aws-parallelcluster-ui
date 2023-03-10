@@ -11,7 +11,7 @@ Parameters:
   - ParameterKey: SNSRole
     UsePreviousValue: true
   - ParameterKey: PublicEcrImageUri
-    ParameterValue: public.ecr.aws/pcm/pcluster-manager-awslambda:latest
+    ParameterValue: public.ecr.aws/pcm/parallelcluster-ui:latest
 Capabilities:
   - CAPABILITY_AUTO_EXPAND
   - CAPABILITY_NAMED_IAM
