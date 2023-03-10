@@ -536,7 +536,7 @@
           }
         },
         "iamPolicies": {
-          "label": "IAM Policies"
+          "label": "IAM Policies - optional"
         }
       },
       "slurmSettings": {
@@ -931,7 +931,6 @@
         }
       },
       "IamPoliciesEditor": {
-        "title": "Add IAM policies, in addition to the set of policies that AWS ParallelCluster provides automatically.",
         "policyAlreadyAdded": "Policy already added.",
         "addButtonLabel": "Add"
       },
