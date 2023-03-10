@@ -373,9 +373,7 @@ function IMDSSecuredSettings() {
   const {t} = useTranslation()
   const imdsSecured = useState(imdsSecuredPath) ?? true
 
-  console.log('WAS', useState(imdsSecuredPath))
   React.useEffect(() => {
-    console.log('SETTING TO', imdsSecured)
     setState(imdsSecuredPath, imdsSecured)
   }, [])
 
