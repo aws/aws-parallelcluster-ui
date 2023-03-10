@@ -184,7 +184,8 @@
         "filteringAriaLabel": "Find jobs",
         "filteringPlaceholder": "Find jobs"
       },
-      "loadingJobs": "Loading jobs..."
+      "loadingJobs": "Loading jobs...",
+      "propertyNotAvailable": "N/A"
     },
     "logs": {
       "label": "Select a log stream from the left."
