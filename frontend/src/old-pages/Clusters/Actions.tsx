@@ -212,6 +212,8 @@ export default function Actions() {
     ]
   }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
+  const isActionsDisabled = isSsmDisabled && isEditDisabled && isDeleteDisabled
+
   return (
     <>
       <DeleteDialog
@@ -251,6 +253,7 @@ export default function Actions() {
         <ButtonDropdown
           onItemClick={onItemClick}
           items={clusterActionsGroupButtonItems}
+          disabled={isActionsDisabled}
         >
           {t('cluster.list.actionsLabel')}
         </ButtonDropdown>
