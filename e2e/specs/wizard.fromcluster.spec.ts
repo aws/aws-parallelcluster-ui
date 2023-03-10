@@ -14,25 +14,28 @@ import { fillClusterSection, fillHeadNodeSection, fillQueuesSection, fillStorage
 
 const CLUSTER_TO_COPY_FROM = 'DO-NOT-DELETE'
 
-test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () => {
-  test('a user should be able to login, navigate till the end of the cluster creation wizard, and perform a dry-run successfully', async ({ page }) => {
-    await visitAndLogin(page)
-  
-    await page.getByRole('button', { name: 'Create cluster' }).first().click();
-    await page.getByRole('menuitem', { name: 'From another cluster' }).click();
-    
-    await page.getByRole('button', { name: 'Select a cluster' }).click();
-    await page.getByRole('option', { name: CLUSTER_TO_COPY_FROM }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
+test.describe('environment: @demo', () => {
+  test.describe('given an already existing cluster', () => {
+    test.describe('when the cluster is picked as source to start the creation wizard', () => {
+      test('user can perform a dry-run successfully', async ({ page }) => {
+        await visitAndLogin(page)
 
-    await fillClusterSection(page, false)
-    
-    await fillHeadNodeSection(page)
-  
-    await fillQueuesSection(page)
+        await page.getByRole('button', { name: 'Create cluster' }).first().click();
+        await page.getByRole('menuitem', { name: 'From another cluster' }).click();
 
-    await fillStorageSection(page)
-  
-    await performDryRun(page)
-  });
-})
+        await page.getByRole('button', { name: 'Select a cluster' }).click();
+        await page.getByRole('option', { name: CLUSTER_TO_COPY_FROM }).click();
+        await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
+
+        await fillClusterSection(page, false)
+
+        await fillHeadNodeSection(page)
+
+        await fillQueuesSection(page)
+
+        await fillStorageSection(page)
+
+        await performDryRun(page)
+      });
+    })
+  })
