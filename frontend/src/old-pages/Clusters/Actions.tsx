@@ -212,6 +212,11 @@ export default function Actions() {
     ]
   }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
+  const isActionsDisabled = React.useMemo(
+    () => isSsmDisabled && isEditDisabled && isDeleteDisabled,
+    [isSsmDisabled, isEditDisabled, isDeleteDisabled],
+  )
+
   return (
     <>
       <DeleteDialog
@@ -251,6 +256,7 @@ export default function Actions() {
         <ButtonDropdown
           onItemClick={onItemClick}
           items={clusterActionsGroupButtonItems}
+          disabled={isActionsDisabled}
         >
           {t('cluster.list.actionsLabel')}
         </ButtonDropdown>
