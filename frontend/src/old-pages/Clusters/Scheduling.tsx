@@ -133,6 +133,9 @@ function FileLink({path, isFile}: {path: string; isFile?: boolean}) {
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
   const headNode = useState([...clusterPath, 'headNode'])
+  const {t} = useTranslation()
+
+  if (!path) return <span>{t('cluster.scheduling.propertyNotAvailable')}</span>
 
   const linkPath = isFile ? path.slice(0, path.lastIndexOf('/')) : path
 
