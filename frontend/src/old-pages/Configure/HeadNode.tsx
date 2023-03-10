@@ -30,6 +30,7 @@ import {
   Input,
   Select,
   SpaceBetween,
+  TextContent,
 } from '@cloudscape-design/components'
 
 // State
@@ -437,32 +438,40 @@ function HeadNode() {
           <SsmSettings />
           <DcvSettings />
           <IMDSSecuredSettings />
-          <FormField
-            label={t('wizard.headNode.securityGroups.label')}
-            info={
-              <InfoLink
-                helpPanel={
-                  <TitleDescriptionHelpPanel
-                    title={t('wizard.headNode.securityGroups.label')}
-                    description={t('wizard.headNode.securityGroups.help')}
-                  />
-                }
-              />
-            }
-          >
-            <SecurityGroups basePath={headNodePath} />
-          </FormField>
           <ExpandableSection
             headerText={t('wizard.headNode.advancedOptions.label')}
           >
-            {isOnNodeUpdatedActive ? (
-              <HeadNodeActionsEditor
-                basePath={headNodePath}
-                errorsPath={errorsPath}
-              />
-            ) : (
-              <ActionsEditor basePath={headNodePath} errorsPath={errorsPath} />
-            )}
+            <SpaceBetween size="s">
+              <FormField
+                label={t('wizard.headNode.securityGroups.label')}
+                info={
+                  <InfoLink
+                    helpPanel={
+                      <TitleDescriptionHelpPanel
+                        title={t('wizard.headNode.securityGroups.label')}
+                        description={t('wizard.headNode.securityGroups.help')}
+                      />
+                    }
+                  />
+                }
+              >
+                <SecurityGroups basePath={headNodePath} />
+              </FormField>
+              <TextContent>
+                <h5>{t('wizard.headNode.advancedOptions.scripts.title')}</h5>
+              </TextContent>
+              {isOnNodeUpdatedActive ? (
+                <HeadNodeActionsEditor
+                  basePath={headNodePath}
+                  errorsPath={errorsPath}
+                />
+              ) : (
+                <ActionsEditor
+                  basePath={headNodePath}
+                  errorsPath={errorsPath}
+                />
+              )}
+            </SpaceBetween>
           </ExpandableSection>
         </SpaceBetween>
       </Container>

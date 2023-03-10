@@ -525,6 +525,7 @@
       "advancedOptions": {
         "label": "Advanced options",
         "scripts": {
+          "title": "Scripts",
           "onStart": {
             "label": "Run script on node start"
           },
