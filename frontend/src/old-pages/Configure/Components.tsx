@@ -54,6 +54,12 @@ import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
 import {subnetName} from './util'
+import {
+  ActionsEditorProps,
+  InstanceGroup,
+  InstanceType,
+  InstanceTypeOption,
+} from './Components.types'
 
 import styles from './Components.module.css'
 import {spaceScaledXs} from '@cloudscape-design/design-tokens'
@@ -61,18 +67,6 @@ import {spaceScaledXs} from '@cloudscape-design/design-tokens'
 // Helper Functions
 function strToOption(str: any) {
   return {value: str, label: str}
-}
-
-type Extension = {
-  name: string
-  path: string
-  description: string
-  args: {name: string; default?: string}[]
-}
-
-type ActionsEditorProps = {
-  basePath: string[]
-  errorsPath: string[]
 }
 
 // Selectors
@@ -135,12 +129,11 @@ function SubnetSelect({value, onChange, disabled}: any) {
   )
 }
 
-type InstanceGroup = [string, string][]
-
 export function useInstanceGroups(): Record<string, InstanceGroup> {
+  const {t} = useTranslation()
   const instanceTypes = useState(['aws', 'instanceTypes']) || []
 
-  let groups: {[key: string]: [string, string][]} = {}
+  let groups: {[key: string]: InstanceGroup} = {}
 
   for (let instance of instanceTypes) {
     let group = 'General Purpose'
@@ -163,46 +156,68 @@ export function useInstanceGroups(): Record<string, InstanceGroup> {
 
     if (!(group in groups)) groups[group] = []
 
-    let desc = `${instance.VCpuInfo.DefaultVCpus} vcpus, ${
-      instance.MemoryInfo.SizeInMiB / 1024
-    }GB memory`
+    let tags = [
+      t('wizard.components.instanceSelect.instanceType.vCpus', {
+        vCpus: instance.VCpuInfo.DefaultVCpus,
+      }),
+      t('wizard.components.instanceSelect.instanceType.memory', {
+        memory: instance.MemoryInfo.SizeInMiB / 1024,
+      }),
+    ]
 
     if (Object.keys(instance.GpuInfo).length > 0)
-      desc = `${instance.GpuInfo.Count} x ${instance.GpuInfo.Name}, ${desc}`
+      tags.push(`${instance.GpuInfo.Count} x ${instance.GpuInfo.Name}`)
 
-    groups[group].push([instance.InstanceType, desc])
+    groups[group].push({type: instance.InstanceType, tags: tags})
   }
   return groups
 }
 
 function InstanceSelect({path, selectId, callback, disabled}: any) {
-  const value = useState(path) || ''
+  const {t} = useTranslation()
+
+  const instanceType = useState(path) || null
   const instanceGroups = useInstanceGroups()
 
-  const instanceToOption = ([value, label]: string[]) => {
-    return {label: value, description: label, value: value}
+  const instanceToOption = (instance: InstanceType): InstanceTypeOption => {
+    return {label: instance.type, value: instance.type, tags: instance.tags}
   }
 
+  const instanceTypeToOption = (
+    instanceType: string,
+  ): InstanceTypeOption | null => {
+    const instances = Object.keys(instanceGroups)
+      .map(groupName => instanceGroups[groupName])
+      .flat()
+    const instance = instances.find(instance => instance.type === instanceType)
+    return instance ? instanceToOption(instance) : null
+  }
+
+  const [selectedOption, setSelectedOption] = React.useState(
+    instanceTypeToOption(instanceType),
+  )
+
+  const onChangeHandler = React.useCallback(
+    ({detail}) => {
+      setSelectedOption(detail.selectedOption as InstanceTypeOption)
+      if (detail.selectedOption.value !== instanceType) {
+        setState(path, detail.selectedOption.value)
+        callback && callback(detail.selectedOption.value)
+      }
+    },
+    [callback, instanceType, path],
+  )
+
   return (
-    <Autosuggest
-      value={value}
+    <Select
+      selectedOption={selectedOption}
       disabled={disabled}
-      onChange={({detail}) => {
-        if (detail.value !== value) {
-          setState(path, detail.value)
-          callback && callback(detail.value)
-        }
-      }}
-      // @ts-expect-error TS(2322) FIXME: Type '(newValue: string) => void' is not assignabl... Remove this comment to see the full error message
-      enteredTextLabel={newValue => {
-        if (newValue !== value) {
-          setState(path, newValue)
-          callback && callback(newValue)
-        }
-      }}
-      ariaLabel="Instance Selector"
-      placeholder="Instance Type"
-      empty="No matches found"
+      onChange={onChangeHandler}
+      ariaLabel={t('wizard.components.instanceSelect.placeholder')}
+      placeholder={t('wizard.components.instanceSelect.placeholder')}
+      empty={t('wizard.components.instanceSelect.noMatches')}
+      triggerVariant="option"
+      filteringType="auto"
       options={Object.keys(instanceGroups).map(groupName => {
         return {
           label: groupName,

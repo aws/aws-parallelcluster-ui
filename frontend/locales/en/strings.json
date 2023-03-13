@@ -909,7 +909,11 @@
       "instanceSelect": {
         "placeholder": "Choose an instance type",
         "ariaLabel": "Instance selector",
-        "noMatches": "No matches"
+        "noMatches": "No matches",
+        "instanceType": {
+          "vCpus": "{{vCpus}} vCpus",
+          "memory": "{{memory}} GiB memory"
+        }
       },
       "customAmi": {
         "ariaLabel": "Custom Amazon Machine Image (AMI)",
