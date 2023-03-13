@@ -18,6 +18,7 @@ import {
   MultiInstanceComputeResource,
   QueueValidationErrors,
 } from './queues.types'
+import {InstanceType} from '../Components.types'
 
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
@@ -94,10 +95,10 @@ export function ComputeResource({
       Object.keys(instanceGroups).map(groupName => {
         return {
           label: groupName,
-          options: instanceGroups[groupName].map(([value, label]) => ({
-            label: value,
-            description: label,
-            value: value,
+          options: instanceGroups[groupName].map((instance: InstanceType) => ({
+            label: instance.type,
+            tags: instance.tags,
+            value: instance.type,
           })),
         }
       }),
