@@ -561,37 +561,21 @@ function RootVolume({basePath, errorsPath}: any) {
   }, [rootVolumeType, rootVolumeTypePath])
 
   return (
-    <SpaceBetween direction="vertical" size="xs">
+    <SpaceBetween direction="vertical" size="s">
       <FormField
         label={t('wizard.components.rootVolume.size.label')}
         errorText={rootVolumeErrors}
-        description={t('wizard.components.rootVolume.size.description')}
       >
         <Input
           disabled={editing}
           placeholder={t('wizard.components.rootVolume.size.placeholder')}
           value={rootVolumeSize || ''}
           inputMode="decimal"
+          type="number"
           onChange={({detail}) => setRootVolume(detail.value)}
         />
       </FormField>
-      <Checkbox
-        disabled={editing}
-        checked={rootVolumeEncrypted || false}
-        onChange={toggleEncrypted}
-      >
-        {t('wizard.components.rootVolume.encrypted')}
-      </Checkbox>
-      <div
-        key="volume-type"
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '16px',
-        }}
-      >
-        <Trans i18nKey="wizard.components.rootVolume.type.label" />:
+      <FormField label={t('wizard.components.rootVolume.type.label')}>
         <Select
           disabled={editing}
           placeholder={t('wizard.components.rootVolume.type.placeholder', {
@@ -603,7 +587,14 @@ function RootVolume({basePath, errorsPath}: any) {
           }}
           options={volumeTypes.map(strToOption)}
         />
-      </div>
+      </FormField>
+      <Checkbox
+        disabled={editing}
+        checked={rootVolumeEncrypted || false}
+        onChange={toggleEncrypted}
+      >
+        {t('wizard.components.rootVolume.encrypted')}
+      </Checkbox>
     </SpaceBetween>
   )
 }
