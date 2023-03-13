@@ -32,7 +32,7 @@ test.describe('environment: @demo', () => {
         await page.getByText(/vpc-.*/).waitFor({state: 'visible'})
         await page.getByRole('button', { name: 'Next' }).click();
 
-        await expect(page.getByRole('heading', { name: 'Head node' })).toBeVisible()
+        await expect(page.getByRole('heading', { name: 'Head node', exact: true })).toBeVisible()
         await page.getByRole('button', { name: 'Next' }).click();
 
         await expect(page.getByRole('heading', { name: 'Queues' }).first()).toBeVisible()
