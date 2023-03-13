@@ -441,6 +441,9 @@
     "headNode": {
       "title": "Head node",
       "description": "Configure the head node.",
+      "instance": {
+        "title": "Head node instance"
+      },
       "help": {
         "main": "<p>Configure the head node of your cluster.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "instanceSelectionLink": {

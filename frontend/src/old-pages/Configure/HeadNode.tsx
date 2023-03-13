@@ -420,7 +420,11 @@ function HeadNode() {
 
   return (
     <ColumnLayout columns={1}>
-      <Container>
+      <Container
+        header={
+          <Header variant="h2">{t('wizard.headNode.instance.title')}</Header>
+        }
+      >
         <SpaceBetween direction="vertical" size="s">
           <Box>
             <FormField
