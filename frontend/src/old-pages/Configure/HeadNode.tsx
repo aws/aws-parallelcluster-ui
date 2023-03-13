@@ -433,7 +433,6 @@ function HeadNode() {
               />
             </FormField>
           </Box>
-          <RootVolume basePath={headNodePath} errorsPath={errorsPath} />
           <SsmSettings />
           <DcvSettings />
           <IMDSSecuredSettings />
@@ -510,6 +509,13 @@ function HeadNode() {
           </ExpandableSection>
         </ColumnLayout>
       </Container>
+      <ExpandableSection
+        variant="container"
+        headerCounter={t('wizard.headNode.localStorage.optional')}
+        headerText={t('wizard.headNode.localStorage.title')}
+      >
+        <RootVolume basePath={headNodePath} errorsPath={errorsPath} />
+      </ExpandableSection>
     </ColumnLayout>
   )
 }
