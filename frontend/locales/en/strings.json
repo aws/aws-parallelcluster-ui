@@ -525,6 +525,10 @@
        "help": "Select one or more security groups.",
        "select": "Select one or more security groups"
       },
+      "localStorage": {
+        "title": "Local storage",
+        "optional": "- optional"
+      },
       "advancedOptions": {
         "label": "Advanced options",
         "scripts": {
@@ -934,7 +938,6 @@
       "rootVolume": {
         "size": {
           "label": "Root volume size (GB)",
-          "description": "The compute node local storage.",
           "placeholder": "Enter root volume size."
         },
         "encrypted": "Encrypt root volume",
