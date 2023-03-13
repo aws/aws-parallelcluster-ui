@@ -909,6 +909,11 @@
       }
     },
     "components": {
+      "instanceSelect": {
+        "placeholder": "Choose an instance type",
+        "ariaLabel": "Instance selector",
+        "noMatches": "No matches"
+      },
       "customAmi": {
         "ariaLabel": "Custom Amazon Machine Image (AMI)",
         "label": "Custom Amazon Machine Image (AMI)",
