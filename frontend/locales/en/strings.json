@@ -856,6 +856,12 @@
       "advancedOptions": {
         "iamPolicies": {
           "label": "IAM Policies"
+        },
+        "scripts": {
+          "title": "Scripts"
+        },
+        "rootVolume": {
+          "title": "Root volume"
         }
       },
       "addQueueButton": {
