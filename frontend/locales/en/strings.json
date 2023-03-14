@@ -898,6 +898,9 @@
         "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running.",
         "disableRollback": "Disable rollback: Retain the cluster resources in case of a cluster create failure."
       },
+      "flashBar": {
+        "success": "Success"
+      },
       "helpPanel": {
         "title": "Cluster configuration",
         "description": "<p>Review, edit and test cluster configuration.</p><p>Choose <strong>Dry run</strong> to validate your configuration without creating your cluster.</p><p>Choose <strong>Create</strong> to validate your configuration and create your cluster in one step.</p>",
