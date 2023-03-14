@@ -25,10 +25,12 @@ import {
   Header,
   Checkbox,
   Spinner,
+  SpaceBetween,
+  Flashbar,
+  FlashbarProps,
 } from '@cloudscape-design/components'
 
 // Components
-import ValidationErrors from '../../components/ValidationErrors'
 import ConfigView from '../../components/ConfigView'
 
 // State
@@ -36,6 +38,10 @@ import {setState, getState, useState} from '../../store'
 import {NavigateFunction} from 'react-router-dom'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import {ConfigError, CreateErrors, UpdateError} from './Create.types'
+import {capitalize} from 'lodash'
+import {StackedFlashbarProps} from '@cloudscape-design/components/flashbar/interfaces'
+import i18next from 'i18next'
 
 // Constants
 const configPath = ['app', 'wizard', 'clusterConfigYaml']
@@ -188,6 +194,82 @@ const EditReviewHelpPanel = () => {
   )
 }
 
+function dismissableMessage(
+  messageDefinition: FlashbarProps.MessageDefinition,
+  setFlashbarItems: React.Dispatch<
+    React.SetStateAction<FlashbarProps.MessageDefinition[]>
+  >,
+): FlashbarProps.MessageDefinition {
+  return {
+    ...messageDefinition,
+    dismissible: true,
+    onDismiss: () =>
+      setFlashbarItems(items =>
+        items.filter(item => item.id !== messageDefinition.id),
+      ),
+  }
+}
+
+export function errorsToFlashbarItems(
+  errors: CreateErrors,
+  setFlashbarItems: React.Dispatch<
+    React.SetStateAction<FlashbarProps.MessageDefinition[]>
+  >,
+) {
+  let items: FlashbarProps.MessageDefinition[] = []
+
+  if (!errors) return items
+
+  const success = errors.message && errors.message.includes('succeeded')
+  const configErrors =
+    errors.configurationValidationErrors || errors.validationMessages
+  const updateErrors = errors.updateValidationErrors
+
+  if (success) {
+    items.push(
+      dismissableMessage(
+        {
+          type: 'success',
+          header: i18next.t('wizard.create.flashBar.success'),
+          content: errors.message,
+          id: 'success',
+        },
+        setFlashbarItems,
+      ),
+    )
+  }
+
+  configErrors?.forEach((error: ConfigError, index: number) => {
+    items.push(
+      dismissableMessage(
+        {
+          type: error.level.toLowerCase() as FlashbarProps.Type,
+          header: capitalize(error.level.toLowerCase()),
+          content: `${error.type}: ${error.message}`,
+          id: `config-err-${index}`,
+        },
+        setFlashbarItems,
+      ),
+    )
+  })
+
+  updateErrors?.forEach((error: UpdateError, index: number) => {
+    items.push(
+      dismissableMessage(
+        {
+          type: error.level.toLowerCase() as FlashbarProps.Type,
+          header: capitalize(error.level.toLowerCase()),
+          content: error.message,
+          id: `update-err-${index}`,
+        },
+        setFlashbarItems,
+      ),
+    )
+  })
+
+  return items
+}
+
 function Create() {
   const {t} = useTranslation()
   const clusterConfig = useState(configPath)
@@ -204,44 +286,63 @@ function Create() {
 
   useHelpPanel(<HelpPanelComponent />)
 
+  React.useEffect(() => {
+    setFlashbarItems(errorsToFlashbarItems(errors, setFlashbarItems))
+  }, [errors])
+
+  const [flashbarItems, setFlashbarItems] = React.useState<
+    FlashbarProps.MessageDefinition[]
+  >([])
+
+  const flashbarProps: StackedFlashbarProps = {
+    stackItems: true,
+    items: flashbarItems,
+  }
+
   return (
     <Container
-      header={<Header>{t('wizard.create.configuration.title')}</Header>}
+      header={
+        <Header description={t('wizard.create.configuration.description')}>
+          {t('wizard.create.configuration.title')}
+        </Header>
+      }
     >
-      <ConfigView
-        config={clusterConfig}
-        pending={!clusterConfig}
-        onChange={({detail}: any) => {
-          setState(configPath, detail.value)
-        }}
-      />
-      {errors && <ValidationErrors errors={errors} />}
-      {pending && (
-        <div>
-          <Spinner size="normal" />{' '}
-          {t('wizard.create.configuration.pending', {action: pending})}
-        </div>
-      )}
-      {editing && (
-        <Checkbox
-          checked={forceUpdate}
-          onChange={() =>
-            setState(['app', 'wizard', 'forceUpdate'], !forceUpdate)
-          }
-        >
-          {t('wizard.create.configuration.forceUpdate')}
-        </Checkbox>
-      )}
-      {!editing && (
-        <Checkbox
-          checked={disableRollback}
-          onChange={() =>
-            setState(['app', 'wizard', 'disableRollback'], !disableRollback)
-          }
-        >
-          {t('wizard.create.configuration.disableRollback')}
-        </Checkbox>
-      )}
+      <SpaceBetween direction="vertical" size="s">
+        <Flashbar {...flashbarProps} />
+        <ConfigView
+          config={clusterConfig}
+          pending={!clusterConfig}
+          onChange={({detail}: any) => {
+            setState(configPath, detail.value)
+          }}
+        />
+        {pending && (
+          <div>
+            <Spinner size="normal" />{' '}
+            {t('wizard.create.configuration.pending', {action: pending})}
+          </div>
+        )}
+        {editing && (
+          <Checkbox
+            checked={forceUpdate}
+            onChange={() =>
+              setState(['app', 'wizard', 'forceUpdate'], !forceUpdate)
+            }
+          >
+            {t('wizard.create.configuration.forceUpdate')}
+          </Checkbox>
+        )}
+        {!editing && (
+          <Checkbox
+            checked={disableRollback}
+            onChange={() =>
+              setState(['app', 'wizard', 'disableRollback'], !disableRollback)
+            }
+          >
+            {t('wizard.create.configuration.disableRollback')}
+          </Checkbox>
+        )}
+      </SpaceBetween>
     </Container>
   )
 }
