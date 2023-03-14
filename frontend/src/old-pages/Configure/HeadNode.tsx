@@ -372,11 +372,15 @@ function DcvSettings() {
 
 function IMDSSecuredSettings() {
   const {t} = useTranslation()
-  const imdsSecured = useState(imdsSecuredPath) ?? true
+  let imdsSecured = useState(imdsSecuredPath)
+  const editing = useState(['app', 'wizard', 'editing'])
 
   React.useEffect(() => {
-    setState(imdsSecuredPath, imdsSecured)
-  }, [])
+    if (null == imdsSecured && !editing) {
+      imdsSecured = true
+      setState(imdsSecuredPath, imdsSecured)
+    }
+  }, [imdsSecured])
 
   const toggleImdsSecured = React.useCallback(() => {
     setState(imdsSecuredPath, !imdsSecured)
@@ -384,6 +388,7 @@ function IMDSSecuredSettings() {
 
   return (
     <CheckboxWithHelpPanel
+      disabled={editing}
       checked={imdsSecured}
       onChange={toggleImdsSecured}
       helpPanel={
