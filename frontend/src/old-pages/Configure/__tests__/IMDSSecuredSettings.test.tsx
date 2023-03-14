@@ -89,11 +89,7 @@ describe('given a component to configure IMDS secured setting', () => {
 
     describe('when no action is performed on the checkbox', () => {
       it('should be set to false', () => {
-        expect(mockSetState).toHaveBeenCalledTimes(1)
-        expect(mockSetState).toHaveBeenCalledWith(
-          ['app', 'wizard', 'config', 'HeadNode', 'Imds', 'Secured'],
-          false,
-        )
+        expect(mockSetState).not.toHaveBeenCalled()
       })
     })
 
@@ -103,12 +99,41 @@ describe('given a component to configure IMDS secured setting', () => {
           screen.getByLabelText('wizard.headNode.imdsSecured.set'),
         )
 
-        expect(mockSetState).toHaveBeenCalledTimes(2)
+        expect(mockSetState).toHaveBeenCalledTimes(1)
         expect(mockSetState).toHaveBeenCalledWith(
           ['app', 'wizard', 'config', 'HeadNode', 'Imds', 'Secured'],
           true,
         )
       })
+    })
+  })
+
+  describe('when editing a cluster', () => {
+    beforeEach(() => {
+      ;(mockSetState as jest.Mock).mockClear()
+      mockStore.getState.mockReturnValue({
+        app: {
+          wizard: {
+            editing: true,
+          },
+        },
+      })
+
+      screen = render(
+        <MockProviders>
+          <IMDSSecuredSettings />
+        </MockProviders>,
+      )
+    })
+
+    it('should not change the checkbox state', () => {
+      expect(mockSetState).not.toHaveBeenCalled()
+    })
+
+    it('should be disabled', () => {
+      fireEvent.click(screen.getByLabelText('wizard.headNode.imdsSecured.set'))
+
+      expect(mockSetState).not.toHaveBeenCalled()
     })
   })
 })
