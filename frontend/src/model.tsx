@@ -16,6 +16,7 @@ import {generateRandomId} from './util'
 import {AppConfig} from './app-config/types'
 import {getAppConfig} from './app-config'
 import {axiosInstance, executeRequest, HTTPMethod} from './http/executeRequest'
+import {LogStream, LogStreamsResponse, LogStreamView} from './types/logs'
 
 // Types
 type Callback = (arg?: any) => void
@@ -264,6 +265,32 @@ function GetClusterStackEvents(clusterName: any) {
         )
       console.log(error)
     })
+}
+
+function toLogStreamView(rawStream: LogStream): LogStreamView {
+  const {logStreamName, lastEventTimestamp} = rawStream
+  const [hostname, instanceId, logIdentifier] = logStreamName.split('.')
+  return {
+    hostname,
+    instanceId,
+    logIdentifier,
+    lastEventTimestamp,
+  }
+}
+
+async function ListClusterLogStreams(
+  clusterName: string,
+): Promise<LogStreamView[]> {
+  var url = `api?path=/v3/clusters/${clusterName}/logstreams`
+  try {
+    const {data}: {data: LogStreamsResponse} = await request('get', url)
+    return data?.logStreams.map(toLogStreamView) || []
+  } catch (error) {
+    if ((error as any).response) {
+      notify(`Error: ${(error as any).response.data.message}`, 'error')
+    }
+    throw error
+  }
 }
 
 function DeprecatedListClusterLogStreams(clusterName: any) {
@@ -902,6 +929,7 @@ export {
   GetClusterInstances,
   GetClusterStackEvents,
   DeprecatedListClusterLogStreams,
+  ListClusterLogStreams,
   GetClusterLogEvents,
   ListCustomImages,
   DescribeCustomImage,
