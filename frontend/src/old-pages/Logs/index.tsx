@@ -14,11 +14,13 @@ import {
   BreadcrumbGroupProps,
   ContentLayout,
   Header,
+  SpaceBetween,
 } from '@cloudscape-design/components'
 import {useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useParams} from 'react-router-dom'
 import Layout from '../Layout'
+import {LogStreamsTable} from './LogStreamsTable'
 
 export function Logs() {
   const {t} = useTranslation()
@@ -41,7 +43,14 @@ export function Logs() {
             {t('clusterLogs.title', {clusterName})}
           </Header>
         }
-      ></ContentLayout>
+      >
+        <SpaceBetween size="m">
+          <LogStreamsTable
+            clusterName={clusterName!}
+            onLogStreamSelect={() => null}
+          />
+        </SpaceBetween>
+      </ContentLayout>
     </Layout>
   )
 }

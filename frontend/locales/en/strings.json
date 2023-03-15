@@ -333,6 +333,37 @@
   "clusterLogs": {
     "title": "{{clusterName}} cluster logs",
     "breadcrumbLabel": "Logs",
+    "logStreams": {
+      "title": "Log streams",
+      "columns": {
+        "hostname": "Hostname",
+        "nodeType": "Type",
+        "logIdentifier": "Log identifier",
+        "timestamp": "Last event time"
+      },
+      "nodeType": {
+        "headNode": "Headnode",
+        "computeNode": "Compute node",
+        "empty": "-"
+      },
+      "loadingText": "Loading log streams...",
+      "filtering": {
+        "countText": "Results: {{filteredItemsCount}}",
+        "filteringPlaceholder": "Find log streams",
+        "empty": {
+          "title": "No log streams",
+          "subtitle": "No log streams to display."
+        },
+        "noMatch": {
+          "title": "No matches",
+          "subtitle": "No log stream match the filters.",
+          "resetFilter": "Clear filter"
+        }
+      },
+      "actions": {
+        "refresh": "Refresh"
+      }
+    }
   },
   "wizard": {
     "actions": {

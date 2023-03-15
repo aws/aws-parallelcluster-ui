@@ -32,6 +32,7 @@ describe('given a ListClusterLogStreams command and a cluster name', () => {
 
       expect(data).toEqual([
         {
+          logStreamName: 'hostname.instanceId.logIdentifier',
           hostname: 'hostname',
           instanceId: 'instanceId',
           logIdentifier: 'logIdentifier',

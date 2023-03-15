@@ -1,0 +1,194 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+// with the License. A copy of the License is located at
+//
+// http://aws.amazon.com/apache2.0/
+//
+// or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+// OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
+// limitations under the License.
+
+import {useCollection} from '@cloudscape-design/collection-hooks'
+import {
+  Header,
+  Pagination,
+  PropertyFilter,
+  Table,
+  TableProps,
+} from '@cloudscape-design/components'
+import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
+import React, {useCallback, useMemo} from 'react'
+import {useTranslation} from 'react-i18next'
+import {useQuery} from 'react-query'
+import DateView from '../../components/date/DateView'
+import EmptyState from '../../components/EmptyState'
+import {ListClusterLogStreams} from '../../model'
+import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
+import {propertyFilterI18nStrings} from '../../shared/propertyFilterI18nStrings'
+import {useState} from '../../store'
+import {Instance, NodeType} from '../../types/instances'
+import {LogStreamView} from '../../types/logs'
+
+interface Props {
+  clusterName: string
+  onLogStreamSelect: (logStreamName: string) => void
+}
+
+function toNodeType(headNode: Instance, instanceId: string): NodeType {
+  return headNode.instanceId === instanceId
+    ? NodeType.HeadNode
+    : NodeType.ComputeNode
+}
+
+export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
+  const {t} = useTranslation()
+  const [selectedItems, setSelectedItems] = React.useState<LogStreamView[]>([])
+  const headNode = useState(['clusters', 'index', clusterName, 'headNode'])
+  const {data = [], isLoading} = useQuery('CLUSTER_LOGS', () =>
+    ListClusterLogStreams(clusterName),
+  )
+
+  const propertyFilterI18n = useMemo(() => propertyFilterI18nStrings(t), [t])
+
+  const columnDefinitions: TableProps.ColumnDefinition<LogStreamView>[] =
+    useMemo(
+      () => [
+        {
+          id: 'hostname',
+          header: t('clusterLogs.logStreams.columns.hostname'),
+          cell: item => item.hostname,
+          sortingField: 'hostname',
+        },
+        {
+          id: 'nodeType',
+          header: t('clusterLogs.logStreams.columns.nodeType'),
+          cell: item => {
+            if (!headNode) {
+              return t('clusterLogs.logStreams.nodeType.empty')
+            }
+
+            const nodeType = toNodeType(headNode, item.instanceId)
+
+            if (nodeType === NodeType.HeadNode) {
+              return t('clusterLogs.logStreams.nodeType.headNode')
+            } else {
+              return t('clusterLogs.logStreams.nodeType.computeNode')
+            }
+          },
+          sortingField: 'nodeType',
+        },
+        {
+          id: 'logIdentifier',
+          header: t('clusterLogs.logStreams.columns.logIdentifier'),
+          cell: item => item.logIdentifier,
+          sortingField: 'logIdentifier',
+        },
+        {
+          id: 'lastEventTimestamp',
+          header: t('clusterLogs.logStreams.columns.timestamp'),
+          cell: item => <DateView date={item.lastEventTimestamp} />,
+          sortingField: 'lastEventTimestamp',
+        },
+      ],
+      [headNode, t],
+    )
+
+  const {
+    items,
+    filteredItemsCount,
+    collectionProps,
+    propertyFilterProps,
+    paginationProps,
+  } = useCollection(
+    data,
+    extendCollectionsOptions({
+      propertyFiltering: {
+        filteringProperties: [
+          {
+            key: 'hostname',
+            operators: ['=', '!=', ':', '!:'],
+            propertyLabel: t('clusterLogs.logStreams.columns.hostname'),
+            groupValuesLabel: t('clusterLogs.logStreams.columns.hostname'),
+          },
+          {
+            key: 'nodeType',
+            operators: ['=', '!=', ':', '!:'],
+            propertyLabel: t('clusterLogs.logStreams.columns.nodeType'),
+            groupValuesLabel: t('clusterLogs.logStreams.columns.nodeType'),
+          },
+          {
+            key: 'logIdentifier',
+            operators: ['=', '!=', ':', '!:'],
+            propertyLabel: t('clusterLogs.logStreams.columns.logIdentifier'),
+            groupValuesLabel: t('clusterLogs.logStreams.columns.logIdentifier'),
+          },
+          {
+            key: 'lastEventTimestamp',
+            operators: ['=', '!=', ':', '!:', '>', '<', '<=', '>='],
+            propertyLabel: t('clusterLogs.logStreams.columns.timestamp'),
+            groupValuesLabel: t('clusterLogs.logStreams.columns.timestamp'),
+          },
+        ],
+        empty: (
+          <EmptyState
+            title={t('clusterLogs.logStreams.filtering.empty.title')}
+            subtitle={t('clusterLogs.logStreams.filtering.empty.subtitle')}
+          />
+        ),
+        noMatch: (
+          <EmptyState
+            title={t('clusterLogs.logStreams.filtering.noMatch.title')}
+            subtitle={t('clusterLogs.logStreams.filtering.noMatch.subtitle')}
+          />
+        ),
+      },
+      pagination: {
+        pageSize: 5,
+      },
+      sorting: {},
+      selection: {},
+    }),
+  )
+
+  const onSelectionChange: NonCancelableEventHandler<
+    TableProps.SelectionChangeDetail<LogStreamView>
+  > = useCallback(
+    ({detail}) => {
+      if (!detail.selectedItems) return
+
+      setSelectedItems(detail.selectedItems)
+      onLogStreamSelect(detail.selectedItems[0].logStreamName)
+    },
+    [onLogStreamSelect],
+  )
+
+  return (
+    <Table
+      {...collectionProps}
+      loading={isLoading}
+      loadingText={t('clusterLogs.logStreams.loadingText')}
+      columnDefinitions={columnDefinitions}
+      items={items}
+      trackBy="lastEventTimestamp"
+      selectionType="single"
+      selectedItems={selectedItems}
+      onSelectionChange={onSelectionChange}
+      header={
+        <Header counter={`(${items.length})`}>
+          {t('clusterLogs.logStreams.title')}
+        </Header>
+      }
+      pagination={<Pagination {...paginationProps} />}
+      filter={
+        <PropertyFilter
+          {...propertyFilterProps}
+          countText={t('clusterLogs.logStreams.filtering.countText', {
+            filteredItemsCount,
+          })}
+          i18nStrings={propertyFilterI18n}
+        />
+      }
+    />
+  )
+}

@@ -271,6 +271,7 @@ function toLogStreamView(rawStream: LogStream): LogStreamView {
   const {logStreamName, lastEventTimestamp} = rawStream
   const [hostname, instanceId, logIdentifier] = logStreamName.split('.')
   return {
+    logStreamName,
     hostname,
     instanceId,
     logIdentifier,

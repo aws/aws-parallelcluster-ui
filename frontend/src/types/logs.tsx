@@ -46,6 +46,7 @@ export type LogStream = {
 }
 
 export interface LogStreamView {
+  logStreamName: string
   hostname: string
   instanceId: string
   logIdentifier: string
