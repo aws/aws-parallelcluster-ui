@@ -333,6 +333,10 @@
   "clusterLogs": {
     "title": "{{clusterName}} cluster logs",
     "breadcrumbLabel": "Logs",
+    "helpPanel": {
+      "title": "Cluster logs",
+      "description": "Browser the logs of your cluster."
+    },
     "logStreams": {
       "title": "Log streams",
       "columns": {

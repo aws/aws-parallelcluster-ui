@@ -17,14 +17,30 @@ import {
   SpaceBetween,
 } from '@cloudscape-design/components'
 import {useMemo} from 'react'
-import {useTranslation} from 'react-i18next'
+import {Trans, useTranslation} from 'react-i18next'
 import {useParams} from 'react-router-dom'
+import {useHelpPanel} from '../../components/help-panel/HelpPanel'
+import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
+import InfoLink from '../../components/InfoLink'
 import Layout from '../Layout'
 import {LogStreamsTable} from './LogStreamsTable'
+
+function LogsHelpPanel() {
+  const {t} = useTranslation()
+
+  return (
+    <TitleDescriptionHelpPanel
+      title={t('clusterLogs.helpPanel.title')}
+      description={<Trans i18nKey="clusterLogs.helpPanel.description" />}
+    />
+  )
+}
 
 export function Logs() {
   const {t} = useTranslation()
   const {clusterName} = useParams()
+
+  useHelpPanel(<LogsHelpPanel />)
 
   const breadcrumbItems: BreadcrumbGroupProps.Item[] = useMemo(
     () => [
@@ -39,7 +55,10 @@ export function Logs() {
     <Layout breadcrumbs={<BreadcrumbGroup items={breadcrumbItems} />}>
       <ContentLayout
         header={
-          <Header variant="awsui-h1-sticky">
+          <Header
+            variant="awsui-h1-sticky"
+            info={<InfoLink helpPanel={<LogsHelpPanel />} />}
+          >
             {t('clusterLogs.title', {clusterName})}
           </Header>
         }
