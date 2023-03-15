@@ -64,6 +64,7 @@ function CustomImagesList() {
   }
 
   const refreshImages = () => {
+    setSelected([])
     clearState(['customImages', 'list'])
     clearState(['app', 'customImages', 'selected'])
     ListCustomImages(imageStatus || 'AVAILABLE')
