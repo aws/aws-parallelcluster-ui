@@ -89,6 +89,7 @@ export function Breadcrumbs({
 
 export default function Layout({
   children,
+  breadcrumbs,
   pageSlug,
   slugOnClick,
   ...props
@@ -103,6 +104,10 @@ export default function Layout({
       [updateHelpPanel],
     )
 
+  const breadcrumbsComponent = breadcrumbs
+    ? breadcrumbs
+    : pageSlug && <Breadcrumbs slug={pageSlug} onClick={slugOnClick} />
+
   return (
     <>
       <TopBar />
@@ -111,9 +116,7 @@ export default function Layout({
         content={children}
         contentType="table"
         navigation={<SideBar />}
-        breadcrumbs={
-          pageSlug && <Breadcrumbs slug={pageSlug} onClick={slugOnClick} />
-        }
+        breadcrumbs={breadcrumbsComponent}
         notifications={<Flashbar items={messages} />}
         {...props}
         tools={element}
