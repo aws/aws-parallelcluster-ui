@@ -266,7 +266,7 @@ function GetClusterStackEvents(clusterName: any) {
     })
 }
 
-function ListClusterLogStreams(clusterName: any) {
+function DeprecatedListClusterLogStreams(clusterName: any) {
   request('get', `api?path=/v3/clusters/${clusterName}/logstreams`)
     .then((response: any) => {
       //console.log(response)
@@ -901,7 +901,7 @@ export {
   UpdateComputeFleet,
   GetClusterInstances,
   GetClusterStackEvents,
-  ListClusterLogStreams,
+  DeprecatedListClusterLogStreams,
   GetClusterLogEvents,
   ListCustomImages,
   DescribeCustomImage,
