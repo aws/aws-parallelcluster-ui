@@ -10,7 +10,7 @@
 
 import { FileChooser, test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
-import { fillClusterSection, fillHeadNodeSection, fillQueuesSection, fillStorageSection, performDryRun } from '../test-utils/wizard';
+import { fillWizard } from '../test-utils/wizard';
 
 const TEMPLATE_PATH = './fixtures/wizard.template.yaml'
 
@@ -27,15 +27,7 @@ test.describe('environment: @demo', () => {
         })
         await page.getByRole('menuitem', { name: 'Upload a template' }).click();
         
-        await fillClusterSection(page, false)
-    
-        await fillHeadNodeSection(page)
-      
-        await fillQueuesSection(page)
-
-        await fillStorageSection(page)
-      
-        await performDryRun(page)
+        await fillWizard(page)
       });
     });
   });

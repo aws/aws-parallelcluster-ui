@@ -10,7 +10,7 @@
 
 import { test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
-import { fillClusterSection, fillHeadNodeSection, fillQueuesSection, fillStorageSection, performDryRun } from '../test-utils/wizard';
+import { fillWizard } from '../test-utils/wizard';
 
 const CLUSTER_TO_COPY_FROM = 'DO-NOT-DELETE'
 
@@ -27,15 +27,8 @@ test.describe('environment: @demo', () => {
         await page.getByRole('option', { name: CLUSTER_TO_COPY_FROM }).click();
         await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
 
-        await fillClusterSection(page, false)
-
-        await fillHeadNodeSection(page)
-
-        await fillQueuesSection(page)
-
-        await fillStorageSection(page)
-
-        await performDryRun(page)
+        await fillWizard(page)
       });
     })
   })
+})

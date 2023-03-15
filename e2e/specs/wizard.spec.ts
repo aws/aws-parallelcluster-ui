@@ -10,7 +10,7 @@
 
 import { test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
-import { fillClusterSection, fillHeadNodeSection, fillQueuesSection, fillStorageSection, performDryRun } from '../test-utils/wizard';
+import { fillWizard } from '../test-utils/wizard';
 
 test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () => {
   test('a user should be able to login, navigate till the end of the cluster creation wizard, and perform a dry-run successfully', async ({ page }) => {
@@ -19,14 +19,6 @@ test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () =
     await page.getByRole('button', { name: 'Create cluster' }).first().click();
     await page.getByRole('menuitem', { name: 'Use interface' }).click();
     
-    await fillClusterSection(page)
-    
-    await fillHeadNodeSection(page)
-  
-    await fillQueuesSection(page)
-
-    await fillStorageSection(page)
-  
-    await performDryRun(page)
+    await fillWizard(page, {vpc: /vpc-.*/})
   });
 })

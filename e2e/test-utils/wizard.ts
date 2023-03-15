@@ -11,16 +11,36 @@
 
 import { expect, Page } from "@playwright/test";
 
-const CLUSTER_NAME = 'c' + Math.random().toString(20).substring(8)
+const DEFAULT_CONFIG: Config = {
+  clusterName: 'c' + Math.random().toString(20).substring(8)
+}
 
-export async function fillClusterSection(page: Page, selectVPC = true) {
+interface Config {
+  clusterName: string;
+  vpc?: RegExp | string
+}
+
+export async function fillWizard(page: Page, config: Partial<Config> = {}) {
+  const configWithDefaults = {
+    ...DEFAULT_CONFIG,
+    ...config,
+  }
+
+  await fillClusterSection(page, configWithDefaults)
+  await fillHeadNodeSection(page, configWithDefaults)
+  await fillQueuesSection(page, configWithDefaults)
+  await fillStorageSection(page, configWithDefaults)
+  await performDryRun(page, configWithDefaults)
+}
+
+export async function fillClusterSection(page: Page, config: Config) {
   await expect(page.getByRole('heading', { name: 'Cluster', exact: true })).toBeVisible()
   
-  await page.getByPlaceholder('Enter your cluster name').fill(CLUSTER_NAME);
+  await page.getByPlaceholder('Enter your cluster name').fill(config.clusterName);
 
-  if (selectVPC) {
+  if (config.vpc) {
     await page.getByRole('button', { name: 'Select a VPC' }).click();
-    await page.getByText(/vpc-.*/).first().click();
+    await page.getByText(config.vpc).first().click();
   } else {
     await page.getByText(/vpc-.*/).waitFor({state: 'visible'})
   }
@@ -28,26 +48,26 @@ export async function fillClusterSection(page: Page, selectVPC = true) {
   await page.getByRole('button', { name: 'Next' }).click();
 }
 
-export async function fillHeadNodeSection(page: Page) {
+export async function fillHeadNodeSection(page: Page, config: Config) {
   await expect(page.getByRole('heading', { name: 'Head node', exact: true })).toBeVisible()
   
   await page.getByRole('button', { name: 'Next' }).click();
 }
 
-export async function fillQueuesSection(page: Page) {
-  await expect(page.getByRole('heading', { name: 'Queues' }).first()).toBeVisible()
+export async function fillQueuesSection(page: Page, config: Config) {
+  await expect(page.getByRole('heading', { name: 'Queues', exact: true }).first()).toBeVisible()
   
   await page.getByRole('button', { name: 'Next' }).click();
 }
 
-export async function fillStorageSection(page: Page) {
-  await expect(page.getByRole('heading', { name: 'Storage' })).toBeVisible()
+export async function fillStorageSection(page: Page, config: Config) {
+  await expect(page.getByRole('heading', { name: 'Storage', exact: true })).toBeVisible()
   
   await page.getByRole('button', { name: 'Next' }).click();
 }
 
-export async function performDryRun(page: Page) {
-  await expect(page.getByRole('heading', { name: 'Create' })).toBeVisible()
+export async function performDryRun(page: Page, config: Config) {
+  await expect(page.getByRole('heading', { name: 'Create', exact: true })).toBeVisible()
     
   await page.getByRole('button', { name: 'Dry run' }).click();
   
