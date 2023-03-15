@@ -330,6 +330,10 @@
       "closeAriaLabel": "Close"
     }
   },
+  "clusterLogs": {
+    "title": "{{clusterName}} cluster logs",
+    "breadcrumbLabel": "Logs",
+  },
   "wizard": {
     "actions": {
       "refreshConfig": "Refresh",
