@@ -89,9 +89,7 @@ export default function Actions() {
   const isDeleteDisabled =
     !clusterName || clusterStatus === ClusterStatus.DeleteInProgress
   const isSsmDisabled =
-    !isHeadNode ||
-    clusterStatus === ClusterStatus.DeleteInProgress ||
-    !ssmEnabled
+    clusterStatus === ClusterStatus.DeleteInProgress || !ssmEnabled
   const isDcvDisabled =
     !isHeadNode ||
     clusterStatus === ClusterStatus.DeleteInProgress ||
