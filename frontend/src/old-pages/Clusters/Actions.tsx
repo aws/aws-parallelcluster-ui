@@ -95,10 +95,6 @@ export default function Actions() {
     clusterStatus === ClusterStatus.DeleteInProgress ||
     !dcvEnabled
 
-  const configure = React.useCallback(() => {
-    wizardShow(navigate)
-  }, [navigate])
-
   const startFleet = React.useCallback(() => {
     UpdateComputeFleet(clusterName, 'START_REQUESTED')
   }, [clusterName])
