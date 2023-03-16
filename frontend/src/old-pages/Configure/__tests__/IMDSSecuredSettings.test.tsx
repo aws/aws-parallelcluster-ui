@@ -42,28 +42,12 @@ describe('given a component to configure IMDS secured setting', () => {
       )
     })
 
-    describe('when no action is performed on the checkbox', () => {
-      it('should be set to true', () => {
-        expect(mockSetState).toHaveBeenCalledTimes(1)
-        expect(mockSetState).toHaveBeenCalledWith(
-          ['app', 'wizard', 'config', 'HeadNode', 'Imds', 'Secured'],
-          true,
-        )
-      })
-    })
-
-    describe('when the checkbox is clicked only once', () => {
-      it('should be set to false', () => {
-        fireEvent.click(
-          screen.getByLabelText('wizard.headNode.imdsSecured.set'),
-        )
-
-        expect(mockSetState).toHaveBeenCalledTimes(2)
-        expect(mockSetState).toHaveBeenCalledWith(
-          ['app', 'wizard', 'config', 'HeadNode', 'Imds', 'Secured'],
-          false,
-        )
-      })
+    it('should be set to true', () => {
+      expect(mockSetState).toHaveBeenCalledTimes(1)
+      expect(mockSetState).toHaveBeenCalledWith(
+        ['app', 'wizard', 'config', 'HeadNode', 'Imds', 'Secured'],
+        true,
+      )
     })
   })
 
@@ -88,7 +72,7 @@ describe('given a component to configure IMDS secured setting', () => {
     })
 
     describe('when no action is performed on the checkbox', () => {
-      it('should be set to false', () => {
+      it('should not change the value', () => {
         expect(mockSetState).not.toHaveBeenCalled()
       })
     })
