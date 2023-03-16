@@ -377,8 +377,7 @@ function IMDSSecuredSettings() {
 
   React.useEffect(() => {
     if (null == imdsSecured && !editing) {
-      imdsSecured = true
-      setState(imdsSecuredPath, imdsSecured)
+      setState(imdsSecuredPath, true)
     }
   }, [imdsSecured])
 
