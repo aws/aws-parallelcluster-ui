@@ -8,27 +8,27 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { FileChooser, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
 import { fillWizard } from '../test-utils/wizard';
 
-const TEMPLATE_PATH = './fixtures/wizard.template.yaml'
+const CLUSTER_TO_COPY_FROM = 'DO-NOT-DELETE'
 
 test.describe('environment: @demo', () => {
-  test.describe('given a cluster configuration template created with single instance type', () => {
-    test.describe('when the file is imported as a template', () => {
+  test.describe('given an already existing cluster', () => {
+    test.describe('when the cluster is picked as source to start the creation wizard', () => {
       test('user can perform a dry-run successfully', async ({ page }) => {
         await visitAndLogin(page)
 
         await page.getByRole('button', { name: 'Create cluster' }).first().click();
-        
-        page.on("filechooser", (fileChooser: FileChooser) => {
-          fileChooser.setFiles([TEMPLATE_PATH]);
-        })
-        await page.getByRole('menuitem', { name: 'Upload a template' }).click();
-        
+        await page.getByRole('menuitem', { name: 'From another cluster' }).click();
+
+        await page.getByRole('button', { name: 'Select a cluster' }).click();
+        await page.getByRole('option', { name: CLUSTER_TO_COPY_FROM }).click();
+        await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
+
         await fillWizard(page)
       });
-    });
-  });
-});
+    })
+  })
+})
