@@ -45,7 +45,6 @@
     "propertyFilter": {
       "filteringAriaLabel": "your choice",
       "dismissAriaLabel": "Dismiss",
-      "filteringPlaceholder": "Filter distributions by text, property or value",
       "groupValuesText": "Values",
       "groupPropertiesText": "Properties",
       "operatorsText": "Operators",

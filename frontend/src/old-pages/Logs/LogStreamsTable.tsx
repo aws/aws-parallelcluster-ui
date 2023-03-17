@@ -25,7 +25,7 @@ import DateView from '../../components/date/DateView'
 import EmptyState from '../../components/EmptyState'
 import {ListClusterLogStreams} from '../../model'
 import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
-import {propertyFilterI18nStrings} from '../../shared/propertyFilterI18nStrings'
+import {usePropertyFilterI18nStrings} from '../../shared/propertyFilterI18nStrings'
 import {useState} from '../../store'
 import {Instance, NodeType} from '../../types/instances'
 import {LogStreamView} from '../../types/logs'
@@ -49,7 +49,11 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
     ListClusterLogStreams(clusterName),
   )
 
-  const propertyFilterI18n = useMemo(() => propertyFilterI18nStrings(t), [t])
+  const propertyFilterI18n = usePropertyFilterI18nStrings({
+    filteringPlaceholder: t(
+      'clusterLogs.logStreams.filtering.filteringPlaceholder',
+    ),
+  })
 
   const columnDefinitions: TableProps.ColumnDefinition<LogStreamView>[] =
     useMemo(
