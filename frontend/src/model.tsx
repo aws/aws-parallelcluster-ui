@@ -316,7 +316,7 @@ function DeprecatedListClusterLogStreams(clusterName: any) {
     })
 }
 
-function GetClusterLogEvents(
+function DeprecatedGetClusterLogEvents(
   clusterName: any,
   logStreamName: any,
   successCallback?: Callback,
@@ -933,7 +933,7 @@ export {
   GetClusterStackEvents,
   DeprecatedListClusterLogStreams,
   ListClusterLogStreams,
-  GetClusterLogEvents,
+  DeprecatedGetClusterLogEvents,
   ListCustomImages,
   DescribeCustomImage,
   GetCustomImageConfiguration,

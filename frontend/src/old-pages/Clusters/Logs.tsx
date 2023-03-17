@@ -13,7 +13,10 @@ import React from 'react'
 import {useSearchParams} from 'react-router-dom'
 
 // Model
-import {GetClusterLogEvents, DeprecatedListClusterLogStreams} from '../../model'
+import {
+  DeprecatedGetClusterLogEvents,
+  DeprecatedListClusterLogStreams,
+} from '../../model'
 import {clearState, getState, setState, useState} from '../../store'
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
@@ -61,7 +64,7 @@ function LogEventsTable() {
     const clusterName = getState(['app', 'clusters', 'selected'])
     const logStreamName = getState(['app', 'clusters', 'selectedLogStreamName'])
     if (clusterName && logStreamName) {
-      GetClusterLogEvents(
+      DeprecatedGetClusterLogEvents(
         clusterName,
         logStreamName,
         () => clearState(['app', 'clusters', 'logs', 'pending']),
@@ -238,7 +241,7 @@ function StreamList({instanceId}: {instanceId: string}) {
         'filename',
       )}`
       setState(['app', 'clusters', 'selectedLogStreamName'], logStreamName)
-      GetClusterLogEvents(selected, logStreamName)
+      DeprecatedGetClusterLogEvents(selected, logStreamName)
     }
   }, [searchParams, instanceId, ip, selectedLogStreamName])
 
