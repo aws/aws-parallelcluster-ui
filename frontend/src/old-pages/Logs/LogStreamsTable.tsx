@@ -48,12 +48,12 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
 
   const [describeClusterQuery, logStreamsQuery] = useQueries([
     {
-      queryKey: 'DECRIBE_CLUSTER',
+      queryKey: ['DESCRIBE_CLUSTER', clusterName],
       queryFn: () => DescribeCluster(clusterName),
       enabled: !headNode,
     },
     {
-      queryKey: 'CLUSTER_LOGS',
+      queryKey: ['CLUSTER_LOGS', clusterName],
       queryFn: () => ListClusterLogStreams(clusterName),
     },
   ])
@@ -153,12 +153,6 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
             title={t('clusterLogs.logStreams.filtering.empty.title')}
             subtitle={t('clusterLogs.logStreams.filtering.empty.subtitle')}
           />
-          /**
-           * This value is arbitrary and it has been chosen
-           * with goal of allowing the table below to be
-           * seen without too much scrolling.
-           *
-           */
         ),
         noMatch: (
           <EmptyState
@@ -168,6 +162,12 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
         ),
       },
       pagination: {
+        /**
+         * This value is arbitrary and it has been chosen
+         * with goal of allowing the table below to be
+         * seen without too much scrolling.
+         *
+         */
         pageSize: 5,
       },
       sorting: {},
@@ -194,7 +194,7 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
       loadingText={t('clusterLogs.logStreams.loadingText')}
       columnDefinitions={columnDefinitions}
       items={items}
-      trackBy="lastEventTimestamp"
+      trackBy="logStreamName"
       selectionType="single"
       selectedItems={selectedItems}
       onSelectionChange={onSelectionChange}
