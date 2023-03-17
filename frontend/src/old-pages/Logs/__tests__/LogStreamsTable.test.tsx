@@ -28,6 +28,7 @@ const mockLogStreams: LogStreamView[] = [
     instanceId: 'instanceId',
     logIdentifier: 'logIdentifier',
     lastEventTimestamp: '2023-03-10T08:45:17.133Z',
+    nodeType: null,
   },
 ]
 

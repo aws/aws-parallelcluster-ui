@@ -29,24 +29,27 @@ import {usePropertyFilterI18nStrings} from '../../shared/propertyFilterI18nStrin
 import {useState} from '../../store'
 import {Instance, NodeType} from '../../types/instances'
 import {LogStreamView} from '../../types/logs'
+import {withNodeType} from './withNodeType'
 
 interface Props {
   clusterName: string
   onLogStreamSelect: (logStreamName: string) => void
 }
 
-function toNodeType(headNode: Instance, instanceId: string): NodeType {
-  return headNode.instanceId === instanceId
-    ? NodeType.HeadNode
-    : NodeType.ComputeNode
-}
-
 export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
   const {t} = useTranslation()
   const [selectedItems, setSelectedItems] = React.useState<LogStreamView[]>([])
-  const headNode = useState(['clusters', 'index', clusterName, 'headNode'])
+  const headNode: Instance | null = useState([
+    'clusters',
+    'index',
+    clusterName,
+    'headNode',
+  ])
   const {data = [], isLoading} = useQuery('CLUSTER_LOGS', () =>
     ListClusterLogStreams(clusterName),
+  )
+  const logStreamsToDisplay = data.map(logStream =>
+    withNodeType(headNode, logStream),
   )
 
   const propertyFilterI18n = usePropertyFilterI18nStrings({
@@ -68,13 +71,11 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
           id: 'nodeType',
           header: t('clusterLogs.logStreams.columns.nodeType'),
           cell: item => {
-            if (!headNode) {
+            if (!item.nodeType) {
               return t('clusterLogs.logStreams.nodeType.empty')
             }
 
-            const nodeType = toNodeType(headNode, item.instanceId)
-
-            if (nodeType === NodeType.HeadNode) {
+            if (item.nodeType === NodeType.HeadNode) {
               return t('clusterLogs.logStreams.nodeType.headNode')
             } else {
               return t('clusterLogs.logStreams.nodeType.computeNode')
@@ -95,7 +96,7 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
           sortingField: 'lastEventTimestamp',
         },
       ],
-      [headNode, t],
+      [t],
     )
 
   const {

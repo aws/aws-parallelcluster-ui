@@ -48,6 +48,7 @@ describe('given a ListClusterLogStreams command and a cluster name', () => {
           instanceId: 'instanceId',
           logIdentifier: 'logIdentifier',
           lastEventTimestamp: 'some-timestamp',
+          nodeType: null,
         },
       ])
     })

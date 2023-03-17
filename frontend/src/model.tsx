@@ -277,6 +277,7 @@ function toLogStreamView(rawStream: LogStream): LogStreamView {
     instanceId,
     logIdentifier,
     lastEventTimestamp,
+    nodeType: null,
   }
 }
 

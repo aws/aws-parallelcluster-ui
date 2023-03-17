@@ -9,6 +9,8 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {NodeType} from './instances'
+
 export interface LogStreamsResponse {
   logStreams: LogStream[]
 }
@@ -51,4 +53,5 @@ export interface LogStreamView {
   instanceId: string
   logIdentifier: string
   lastEventTimestamp: string
+  nodeType: NodeType | null
 }
