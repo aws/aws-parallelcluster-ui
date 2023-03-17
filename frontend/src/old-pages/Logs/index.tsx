@@ -56,7 +56,7 @@ export function Logs() {
       <ContentLayout
         header={
           <Header
-            variant="awsui-h1-sticky"
+            variant="h1"
             info={<InfoLink helpPanel={<LogsHelpPanel />} />}
           >
             {t('clusterLogs.title', {clusterName})}

@@ -20,10 +20,10 @@ import {
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import React, {useCallback, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
-import {useQuery} from 'react-query'
+import {useQueries} from 'react-query'
 import DateView from '../../components/date/DateView'
 import EmptyState from '../../components/EmptyState'
-import {ListClusterLogStreams} from '../../model'
+import {DescribeCluster, ListClusterLogStreams} from '../../model'
 import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 import {usePropertyFilterI18nStrings} from '../../shared/propertyFilterI18nStrings'
 import {useState} from '../../store'
@@ -45,10 +45,23 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
     clusterName,
     'headNode',
   ])
-  const {data = [], isLoading} = useQuery('CLUSTER_LOGS', () =>
-    ListClusterLogStreams(clusterName),
-  )
-  const logStreamsToDisplay = data.map(logStream =>
+
+  const [describeClusterQuery, logStreamsQuery] = useQueries([
+    {
+      queryKey: 'DECRIBE_CLUSTER',
+      queryFn: () => DescribeCluster(clusterName),
+      enabled: !headNode,
+    },
+    {
+      queryKey: 'CLUSTER_LOGS',
+      queryFn: () => ListClusterLogStreams(clusterName),
+    },
+  ])
+
+  const isLoading = describeClusterQuery.isLoading || logStreamsQuery.isLoading
+  const logStreams = logStreamsQuery.data || []
+
+  const logStreamsToDisplay = logStreams.map(logStream =>
     withNodeType(headNode, logStream),
   )
 
@@ -106,7 +119,7 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
     propertyFilterProps,
     paginationProps,
   } = useCollection(
-    data,
+    logStreamsToDisplay,
     extendCollectionsOptions({
       propertyFiltering: {
         filteringProperties: [
@@ -140,6 +153,12 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
             title={t('clusterLogs.logStreams.filtering.empty.title')}
             subtitle={t('clusterLogs.logStreams.filtering.empty.subtitle')}
           />
+          /**
+           * This value is arbitrary and it has been chosen
+           * with goal of allowing the table below to be
+           * seen without too much scrolling.
+           *
+           */
         ),
         noMatch: (
           <EmptyState
