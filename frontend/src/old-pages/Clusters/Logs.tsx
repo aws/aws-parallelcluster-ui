@@ -13,7 +13,7 @@ import React from 'react'
 import {useSearchParams} from 'react-router-dom'
 
 // Model
-import {ListClusterLogStreams, GetClusterLogEvents} from '../../model'
+import {GetClusterLogEvents, DeprecatedListClusterLogStreams} from '../../model'
 import {clearState, getState, setState, useState} from '../../store'
 import {useCollection} from '@cloudscape-design/collection-hooks'
 
@@ -330,7 +330,7 @@ export default function ClusterLogs() {
 
   React.useEffect(() => {
     const selected = getState(['app', 'clusters', 'selected'])
-    ListClusterLogStreams(selected)
+    DeprecatedListClusterLogStreams(selected)
   }, [])
 
   return (

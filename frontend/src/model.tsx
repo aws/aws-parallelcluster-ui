@@ -16,6 +16,8 @@ import {generateRandomId} from './util'
 import {AppConfig} from './app-config/types'
 import {getAppConfig} from './app-config'
 import {axiosInstance, executeRequest, HTTPMethod} from './http/executeRequest'
+import {LogStream, LogStreamsResponse, LogStreamView} from './types/logs'
+import {AxiosError} from 'axios'
 
 // Types
 type Callback = (arg?: any) => void
@@ -266,7 +268,35 @@ function GetClusterStackEvents(clusterName: any) {
     })
 }
 
-function ListClusterLogStreams(clusterName: any) {
+function toLogStreamView(rawStream: LogStream): LogStreamView {
+  const {logStreamName, lastEventTimestamp} = rawStream
+  const [hostname, instanceId, logIdentifier] = logStreamName.split('.')
+  return {
+    logStreamName,
+    hostname,
+    instanceId,
+    logIdentifier,
+    lastEventTimestamp,
+    nodeType: null,
+  }
+}
+
+async function ListClusterLogStreams(
+  clusterName: string,
+): Promise<LogStreamView[]> {
+  var url = `api?path=/v3/clusters/${clusterName}/logstreams`
+  try {
+    const {data}: {data: LogStreamsResponse} = await request('get', url)
+    return data?.logStreams.map(toLogStreamView) || []
+  } catch (error) {
+    if ((error as AxiosError).response) {
+      notify(`Error: ${(error as any).response.data.message}`, 'error')
+    }
+    throw error
+  }
+}
+
+function DeprecatedListClusterLogStreams(clusterName: any) {
   request('get', `api?path=/v3/clusters/${clusterName}/logstreams`)
     .then((response: any) => {
       //console.log(response)
@@ -901,6 +931,7 @@ export {
   UpdateComputeFleet,
   GetClusterInstances,
   GetClusterStackEvents,
+  DeprecatedListClusterLogStreams,
   ListClusterLogStreams,
   GetClusterLogEvents,
   ListCustomImages,

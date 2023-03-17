@@ -9,6 +9,12 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+import {NodeType} from './instances'
+
+export interface LogStreamsResponse {
+  logStreams: LogStream[]
+}
+
 export type LogStreamName = string
 
 export type LogEvent = {
@@ -39,4 +45,13 @@ export type LogStream = {
   uploadSequenceToken: string
   // The Amazon Resource Name (ARN) of the log stream.
   logStreamArn: string
+}
+
+export interface LogStreamView {
+  logStreamName: string
+  hostname: string
+  instanceId: string
+  logIdentifier: string
+  lastEventTimestamp: string
+  nodeType: NodeType | null
 }
