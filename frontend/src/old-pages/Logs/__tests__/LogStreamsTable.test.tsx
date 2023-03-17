@@ -10,10 +10,10 @@
 // limitations under the License.
 
 import {Store} from '@reduxjs/toolkit'
-import {render, RenderResult, waitFor} from '@testing-library/react'
+import {render, RenderResult} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {mock, MockProxy} from 'jest-mock-extended'
-import {I18nextProvider} from 'react-i18next'
+import {mock} from 'jest-mock-extended'
+import {I18nextProvider, initReactI18next} from 'react-i18next'
 import {QueryClient, QueryClientProvider} from 'react-query'
 import {Provider} from 'react-redux'
 import {BrowserRouter} from 'react-router-dom'
@@ -37,6 +37,11 @@ const mockClusterInfo = mock<ClusterDescription>({
   headNode: {
     instanceId: 'instanceId',
   },
+})
+
+i18n.use(initReactI18next).init({
+  resources: {},
+  lng: 'en',
 })
 
 const mockStore = mock<Store>()
@@ -147,6 +152,17 @@ describe('given a component to show the log streams list and a cluster name', ()
         expect(mockOnLogStreamSelect).toHaveBeenCalledWith(
           'hostname.instanceId.logIdentifier',
         )
+      })
+    })
+
+    describe('when the user refreshes the list', () => {
+      it('should refetch the log streams', async () => {
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'clusterLogs.logEvents.actions.refresh',
+          }),
+        )
+        expect(mockListClusterLogStreams).toHaveBeenCalledTimes(2)
       })
     })
   })

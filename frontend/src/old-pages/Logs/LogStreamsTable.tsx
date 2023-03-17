@@ -11,6 +11,7 @@
 
 import {useCollection} from '@cloudscape-design/collection-hooks'
 import {
+  Button,
   Header,
   Pagination,
   PropertyFilter,
@@ -187,6 +188,10 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
     [onLogStreamSelect],
   )
 
+  const onRefreshClick = useCallback(() => {
+    logStreamsQuery.refetch()
+  }, [logStreamsQuery])
+
   return (
     <Table
       {...collectionProps}
@@ -199,7 +204,17 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
       selectedItems={selectedItems}
       onSelectionChange={onSelectionChange}
       header={
-        <Header counter={`(${items.length})`}>
+        <Header
+          counter={`(${items.length})`}
+          actions={
+            <Button
+              onClick={onRefreshClick}
+              loading={logStreamsQuery.isFetching}
+            >
+              {t('clusterLogs.logEvents.actions.refresh')}
+            </Button>
+          }
+        >
           {t('clusterLogs.logStreams.title')}
         </Header>
       }
