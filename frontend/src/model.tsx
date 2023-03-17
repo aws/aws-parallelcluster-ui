@@ -17,6 +17,7 @@ import {AppConfig} from './app-config/types'
 import {getAppConfig} from './app-config'
 import {axiosInstance, executeRequest, HTTPMethod} from './http/executeRequest'
 import {LogStream, LogStreamsResponse, LogStreamView} from './types/logs'
+import {AxiosError} from 'axios'
 
 // Types
 type Callback = (arg?: any) => void
@@ -287,7 +288,7 @@ async function ListClusterLogStreams(
     const {data}: {data: LogStreamsResponse} = await request('get', url)
     return data?.logStreams.map(toLogStreamView) || []
   } catch (error) {
-    if ((error as any).response) {
+    if ((error as AxiosError).response) {
       notify(`Error: ${(error as any).response.data.message}`, 'error')
     }
     throw error

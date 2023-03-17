@@ -41,7 +41,7 @@ describe('given a ListClusterLogStreams command and a cluster name', () => {
     it('should return the log streams list', async () => {
       const data = await ListClusterLogStreams(clusterName)
 
-      expect(data).toEqual([
+      expect(data).toEqual<LogStreamView[]>([
         {
           logStreamName: 'hostname.instanceId.logIdentifier',
           hostname: 'hostname',
@@ -49,7 +49,7 @@ describe('given a ListClusterLogStreams command and a cluster name', () => {
           logIdentifier: 'logIdentifier',
           lastEventTimestamp: 'some-timestamp',
         },
-      ] as LogStreamView[])
+      ])
     })
   })
 
