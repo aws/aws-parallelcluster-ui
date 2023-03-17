@@ -335,7 +335,7 @@
     "breadcrumbLabel": "Logs",
     "helpPanel": {
       "title": "Cluster logs",
-      "description": "Browser the logs of your cluster."
+      "description": "Browse the logs of your cluster."
     },
     "logStreams": {
       "title": "Log streams",
@@ -353,14 +353,14 @@
       "loadingText": "Loading log streams...",
       "filtering": {
         "countText": "Results: {{filteredItemsCount}}",
-        "filteringPlaceholder": "Find log streams",
+        "filteringPlaceholder": "Filter log streams",
         "empty": {
           "title": "No log streams",
           "subtitle": "No log streams to display."
         },
         "noMatch": {
           "title": "No matches",
-          "subtitle": "No log stream match the filters.",
+          "subtitle": "No log stream matches the filters.",
           "resetFilter": "Clear filter"
         }
       },
