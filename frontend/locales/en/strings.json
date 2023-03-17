@@ -410,6 +410,7 @@
       },
       "validation": {
         "VpcSelect": "You must select a VPC.",
+        "regionSelect": "You must select a region.",
         "customAmiSelect": "You must select an AMI ID if you add a custom AMI."
       },
       "clusterName": {
@@ -423,7 +424,8 @@
       "region": {
         "label": "Region",
         "description": "The AWS Region for the cluster.",
-        "selectedAriaLabel": "Selected"
+        "selectedAriaLabel": "Selected",
+        "placeholder": "Select a region"
       },
       "os": {
         "label": "Operating system",
