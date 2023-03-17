@@ -68,6 +68,7 @@ const selectAwsSubnets = (state: any) => getState(state, ['aws', 'subnets'])
 
 function clusterValidate() {
   const vpc = getState(['app', 'wizard', 'vpc'])
+  const region = getState(['app', 'wizard', 'config', 'Region'])
   const editing = getState(['app', 'wizard', 'editing'])
   const customAmiEnabled = getState(['app', 'wizard', 'customAMI', 'enabled'])
   const customAmi = getState(['app', 'wizard', 'config', 'Image', 'CustomAmi'])
@@ -84,6 +85,16 @@ function clusterValidate() {
     valid = false
   } else {
     clearState([...errorsPath, 'vpc'])
+  }
+
+  if (!region) {
+    setState(
+      [...errorsPath, 'region'],
+      i18next.t('wizard.cluster.validation.regionSelect'),
+    )
+    valid = false
+  } else {
+    clearState([...errorsPath, 'region'])
   }
 
   if (customAmiEnabled && !customAmi) {
@@ -142,11 +153,13 @@ function RegionSelect() {
   const isMultipleInstanceTypesActive = useFeatureFlag(
     'queues_multiple_instance_types',
   )
+  const error = useState([...errorsPath, 'region'])
 
   const handleChange = useCallback(
     ({detail}: NonCancelableCustomEvent<SelectProps.ChangeDetail>) => {
-      const chosenRegion = detail.selectedOption.value
+      clearState([...errorsPath, 'region'])
 
+      const chosenRegion = detail.selectedOption.value
       if (!chosenRegion) return
 
       /**
@@ -198,6 +211,7 @@ function RegionSelect() {
       <FormField
         label={t('wizard.cluster.region.label')}
         description={t('wizard.cluster.region.description')}
+        errorText={error}
       >
         <Select
           disabled={editing}
@@ -210,6 +224,7 @@ function RegionSelect() {
           onChange={handleChange}
           // @ts-expect-error TS(2322) FIXME: Type '({ label: Element; value: string; } | undefi... Remove this comment to see the full error message
           options={supportedRegions.map(itemToOption)}
+          placeholder={t('wizard.cluster.region.placeholder')}
           selectedAriaLabel={t('wizard.cluster.region.selectedAriaLabel')}
         />
       </FormField>
