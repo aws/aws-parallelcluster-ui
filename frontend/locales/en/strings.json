@@ -367,6 +367,30 @@
       "actions": {
         "refresh": "Refresh"
       }
+    },
+    "logEvents": {
+      "title": "Messages",
+      "columns": {
+        "message": "Message",
+        "timestamp": "Event time"
+      },
+      "loadingText": "Loading messages...",
+      "filtering": {
+        "countText": "Results: {{filteredItemsCount}}",
+        "filteringPlaceholder": "Find messages",
+        "empty": {
+          "title": "No messages",
+          "subtitle": "No messages to display."
+        },
+        "noMatch": {
+          "title": "No matches",
+          "subtitle": "No message matches the filters.",
+          "resetFilter": "Clear filter"
+        }
+      },
+      "actions": {
+        "refresh": "Refresh"
+      }
     }
   },
   "wizard": {
