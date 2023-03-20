@@ -64,11 +64,6 @@ jest.mock('../../../model', () => ({
   DescribeCluster: () => mockDescribeCluster(),
 }))
 
-jest.mock('../../../store', () => ({
-  ...(jest.requireActual('../../../store') as any),
-  setState: jest.fn(),
-}))
-
 describe('given a component to show the log streams list and a cluster name', () => {
   let mockOnLogStreamSelect: jest.Mock
   let screen: RenderResult
@@ -159,7 +154,7 @@ describe('given a component to show the log streams list and a cluster name', ()
       it('should refetch the log streams', async () => {
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'clusterLogs.logEvents.actions.refresh',
+            name: 'clusterLogs.logStreams.actions.refresh',
           }),
         )
         expect(mockListClusterLogStreams).toHaveBeenCalledTimes(2)

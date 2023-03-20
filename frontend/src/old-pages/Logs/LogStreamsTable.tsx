@@ -211,7 +211,7 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
               onClick={onRefreshClick}
               loading={logStreamsQuery.isFetching}
             >
-              {t('clusterLogs.logEvents.actions.refresh')}
+              {t('clusterLogs.logStreams.actions.refresh')}
             </Button>
           }
         >
