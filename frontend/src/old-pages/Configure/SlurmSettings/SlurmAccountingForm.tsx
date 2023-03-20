@@ -10,9 +10,40 @@
 // limitations under the License.
 
 import {ColumnLayout, FormField, Input} from '@cloudscape-design/components'
-import {useTranslation} from 'react-i18next'
+import React from 'react'
+import {Trans, useTranslation} from 'react-i18next'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
+import InfoLink from '../../../components/InfoLink'
 import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 import {setState, useState} from '../../../store'
+
+const SlurmAccountingsHelpPanel = ({title}: {title: string}) => {
+  const {t} = useTranslation()
+  const footerLinks = React.useMemo(
+    () => [
+      {
+        title: t('wizard.headNode.help.accountingLink.title'),
+        href: t('wizard.headNode.help.accountingLink.href'),
+      },
+      {
+        title: t('wizard.headNode.help.databaseLink.title'),
+        href: t('wizard.headNode.help.databaseLink.href'),
+      },
+      {
+        title: t('wizard.headNode.help.queueLink.title'),
+        href: t('wizard.headNode.help.queueLink.href'),
+      },
+    ],
+    [t],
+  )
+  return (
+    <TitleDescriptionHelpPanel
+      title={title}
+      description={<Trans i18nKey="wizard.headNode.help.slurmSettings" />}
+      footerLinks={footerLinks}
+    />
+  )
+}
 
 interface DatabaseFieldProps {
   uriPath: string[]
@@ -28,6 +59,15 @@ function DatabaseField({uriPath, uriErrorPath}: DatabaseFieldProps) {
     <FormField
       label={t('wizard.headNode.slurmSettings.database.label')}
       description={t('wizard.headNode.slurmSettings.database.description')}
+      info={
+        <InfoLink
+          helpPanel={
+            <SlurmAccountingsHelpPanel
+              title={t('wizard.headNode.slurmSettings.database.label')}
+            />
+          }
+        />
+      }
       errorText={uriError}
     >
       <Input
@@ -55,12 +95,22 @@ function UsernameField({usernamePath, usernameErrorPath}: UsernameFieldProps) {
     <FormField
       label={t('wizard.headNode.slurmSettings.username.label')}
       description={t('wizard.headNode.slurmSettings.username.description')}
+      info={
+        <InfoLink
+          helpPanel={
+            <SlurmAccountingsHelpPanel
+              title={t('wizard.headNode.slurmSettings.username.label')}
+            />
+          }
+        />
+      }
       errorText={usernameError}
     >
       <Input
         onChange={({detail}) => {
           setState(usernamePath, detail.value)
         }}
+        placeholder={t('wizard.headNode.slurmSettings.username.placeholder')}
         value={username}
         type="text"
       />
@@ -82,12 +132,22 @@ function PasswordField({passwordPath, passwordErrorPath}: PasswordFieldProps) {
     <FormField
       label={t('wizard.headNode.slurmSettings.password.label')}
       description={t('wizard.headNode.slurmSettings.password.description')}
+      info={
+        <InfoLink
+          helpPanel={
+            <SlurmAccountingsHelpPanel
+              title={t('wizard.headNode.slurmSettings.password.label')}
+            />
+          }
+        />
+      }
       errorText={passwordError}
     >
       <Input
         onChange={({detail}) => {
           setState(passwordPath, detail.value)
         }}
+        placeholder={t('wizard.headNode.slurmSettings.password.placeholder')}
         value={password}
         type="text"
       />

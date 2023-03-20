@@ -12,7 +12,7 @@
 import * as React from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
-import {Container, Header} from '@cloudscape-design/components'
+import {ExpandableSection, Header} from '@cloudscape-design/components'
 import {setState, getState, clearState} from '../../../store'
 import {SlurmAccountingForm} from './SlurmAccountingForm'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
@@ -85,21 +85,13 @@ function SlurmSettings() {
   if (!isSlurmAccountingEnabled) return null
 
   return (
-    <Container
-      header={
-        <Header
-          variant="h2"
-          description={t('wizard.headNode.slurmSettings.container.description')}
-          info={<InfoLink helpPanel={<SlurmSettingsHelpPanel />} />}
-        >
-          {t('wizard.headNode.slurmSettings.container.title')}{' '}
-          <span
-            style={{fontWeight: '400', fontStyle: 'italic', fontSize: '14px'}}
-          >
-            ({t('wizard.headNode.slurmSettings.container.optional')})
-          </span>
-        </Header>
-      }
+    <ExpandableSection
+      variant="container"
+      headerText={t('wizard.headNode.slurmSettings.container.title')}
+      headerCounter={t('wizard.headNode.slurmSettings.container.optional')}
+      headerDescription={t(
+        'wizard.headNode.slurmSettings.container.description',
+      )}
     >
       <SlurmAccountingForm
         uriPath={uriPath}
@@ -109,35 +101,7 @@ function SlurmSettings() {
         passwordPath={passwordPath}
         passwordErrorPath={passwordErrorPath}
       />
-    </Container>
-  )
-}
-
-const SlurmSettingsHelpPanel = () => {
-  const {t} = useTranslation()
-  const footerLinks = React.useMemo(
-    () => [
-      {
-        title: t('wizard.headNode.help.accountingLink.title'),
-        href: t('wizard.headNode.help.accountingLink.href'),
-      },
-      {
-        title: t('wizard.headNode.help.databaseLink.title'),
-        href: t('wizard.headNode.help.databaseLink.href'),
-      },
-      {
-        title: t('wizard.headNode.help.queueLink.title'),
-        href: t('wizard.headNode.help.queueLink.href'),
-      },
-    ],
-    [t],
-  )
-  return (
-    <TitleDescriptionHelpPanel
-      title={t('wizard.headNode.slurmSettings.container.title')}
-      description={<Trans i18nKey="wizard.headNode.help.slurmSettings" />}
-      footerLinks={footerLinks}
-    />
+    </ExpandableSection>
   )
 }
 
