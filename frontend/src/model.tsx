@@ -849,7 +849,7 @@ function SlurmAccounting(
     })
 }
 
-function GetIdentity(successCallback?: Callback) {
+export function GetIdentity(successCallback?: Callback) {
   const url = 'manager/get_identity'
   request('get', url)
     .then(response => {
@@ -867,7 +867,7 @@ function GetIdentity(successCallback?: Callback) {
     })
 }
 
-async function GetAppConfig() {
+export async function GetAppConfig() {
   try {
     const appConfig = await getAppConfig(axiosInstance)
     setState(['app', 'appConfig'], appConfig)
