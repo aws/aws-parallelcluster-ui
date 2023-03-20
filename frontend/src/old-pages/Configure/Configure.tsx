@@ -177,11 +177,7 @@ function Configure() {
     return (
       <SpaceBetween direction="horizontal" size="xs">
         {currentPage !== 'create' && (
-          <Button
-            loading={refreshing}
-            onClick={handleRefresh}
-            iconName={'refresh'}
-          >
+          <Button loading={refreshing} onClick={handleRefresh}>
             {t('wizard.actions.refreshConfig')}
           </Button>
         )}

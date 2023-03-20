@@ -178,9 +178,14 @@
       }
     },
     "stackEvents": {
+      "title": "Events",
       "filter": {
         "filteringPlaceholder": "Find stack events",
         "filteringAriaLabel": "Find stack events"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "view": "View in CloudFormation"
       }
     },
     "accounting": {

@@ -203,14 +203,16 @@ export default function ClusterStackEvents() {
           counter={filteredItemsCount && `(${filteredItemsCount})`}
           actions={
             <SpaceBetween direction="horizontal" size="s">
-              <Button onClick={refreshStackEvents} iconName="refresh" />
+              <Button onClick={refreshStackEvents}>
+                {t('cluster.stackEvents.actions.refresh')}
+              </Button>
               <Button iconName="external" href={cfnHref} target="_blank">
-                View in CloudFormation
+                {t('cluster.stackEvents.actions.view')}
               </Button>
             </SpaceBetween>
           }
         >
-          Events
+          {t('cluster.stackEvents.title')}
         </Header>
       }
       resizableColumns
