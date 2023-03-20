@@ -581,8 +581,7 @@
         "header": "Networking",
         "subnetId": {
           "label": "Subnet ID",
-          "description": "Subnet ID for head node.",
-          "alert": "If you don't have a default VPC or subnet, Amazon ParallelCluster UI will use defaults for your cluster."
+          "description": "Subnet ID for head node."
         }
       },
       "security": {
@@ -612,7 +611,7 @@
           }
         },
         "iamPolicies": {
-          "label": "IAM Policies - optional"
+          "label": "IAM Policies"
         }
       },
       "slurmSettings": {
@@ -1036,7 +1035,10 @@
           "label": "Run script on node configured"
         },
         "addArgument": "Add argument",
-        "argument": "Argument"
+        "argument": {
+          "label": "Argument",
+          "placeholder": "argument"
+        }
       }
     }
   },

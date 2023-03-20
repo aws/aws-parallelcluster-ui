@@ -350,12 +350,13 @@ function ArgEditor({path, i}: any) {
       className={styles.spaceBetweenCentered}
       style={{'--spacing': spaceScaledXs}}
     >
-      <span>{t('wizard.components.actionsEditor.argument')}</span>
+      <span>{t('wizard.components.actionsEditor.argument.label')}</span>
       <Input
         value={arg}
         onChange={({detail}) => {
           setState([...path, i], detail.value)
         }}
+        placeholder={t('wizard.components.actionsEditor.argument.placeholder')}
       />
       <Button onClick={remove}>{t('wizard.actions.remove')}</Button>
     </div>
@@ -470,7 +471,7 @@ function HeadNodeActionsEditor({basePath, errorsPath}: ActionsEditorProps) {
   const onUpdatedErrors = useState([...errorsPath, 'onUpdated'])
 
   return (
-    <SpaceBetween direction="vertical" size="s">
+    <SpaceBetween direction="vertical" size="xs">
       <ActionEditor
         label={t('wizard.headNode.advancedOptions.scripts.onStart.label')}
         error={onStartErrors}

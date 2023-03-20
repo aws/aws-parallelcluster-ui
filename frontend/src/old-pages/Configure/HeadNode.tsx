@@ -448,7 +448,7 @@ function HeadNode() {
           <ExpandableSection
             headerText={t('wizard.headNode.advancedOptions.label')}
           >
-            <SpaceBetween size="s">
+            <SpaceBetween size="xs">
               <FormField
                 label={t('wizard.headNode.securityGroups.label')}
                 info={
@@ -464,20 +464,22 @@ function HeadNode() {
               >
                 <SecurityGroups basePath={headNodePath} />
               </FormField>
-              <TextContent>
-                <h5>{t('wizard.headNode.advancedOptions.scripts.title')}</h5>
-              </TextContent>
-              {isOnNodeUpdatedActive ? (
-                <HeadNodeActionsEditor
-                  basePath={headNodePath}
-                  errorsPath={errorsPath}
-                />
-              ) : (
-                <ActionsEditor
-                  basePath={headNodePath}
-                  errorsPath={errorsPath}
-                />
-              )}
+              <SpaceBetween size="xxs">
+                <TextContent>
+                  <h3>{t('wizard.headNode.advancedOptions.scripts.title')}</h3>
+                </TextContent>
+                {isOnNodeUpdatedActive ? (
+                  <HeadNodeActionsEditor
+                    basePath={headNodePath}
+                    errorsPath={errorsPath}
+                  />
+                ) : (
+                  <ActionsEditor
+                    basePath={headNodePath}
+                    errorsPath={errorsPath}
+                  />
+                )}
+              </SpaceBetween>
             </SpaceBetween>
           </ExpandableSection>
         </SpaceBetween>
@@ -500,11 +502,6 @@ function HeadNode() {
               value={subnetValue}
               onChange={(subnetId: any) => setState(subnetPath, subnetId)}
             />
-          </Box>
-          <Box>
-            <Alert statusIconAriaLabel="Info">
-              {t('wizard.headNode.networking.subnetId.alert')}
-            </Alert>
           </Box>
         </SpaceBetween>
       </Container>
