@@ -900,7 +900,7 @@ function SlurmAccounting(
 
 export function GetIdentity(successCallback?: Callback) {
   const url = 'manager/get_identity'
-  request('get', url)
+  return request('get', url)
     .then(response => {
       if (response.status === 200) {
         setState(['identity'], response.data)
