@@ -653,7 +653,7 @@
         "container": {
           "title": "Slurm settings",
           "description": "Connect with an external Slurm database to monitor and analyze cluster usage.",
-          "optional": "optional"
+          "optional": "- optional"
         },
         "database": {
           "label": "Database",
@@ -662,10 +662,12 @@
         },
         "username": {
           "label": "Username",
+          "placeholder": "Username",
           "description": "Enter the user ID for access to the database."
         },
         "password": {
           "label": "Password secret ARN",
+          "placeholder": "arn::aws::...",
           "description": "The ARN of the AWS secret containing the database password."
         },
         "scaledownIdleTime": {
