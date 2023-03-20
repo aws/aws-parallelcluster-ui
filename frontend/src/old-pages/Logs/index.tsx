@@ -16,6 +16,7 @@ import {
   Header,
   SpaceBetween,
 } from '@cloudscape-design/components'
+import React, {useCallback} from 'react'
 import {useMemo} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {useParams} from 'react-router-dom'
@@ -23,6 +24,7 @@ import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
 import Layout from '../Layout'
+import {LogMessagesTable} from './LogMessagesTable'
 import {LogStreamsTable} from './LogStreamsTable'
 
 function LogsHelpPanel() {
@@ -39,6 +41,9 @@ function LogsHelpPanel() {
 export function Logs() {
   const {t} = useTranslation()
   const {clusterName} = useParams()
+  const [selectedLogStream, setSelectedLogStream] = React.useState<
+    string | undefined
+  >()
 
   useHelpPanel(<LogsHelpPanel />)
 
@@ -50,6 +55,10 @@ export function Logs() {
     ],
     [clusterName, t],
   )
+
+  const onLogStreamSelect = useCallback((selectedLogStream: string) => {
+    setSelectedLogStream(selectedLogStream)
+  }, [])
 
   return (
     <Layout breadcrumbs={<BreadcrumbGroup items={breadcrumbItems} />}>
@@ -63,10 +72,14 @@ export function Logs() {
           </Header>
         }
       >
-        <SpaceBetween size="m">
+        <SpaceBetween size="xl">
           <LogStreamsTable
             clusterName={clusterName!}
-            onLogStreamSelect={() => null}
+            onLogStreamSelect={onLogStreamSelect}
+          />
+          <LogMessagesTable
+            clusterName={clusterName!}
+            logStreamName={selectedLogStream}
           />
         </SpaceBetween>
       </ContentLayout>
