@@ -7,6 +7,7 @@ import {
   Multiselect,
   MultiselectProps,
   Checkbox,
+  SpaceBetween,
 } from '@cloudscape-design/components'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {useCallback, useEffect, useMemo} from 'react'
@@ -203,7 +204,12 @@ export function ComputeResource({
     <div className="compute-resource">
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
         <ColumnLayout columns={2}>
-          <h4>{computeResource.Name}</h4>
+          <h3>
+            {t('wizard.queues.computeResource.name', {
+              index: index + 1,
+              crName: computeResource.Name,
+            })}
+          </h3>
           <Box margin={{top: 'xs'}} textAlign="right">
             {index > 0 && (
               <Button onClick={remove}>
@@ -304,7 +310,7 @@ export function createComputeResource(
   crIndex: number,
 ): MultiInstanceComputeResource {
   return {
-    Name: `queue-${queueIndex}-cr-${crIndex}`,
+    Name: `queue-${queueIndex + 1}-cr-${crIndex + 1}`,
     Instances: [
       {
         InstanceType: defaultInstanceType,
