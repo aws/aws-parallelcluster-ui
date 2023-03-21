@@ -25,6 +25,7 @@ import Loading from '../components/Loading'
 import {NoMatch} from '../components/NoMatch'
 import {Images} from '../old-pages/Images'
 import {Logs} from '../old-pages/Logs'
+import {useLoadingState} from '../components/useLoadingState'
 
 export default function App() {
   const identity = useState(['identity'])
@@ -33,31 +34,33 @@ export default function App() {
     LoadInitialState()
   }, [])
 
-  return (
-    <>
-      {identity ? (
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path="index.html"
-              element={<Navigate replace to="/clusters" />}
-            />
-            <Route index element={<Navigate replace to="/clusters" />} />
-            <Route path="clusters" element={<Clusters />}>
-              <Route path=":clusterName" element={<div></div>}>
-                <Route path=":tab" element={<div></div>} />
-              </Route>
-            </Route>
-            <Route path="clusters/:clusterName/logs" element={<Logs />} />
-            <Route path="configure" element={<Configure />} />
-            <Route path="images" element={<Images />} />
-            <Route path="users" element={<Users />} />
-            <Route path="*" element={<NoMatch />} />
-          </Routes>
-        </BrowserRouter>
-      ) : (
-        <Loading />
-      )}
-    </>
+  const {loading, content} = useLoadingState (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="index.html"
+          element={<Navigate replace to="/clusters" />}
+        />
+        <Route index element={<Navigate replace to="/clusters" />} />
+        <Route path="clusters" element={<Clusters />}>
+          <Route path=":clusterName" element={<div></div>}>
+            <Route path=":tab" element={<div></div>} />
+          </Route>
+        </Route>
+        <Route path="clusters/:clusterName/logs" element={<Logs />} />
+        <Route path="configure" element={<Configure />} />
+        <Route path="images" element={<Images />} />
+        <Route path="users" element={<Users />} />
+        <Route path="*" element={<NoMatch />} />
+      </Routes>
+    </BrowserRouter>
   )
+
+  React.useEffect(() => {
+    if (!loading) {
+      LoadInitialState()
+    }
+  }, [loading])
+
+  return content
 }
