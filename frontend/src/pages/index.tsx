@@ -21,7 +21,6 @@ import Configure from '../old-pages/Configure/Configure'
 import Users from '../old-pages/Users/Users'
 
 // Components
-import Loading from '../components/Loading'
 import {NoMatch} from '../components/NoMatch'
 import {Images} from '../old-pages/Images'
 import {Logs} from '../old-pages/Logs'
