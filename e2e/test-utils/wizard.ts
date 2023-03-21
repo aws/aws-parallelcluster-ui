@@ -12,12 +12,13 @@
 import { expect, Page } from "@playwright/test";
 
 const DEFAULT_CONFIG: Config = {
-  clusterName: 'c' + Math.random().toString(20).substring(8)
+  clusterName: 'c' + Math.random().toString(20).substring(8),
 }
 
 interface Config {
   clusterName: string;
-  vpc?: RegExp | string
+  region?: string;
+  vpc?: RegExp | string;
 }
 
 export async function fillWizard(page: Page, config: Partial<Config> = {}) {
@@ -37,6 +38,11 @@ export async function fillClusterSection(page: Page, config: Config) {
   await expect(page.getByRole('heading', { name: 'Cluster', exact: true })).toBeVisible()
   
   await page.getByPlaceholder('Enter your cluster name').fill(config.clusterName);
+
+  if (config.region) {
+    await page.getByLabel("Region").click();
+    await page.getByText(config.region).first().click();
+  }
 
   if (config.vpc) {
     await page.getByRole('button', { name: 'Select a VPC' }).click();
