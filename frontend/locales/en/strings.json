@@ -380,7 +380,7 @@
         "filteringPlaceholder": "Find messages",
         "empty": {
           "title": "No messages",
-          "subtitle": "No messages to display."
+          "subtitle": "No messages to display. Select a log stream to browse the messages."
         },
         "noMatch": {
           "title": "No matches",
