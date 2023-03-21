@@ -492,6 +492,7 @@ function Queue({index}: any) {
                     >
                       <Input
                         value={queue.Name}
+                        placeholder={t('wizard.queues.name.placeholder')}
                         onKeyDown={e => {
                           if (
                             e.detail.key === 'Enter' ||
