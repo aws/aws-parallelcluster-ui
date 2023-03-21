@@ -574,7 +574,7 @@ function Queue({index}: any) {
               />
             </ColumnLayout>
             <ExpandableSection headerText="Advanced options">
-              <SpaceBetween direction="vertical" size="s">
+              <SpaceBetween direction="vertical" size="xs">
                 <FormField label={t('wizard.queues.securityGroups.label')}>
                   <SecurityGroups basePath={[...queuesPath, index]} />
                 </FormField>
