@@ -107,8 +107,7 @@
       "storage": "Storage",
       "scheduling": "Job scheduling",
       "accounting": "Accounting",
-      "stackEvents": "Stack events",
-      "logs": "Logs"
+      "stackEvents": "Stack events"
     },
     "properties": {
       "sshcommand": {

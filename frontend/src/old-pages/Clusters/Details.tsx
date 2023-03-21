@@ -23,7 +23,6 @@ import Instances from './Instances'
 import Filesystems from './Filesystems'
 import Scheduling from './Scheduling'
 import Properties from './Properties'
-import Logs from './Logs'
 import Loading from '../../components/Loading'
 import {useTranslation} from 'react-i18next'
 import {Alert} from '@cloudscape-design/components'
@@ -92,7 +91,6 @@ export default function ClusterTabs() {
             id: 'stack-events',
             content: <StackEvents />,
           },
-          {label: t('cluster.tabs.logs'), id: 'logs', content: <Logs />},
         ]}
         onChange={({detail}) => {
           navigate(`/clusters/${selectedClusterName}/${detail.activeTabId}`)
