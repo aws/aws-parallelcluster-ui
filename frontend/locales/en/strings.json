@@ -873,6 +873,9 @@
     "queues": {
       "title": "Queues",
       "description": "Configure up to {{limit}} cluster queues.",
+      "container": {
+        "title": "Queue {{index}} - {{queueName}}"
+      },
       "help": {
         "main": "<p>Configure your cluster queues for job scheduling.</p><p>Add and remove queues and queue compute resources.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "schedulerLink": {
@@ -938,6 +941,7 @@
           "title": "Compute resources",
           "description": "Configure up to {{limit}} compute resources."
         },
+        "name": "Resource {{index}} - {{crName}}",
         "removeComputeResourceButton": {
           "label": "Remove resource"
         },

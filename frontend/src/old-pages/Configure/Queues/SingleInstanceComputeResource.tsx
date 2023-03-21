@@ -5,6 +5,7 @@ import {
   FormField,
   Input,
   Checkbox,
+  SpaceBetween,
 } from '@cloudscape-design/components'
 import {useEffect} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
@@ -147,7 +148,12 @@ export function ComputeResource({index, queueIndex, computeResource}: any) {
     <div className="compute-resource">
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
         <ColumnLayout columns={2}>
-          <h4>{computeResource.Name}</h4>
+          <h3>
+            {t('wizard.queues.computeResource.name', {
+              index: index + 1,
+              crName: computeResource.Name,
+            })}
+          </h3>
           <Box margin={{top: 'xs'}} textAlign="right">
             {index > 0 && (
               <Button onClick={remove}>
@@ -240,7 +246,7 @@ export function ComputeResource({index, queueIndex, computeResource}: any) {
 
 export function createComputeResource(queueIndex: number, crIndex: number) {
   return {
-    Name: `queue${queueIndex}-${defaultInstanceType.replace('.', '')}`,
+    Name: `queue-${queueIndex + 1}-${defaultInstanceType.replace('.', '')}`,
     InstanceType: defaultInstanceType,
     MinCount: 0,
     MaxCount: 4,
