@@ -556,8 +556,6 @@ function Queue({index}: any) {
                       />
                     </FormField>
                   ) : null}
-                </ColumnLayout>
-                <Box variant="div" margin={{vertical: 'xs'}}>
                   <Checkbox
                     checked={enablePlacementGroup}
                     disabled={!canUsePlacementGroup}
@@ -567,7 +565,7 @@ function Queue({index}: any) {
                   >
                     <Trans i18nKey="wizard.queues.placementGroup.label" />
                   </Checkbox>
-                </Box>
+                </ColumnLayout>
               </SpaceBetween>
               <ComputeResources
                 queue={queue}
