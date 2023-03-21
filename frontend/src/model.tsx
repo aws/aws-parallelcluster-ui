@@ -898,22 +898,26 @@ function SlurmAccounting(
     })
 }
 
-export function GetIdentity(successCallback?: Callback) {
+export function GetIdentity(successCallback?: Callback, throwing = false) {
   const url = 'manager/get_identity'
-  return request('get', url)
-    .then(response => {
-      if (response.status === 200) {
-        setState(['identity'], response.data)
-        successCallback && successCallback(response.data)
-      }
-    })
-    .catch(error => {
+  let responsePromise = request('get', url).then(response => {
+    if (response.status === 200) {
+      setState(['identity'], response.data)
+      successCallback && successCallback(response.data)
+    }
+  })
+
+  if (!throwing) {
+    responsePromise = responsePromise.catch(error => {
       if (error.response) {
         console.log(error.response)
         notify(`Error: ${error.response.data.message}`, 'error')
       }
       console.log(error)
     })
+  }
+
+  return responsePromise
 }
 
 export async function GetAppConfig() {
