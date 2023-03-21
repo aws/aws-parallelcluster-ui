@@ -178,12 +178,15 @@ export default function Actions() {
           case 'edit':
             editConfiguration()
             break
+          case 'logs':
+            navigate(`/clusters/${clusterName}/logs`)
+            break
           case 'delete':
             showDialog('deleteCluster')
             break
         }
       },
-      [openFileSystem, editConfiguration],
+      [openFileSystem, editConfiguration, navigate, clusterName],
     )
 
   const clusterActionsGroupButtonItems = React.useMemo(() => {
@@ -197,6 +200,10 @@ export default function Actions() {
         id: 'edit',
         text: t('cluster.list.actions.edit'),
         disabled: isEditDisabled,
+      },
+      {
+        id: 'logs',
+        text: t('cluster.list.actions.logs'),
       },
       {
         id: 'delete',

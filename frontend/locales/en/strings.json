@@ -107,8 +107,7 @@
       "storage": "Storage",
       "scheduling": "Job scheduling",
       "accounting": "Accounting",
-      "stackEvents": "Stack events",
-      "logs": "Logs"
+      "stackEvents": "Stack events"
     },
     "properties": {
       "sshcommand": {
@@ -142,8 +141,7 @@
       "actionsLabel": "Actions",
       "actions": {
         "stop": "Stop",
-        "start": "Start",
-        "logs": "Logs"
+        "start": "Start"
       },
       "loadingText": "Loading instances...",
       "filtering": {
@@ -271,7 +269,8 @@
         "delete": "Delete cluster",
         "shell": "Shell",
         "filesystem": "File system",
-        "dcv": "DCV"
+        "dcv": "DCV",
+        "logs": "View logs"
       },
       "actionsLabel": "Actions",
       "filtering": {

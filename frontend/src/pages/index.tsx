@@ -24,6 +24,7 @@ import Users from '../old-pages/Users/Users'
 import Loading from '../components/Loading'
 import {NoMatch} from '../components/NoMatch'
 import {Images} from '../old-pages/Images'
+import {Logs} from '../old-pages/Logs'
 
 export default function App() {
   const identity = useState(['identity'])
@@ -47,6 +48,7 @@ export default function App() {
                 <Route path=":tab" element={<div></div>} />
               </Route>
             </Route>
+            <Route path="clusters/:clusterName/logs" element={<Logs />} />
             <Route path="configure" element={<Configure />} />
             <Route path="images" element={<Images />} />
             <Route path="users" element={<Users />} />

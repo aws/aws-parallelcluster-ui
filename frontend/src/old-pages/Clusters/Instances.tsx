@@ -12,7 +12,6 @@ import {Region} from '../../types/base'
 import {ClusterName, ComputeFleetStatus} from '../../types/clusters'
 import {InstanceState, Instance, NodeType} from '../../types/instances'
 import React from 'react'
-import {useNavigate} from 'react-router-dom'
 import {useTranslation} from 'react-i18next'
 
 import {GetClusterInstances, Ec2Action} from '../../model'
@@ -36,7 +35,6 @@ import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
 
 function InstanceActions({instance}: {instance?: Instance}) {
   const {t} = useTranslation()
-  const navigate = useNavigate()
 
   const clusterName = useState(['app', 'clusters', 'selected'])
   const fleetStatus: ComputeFleetStatus = useState([
@@ -68,17 +66,6 @@ function InstanceActions({instance}: {instance?: Instance}) {
     Ec2Action(instance!.instanceId, 'start_instances', refresh)
   }, [instance, refresh])
 
-  const navigateToLogTab = React.useCallback(
-    (event: CustomEvent) => {
-      const logHref = `/clusters/${clusterName}/logs?instance=${
-        instance!.instanceId
-      }`
-      navigate(logHref)
-      event.preventDefault()
-    },
-    [clusterName, instance, navigate],
-  )
-
   const isComputeFleetStopped = fleetStatus === ComputeFleetStatus.Stopped
   const isHeadNodeRunning =
     instance?.nodeType === NodeType.HeadNode &&
@@ -102,9 +89,6 @@ function InstanceActions({instance}: {instance?: Instance}) {
         onClick={startInstance}
       >
         {t('cluster.instances.actions.start')}
-      </Button>
-      <Button disabled={!instance} onClick={navigateToLogTab}>
-        {t('cluster.instances.actions.logs')}
       </Button>
     </SpaceBetween>
   )
