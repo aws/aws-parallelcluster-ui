@@ -28,6 +28,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
 
   private promiseRejectionHandler = (event: PromiseRejectionEvent) => {
     this.props.logger.error(event.reason)
+    this.setState({error: true})
   }
 
   private errorHandler = (event: ErrorEvent) => {
