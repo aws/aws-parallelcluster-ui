@@ -141,8 +141,7 @@
       "actionsLabel": "Actions",
       "actions": {
         "stop": "Stop",
-        "start": "Start",
-        "logs": "Logs"
+        "start": "Start"
       },
       "loadingText": "Loading instances...",
       "filtering": {
