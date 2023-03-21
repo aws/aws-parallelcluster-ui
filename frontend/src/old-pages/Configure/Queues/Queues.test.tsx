@@ -75,7 +75,7 @@ describe('Given a list of queues', () => {
 
   describe("when they're 10 or more", () => {
     const queues = new Array(11).fill(null).map((_, index) => ({
-      Name: `queue-${index}`,
+      Name: `queue-${index + 1}`,
       ComputeResources: [],
       ComputeSettings: {
         LocalStorage: {
@@ -99,13 +99,13 @@ describe('Given a list of queues', () => {
       })
     })
     it('should not allow to add more queues', () => {
-      const {getByText} = render(
+      const {getAllByText} = render(
         <MockProviders store={mockStore}>
           <Queues />
         </MockProviders>,
       )
 
-      const button = getByText('Add queue')
+      const button = getAllByText('Add queue')[0]
       fireEvent.click(button)
       expect(setState).not.toHaveBeenCalled()
     })
@@ -113,7 +113,7 @@ describe('Given a list of queues', () => {
 
   describe("when they're less than 10", () => {
     const queues = new Array(5).fill(null).map((_, index) => ({
-      Name: `queue-${index}`,
+      Name: `queue-${index + 1}`,
       ComputeResources: [],
       ComputeSettings: {
         LocalStorage: {
@@ -137,13 +137,13 @@ describe('Given a list of queues', () => {
       })
     })
     it('should allow to add more queues', () => {
-      const {getByText} = render(
+      const {getAllByText} = render(
         <MockProviders store={mockStore}>
           <Queues />
         </MockProviders>,
       )
 
-      const button = getByText('Add queue')
+      const button = getAllByText('Add queue')[0]
       fireEvent.click(button)
       expect(setState).toHaveBeenCalled()
     })
@@ -158,7 +158,7 @@ describe('Given a list of queues', () => {
               Scheduling: {
                 SlurmQueues: [
                   {
-                    Name: 'queue-0',
+                    Name: 'queue-1',
                     ComputeResources: new Array(5).fill(null).map(index => ({
                       Name: `cr-${index}`,
                     })),
@@ -195,7 +195,7 @@ describe('Given a list of queues', () => {
               Scheduling: {
                 SlurmQueues: [
                   {
-                    Name: 'queue-0',
+                    Name: 'queue-1',
                     ComputeResources: new Array(2).fill(null).map(index => ({
                       Name: `cr-${index}`,
                     })),
@@ -265,7 +265,7 @@ describe('Given a queue', () => {
               Scheduling: {
                 SlurmQueues: [
                   {
-                    Name: `queue-0`,
+                    Name: `queue-1`,
                     ComputeResources: [
                       {
                         Instances: [{InstanceType: 'hpc6a.48xlarge'}],
@@ -320,7 +320,7 @@ describe('Given a queue', () => {
               Scheduling: {
                 SlurmQueues: [
                   {
-                    Name: `queue-0`,
+                    Name: `queue-1`,
                     ComputeResources: [
                       {
                         Instances: [{InstanceType: 'c5n.large'}],

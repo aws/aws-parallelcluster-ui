@@ -460,14 +460,13 @@ function Queue({index}: any) {
               variant="h2"
               actions={
                 <SpaceBetween direction="horizontal" size="xs">
-                  {index === 0 ? (
-                    <Button
-                      disabled={queues.length >= MAX_QUEUES}
-                      onClick={addQueue}
-                    >
-                      {t('wizard.queues.addQueueButton.label')}
-                    </Button>
-                  ) : (
+                  <Button
+                    disabled={queues.length >= MAX_QUEUES}
+                    onClick={addQueue}
+                  >
+                    {t('wizard.queues.addQueueButton.label')}
+                  </Button>
+                  {queues.length > 1 && (
                     <Button onClick={remove}>
                       {t('wizard.queues.removeQueueButton.label')}
                     </Button>
