@@ -275,7 +275,7 @@ export function ComputeResource({
             />
           )}
         </ColumnLayout>
-        <div style={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
+        <SpaceBetween direction="vertical" size="s">
           <Checkbox
             checked={multithreadingDisabled}
             disabled={hpcInstanceSelected}
@@ -299,7 +299,7 @@ export function ComputeResource({
           >
             <Trans i18nKey="wizard.queues.computeResource.enableEfa" />
           </Checkbox>
-        </div>
+        </SpaceBetween>
       </div>
     </div>
   )

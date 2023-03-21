@@ -213,7 +213,7 @@ export function ComputeResource({index, queueIndex, computeResource}: any) {
             />
           )}
         </ColumnLayout>
-        <div style={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
+        <SpaceBetween direction="vertical" size="s">
           <Checkbox
             disabled={
               tInstances.has(instanceType) ||
@@ -238,7 +238,7 @@ export function ComputeResource({index, queueIndex, computeResource}: any) {
           >
             <Trans i18nKey="wizard.queues.computeResource.enableEfa" />
           </Checkbox>
-        </div>
+        </SpaceBetween>
       </div>
     </div>
   )
