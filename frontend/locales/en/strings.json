@@ -954,7 +954,12 @@
         "addComputeResource": "Add compute resource",
         "staticNodes": "Static nodes",
         "dynamicNodes": "Dynamic nodes",
-        "instanceType": "Instance type",
+        "instanceType": {
+          "label": "Instance type",
+          "placeholder": {
+            "multiple": "Select one or more instance type"
+          }
+        },
         "disableHT": {
           "label": "Turn off multithreading",
           "description": "Prevent multiple threads from running on an EC2 instance core."
@@ -982,13 +987,15 @@
         "label": "Use placement group"
       },
       "name": {
-        "label": "Queue name"
+        "label": "Queue name",
+        "placeholder": "queue-name"
       },
       "subnet": {
         "label": {
           "single": "Subnet ID",
           "multiple": "Subnet IDs"
-        }
+        },
+        "placeholder": "Select a subnet"
       },
       "purchaseType": {
         "label": "Purchase type"

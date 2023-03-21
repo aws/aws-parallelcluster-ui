@@ -242,7 +242,7 @@ export function ComputeResource({
             </FormField>
           </div>
           <FormField
-            label={t('wizard.queues.computeResource.instanceType')}
+            label={t('wizard.queues.computeResource.instanceType.label')}
             errorText={typeError}
           >
             <Multiselect
@@ -250,6 +250,9 @@ export function ComputeResource({
                 value: instance.InstanceType,
                 label: instance.InstanceType,
               }))}
+              placeholder={t(
+                'wizard.queues.computeResource.instanceType.placeholder.multiple',
+              )}
               tokenLimit={3}
               onChange={setInstances}
               options={instanceOptions}

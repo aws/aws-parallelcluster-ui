@@ -2,6 +2,7 @@ import {Multiselect, MultiselectProps} from '@cloudscape-design/components'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import React from 'react'
 import {useMemo} from 'react'
+import {useTranslation} from 'react-i18next'
 import {useState} from '../../../store'
 import {subnetName} from '../util'
 import {Subnet} from './queues.types'
@@ -12,6 +13,7 @@ type SubnetMultiSelectProps = {
 }
 
 function SubnetMultiSelect({value, onChange}: SubnetMultiSelectProps) {
+  const {t} = useTranslation()
   const vpc = useState(['app', 'wizard', 'vpc'])
   const subnets = useState(['aws', 'subnets'])
   const filteredSubnets: Subnet[] = useMemo(
@@ -42,6 +44,7 @@ function SubnetMultiSelect({value, onChange}: SubnetMultiSelectProps) {
         return value.includes(option.value)
       })}
       onChange={onChange}
+      placeholder={t('wizard.queues.subnet.placeholder')}
       options={subnetOptions}
     />
   )
