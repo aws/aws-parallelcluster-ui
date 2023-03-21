@@ -15,6 +15,10 @@ export interface LogStreamsResponse {
   logStreams: LogStream[]
 }
 
+export interface LogEventsResponse {
+  events: LogEvent[]
+}
+
 export type LogStreamName = string
 
 export type LogEvent = {

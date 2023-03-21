@@ -27,7 +27,13 @@ import {enableHttpLogs} from '../http/httpLogs'
 import {axiosInstance} from '../http/executeRequest'
 import {HelpPanelProvider} from '../components/help-panel/HelpPanel'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 declare global {
   interface Window {
     ace: any
