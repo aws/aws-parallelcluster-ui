@@ -45,6 +45,7 @@ import i18next from 'i18next'
 
 // Constants
 const configPath = ['app', 'wizard', 'clusterConfigYaml']
+const priority: FlashbarProps.Type[] = ['error', 'success', 'warning', 'info']
 
 function handleWarnings(resp: any) {
   if (!resp.validationMessages) return
@@ -210,6 +211,18 @@ function dismissableMessage(
   }
 }
 
+function compareFlashbarItems(
+  itemA: FlashbarProps.MessageDefinition,
+  itemB: FlashbarProps.MessageDefinition,
+): number {
+  const itemAPriority = priority.indexOf(itemA.type!)
+  const itemBPriority = priority.indexOf(itemB.type!)
+
+  if (itemAPriority > itemBPriority) return 1
+  if (itemAPriority < itemBPriority) return -1
+  else return 0
+}
+
 export function errorsToFlashbarItems(
   errors: CreateErrors,
   setFlashbarItems: React.Dispatch<
@@ -267,6 +280,7 @@ export function errorsToFlashbarItems(
     )
   })
 
+  items.sort(compareFlashbarItems)
   return items
 }
 
