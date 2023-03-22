@@ -323,6 +323,7 @@ export function FsxLustreSettings({index}: any) {
       <FormField label={t('wizard.storage.Fsx.capacity.label')}>
         <Input
           value={storageCapacity}
+          placeholder={t('wizard.storage.Fsx.capacity.placeholder')}
           step={1200}
           onChange={({detail}) => {
             setState(storageCapacityPath, detail.value)
@@ -565,6 +566,7 @@ export function EfsSettings({index}: any) {
           {throughputMode === 'provisioned' && (
             <Input
               type="number"
+              placeholder={t('wizard.storage.Efs.provisioned.placeholder')}
               value={clamp(parseInt(provisionedThroughput), 1, 1024).toString()}
               onChange={({detail}) => {
                 setState(
@@ -699,6 +701,7 @@ export function EbsSettings({index}: any) {
         >
           <Input
             inputMode={'decimal'}
+            placeholder={t('wizard.storage.Ebs.volumeSize.placeholder')}
             type={'number' as InputProps.Type}
             value={volumeSize}
             onChange={({detail}) => {
@@ -751,6 +754,7 @@ export function EbsSettings({index}: any) {
           {snapshotId !== null && (
             <Input
               value={snapshotId}
+              placeholder={t('wizard.storage.Ebs.snapshotId.placeholder')}
               onChange={({detail}) => {
                 setState(snapshotIdPath, detail.value)
               }}
@@ -890,7 +894,11 @@ function StorageInstance({index}: any) {
             label={t('wizard.storage.instance.sourceName.label')}
             errorText={storageNameErrors}
           >
-            <Input value={storageName} onChange={updateStorageName} />
+            <Input
+              value={storageName}
+              onChange={updateStorageName}
+              placeholder={t('wizard.storage.instance.sourceName.placeholder')}
+            />
           </FormField>
           <FormField
             label={t('wizard.storage.instance.mountPoint.label')}
@@ -907,6 +915,7 @@ function StorageInstance({index}: any) {
           >
             <Input
               value={mountPoint}
+              placeholder={t('wizard.storage.instance.mountPoint.placeholder')}
               onChange={({detail}) => {
                 setState([...storagePath, index, 'MountDir'], detail.value)
               }}

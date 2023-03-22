@@ -692,9 +692,10 @@
       "title": "Storage",
       "description": "Configure shared storage for your cluster.",
       "container": {
+        "title": "Storage settings",
         "noStorageSelected": "No shared storage options selected.",
         "storageType": "Storage type",
-        "storageTypePlaceholder": "Select a file system type",
+        "storageTypePlaceholder": "Select one or more storage types",
         "volumePlaceholder": "Select a volume",
         "addStorage": "Add storage",
         "removeStorage": "Remove storage",
@@ -742,7 +743,8 @@
           "fsxOnTap": "FSx NetApp ONTAP volume"
         },
         "capacity": {
-          "label": "Storage capacity (GB)"
+          "label": "Storage capacity (GB)",
+          "placeholder": "1200"
         },
         "lustreType": {
           "label": "FSx for Lustre",
@@ -787,6 +789,7 @@
         },
         "provisioned": {
           "label": "Provisioned throughput (1-1024 in MiB/s)",
+          "placeholder": "128",
           "help": "Configure the provisioned throughput (from 1-1024 in MiB/s) for the Amazon EFS file system. If not configured, the file system is created in bursting mode.",
           "throughputLink": {
             "title": "ThroughputMode section",
@@ -801,7 +804,8 @@
           "placeholder": "Default ({{defaultVolumeType}})"
         },
         "volumeSize": {
-          "label": "Volume Size (35-2048 in GB)"
+          "label": "Volume Size (35-2048 in GB)",
+          "placeholder": "35"
         },
         "encrypted": {
           "label": "Encrypted",
@@ -814,6 +818,7 @@
         },
         "snapshotId": {
           "label": "Snapshot ID",
+          "placeholder": "snap-id",
           "help": "Enter the Amazon EBS snapshot ID if you're using a snapshot as the source for the volume.",
           "snapshotLink": {
             "title": "SnapshotID",
@@ -824,10 +829,12 @@
       "instance": {
         "mountPoint": {
           "label": "Mount path",
+          "placeholder": "/shared",
           "help": "Configure the mount path for the shared storage on both the head node and compute nodes."
         },
         "sourceName": {
           "label": "Shared source name",
+          "placeholder": "StorageName",
           "maxLengthError": "Name can be at most {{maxChars}} characters",
           "forbiddenCharsError": "The name contains one or more forbidden characters",
           "forbiddenKeywordError": "The name contains a forbidden keyword",
