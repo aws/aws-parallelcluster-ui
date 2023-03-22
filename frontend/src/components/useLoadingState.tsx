@@ -1,11 +1,8 @@
 import {Box, SpaceBetween, Spinner} from '@cloudscape-design/components'
 import React from 'react'
 import {GetAppConfig, GetIdentity} from '../model'
-import {useTranslation} from 'react-i18next'
 
 export function LoadingSpinnerContent() {
-  const {t} = useTranslation()
-
   return (
     <SpaceBetween direction="vertical" size="l">
       <Box textAlign="center">
