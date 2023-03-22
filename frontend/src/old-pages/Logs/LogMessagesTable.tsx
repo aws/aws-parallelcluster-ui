@@ -106,7 +106,7 @@ export function LogMessagesTable({clusterName, logStreamName}: Props) {
       trackBy="message"
       header={
         <Header
-          counter={`(${items.length})`}
+          counter={`(${data.length})`}
           actions={
             <Button
               disabled={!canFetchMessages}

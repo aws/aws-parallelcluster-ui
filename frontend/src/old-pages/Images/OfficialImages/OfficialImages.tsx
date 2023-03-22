@@ -61,6 +61,7 @@ function OfficialImagesHelpPanel() {
 
 function OfficialImagesList({images}: {images: Image[]}) {
   const {t} = useTranslation()
+  const imagesCount = (images || []).length
   const {
     items,
     actions,
@@ -104,7 +105,7 @@ function OfficialImagesList({images}: {images: Image[]}) {
       header={
         <Header
           variant="awsui-h1-sticky"
-          counter={items && `(${items.length})`}
+          counter={`(${imagesCount})`}
           description={t('officialImages.header.description')}
           info={<InfoLink helpPanel={<OfficialImagesHelpPanel />} />}
         >
