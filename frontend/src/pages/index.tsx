@@ -27,13 +27,7 @@ import {Logs} from '../old-pages/Logs'
 import {useLoadingState} from '../components/useLoadingState'
 
 export default function App() {
-  const identity = useState(['identity'])
-
-  React.useEffect(() => {
-    LoadInitialState()
-  }, [])
-
-  const {loading, content} = useLoadingState (
+  const {loading, content} = useLoadingState(
     <BrowserRouter>
       <Routes>
         <Route
@@ -52,7 +46,7 @@ export default function App() {
         <Route path="users" element={<Users />} />
         <Route path="*" element={<NoMatch />} />
       </Routes>
-    </BrowserRouter>
+    </BrowserRouter>,
   )
 
   React.useEffect(() => {
