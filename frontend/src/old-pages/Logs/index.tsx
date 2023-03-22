@@ -49,6 +49,7 @@ export function Logs() {
 
   const breadcrumbItems: BreadcrumbGroupProps.Item[] = useMemo(
     () => [
+      {text: t('global.menu.header'), href: '/'},
       {text: t('global.menu.clusters'), href: '/clusters'},
       {text: clusterName!, href: `/clusters/${clusterName}`},
       {text: t('clusterLogs.breadcrumbLabel'), href: '#'},
