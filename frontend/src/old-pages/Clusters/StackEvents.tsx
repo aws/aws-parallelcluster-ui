@@ -45,52 +45,9 @@ import EmptyState from '../../components/EmptyState'
 import {useTranslation} from 'react-i18next'
 
 function EventStatus(stackEvent: StackEvent) {
-  const {logicalResourceId, resourceStatus} = stackEvent
-
-  const clusterName: ClusterName = useState(['app', 'clusters', 'selected'])
-  const clusterPath = ['clusters', 'index', clusterName]
-  let headNode = useState([...clusterPath, 'headNode'])
-
-  const events: StackEvents = useState([
-    'clusters',
-    'index',
-    clusterName,
-    'stackevents',
-    'events',
-  ])
-
-  let getHeadNode = (events: StackEvent[]) => {
-    let event = findFirst(
-      events,
-      (e: StackEvent) => e.logicalResourceId === 'HeadNode',
-    )
-    if (event) return {instanceId: event.physicalResourceId}
-  }
-
-  if (
-    logicalResourceId.startsWith('HeadNodeWaitCondition') &&
-    resourceStatus === CloudFormationResourceStatus.CreateFailed &&
-    !headNode
-  ) {
-    headNode = getHeadNode(events)
-  }
-
   return (
     <SpaceBetween direction="horizontal" size="s">
-      <StackEventStatusIndicator stackEvent={stackEvent}>
-        {headNode &&
-          logicalResourceId.startsWith('HeadNodeWaitCondition') &&
-          resourceStatus === CloudFormationResourceStatus.CreateFailed && (
-            <div>
-              &nbsp; Logs:{' '}
-              <Link
-                to={`/clusters/${clusterName}/logs?instance=${headNode.instanceId}&filename=cfn-init&filter=ERROR`}
-              >
-                cfn-init
-              </Link>
-            </div>
-          )}
-      </StackEventStatusIndicator>
+      <StackEventStatusIndicator stackEvent={stackEvent} />
     </SpaceBetween>
   )
 }

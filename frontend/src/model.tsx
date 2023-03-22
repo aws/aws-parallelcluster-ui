@@ -302,26 +302,6 @@ async function ListClusterLogStreams(
   }
 }
 
-function DeprecatedListClusterLogStreams(clusterName: any) {
-  request('get', `api?path=/v3/clusters/${clusterName}/logstreams`)
-    .then((response: any) => {
-      //console.log(response)
-      if (response.status === 200)
-        setState(
-          ['clusters', 'index', clusterName, 'logstreams'],
-          response.data,
-        )
-    })
-    .catch((error: any) => {
-      if (error.response)
-        notify(
-          `Error (${clusterName}): ${error.response.data.message}`,
-          'error',
-        )
-      console.log(error)
-    })
-}
-
 async function ListClusterLogEvents(
   clusterName: string,
   logStreamName: string,
@@ -336,35 +316,6 @@ async function ListClusterLogEvents(
     }
     throw error
   }
-}
-
-function DeprecatedGetClusterLogEvents(
-  clusterName: any,
-  logStreamName: any,
-  successCallback?: Callback,
-  failureCallback?: Callback,
-) {
-  let url = `api?path=/v3/clusters/${clusterName}/logstreams/${logStreamName}`
-  request('get', url)
-    .then((response: any) => {
-      //console.log(response)
-      if (response.status === 200) {
-        setState(
-          ['clusters', 'index', clusterName, 'logEventIndex', logStreamName],
-          response.data,
-        )
-        successCallback && successCallback(response.data)
-      }
-    })
-    .catch((error: any) => {
-      failureCallback && failureCallback()
-      if (error.response)
-        notify(
-          `Error (${clusterName}/${logStreamName}): ${error.response.data.message}`,
-          'error',
-        )
-      console.log(error)
-    })
 }
 
 function ListCustomImages(
@@ -953,9 +904,7 @@ export {
   UpdateComputeFleet,
   GetClusterInstances,
   GetClusterStackEvents,
-  DeprecatedListClusterLogStreams,
   ListClusterLogStreams,
-  DeprecatedGetClusterLogEvents,
   ListClusterLogEvents,
   ListCustomImages,
   DescribeCustomImage,
