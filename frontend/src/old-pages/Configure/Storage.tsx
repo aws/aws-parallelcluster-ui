@@ -1145,7 +1145,9 @@ function Storage() {
 
   return (
     <SpaceBetween direction="vertical" size="l">
-      <Container>
+      <Container
+        header={<Header>{t('wizard.storage.container.title')}</Header>}
+      >
         <SpaceBetween direction="vertical" size="m">
           {!hasAddedStorage && (
             <Alert statusIconAriaLabel="Info">
