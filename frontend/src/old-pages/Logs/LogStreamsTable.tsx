@@ -205,7 +205,7 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
       onSelectionChange={onSelectionChange}
       header={
         <Header
-          counter={`(${items.length})`}
+          counter={`(${logStreamsToDisplay.length})`}
           actions={
             <Button
               onClick={onRefreshClick}

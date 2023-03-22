@@ -92,6 +92,8 @@ function ClusterList({clusters}: {clusters: ClusterInfoSummary[]}) {
     wizardShow(navigate)
   }
 
+  const clustersCount = (clusters || []).length
+
   const {
     items,
     actions,
@@ -140,7 +142,7 @@ function ClusterList({clusters}: {clusters: ClusterInfoSummary[]}) {
         <Header
           variant="awsui-h1-sticky"
           description={t('cluster.list.header.description')}
-          counter={items && `(${items.length})`}
+          counter={`(${clustersCount})`}
           info={<InfoLink helpPanel={<ClustersHelpPanel />} />}
           actions={<Actions />}
         >

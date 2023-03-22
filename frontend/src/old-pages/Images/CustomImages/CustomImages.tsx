@@ -70,6 +70,8 @@ function CustomImagesList() {
     ListCustomImages(imageStatus || 'AVAILABLE')
   }
 
+  const imagesCount = (images || []).length
+
   const {
     items,
     actions,
@@ -128,7 +130,7 @@ function CustomImagesList() {
               ></Link>
             </Trans>
           }
-          counter={images && `(${images.length})`}
+          counter={`(${imagesCount})`}
           actions={
             <SpaceBetween direction="horizontal" size="xs">
               <Button className="action" onClick={refreshImages}>
