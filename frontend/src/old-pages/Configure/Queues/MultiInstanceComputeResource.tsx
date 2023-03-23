@@ -309,11 +309,11 @@ export function ComputeResource({
 }
 
 export function createComputeResource(
-  queueIndex: number,
+  queueName: string,
   crIndex: number,
 ): MultiInstanceComputeResource {
   return {
-    Name: `queue-${queueIndex + 1}-cr-${crIndex + 1}`,
+    Name: `${queueName}-cr-${crIndex + 1}`,
     Instances: [
       {
         InstanceType: defaultInstanceType,

@@ -238,6 +238,7 @@ function initWizardState(
   isMultipleInstanceTypesActive: boolean,
 ) {
   const customAMIEnabled = getIn(config, ['Image', 'CustomAmi']) ? true : false
+  const queueName = 'queue-1'
   setState(['app', 'wizard', 'customAMI', 'enabled'], customAMIEnabled)
   setState([...configPath, 'HeadNode', 'InstanceType'], 't2.micro')
   setState([...configPath, 'Scheduling', 'Scheduler'], 'slurm')
@@ -247,14 +248,14 @@ function initWizardState(
     [...configPath, 'Scheduling', 'SlurmQueues'],
     [
       {
-        Name: 'queue-1',
+        Name: queueName,
         AllocationStrategy: isMultipleInstanceTypesActive
           ? 'lowest-price'
           : undefined,
         ComputeResources: [
           isMultipleInstanceTypesActive
-            ? multiCreate(0, 0)
-            : singleCreate(0, 0),
+            ? multiCreate(queueName, 0)
+            : singleCreate(queueName, 0),
         ],
       },
     ],

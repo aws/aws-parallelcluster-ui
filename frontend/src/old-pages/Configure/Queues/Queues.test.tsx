@@ -69,7 +69,7 @@ const MockProviders = (props: any) => (
 describe('Given a list of queues', () => {
   describe('when creating a new compute resource', () => {
     it('should create it with a default instance type', () => {
-      expect(createComputeResource(0, 0).Instances).toHaveLength(1)
+      expect(createComputeResource('queueName', 0).Instances).toHaveLength(1)
     })
   })
 

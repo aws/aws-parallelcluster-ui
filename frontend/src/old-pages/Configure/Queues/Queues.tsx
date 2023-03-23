@@ -276,7 +276,10 @@ function ComputeResources({queue, index, canUseEFA}: any) {
       ...queue,
       ComputeResources: [
         ...existingCRs,
-        computeResourceAdapter.createComputeResource(index, existingCRs.length),
+        computeResourceAdapter.createComputeResource(
+          queue.Name,
+          existingCRs.length,
+        ),
       ],
     })
   }
@@ -436,15 +439,16 @@ function Queue({index}: any) {
   const defaultAllocationStrategy = useDefaultAllocationStrategy()
 
   const addQueue = () => {
+    const queueName = `queue-${queues.length + 1}`
     setState(
       [...queuesPath],
       [
         ...(queues || []),
         {
-          Name: `queue-${queues.length + 1}`,
+          Name: queueName,
           ...defaultAllocationStrategy,
           ComputeResources: [
-            computeResourceAdapter.createComputeResource(queues.length, 0),
+            computeResourceAdapter.createComputeResource(queueName, 0),
           ],
         },
       ],
