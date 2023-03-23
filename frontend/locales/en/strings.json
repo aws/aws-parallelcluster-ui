@@ -951,7 +951,7 @@
         "instanceType": {
           "label": "Instance type",
           "placeholder": {
-            "multiple": "Select one or more instance type"
+            "multiple": "Select one or more instance types"
           }
         },
         "disableHT": {
@@ -982,7 +982,7 @@
       },
       "name": {
         "label": "Queue name",
-        "placeholder": "queue-name"
+        "placeholder": "Enter the queue name"
       },
       "subnet": {
         "label": {
