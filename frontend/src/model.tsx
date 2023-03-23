@@ -937,14 +937,11 @@ async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
   GetVersion()
-  await GetAppConfig()
-  GetIdentity(_ => {
-    ListUsers()
-    ListClusters()
-    ListCustomImages()
-    ListOfficialImages()
-    LoadAwsConfig(region)
-  })
+  ListUsers()
+  ListClusters()
+  ListCustomImages()
+  ListOfficialImages()
+  LoadAwsConfig(region)
 }
 
 export {
