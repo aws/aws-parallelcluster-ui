@@ -1,6 +1,7 @@
 import {Box, SpaceBetween, Spinner} from '@cloudscape-design/components'
 import React from 'react'
 import {GetAppConfig, GetIdentity} from '../model'
+import {AxiosError} from 'axios'
 
 export function LoadingSpinnerContent() {
   return (
@@ -28,7 +29,7 @@ export function useLoadingState(
       try {
         await GetIdentity(undefined, true)
       } catch (error: any) {
-        const status = error?.response?.status
+        const status = (error as AxiosError)?.response?.status
         if (status != 403 && status != 401) {
           throw error // rethrow in case error is not authn/z related
         }
