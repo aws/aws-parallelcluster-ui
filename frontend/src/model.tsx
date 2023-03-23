@@ -898,26 +898,19 @@ function SlurmAccounting(
     })
 }
 
-function GetIdentity(successCallback?: Callback, throwing = false) {
-  const url = 'manager/get_identity'
-  let responsePromise = request('get', url).then(response => {
+async function GetIdentity(successCallback?: Callback, throwing = false) {
+  try {
+    const response = await request('get', 'manager/get_identity')
     if (response.status === 200) {
       setState(['identity'], response.data)
       successCallback && successCallback(response.data)
     }
-  })
-
-  if (!throwing) {
-    responsePromise = responsePromise.catch(error => {
-      if (error.response) {
-        console.log(error.response)
-        notify(`Error: ${error.response.data.message}`, 'error')
-      }
-      console.log(error)
-    })
+  } catch (e) {
+    console.log(e)
+    if (throwing) {
+      throw e as AxiosError
+    }
   }
-
-  return responsePromise
 }
 
 async function GetAppConfig() {
