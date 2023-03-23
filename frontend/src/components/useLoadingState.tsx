@@ -3,7 +3,7 @@ import React from 'react'
 import {GetAppConfig, GetIdentity} from '../model'
 import {AxiosError} from 'axios'
 
-export function LoadingSpinnerContent() {
+function LoadingSpinnerContent() {
   return (
     <SpaceBetween direction="vertical" size="l">
       <Box textAlign="center">
@@ -16,9 +16,7 @@ interface UseLoadingStateResponse {
   loading: boolean
   content: React.ReactNode
 }
-export function useLoadingState(
-  wrappedComponents: any,
-): UseLoadingStateResponse {
+function useLoadingState(wrappedComponents: any): UseLoadingStateResponse {
   const [loading, setLoading] = React.useState(false)
 
   React.useEffect(() => {
@@ -45,3 +43,5 @@ export function useLoadingState(
     content: loading ? <LoadingSpinnerContent /> : wrappedComponents,
   }
 }
+
+export {useLoadingState, LoadingSpinnerContent}
