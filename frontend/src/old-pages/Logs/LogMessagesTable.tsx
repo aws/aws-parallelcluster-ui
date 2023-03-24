@@ -92,6 +92,9 @@ export function LogMessagesTable({clusterName, logStreamName}: Props) {
     }),
   )
 
+  const messagesCountText =
+    data.length > 0 ? `(${data.length}+)` : `(${data.length})`
+
   const onRefreshClick = useCallback(() => {
     refetch()
   }, [refetch])
@@ -106,7 +109,7 @@ export function LogMessagesTable({clusterName, logStreamName}: Props) {
       trackBy="message"
       header={
         <Header
-          counter={`(${data.length})`}
+          counter={messagesCountText}
           actions={
             <Button
               disabled={!canFetchMessages}
