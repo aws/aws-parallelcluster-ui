@@ -16,7 +16,9 @@ interface UseLoadingStateResponse {
   loading: boolean
   content: React.ReactNode
 }
-function useLoadingState(wrappedComponents: any): UseLoadingStateResponse {
+function useLoadingState(
+  wrappedComponents: React.ReactNode,
+): UseLoadingStateResponse {
   const [loading, setLoading] = React.useState(false)
 
   React.useEffect(() => {
