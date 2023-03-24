@@ -11,10 +11,10 @@
 
 import { expect, Page } from "@playwright/test";
 
-const NON_ZERO_MESSAGES_COUNT = /Messages.*\([1-9][0-9]*\)/
+const NON_ZERO_MESSAGES_COUNT = /Messages.*\([1-9][0-9]*\+\)/
 
 export async function visitClusterLogsPage(page: Page) {
-  await expect(page.getByRole('heading', { name: /cluster logs/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Cluster DO-NOT-DELETE logs', exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Log streams' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible()
 
