@@ -335,11 +335,23 @@
     }
   },
   "clusterLogs": {
-    "title": "{{clusterName}} cluster logs",
+    "title": "Cluster {{clusterName}} logs",
     "breadcrumbLabel": "Logs",
     "helpPanel": {
-      "title": "Cluster logs",
-      "description": "Browse the logs of your cluster."
+      "title": "$t(clusterLogs.title)",
+      "description": "<p>View the AWS ParallelCluster logs that Amazon CloudWatch collects for your cluster.</p><p>You can also view these logs in the Amazon CloudWatch console and dashboard.</p>",
+      "cwIntegrationLink": {
+        "title": "Integration with Amazon CloudWatch Logs",
+        "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/cloudwatch-logs-v3.html"
+      },
+      "cwDashboardLink": {
+        "title": "Amazon CloudWatch dashboard",
+        "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/cloudwatch-dashboard-v3.html"
+      },
+      "monitoringLink": {
+        "title": "Monitoring section",
+        "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/Monitoring-v3.html"
+      }
     },
     "logStreams": {
       "title": "Log streams",
