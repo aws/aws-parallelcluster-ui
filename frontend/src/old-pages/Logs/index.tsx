@@ -27,13 +27,32 @@ import Layout from '../Layout'
 import {LogMessagesTable} from './LogMessagesTable'
 import {LogStreamsTable} from './LogStreamsTable'
 
-function LogsHelpPanel() {
+function LogsHelpPanel({clusterName}: {clusterName: string}) {
   const {t} = useTranslation()
+
+  const footerLinks = useMemo(
+    () => [
+      {
+        title: t('clusterLogs.helpPanel.cwIntegrationLink.title'),
+        href: t('clusterLogs.helpPanel.cwIntegrationLink.href'),
+      },
+      {
+        title: t('clusterLogs.helpPanel.cwDashboardLink.title'),
+        href: t('clusterLogs.helpPanel.cwDashboardLink.href'),
+      },
+      {
+        title: t('clusterLogs.helpPanel.monitoringLink.title'),
+        href: t('clusterLogs.helpPanel.monitoringLink.href'),
+      },
+    ],
+    [t],
+  )
 
   return (
     <TitleDescriptionHelpPanel
-      title={t('clusterLogs.helpPanel.title')}
+      title={t('clusterLogs.helpPanel.title', {clusterName})}
       description={<Trans i18nKey="clusterLogs.helpPanel.description" />}
+      footerLinks={footerLinks}
     />
   )
 }
@@ -45,7 +64,7 @@ export function Logs() {
     string | undefined
   >()
 
-  useHelpPanel(<LogsHelpPanel />)
+  useHelpPanel(<LogsHelpPanel clusterName={clusterName!} />)
 
   const breadcrumbItems: BreadcrumbGroupProps.Item[] = useMemo(
     () => [
@@ -67,7 +86,11 @@ export function Logs() {
         header={
           <Header
             variant="h1"
-            info={<InfoLink helpPanel={<LogsHelpPanel />} />}
+            info={
+              <InfoLink
+                helpPanel={<LogsHelpPanel clusterName={clusterName!} />}
+              />
+            }
           >
             {t('clusterLogs.title', {clusterName})}
           </Header>
