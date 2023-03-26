@@ -1,0 +1,21 @@
+FROM public.ecr.aws/lambda/python:3.9
+
+ARG data_dir=/opt
+
+COPY --from=frontend /app/build ${data_dir}/frontend/public
+
+COPY resources/attributions/docker-attributions.txt license.txt
+COPY requirements.txt  .
+RUN  pip3 install -r requirements.txt --target "${data_dir}/python"
+
+COPY app.py ${data_dir}/python/pcui/app.py
+COPY api ${data_dir}/python/api
+COPY awslambda ${data_dir}/python/awslambda
+RUN touch ${data_dir}/python/pcui/__init__.py
+RUN rm -fr ${data_dir}/python/boto* ${data_dir}/python/pip*
+RUN mkdir -p /data
+WORKDIR /opt
+RUN python -c "import shutil; shutil.make_archive('/data/layer', format='zip')"
+
+ENTRYPOINT ["bash"]
+CMD ["-c", "cp /data/layer.zip /output" ]

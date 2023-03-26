@@ -92,7 +92,7 @@ def build_flask_app(name):
 
     additional_args = {}
     if not is_running_local:
-        additional_args = dict(static_url_path="", static_folder="frontend/public")
+        additional_args = dict(static_url_path="", static_folder=os.getenv("STATIC_PATH", "frontend/public"))
 
     app = Flask(name, **additional_args)
     # Pcm globals setter functions before any other before_func
