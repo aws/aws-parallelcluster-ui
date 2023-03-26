@@ -12,12 +12,12 @@ import datetime
 import os
 
 import dateutil
-from flask import Flask, Response, request, send_from_directory
 import requests
+from flask import Flask, Response, request, send_from_directory
 
-from api.pcm_globals import PCMGlobals, logger
 from api.exception import ExceptionHandler
 from api.logging import RequestResponseLogging
+from api.pcm_globals import PCMGlobals, logger
 from api.security import SecurityHeaders
 
 # needed to only allow tests to disable auth

@@ -15,7 +15,11 @@ from flask.json import JSONEncoder
 from werkzeug.routing import BaseConverter
 
 import api.utils as utils
+from api.logging import parse_log_entry, push_log_entry
 from api.PclusterApiHandler import (
+    CLIENT_ID,
+    CLIENT_SECRET,
+    USER_POOL_ID,
     authenticated,
     cancel_job,
     create_user,
@@ -27,25 +31,38 @@ from api.PclusterApiHandler import (
     get_custom_image_config,
     get_dcv_session,
     get_identity,
-    get_version,
     get_instance_types,
+    get_version,
     list_users,
     login,
     logout,
+    pc,
     price_estimate,
     queue_status,
     sacct,
     scontrol_job,
-    CLIENT_ID, CLIENT_SECRET, USER_POOL_ID, pc
 )
-from api.logging import parse_log_entry, push_log_entry
 from api.pcm_globals import logger
 from api.security.csrf import CSRF
 from api.security.csrf.csrf import csrf_needed
 from api.security.fingerprint import CognitoFingerprintGenerator
-from api.validation import validated, EC2Action
-from api.validation.schemas import CreateUser, DeleteUser, GetClusterConfig, GetCustomImageConfig, GetAwsConfig, GetInstanceTypes,\
-     Login, PushLog, PriceEstimate, GetDcvSession, QueueStatus, ScontrolJob, CancelJob, Sacct
+from api.validation import EC2Action, validated
+from api.validation.schemas import (
+    CancelJob,
+    CreateUser,
+    DeleteUser,
+    GetAwsConfig,
+    GetClusterConfig,
+    GetCustomImageConfig,
+    GetDcvSession,
+    GetInstanceTypes,
+    Login,
+    PriceEstimate,
+    PushLog,
+    QueueStatus,
+    Sacct,
+    ScontrolJob,
+)
 
 ADMINS_GROUP = { "admin" }
 

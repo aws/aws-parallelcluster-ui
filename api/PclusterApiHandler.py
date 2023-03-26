@@ -18,34 +18,34 @@ import boto3
 import botocore
 import requests
 import yaml
-from flask import abort, redirect, request, Blueprint
+from flask import Blueprint, abort, redirect, request
 from jose import jwt
 
 from api.exception.exceptions import RefreshTokenError
-from api.pcm_globals import set_auth_cookies_in_context, logger, auth_cookies
+from api.pcm_globals import auth_cookies, logger, set_auth_cookies_in_context
 from api.security.csrf.constants import CSRF_COOKIE_NAME
 from api.security.csrf.csrf import csrf_needed
 from api.utils import disable_auth
 from api.validation import validated
 from api.validation.schemas import PCProxyArgs, PCProxyBody
 
-USER_POOL_ID = os.getenv("USER_POOL_ID")
-AUTH_PATH = os.getenv("AUTH_PATH")
 API_BASE_URL = os.getenv("API_BASE_URL")
-API_VERSION = os.getenv("API_VERSION", "3.1.0")
 API_USER_ROLE = os.getenv("API_USER_ROLE")
-OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
+API_VERSION = os.getenv("API_VERSION", "3.1.0")
+AUDIENCE = os.getenv("AUDIENCE")
+AUTH_PATH = os.getenv("AUTH_PATH")
+AUTH_URL = os.getenv("AUTH_URL", f"{AUTH_PATH}/login")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+JWKS_URL = os.getenv("JWKS_URL")
+OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
+REGION = os.getenv("AWS_DEFAULT_REGION")
+REVOKE_REFRESH_TOKEN_URL = f"{AUTH_PATH}/oauth2/revoke"
+SCOPES_LIST = os.getenv("SCOPES_LIST")
 SECRET_ID = os.getenv("SECRET_ID")
 SITE_URL = os.getenv("SITE_URL", API_BASE_URL)
-SCOPES_LIST = os.getenv("SCOPES_LIST")
-REGION = os.getenv("AWS_DEFAULT_REGION")
 TOKEN_URL = os.getenv("TOKEN_URL", f"{AUTH_PATH}/oauth2/token")
-REVOKE_REFRESH_TOKEN_URL = f"{AUTH_PATH}/oauth2/revoke"
-AUTH_URL = os.getenv("AUTH_URL", f"{AUTH_PATH}/login")
-JWKS_URL = os.getenv("JWKS_URL")
-AUDIENCE = os.getenv("AUDIENCE")
+USER_POOL_ID = os.getenv("USER_POOL_ID")
 USER_ROLES_CLAIM = os.getenv("USER_ROLES_CLAIM", "cognito:groups")
 
 try:
