@@ -148,6 +148,9 @@ Resources:
         Variables:
           PYTHONUNBUFFERED: 1
           STATIC_PATH: /opt/frontend/public/
+          BUCKET: !Ref InfrastructureBucket
+          PCUI_STACK_ID: !Ref AWS::StackId
+          PCUI_VERSION: !Ref PCUIVersion
           API_BASE_URL: !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]
           API_VERSION: !Ref Version
           SITE_URL: !Sub
@@ -515,12 +518,73 @@ Resources:
         Version: '2012-10-17'
         Statement:
           - Action:
+              - cloudformation:DescribeStacks
+              - cloudformation:UpdateStack
+              - cloudformation:CreateChangeSet
+            Resource:
+              - !Sub arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
+              - !Sub arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/Include
+              - !Sub arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31
+            Effect: Allow
+            Sid: InfrastructureCloudFormationPolicy
+          - Action:
+              - lambda:PublishLayerVersion
+              - lambda:GetLayerVersion
+              - lambda:DeleteLayerVersion
+            Resource:
+              - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:layer:PCUILayer-${AWS::StackName}*
+            Effect: Allow
+            Sid: InfrastructureLambdaLayerPolicy
+          - Action:
+              - lambda:UpdateFunctionConfiguration
+              - lambda:UpdateFunctionCode
+              - lambda:ListTags
+            Resource:
+              - !Sub
+                - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}*
+                - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+            Effect: Allow
+            Sid: InfrastructureLambdaPolicy
+          - Action:
+              - s3:ListBucket
+              - s3:GetBucketLocation
+            Resource:
+              - !Sub arn:${AWS::Partition}:s3:::${InfrastructureBucket}
+            Condition: {"StringLike":{"s3:prefix":["parallelcluster-ui/*"]}}
+            Effect: Allow
+            Sid: InfrastructureS3Policy
+          - Action:
+              - s3:GetObject
+            Resource:
+              - !Sub arn:${AWS::Partition}:s3:::${InfrastructureBucket}/parallelcluster-ui/*
+              - !Sub arn:${AWS::Partition}:s3:::${InfrastructureBucket}/parallelcluster/*
+              - !Sub arn:${AWS::Partition}:s3:::${AWS::Region}-aws-parallelcluster/parallelcluster/*
+            Effect: Allow
+            Sid: InfrastructureS3LayerPolicy
+          - Action:
               - execute-api:Invoke
             Effect: Allow
             Resource: !Sub
               - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${PCApiGateway}/*/*
               - { PCApiGateway: !Select [2, !Split ['/', !Select [0, !Split ['.', !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]]]]] }
             Sid: InfrastructureAPIProxyPolicy
+          - Action:
+              - iam:GetRole
+              - iam:GetRolePolicy
+              - iam:GetPolicy
+              - iam:SimulatePrincipalPolicy
+            Resource:
+              - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*
+              - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/*
+              - !Sub arn:${AWS::Partition}:iam::aws:policy/*
+            Effect: Allow
+            Sid: InfrastructureIamRead
+          - Action:
+              - iam:PassRole
+            Resource:
+              - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${AWS::StackName}-ParallelClusterUIUserRole-*
+            Effect: Allow
+            Sid: InfrastructureIamPassRole
 
   PricingPolicy:
     Type: AWS::IAM::ManagedPolicy

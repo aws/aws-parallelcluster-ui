@@ -21,6 +21,11 @@ def is_alphanumeric_with_hyphen(arg: str):
     return bool(re.fullmatch(pattern, arg))
 
 
+def is_alphanumeric_with_hyphen_and_dot(arg: str):
+    pattern = re.compile(r"^[a-zA-Z][a-zA-Z0-9-.]+$")
+    return bool(re.fullmatch(pattern, arg))
+
+
 aws_region_validator = validate.OneOf(choices=PC_REGIONS)
 
 

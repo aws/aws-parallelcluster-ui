@@ -35,10 +35,13 @@ API_VERSION = os.getenv("API_VERSION", "3.1.0")
 AUDIENCE = os.getenv("AUDIENCE")
 AUTH_PATH = os.getenv("AUTH_PATH")
 AUTH_URL = os.getenv("AUTH_URL", f"{AUTH_PATH}/login")
+BUCKET = os.getenv("BUCKET")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 JWKS_URL = os.getenv("JWKS_URL")
 OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
+PCUI_VERSION = os.getenv("PCUI_VERSION", "latest")
+PCUI_STACK_ID = os.getenv("PCUI_STACK_ID")
 REGION = os.getenv("AWS_DEFAULT_REGION")
 REVOKE_REFRESH_TOKEN_URL = f"{AUTH_PATH}/oauth2/revoke"
 SCOPES_LIST = os.getenv("SCOPES_LIST")
@@ -187,12 +190,76 @@ def get_scopes_list():
 
 def get_redirect_uri():
   return f"{SITE_URL}/login"
-  
+
 # Local Endpoints
 
 
 def get_version():
     return {"version": API_VERSION}
+
+
+def get_stack_info(region=REGION):
+    stack_name = PCUI_STACK_ID
+    keep_keys = {"StackStatus"}
+    cfn = boto3.client("cloudformation", region)
+    stack = cfn.describe_stacks(StackName=stack_name)["Stacks"][0]
+    return {"stack_info": {k: v for k, v in stack.items() if k in keep_keys}}
+
+
+def get_pcui_versions():
+    if not BUCKET:
+        return {"versions": [], "current": "loading"}
+
+    app_id="parallelcluster-ui"
+
+    s3 = boto3.client("s3")
+
+    # FIXME: make sure this paginates correctly, why the `0` here?
+    paginator = s3.get_paginator('list_objects')
+    pages = paginator.paginate(Bucket=BUCKET, Prefix=f"{app_id}/")
+
+    def is_pcui_template(obj):
+        return obj["Key"].endswith(f"{app_id}.yaml")
+
+    # flatten one level to go from pages -> objects
+    objects = []
+    for page in pages:
+        objects.extend(page["Contents"])
+
+    keys = [obj["Key"] for obj in sorted(objects, key=lambda x: x["LastModified"]) if is_pcui_template(obj)]
+    version_re = r"parallelcluster-ui/([^/]*)/.*"
+    versions = [re.match(version_re, key).groups(0)[0] for key in keys]
+    return {"versions": versions, "current_version": PCUI_VERSION}
+
+
+def set_pcui_version():
+    version = request.args.get("version")
+    ret = {"message": "success"}
+
+    app_id="parallelcluster-ui"
+    if PCUI_STACK_ID:
+        keys = ["AdminUserEmail", "UserPoolId", "UserPoolAuthDomain", "SNSRole",
+                "Version", "PCUIVersion", "InfrastructureBucket", ]
+
+        updates = {"PCUIVersion": version}
+
+        aws_urlsuffix = "amazonaws.com" if not REGION.startswith('us-gov') else "amazonaws-us-gov.com"
+
+        url = f"https://{BUCKET}.s3.{REGION}.{aws_urlsuffix}/{app_id}/{version}/templates/{app_id}.yaml"
+
+        def param_value(param):
+            return {"ParameterValue": updates[param]} if param in updates else {"UsePreviousValue": True}
+        params = [{"ParameterKey": k, **(param_value(k))} for k in keys]
+        capabilities = ["CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
+
+        cfn = boto3.client("cloudformation")
+        cfn.update_stack(StackName=PCUI_STACK_ID, TemplateURL=url, Parameters=params, Capabilities=capabilities)
+        ret |= get_stack_info()
+    else:
+        ret["message"] = "Couldn't find PCUI_STACK_ID in environment."
+
+    return ret
+
 
 def get_app_config():
   return {

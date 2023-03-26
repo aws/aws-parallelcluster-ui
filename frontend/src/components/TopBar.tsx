@@ -11,7 +11,7 @@
 import React, {useMemo} from 'react'
 
 import {useState, setState, clearAllState} from '../store'
-import {LoadInitialState} from '../model'
+import {LoadInitialState, GetPCUIVersions, SetPCUIVersion, GetStackInfo } from '../model'
 
 // UI Elements
 import TopNavigation from '@cloudscape-design/components/top-navigation'
@@ -65,6 +65,27 @@ export function regions(selected: string) {
   return supportedRegions
 }
 
+const versionsToDropdownItems= (
+    versions: string[], currentVersion: string
+) => {
+
+    return versions.map(version => {
+        let className = 'version'
+        if (currentVersion === version) className += ' version-selected'
+
+        return {
+            type: 'button',
+            id: version,
+            text: (
+                <span className={className}>
+                    <span className="version">{version}</span>
+                </span>
+            )
+        }
+
+    })
+}
+
 const regionsToDropdownItems = (
   regionGroups: string[][][],
   selected: string,
@@ -112,7 +133,19 @@ export default function Topbar() {
   const defaultRegionText = t('global.topBar.regionSelector.defaultRegionText')
   const defaultRegion = useState(['aws', 'region']) || defaultRegionText
   const selectedRegion = useState(['app', 'selectedRegion']) || defaultRegion
+  const stackStatus = useState(['app', 'stack_info', 'StackStatus']) || "unknown"
+  const currentVersion = useState(['app', 'pcui_versions', 'current_version'])
+  const versions = useState(['app', 'pcui_versions', 'versions']) || [...(currentVersion ? [currentVersion] : [])]
   const displayedRegions = regions(selectedRegion)
+  let finishedStates = new Set(["UPDATE_COMPLETE_CLEANUP_IN_PROGRESS", "UPDATE_COMPLETE", "UPDATE_ROLLBACK_COMPLETE"])
+
+  const selectVersion = (version: any) => {
+      let newVersion = version.detail.id
+      if(newVersion != currentVersion) {
+          SetPCUIVersion(newVersion)
+          setState(['app', 'stack_info', 'StackStatus'], "UPDATE_IN_PROGRESS")
+      }
+  }
 
   const selectRegion = (region: any) => {
     let newRegion = region.detail.id
@@ -134,11 +167,50 @@ export default function Topbar() {
     [t],
   )
 
+  const statusIcon = (status: string) => {
+      let status_map: Record<string, string> = {
+          "COMPLETE": 'status-positive',
+          "PROGRESS": 'status-in-progress',
+          "FAILED": 'status-negative'}
+      let status_suffix = status.split("_").slice(-1)[0]
+      return status_map[status_suffix] ?? 'status-pending'
+  }
+
+
+  React.useEffect(() =>{
+      let old_stack_status: string = ''
+      const stackInfoTick = () => {
+          GetStackInfo(stack_info => {
+              let finished = finishedStates.has(stack_info.StackStatus)
+              if(old_stack_status != '' && stack_info.StackStatus != old_stack_status && finished)
+                  {
+                      if(confirm(t('global.topBar.reloadOnDeploy')))
+                      {
+                          location.href = "/"
+                          location.reload()
+                      }
+                  }
+                  old_stack_status = stack_info.StackStatus
+          })
+
+      }
+      const stackInfoTimerId = setInterval(stackInfoTick, 10000)
+      return () => {
+          clearInterval(stackInfoTimerId)
+      }
+  }, [])
+
+
+  React.useEffect(() => {
+    const versionsTimerId = setInterval(GetPCUIVersions, 60000)
+    return () => { clearInterval(versionsTimerId)}
+  }, [])
+
   return (
     <div id="top-bar">
       <TopNavigation
         identity={{
-          title: t('global.projectDisplayName'),
+          title: t('global.projectDisplayName') + (currentVersion ? ` (${currentVersion})` : ""),
           href: '/',
           logo: {
             src: '/img/pcluster.svg',
@@ -146,6 +218,35 @@ export default function Topbar() {
           },
         }}
         utilities={[
+          ...[
+            versions && {
+                type: 'button',
+                disabled: true,
+                iconName: statusIcon(stackStatus),
+                title: "Stack status"
+            }
+          ],
+          ...[
+            versions && currentVersion && (
+                stackStatus.split("_").slice(-1)[0] == "COMPLETE" || finishedStates.has(stackStatus)
+            )
+                ? {
+                    type: 'menu-dropdown',
+                    text: (
+                        <span style={{fontWeight: 'normal'}}>{currentVersion}</span>
+                    ),
+                    onItemClick: selectVersion,
+                    items: versionsToDropdownItems(versions, currentVersion),
+                  }
+                : {
+                    type: 'button',
+                    disabled: true,
+                    text: (
+                        <span style={{fontWeight: 'normal', cursor: 'not-allowed'}}>upgrading...</span>
+                    ),
+                }
+          ]
+          ,
           ...[
             username
               ? {

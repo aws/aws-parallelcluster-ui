@@ -11,6 +11,7 @@
     },
     "topBar": {
       "signOut": "Sign out",
+      "reloadOnDeploy": "A new version of PCUI has has been deployed, click ok to reload.",
       "logoAltText": "$t(global.projectDisplayName} logo",
       "regionSelector": {
         "defaultRegionText": "Region",

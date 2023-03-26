@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, validate, INCLUDE, validates_schema
 
-from api.validation.validators import aws_region_validator, is_alphanumeric_with_hyphen, \
-    valid_api_log_levels_predicate, size_not_exceeding
+from api.validation.validators import  aws_region_validator, is_alphanumeric_with_hyphen, \
+    is_alphanumeric_with_hyphen_and_dot, valid_api_log_levels_predicate, size_not_exceeding
 
 
 class EC2ActionSchema(Schema):
@@ -84,6 +84,12 @@ class CancelJobSchema(Schema):
     region = fields.String(required=True, validate=aws_region_validator)
 
 CancelJob = CancelJobSchema(unknown=INCLUDE)
+
+
+class SetPCUIVersionSchema(Schema):
+    version = fields.String(validate=is_alphanumeric_with_hyphen_and_dot)
+
+SetPCUIVersion = SetPCUIVersionSchema(unknown=INCLUDE)
 
 
 class SacctSchema(Schema):
