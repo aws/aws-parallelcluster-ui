@@ -189,29 +189,32 @@ export default function Actions() {
       [openFileSystem, editConfiguration, navigate, clusterName],
     )
 
-  const clusterActionsGroupButtonItems = React.useMemo(() => {
-    return [
-      {
-        id: 'filesystem',
-        text: t('cluster.list.actions.filesystem'),
-        disabled: isSsmDisabled,
-      },
-      {
-        id: 'edit',
-        text: t('cluster.list.actions.edit'),
-        disabled: isEditDisabled,
-      },
-      {
-        id: 'logs',
-        text: t('cluster.list.actions.logs'),
-      },
-      {
-        id: 'delete',
-        text: t('cluster.list.actions.delete'),
-        disabled: isDeleteDisabled,
-      },
-    ]
-  }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
+  const clusterActionsGroupButtonItems: ButtonDropdownProps.ItemOrGroup[] =
+    React.useMemo(() => {
+      return [
+        {
+          id: 'logs',
+          text: t('cluster.list.actions.logs'),
+        },
+        {
+          id: 'filesystem',
+          text: t('cluster.list.actions.filesystem'),
+          disabled: isSsmDisabled,
+          external: true,
+          href: '#',
+        },
+        {
+          id: 'edit',
+          text: t('cluster.list.actions.edit'),
+          disabled: isEditDisabled,
+        },
+        {
+          id: 'delete',
+          text: t('cluster.list.actions.delete'),
+          disabled: isDeleteDisabled,
+        },
+      ]
+    }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
 
   const isActionsDisabled = isSsmDisabled && isEditDisabled && isDeleteDisabled
 
@@ -226,10 +229,18 @@ export default function Actions() {
       </DeleteDialog>
       <StopDialog clusterName={clusterName} />
       <SpaceBetween direction="horizontal" size="xs">
-        <Button disabled={isSsmDisabled} onClick={onShellClick}>
+        <Button
+          disabled={isSsmDisabled}
+          onClick={onShellClick}
+          iconName="external"
+        >
           {t('cluster.list.actions.shell')}
         </Button>
-        <Button disabled={isDcvDisabled} onClick={onDcvClick}>
+        <Button
+          disabled={isDcvDisabled}
+          onClick={onDcvClick}
+          iconName="external"
+        >
           {t('cluster.list.actions.dcv')}
         </Button>
 
