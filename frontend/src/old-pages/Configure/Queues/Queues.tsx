@@ -487,30 +487,28 @@ function Queue({index}: any) {
         >
           <SpaceBetween direction="vertical" size="s">
             <ColumnLayout borders="horizontal">
-              <SpaceBetween direction="vertical" size="xs">
-                <Box margin={{bottom: 'xs'}}>
-                  <SpaceBetween direction="horizontal" size="xs">
-                    <FormField
-                      label={t('wizard.queues.name.label')}
-                      errorText={nameError}
-                    >
-                      <Input
-                        value={queue.Name}
-                        placeholder={t('wizard.queues.name.placeholder')}
-                        onKeyDown={e => {
-                          if (
-                            e.detail.key === 'Enter' ||
-                            e.detail.key === 'Escape'
-                          ) {
-                            e.stopPropagation()
-                            queueValidate(index)
-                          }
-                        }}
-                        onChange={({detail}) => renameQueue(detail.value)}
-                      />
-                    </FormField>
-                  </SpaceBetween>
-                </Box>
+              <SpaceBetween direction="vertical" size="m">
+                <ColumnLayout columns={2}>
+                  <FormField
+                    label={t('wizard.queues.name.label')}
+                    errorText={nameError}
+                  >
+                    <Input
+                      value={queue.Name}
+                      placeholder={t('wizard.queues.name.placeholder')}
+                      onKeyDown={e => {
+                        if (
+                          e.detail.key === 'Enter' ||
+                          e.detail.key === 'Escape'
+                        ) {
+                          e.stopPropagation()
+                          queueValidate(index)
+                        }
+                      }}
+                      onChange={({detail}) => renameQueue(detail.value)}
+                    />
+                  </FormField>
+                </ColumnLayout>
                 <ColumnLayout columns={2}>
                   <FormField
                     label={
