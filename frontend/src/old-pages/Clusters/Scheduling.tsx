@@ -35,6 +35,7 @@ import {
   SpaceBetween,
   Table,
   TextFilter,
+  Header,
 } from '@cloudscape-design/components'
 
 // Components
@@ -351,6 +352,11 @@ export default function ClusterScheduling() {
           <Table
             {...collectionProps}
             trackBy="job_id"
+            header={
+              <Header variant="h3" counter={jobs && `(${jobs.length})`}>
+                {t('cluster.scheduling.tableTitle')}
+              </Header>
+            }
             columnDefinitions={[
               {
                 id: 'id',
