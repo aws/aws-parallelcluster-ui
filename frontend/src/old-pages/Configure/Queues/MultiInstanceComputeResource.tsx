@@ -14,13 +14,18 @@ import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/
 import {useCallback, useEffect, useMemo} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {clearState, setState, useState} from '../../../store'
-import {HelpTextInput, useInstanceGroups} from '../Components'
+import {
+  CheckboxWithHelpPanel,
+  HelpTextInput,
+  useInstanceGroups,
+} from '../Components'
 import {
   ComputeResourceInstance,
   MultiInstanceComputeResource,
   QueueValidationErrors,
 } from './queues.types'
 import {InstanceType} from '../Components.types'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
@@ -276,16 +281,25 @@ export function ComputeResource({
         )}
       </ColumnLayout>
       <SpaceBetween direction="vertical" size="s">
-        <Checkbox
+        <CheckboxWithHelpPanel
           checked={multithreadingDisabled}
           disabled={hpcInstanceSelected}
           onChange={_e => {
             setDisableHT(!multithreadingDisabled)
           }}
-          description={t('wizard.queues.computeResource.disableHT.description')}
+          helpPanel={
+            <TitleDescriptionHelpPanel
+              title={t(
+                'wizard.queues.computeResource.disableHT.helpPanel.title',
+              )}
+              description={t(
+                'wizard.queues.computeResource.disableHT.helpPanel.description',
+              )}
+            />
+          }
         >
           <Trans i18nKey="wizard.queues.computeResource.disableHT.label" />
-        </Checkbox>
+        </CheckboxWithHelpPanel>
         <Checkbox
           disabled={
             !allInstancesSupportEFA(instances, efaInstances) || !canUseEFA
