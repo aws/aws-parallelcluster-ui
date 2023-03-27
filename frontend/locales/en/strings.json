@@ -7,7 +7,7 @@
       "clusters": "Clusters",
       "images": "Images",
       "users": "Users",
-      "viewLicense": "View License"
+      "viewLicense": "View license"
     },
     "topBar": {
       "signOut": "Sign out",
@@ -320,7 +320,7 @@
       "preferencesModalDarkThemes": "Dark themes"
     },
     "fromClusterModal": {
-      "title": "Create Cluster From Another Cluster",
+      "title": "Create cluster from another cluster",
       "description": "Use an existing cluster as starting point for the configuration of your new cluster. Only clusters whose version matches the version of AWS ParallelCluster can be selected.",
       "actions": {
         "cancel": "Cancel",
