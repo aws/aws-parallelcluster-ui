@@ -1207,8 +1207,8 @@
         "filteringAriaLabel": "Find custom images",
         "filteringPlaceholder": "Find custom images",
         "empty": {
-          "title": "No images",
-          "subtitle": "No images to display.",
+          "title": "No images to display",
+          "subtitle": "Click on Build image to create an image.",
           "action": "Build image"
         },
         "noMatch": {
@@ -1239,8 +1239,8 @@
           "filteringAriaLabel": "Find tags",
           "filteringPlaceholder": "Find tags",
           "empty": {
-            "title": "No tags",
-            "subtitle": "No tags to display."
+            "title": "No tags to display",
+            "subtitle": "Use the Tags property of the image configuration to add tags to the image."
           },
           "noMatch": {
             "title": "No matches",
