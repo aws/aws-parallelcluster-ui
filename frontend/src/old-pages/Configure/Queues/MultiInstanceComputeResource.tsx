@@ -8,6 +8,7 @@ import {
   MultiselectProps,
   Checkbox,
   SpaceBetween,
+  Header,
 } from '@cloudscape-design/components'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {useCallback, useEffect, useMemo} from 'react'
@@ -201,110 +202,103 @@ export function ComputeResource({
     )
 
   return (
-    <div className="compute-resource">
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <ColumnLayout columns={2}>
-          <h3>
-            {t('wizard.queues.computeResource.name', {
-              index: index + 1,
-              crName: computeResource.Name,
-            })}
-          </h3>
-          <Box margin={{top: 'xs'}} textAlign="right">
-            {index > 0 && (
-              <Button onClick={remove}>
-                {t(
-                  'wizard.queues.computeResource.removeComputeResourceButton.label',
-                )}
-              </Button>
-            )}
-          </Box>
-        </ColumnLayout>
-        <ColumnLayout columns={2}>
-          <div style={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
-            <FormField label={t('wizard.queues.computeResource.staticNodes')}>
-              <Input
-                value={computeResource.MinCount || 0}
-                type="number"
-                onChange={({detail}) => setMinCount(parseInt(detail.value))}
-              />
-            </FormField>
-            <FormField label={t('wizard.queues.computeResource.dynamicNodes')}>
-              <Input
-                value={Math.max(
-                  (computeResource.MaxCount || 0) -
-                    (computeResource.MinCount || 0),
-                  0,
-                ).toString()}
-                type="number"
-                onChange={({detail}) => setMaxCount(parseInt(detail.value))}
-              />
-            </FormField>
-          </div>
-          <FormField
-            label={t('wizard.queues.computeResource.instanceType.label')}
-            errorText={typeError}
-          >
-            <Multiselect
-              selectedOptions={instances.map(instance => ({
-                value: instance.InstanceType,
-                label: instance.InstanceType,
-              }))}
-              placeholder={t(
-                'wizard.queues.computeResource.instanceType.placeholder.multiple',
+    <SpaceBetween direction="vertical" size="s">
+      <Header
+        variant="h3"
+        actions={
+          index > 0 && (
+            <Button onClick={remove}>
+              {t(
+                'wizard.queues.computeResource.removeComputeResourceButton.label',
               )}
-              tokenLimit={3}
-              onChange={setInstances}
-              options={instanceOptions}
-              filteringType="auto"
+            </Button>
+          )
+        }
+      >
+        {t('wizard.queues.computeResource.name', {
+          index: index + 1,
+          crName: computeResource.Name,
+        })}
+      </Header>
+      <ColumnLayout columns={2}>
+        <SpaceBetween direction="horizontal" size="l">
+          <FormField label={t('wizard.queues.computeResource.staticNodes')}>
+            <Input
+              value={computeResource.MinCount || 0}
+              type="number"
+              onChange={({detail}) => setMinCount(parseInt(detail.value))}
             />
           </FormField>
-          {enableMemoryBasedScheduling && (
-            <HelpTextInput
-              name={t('wizard.queues.schedulableMemory.name')}
-              path={path}
-              errorsPath={errorsPath}
-              configKey={'SchedulableMemory'}
-              onChange={({detail}) =>
-                setSchedulableMemory(
-                  [...path, 'SchedulableMemory'],
-                  detail.value,
-                )
-              }
-              description={t('wizard.queues.schedulableMemory.description')}
-              placeholder={t('wizard.queues.schedulableMemory.placeholder')}
-              help={t('wizard.queues.schedulableMemory.help')}
+          <FormField label={t('wizard.queues.computeResource.dynamicNodes')}>
+            <Input
+              value={Math.max(
+                (computeResource.MaxCount || 0) -
+                  (computeResource.MinCount || 0),
+                0,
+              ).toString()}
               type="number"
+              onChange={({detail}) => setMaxCount(parseInt(detail.value))}
             />
-          )}
-        </ColumnLayout>
-        <SpaceBetween direction="vertical" size="s">
-          <Checkbox
-            checked={multithreadingDisabled}
-            disabled={hpcInstanceSelected}
-            onChange={_e => {
-              setDisableHT(!multithreadingDisabled)
-            }}
-            description={t(
-              'wizard.queues.computeResource.disableHT.description',
-            )}
-          >
-            <Trans i18nKey="wizard.queues.computeResource.disableHT.label" />
-          </Checkbox>
-          <Checkbox
-            disabled={
-              !allInstancesSupportEFA(instances, efaInstances) || !canUseEFA
-            }
-            checked={enableEFA}
-            onChange={_e => {
-              setEnableEFA(!enableEFA)
-            }}
-          >
-            <Trans i18nKey="wizard.queues.computeResource.enableEfa" />
-          </Checkbox>
+          </FormField>
         </SpaceBetween>
-      </div>
-    </div>
+        <FormField
+          label={t('wizard.queues.computeResource.instanceType.label')}
+          errorText={typeError}
+        >
+          <Multiselect
+            selectedOptions={instances.map(instance => ({
+              value: instance.InstanceType,
+              label: instance.InstanceType,
+            }))}
+            placeholder={t(
+              'wizard.queues.computeResource.instanceType.placeholder.multiple',
+            )}
+            tokenLimit={3}
+            onChange={setInstances}
+            options={instanceOptions}
+            filteringType="auto"
+          />
+        </FormField>
+        {enableMemoryBasedScheduling && (
+          <HelpTextInput
+            name={t('wizard.queues.schedulableMemory.name')}
+            path={path}
+            errorsPath={errorsPath}
+            configKey={'SchedulableMemory'}
+            onChange={({detail}) =>
+              setSchedulableMemory([...path, 'SchedulableMemory'], detail.value)
+            }
+            description={t('wizard.queues.schedulableMemory.description')}
+            placeholder={t('wizard.queues.schedulableMemory.placeholder')}
+            help={t('wizard.queues.schedulableMemory.help')}
+            type="number"
+          />
+        )}
+      </ColumnLayout>
+      <SpaceBetween direction="vertical" size="s">
+        <Checkbox
+          checked={multithreadingDisabled}
+          disabled={hpcInstanceSelected}
+          onChange={_e => {
+            setDisableHT(!multithreadingDisabled)
+          }}
+          description={t('wizard.queues.computeResource.disableHT.description')}
+        >
+          <Trans i18nKey="wizard.queues.computeResource.disableHT.label" />
+        </Checkbox>
+        <Checkbox
+          disabled={
+            !allInstancesSupportEFA(instances, efaInstances) || !canUseEFA
+          }
+          checked={enableEFA}
+          onChange={_e => {
+            setEnableEFA(!enableEFA)
+          }}
+        >
+          <Trans i18nKey="wizard.queues.computeResource.enableEfa" />
+        </Checkbox>
+      </SpaceBetween>
+    </SpaceBetween>
   )
 }
 
