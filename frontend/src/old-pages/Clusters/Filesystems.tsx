@@ -17,6 +17,7 @@ import {useCollection} from '@cloudscape-design/collection-hooks'
 // UI Elements
 import {
   Button,
+  Header,
   Link,
   Pagination,
   Table,
@@ -160,6 +161,11 @@ export default function Filesystems() {
           <Table
             {...collectionProps}
             trackBy="clusterName"
+            header={
+              <Header variant="h3" counter={storage && `(${storage.length})`}>
+                {t('cluster.storage.tableTitle')}
+              </Header>
+            }
             columnDefinitions={[
               {
                 id: 'mount',

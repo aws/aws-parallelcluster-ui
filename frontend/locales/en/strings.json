@@ -159,6 +159,7 @@
       }
     },
     "storage": {
+      "tableTitle":"Filesystems",
       "id": "ID",
       "mountPath": "Mount path",
       "name": "Name",
@@ -168,8 +169,8 @@
       "noFilesystemsToDisplay": "No filesystems to display.",
       "filter": {
         "loading": "Loading Filesystems...",
-        "filteringPlaceholder": "Find storage",
-        "filteringAriaLabel": "Find storage",
+        "filteringPlaceholder": "Find filesystems",
+        "filteringAriaLabel": "Find filesystems",
         "noMatches": "No matches",
         "noFilesystems": "No filesystems match the filters.",
         "clear": "Clear filter"
@@ -200,6 +201,7 @@
       }
     },
     "scheduling": {
+      "tableTitle": "Jobs",
       "id": "ID",
       "name": "Name",
       "partition": "Partition",
