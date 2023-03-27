@@ -324,7 +324,12 @@ export default function ClusterScheduling() {
     jobs || [],
     extendCollectionsOptions({
       filtering: {
-        empty: <EmptyState title="No jobs" subtitle="No jobs to display." />,
+        empty: (
+          <EmptyState
+            title={t('cluster.scheduling.filter.empty.title')}
+            subtitle={t('cluster.scheduling.filter.empty.subtitle')}
+          />
+        ),
         noMatch: (
           <EmptyState
             title="No matches"

@@ -212,7 +212,11 @@
       "ssmEnabled": "You must enable SSM to monitor jobs.",
       "filter": {
         "filteringAriaLabel": "Find jobs",
-        "filteringPlaceholder": "Find jobs"
+        "filteringPlaceholder": "Find jobs",
+        "empty": {
+          "title": "No jobs to display",
+          "subtitle": "Schedule a job on the cluster to monitor its status."
+        }
       },
       "loadingJobs": "Loading jobs...",
       "propertyNotAvailable": "N/A"
