@@ -405,8 +405,8 @@
         "countText": "Results: {{filteredItemsCount}}",
         "filteringPlaceholder": "Find messages",
         "empty": {
-          "title": "No messages",
-          "subtitle": "No messages to display. Select a log stream to browse the messages."
+          "title": "No messages to display",
+          "subtitle": "Select a log stream to browse the messages."
         },
         "noMatch": {
           "title": "No matches",
