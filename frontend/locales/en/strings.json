@@ -163,9 +163,9 @@
       "mountPath": "Mount path",
       "name": "Name",
       "type": "Type",
-      "noFilesystems": "No filesystems",
+      "noFilesystems": "No filesystems to display",
       "noFilesystemsFound": "No filesystems found.",
-      "noFilesystemsToDisplay": "No filesystems to display.",
+      "noFilesystemsToDisplay": "Edit the cluster to add the storage of your choice.",
       "filter": {
         "loading": "Loading Filesystems...",
         "filteringPlaceholder": "Find storage",
