@@ -12,6 +12,31 @@ import {useLoadingState} from '../useLoadingState'
 import {Box} from '@cloudscape-design/components'
 import React from 'react'
 import {Mock} from 'jest-mock'
+import DoneCallback = jest.DoneCallback
+import {AxiosError} from 'axios'
+
+// @ts-ignore
+const _process = process._original()
+
+function storeOriginalJestListeners(originalJestListeners: {
+  unhandledRejection: any[]
+}) {
+  _process.listeners('unhandledRejection').forEach((listener: any) => {
+    originalJestListeners['unhandledRejection'].push(listener)
+    _process.off('unhandledRejection', listener)
+  })
+}
+
+function restoreOriginalJestListeners(originalJestListeners: {
+  unhandledRejection: any[]
+}) {
+  let listener
+  while (
+    (listener = originalJestListeners['unhandledRejection'].pop()) !== undefined
+  ) {
+    _process.on('unhandledRejection', listener)
+  }
+}
 
 describe('given a prerequisite to allow a component to be displayed', () => {
   beforeEach(() => {
@@ -36,6 +61,68 @@ describe('given a prerequisite to allow a component to be displayed', () => {
 
       expect(GetAppConfig).toHaveBeenCalledTimes(1)
       expect(GetIdentity).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('when the prerequisites are not met', () => {
+    const originalJestListeners = {
+      unhandledRejection: [] as any[],
+    }
+
+    beforeEach(() => {
+      storeOriginalJestListeners(originalJestListeners)
+    })
+
+    afterEach(() => {
+      restoreOriginalJestListeners(originalJestListeners)
+    })
+
+    describe('when the encountered error is due to a authn/z', () => {
+      const axiosError = {
+        response: {
+          status: 401,
+        },
+      } as AxiosError
+
+      beforeEach(() =>
+        (GetIdentity as Mock).mockImplementation(() =>
+          Promise.reject(axiosError),
+        ),
+      )
+
+      it('should not re-throw the error', async () => {
+        const unhandledRejectionHandler = () =>
+          fail('it should not have rethrown the error')
+
+        _process.on('unhandledRejection', unhandledRejectionHandler)
+
+        const {waitForNextUpdate} = renderHook(() => useLoadingState(<></>))
+
+        await waitForNextUpdate()
+      })
+    })
+
+    describe('when the encountered error is NOT due to a authn/z', () => {
+      const axiosError = {
+        response: {
+          status: 500,
+        },
+      } as AxiosError
+
+      beforeEach(() =>
+        (GetIdentity as Mock).mockImplementation(() =>
+          Promise.reject(axiosError),
+        ),
+      )
+
+      it('should re-throw the error', (done: DoneCallback) => {
+        _process.on('unhandledRejection', (error: any) => {
+          expect(error).toBe(axiosError)
+          done()
+        })
+
+        renderHook(() => useLoadingState(<></>))
+      })
     })
   })
 
