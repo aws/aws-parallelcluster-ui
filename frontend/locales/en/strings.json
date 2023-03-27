@@ -285,8 +285,8 @@
       "actionsLabel": "Actions",
       "filtering": {
         "empty": {
-          "title": "No clusters",
-          "subtitle": "No clusters to display",
+          "title": "No clusters to display",
+          "subtitle": "Click on Create cluster to create a cluster.",
           "action": "Create cluster"
         },
         "noMatch": {
