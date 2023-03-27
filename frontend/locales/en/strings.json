@@ -1096,8 +1096,8 @@
         },
         "addArgument": "Add argument",
         "argument": {
-          "label": "Argument",
-          "placeholder": "argument"
+          "label": "Arguments",
+          "placeholder": "Argument"
         }
       }
     }

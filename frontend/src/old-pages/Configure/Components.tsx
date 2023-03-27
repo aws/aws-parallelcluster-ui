@@ -17,7 +17,7 @@ import React, {
   useMemo,
   useState as useStateReact,
 } from 'react'
-import {Trans, useTranslation} from 'react-i18next'
+import {useTranslation} from 'react-i18next'
 import {useSelector} from 'react-redux'
 import {findFirst} from '../../util'
 
@@ -40,13 +40,12 @@ import {
   Input,
   SpaceBetween,
   Checkbox,
-  TokenGroup,
   Select,
   InputProps,
-  TextContent,
   CheckboxProps,
   Multiselect,
   MultiselectProps,
+  ColumnLayout,
 } from '@cloudscape-design/components'
 
 // Components
@@ -346,11 +345,7 @@ function ArgEditor({path, i}: any) {
   }
 
   return (
-    <div
-      className={styles.spaceBetweenCentered}
-      style={{'--spacing': spaceScaledXs}}
-    >
-      <span>{t('wizard.components.actionsEditor.argument.label')}</span>
+    <ColumnLayout columns={2}>
       <Input
         value={arg}
         onChange={({detail}) => {
@@ -359,7 +354,7 @@ function ArgEditor({path, i}: any) {
         placeholder={t('wizard.components.actionsEditor.argument.placeholder')}
       />
       <Button onClick={remove}>{t('wizard.actions.remove')}</Button>
-    </div>
+    </ColumnLayout>
   )
 }
 
@@ -399,10 +394,7 @@ function ActionEditor({
       </Checkbox>
       {enabled ? (
         <>
-          <div
-            className={styles.spaceBetweenCentered}
-            style={{'--spacing': spaceScaledXs}}
-          >
+          <ColumnLayout columns={2}>
             <FormField errorText={error}>
               <Input
                 placeholder="/home/ec2-user/start.sh"
@@ -415,17 +407,23 @@ function ActionEditor({
             <Button onClick={() => addArg([...path, 'Args'])}>
               {t('wizard.components.actionsEditor.addArgument')}
             </Button>
-          </div>
-          <SpaceBetween direction="vertical" size="xs">
-            {args.map((a: any, i: any) => (
-              <ArgEditor
-                key={`osa${i}`}
-                arg={a}
-                i={i}
-                path={[...path, 'Args']}
+          </ColumnLayout>
+          {args.length > 0 ? (
+            <SpaceBetween direction="vertical" size="xs">
+              {/* The title is stiled as an empty FormField because the shortest heading is an h3, too big for this case */}
+              <FormField
+                label={t('wizard.components.actionsEditor.argument.label')}
               />
-            ))}
-          </SpaceBetween>
+              {args.map((a: any, i: any) => (
+                <ArgEditor
+                  key={`osa${i}`}
+                  arg={a}
+                  i={i}
+                  path={[...path, 'Args']}
+                />
+              ))}
+            </SpaceBetween>
+          ) : null}
         </>
       ) : null}
     </SpaceBetween>
