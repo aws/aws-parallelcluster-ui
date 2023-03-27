@@ -64,7 +64,13 @@ export default function Users() {
   const loading = !useSelector(selectUserIndex)
   const user_index = useSelector(selectUserIndex) || {}
   const usernames = Object.keys(user_index).sort()
-  const users = usernames.map(username => user_index[username])
+  const users = usernames
+    .map(username => user_index[username])
+    .map(user => ({
+      ...user,
+      email: user.Attributes.email, // adds the email as first-level property so that Cloudscape can filter properly
+    }))
+
   const userEmail = useState(['app', 'user', 'delete', 'Attributes', 'email'])
   const deletedUser = useState(['app', 'user', 'delete'])
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([])
@@ -170,7 +176,7 @@ export default function Users() {
       <Table
         {...collectionProps}
         resizableColumns
-        trackBy={item => item.Attributes && item.Attributes.email}
+        trackBy={item => item.email}
         variant="full-page"
         selectionType="single"
         stickyHeader
@@ -216,8 +222,8 @@ export default function Users() {
           {
             id: 'email',
             header: t('users.list.columns.email'),
-            cell: item => item.Attributes.email || '-',
-            sortingField: 'Attributes.email',
+            cell: item => item.email || '-',
+            sortingField: 'email',
           },
           {
             id: 'created',
