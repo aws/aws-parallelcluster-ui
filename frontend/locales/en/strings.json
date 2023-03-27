@@ -197,6 +197,12 @@
       "costEstimate": {
         "title": "Cost estimate",
         "help": "This cost estimate is based on the time taken for the job to run, the number of nodes, and an estimate of the node cost. The estimate could be inaccurate and is only meant to be an overall estimate."
+      },
+      "filter": {
+        "empty": {
+          "title": "No jobs to display",
+          "subtitle": "Schedule a job on the cluster to monitor its status."
+        }
       }
     },
     "scheduling": {
