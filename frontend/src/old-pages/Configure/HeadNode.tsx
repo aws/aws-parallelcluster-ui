@@ -491,18 +491,17 @@ function HeadNode() {
         }
       >
         <SpaceBetween direction="vertical" size="s">
-          <Box>
-            <FormField
-              label={t('wizard.headNode.networking.subnetId.label')}
-              errorText={subnetErrors}
-              description={t('wizard.headNode.networking.subnetId.description')}
-            ></FormField>
+          <FormField
+            label={t('wizard.headNode.networking.subnetId.label')}
+            errorText={subnetErrors}
+            description={t('wizard.headNode.networking.subnetId.description')}
+          >
             <SubnetSelect
               disabled={editing}
               value={subnetValue}
               onChange={(subnetId: any) => setState(subnetPath, subnetId)}
             />
-          </Box>
+          </FormField>
         </SpaceBetween>
       </Container>
 
