@@ -60,9 +60,6 @@ import {
   InstanceTypeOption,
 } from './Components.types'
 
-import styles from './Components.module.css'
-import {spaceScaledXs} from '@cloudscape-design/design-tokens'
-
 // Helper Functions
 function strToOption(str: any) {
   return {value: str, label: str}
