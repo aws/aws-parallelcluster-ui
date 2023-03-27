@@ -177,7 +177,7 @@ describe('Given a list of queues', () => {
         </MockProviders>,
       )
 
-      const button = getByText('Add compute resource')
+      const button = getByText('Add resource')
       fireEvent.click(button)
       expect(setState).not.toHaveBeenCalledWith(
         ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
@@ -214,7 +214,7 @@ describe('Given a list of queues', () => {
         </MockProviders>,
       )
 
-      const button = getByText('Add compute resource')
+      const button = getByText('Add resource')
       fireEvent.click(button)
       expect(setState).toHaveBeenCalledWith(
         ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],

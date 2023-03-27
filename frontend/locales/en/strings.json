@@ -964,7 +964,7 @@
         "removeComputeResourceButton": {
           "label": "Remove resource"
         },
-        "addComputeResource": "Add compute resource",
+        "addComputeResource": "Add resource",
         "staticNodes": "Static nodes",
         "dynamicNodes": "Dynamic nodes",
         "instanceType": {
@@ -975,7 +975,10 @@
         },
         "disableHT": {
           "label": "Turn off multithreading",
-          "description": "Prevent multiple threads from running on an EC2 instance core."
+          "helpPanel": {
+            "title": "$t(wizard.queues.computeResource.disableHT.label)",
+            "description": "Prevent multiple threads from running on an EC2 instance core."
+          }
         },
         "enableEfa": "Use EFA"
       },
