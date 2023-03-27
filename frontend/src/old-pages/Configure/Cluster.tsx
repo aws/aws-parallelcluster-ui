@@ -33,11 +33,11 @@ import {getState, setState, useState, clearState} from '../../store'
 import {LoadAwsConfig} from '../../model'
 
 // Components
-import {CustomAMISettings} from './Components'
+import {CheckboxWithHelpPanel, CustomAMISettings} from './Components'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import {createComputeResource as singleCreate} from './Queues/SingleInstanceComputeResource'
 import {createComputeResource as multiCreate} from './Queues/MultiInstanceComputeResource'
-import {MultiUser, multiUserValidate} from './MultiUser'
+import {MultiUser, MultiUserHelpPanel, multiUserValidate} from './MultiUser'
 import {
   NonCancelableCustomEvent,
   NonCancelableEventHandler,
@@ -450,14 +450,14 @@ function Cluster() {
           <VpcSelect />
           {isMultiuserClusterActive && (
             <FormField>
-              <Checkbox
+              <CheckboxWithHelpPanel
                 disabled={editing}
-                description={t('wizard.cluster.multiUser.checkbox.description')}
                 checked={multiUserEnabled}
                 onChange={handleMultiUserChange}
+                helpPanel={<MultiUserHelpPanel />}
               >
                 <Trans i18nKey="wizard.cluster.multiUser.checkbox.label" />
-              </Checkbox>
+              </CheckboxWithHelpPanel>
             </FormField>
           )}
         </SpaceBetween>

@@ -496,8 +496,7 @@
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/DirectoryService-v3.html?icmpid=docs_parallelcluster_hp_multi_user_v1"
         },
         "checkbox": {
-          "label": "Multiple users on a cluster.",
-          "description": "Manage multiple cluster users in your Active Directory."
+          "label": "Allow multiple users on a cluster"
         },
         "domainName": {
           "name": "Domain name",
@@ -1062,8 +1061,8 @@
         }
       },
       "customAmi": {
-        "ariaLabel": "Custom Amazon Machine Image (AMI)",
-        "label": "Custom Amazon Machine Image (AMI)",
+        "ariaLabel": "Use a custom Amazon Machine Image (AMI)",
+        "label": "Use a custom Amazon Machine Image (AMI)",
         "helpPanel": {
           "title": "Custom Amazon Machine Image (AMI)",
           "description": "Use a custom Amazon Machine Image (AMI) to customize your cluster.",

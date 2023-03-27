@@ -407,7 +407,7 @@ function ActionEditor({
           </ColumnLayout>
           {args.length > 0 ? (
             <SpaceBetween direction="vertical" size="xs">
-              {/* The title is stiled as an empty FormField because the shortest heading is an h3, too big for this case */}
+              {/* The title is styled as an empty FormField because the shortest heading is an h3, too big for this case */}
               <FormField
                 label={t('wizard.components.actionsEditor.argument.label')}
               />
