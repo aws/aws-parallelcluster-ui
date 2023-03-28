@@ -133,7 +133,7 @@ function CustomImagesList() {
           counter={`(${imagesCount})`}
           actions={
             <SpaceBetween direction="horizontal" size="xs">
-              <Button className="action" onClick={refreshImages}>
+              <Button onClick={refreshImages}>
                 {t('customImages.actions.refresh')}
               </Button>
               <StatusSelect />

@@ -105,7 +105,6 @@ export default function ImageBuildDialog() {
 
   return (
     <Modal
-      className="wizard-dialog"
       visible={open || false}
       onDismiss={handleClose}
       closeAriaLabel={t('customImages.dialogs.buildImage.closeAriaLabel')}
