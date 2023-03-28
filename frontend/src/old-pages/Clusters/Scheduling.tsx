@@ -343,7 +343,13 @@ export default function ClusterScheduling() {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'job_id',
+          },
+        },
+      },
       selection: {},
     }),
   )

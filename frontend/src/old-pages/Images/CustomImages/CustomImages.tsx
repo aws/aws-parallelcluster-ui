@@ -106,7 +106,13 @@ function CustomImagesList() {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'imageId',
+          },
+        },
+      },
       selection: {},
     }),
   )

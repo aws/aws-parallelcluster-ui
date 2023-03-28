@@ -460,7 +460,13 @@ export default function ClusterAccounting() {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'job_id',
+          },
+        },
+      },
       selection: {},
     }),
   )

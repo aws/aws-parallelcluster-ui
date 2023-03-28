@@ -232,7 +232,13 @@ function CustomImageTags({image}: CustomImageTagsProps) {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'key',
+          },
+        },
+      },
       selection: {},
     }),
   )

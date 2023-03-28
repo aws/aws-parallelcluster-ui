@@ -156,7 +156,13 @@ export default function ClusterInstances() {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'instanceId',
+          },
+        },
+      },
       selection: {},
     }),
   )

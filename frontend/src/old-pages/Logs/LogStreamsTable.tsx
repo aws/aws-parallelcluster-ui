@@ -171,7 +171,13 @@ export function LogStreamsTable({clusterName, onLogStreamSelect}: Props) {
          */
         pageSize: 5,
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'logIdentifier',
+          },
+        },
+      },
       selection: {},
     }),
   )
