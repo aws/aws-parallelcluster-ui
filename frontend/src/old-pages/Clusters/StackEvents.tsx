@@ -139,7 +139,14 @@ export default function ClusterStackEvents() {
       ),
     },
     pagination: {pageSize: pageSize},
-    sorting: {},
+    sorting: {
+      defaultState: {
+        sortingColumn: {
+          sortingField: 'timestamp',
+        },
+        isDescending: true,
+      },
+    },
     selection: {},
   })
 

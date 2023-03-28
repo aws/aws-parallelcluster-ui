@@ -128,7 +128,13 @@ function ClusterList({clusters}: {clusters: ClusterInfoSummary[]}) {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'clusterName',
+          },
+        },
+      },
       selection: {},
     }),
   )

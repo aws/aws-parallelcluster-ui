@@ -135,7 +135,13 @@ export default function Users() {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'email',
+          },
+        },
+      },
       selection: {},
     }),
   )

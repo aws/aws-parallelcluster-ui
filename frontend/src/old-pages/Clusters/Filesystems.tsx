@@ -149,7 +149,13 @@ export default function Filesystems() {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'Name',
+          },
+        },
+      },
       selection: {},
     }),
   )

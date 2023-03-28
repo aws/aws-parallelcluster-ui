@@ -92,7 +92,13 @@ function OfficialImagesList({images}: {images: Image[]}) {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'amiId',
+          },
+        },
+      },
       selection: {},
     }),
   )

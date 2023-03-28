@@ -87,7 +87,14 @@ export function LogMessagesTable({clusterName, logStreamName}: Props) {
           />
         ),
       },
-      sorting: {},
+      sorting: {
+        defaultState: {
+          sortingColumn: {
+            sortingField: 'timestamp',
+          },
+          isDescending: true,
+        },
+      },
       selection: {},
     }),
   )
