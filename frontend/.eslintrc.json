@@ -2,5 +2,8 @@
   "extends": [
     "next/core-web-vitals",
     "prettier"
+  ],
+  "ignorePatterns": [
+    "**/jest.config.js"
   ]
 }
