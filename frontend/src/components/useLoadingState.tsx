@@ -27,7 +27,7 @@ function useLoadingState(
       await GetAppConfig()
 
       try {
-        await GetIdentity(undefined, true)
+        await GetIdentity()
       } catch (error: any) {
         const status = (error as AxiosError)?.response?.status
         if (status != 403 && status != 401) {
