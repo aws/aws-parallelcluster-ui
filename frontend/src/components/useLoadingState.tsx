@@ -2,14 +2,15 @@ import {Box, SpaceBetween, Spinner} from '@cloudscape-design/components'
 import React from 'react'
 import {GetAppConfig, GetIdentity} from '../model'
 import {AxiosError} from 'axios'
+import {BoxProps} from '@cloudscape-design/components/box/interfaces'
+
+const loadingSpinnerMargin: BoxProps.Spacing = {top: 'xxxl'}
 
 function LoadingSpinnerContent() {
   return (
-    <SpaceBetween direction="vertical" size="l">
-      <Box textAlign="center">
-        <Spinner size="large"></Spinner>
-      </Box>
-    </SpaceBetween>
+    <Box textAlign="center" margin={loadingSpinnerMargin}>
+      <Spinner size="large"></Spinner>
+    </Box>
   )
 }
 interface UseLoadingStateResponse {
