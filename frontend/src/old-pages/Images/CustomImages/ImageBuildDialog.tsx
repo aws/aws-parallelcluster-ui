@@ -122,6 +122,7 @@ export default function ImageBuildDialog() {
             </Button>
             <Button
               disabled={pending}
+              variant="primary"
               onClick={() => {
                 buildImageValidate(missingImageIdError) && handleBuild()
               }}

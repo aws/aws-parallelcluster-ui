@@ -208,7 +208,7 @@ export default function Users() {
                     placeholder={t('users.list.createForm.emailPlaceholder')}
                   ></Input>
                 </div>
-                <Button className="action" onClick={createUser}>
+                <Button variant="primary" onClick={createUser}>
                   {t('users.actions.create')}
                 </Button>
               </SpaceBetween>
