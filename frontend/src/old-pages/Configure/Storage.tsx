@@ -159,6 +159,26 @@ const storageThroughputsP2 = [
 
 const DEFAULT_DELETION_POLICY: DeletionPolicy = 'Retain'
 
+function isPersistentFsx(lustreType: string): boolean {
+  return ['PERSISTENT_1', 'PERSISTENT_2'].includes(lustreType)
+}
+
+function setDefaultStorageThroughput(
+  lustreType: string,
+  storageThroughputPath: string[],
+) {
+  if (isPersistentFsx(lustreType)) {
+    setState(
+      storageThroughputPath,
+      lustreType === 'PERSISTENT_1'
+        ? LUSTRE_PERSISTENT1_DEFAULT_THROUGHPUT
+        : LUSTRE_PERSISTENT2_DEFAULT_THROUGHPUT,
+    )
+  } else {
+    clearState(storageThroughputPath)
+  }
+}
+
 export function FsxLustreSettings({index}: any) {
   const {t} = useTranslation()
   const isLustrePersistent2Active = useFeatureFlag('lustre_persistent2')
@@ -209,12 +229,7 @@ export function FsxLustreSettings({index}: any) {
     if (storageCapacity === null && !useExisting)
       setState(storageCapacityPath, 1200)
     if (!storageThroughput && !useExisting) {
-      setState(
-        storageThroughputPath,
-        lustreType === 'PERSISTENT_1'
-          ? LUSTRE_PERSISTENT1_DEFAULT_THROUGHPUT
-          : LUSTRE_PERSISTENT2_DEFAULT_THROUGHPUT,
-      )
+      setDefaultStorageThroughput(lustreType, storageThroughputPath)
     }
     if (lustreType === null && !useExisting)
       setState(
@@ -310,11 +325,9 @@ export function FsxLustreSettings({index}: any) {
           selectedOption={strToOption(lustreType || 'PERSISTENT_1')}
           onChange={({detail}) => {
             setState(lustreTypePath, detail.selectedOption.value)
-            setState(
+            setDefaultStorageThroughput(
+              detail.selectedOption.value!,
               storageThroughputPath,
-              detail.selectedOption.value === 'PERSISTENT_1'
-                ? LUSTRE_PERSISTENT1_DEFAULT_THROUGHPUT
-                : LUSTRE_PERSISTENT2_DEFAULT_THROUGHPUT,
             )
           }}
           options={lustreTypes.map(strToOption)}
@@ -395,7 +408,7 @@ export function FsxLustreSettings({index}: any) {
         </>
       )}
 
-      {['PERSISTENT_1', 'PERSISTENT_2'].includes(lustreType) && (
+      {isPersistentFsx(lustreType) && (
         <FormField
           label={t('wizard.storage.Fsx.throughput.label')}
           info={

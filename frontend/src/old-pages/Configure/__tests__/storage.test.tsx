@@ -16,7 +16,7 @@ import {initReactI18next} from 'react-i18next'
 import mock from 'jest-mock-extended/lib/Mock'
 import {Store} from '@reduxjs/toolkit'
 import {Provider} from 'react-redux'
-import {setState} from '../../../store'
+import {setState, clearState} from '../../../store'
 import {EbsSettings, EfsSettings, FsxLustreSettings} from '../Storage'
 
 jest.mock('../../../store', () => {
@@ -26,6 +26,7 @@ jest.mock('../../../store', () => {
     __esModule: true, // Use it when dealing with esModules
     ...originalModule,
     setState: jest.fn(),
+    clearState: jest.fn(),
   }
 })
 
@@ -119,6 +120,101 @@ describe('Given a Lustre storage component', () => {
             'PerUnitStorageThroughput',
           ],
           125,
+        )
+      })
+    })
+
+    describe('with a SCRATCH_1 type', () => {
+      beforeEach(() => {
+        mockStore.getState.mockReturnValue({
+          app: {
+            wizard: {
+              config: {
+                SharedStorage: [
+                  {
+                    FsxLustreSettings: {
+                      DeploymentType: 'SCRATCH_1',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        })
+      })
+      it('should not set the PerUnitStorageThroughPut value in the config', () => {
+        render(
+          <MockProviders>
+            <FsxLustreSettings index={0} />
+          </MockProviders>,
+        )
+        expect(setState).not.toHaveBeenCalledWith(
+          [
+            'app',
+            'wizard',
+            'config',
+            'SharedStorage',
+            0,
+            'FsxLustreSettings',
+            'PerUnitStorageThroughput',
+          ],
+          expect.anything(),
+        )
+      })
+
+      it('should clear an existing PerUnitStorageThroughput value if available', () => {
+        render(
+          <MockProviders>
+            <FsxLustreSettings index={0} />
+          </MockProviders>,
+        )
+        expect(clearState).toHaveBeenCalledWith([
+          'app',
+          'wizard',
+          'config',
+          'SharedStorage',
+          0,
+          'FsxLustreSettings',
+          'PerUnitStorageThroughput',
+        ])
+      })
+    })
+
+    describe('with a SCRATCH_2 type', () => {
+      beforeEach(() => {
+        mockStore.getState.mockReturnValue({
+          app: {
+            wizard: {
+              config: {
+                SharedStorage: [
+                  {
+                    FsxLustreSettings: {
+                      DeploymentType: 'SCRATCH_2',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        })
+      })
+      it('should not set the PerUnitStorageThroughPut value in the config', () => {
+        render(
+          <MockProviders>
+            <FsxLustreSettings index={0} />
+          </MockProviders>,
+        )
+        expect(setState).not.toHaveBeenCalledWith(
+          [
+            'app',
+            'wizard',
+            'config',
+            'SharedStorage',
+            0,
+            'FsxLustreSettings',
+            'PerUnitStorageThroughput',
+          ],
+          expect.anything(),
         )
       })
     })
