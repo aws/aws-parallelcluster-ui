@@ -47,7 +47,10 @@ describe('Given a Lustre storage component', () => {
     ;(setState as jest.Mock).mockClear()
   })
   describe("when it's initialized", () => {
-    describe('with a Persistent_1 type', () => {
+    describe.each<[string, number]>([
+      ['PERSISTENT_1', 200],
+      ['PERSISTENT_2', 125],
+    ])('with a %s type', (fsxType, throughputValue) => {
       beforeEach(() => {
         mockStore.getState.mockReturnValue({
           app: {
@@ -56,7 +59,7 @@ describe('Given a Lustre storage component', () => {
                 SharedStorage: [
                   {
                     FsxLustreSettings: {
-                      DeploymentType: 'PERSISTENT_1',
+                      DeploymentType: fsxType,
                     },
                   },
                 ],
@@ -81,50 +84,12 @@ describe('Given a Lustre storage component', () => {
             'FsxLustreSettings',
             'PerUnitStorageThroughput',
           ],
-          200,
-        )
-      })
-    })
-    describe('with a Persistent_2 type', () => {
-      beforeEach(() => {
-        mockStore.getState.mockReturnValue({
-          app: {
-            wizard: {
-              config: {
-                SharedStorage: [
-                  {
-                    FsxLustreSettings: {
-                      DeploymentType: 'PERSISTENT_2',
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        })
-      })
-      it('should set the correct PerUnitStorageThroughPut value in the config', () => {
-        render(
-          <MockProviders>
-            <FsxLustreSettings index={0} />
-          </MockProviders>,
-        )
-        expect(setState).toHaveBeenCalledWith(
-          [
-            'app',
-            'wizard',
-            'config',
-            'SharedStorage',
-            0,
-            'FsxLustreSettings',
-            'PerUnitStorageThroughput',
-          ],
-          125,
+          throughputValue,
         )
       })
     })
 
-    describe('with a SCRATCH_1 type', () => {
+    describe.each([['SCRATCH_1'], ['SCRATCH_2']])('with a %s type', fsxType => {
       beforeEach(() => {
         mockStore.getState.mockReturnValue({
           app: {
@@ -133,7 +98,7 @@ describe('Given a Lustre storage component', () => {
                 SharedStorage: [
                   {
                     FsxLustreSettings: {
-                      DeploymentType: 'SCRATCH_1',
+                      DeploymentType: fsxType,
                     },
                   },
                 ],
@@ -179,46 +144,6 @@ describe('Given a Lustre storage component', () => {
         ])
       })
     })
-
-    describe('with a SCRATCH_2 type', () => {
-      beforeEach(() => {
-        mockStore.getState.mockReturnValue({
-          app: {
-            wizard: {
-              config: {
-                SharedStorage: [
-                  {
-                    FsxLustreSettings: {
-                      DeploymentType: 'SCRATCH_2',
-                    },
-                  },
-                ],
-              },
-            },
-          },
-        })
-      })
-      it('should not set the PerUnitStorageThroughPut value in the config', () => {
-        render(
-          <MockProviders>
-            <FsxLustreSettings index={0} />
-          </MockProviders>,
-        )
-        expect(setState).not.toHaveBeenCalledWith(
-          [
-            'app',
-            'wizard',
-            'config',
-            'SharedStorage',
-            0,
-            'FsxLustreSettings',
-            'PerUnitStorageThroughput',
-          ],
-          expect.anything(),
-        )
-      })
-    })
-
     describe('when the user wants to link an already created Lustre', () => {
       beforeEach(() => {
         mockStore.getState.mockReturnValue({
