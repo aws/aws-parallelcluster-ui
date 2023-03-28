@@ -1,6 +1,6 @@
-const merge = require('lodash/merge');
+const merge = require('lodash/merge')
 const nextJest = require('next/jest')
-const awsuiPreset = require('@cloudscape-design/jest-preset/jest-preset');
+const awsuiPreset = require('@cloudscape-design/jest-preset/jest-preset')
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -22,5 +22,17 @@ async function mergePolarisPreset() {
 
   return mergedConfig
 }
+
+// necessary to circumvent Jest exception handlers to test exception throwing
+// this is due to the impossibility to run code before Jest starts, since Jest performs its
+// override/patching of the `process` variable
+// see https://johann.pardanaud.com/blog/how-to-assert-unhandled-rejection-and-uncaught-exception-with-jest/
+// this is not the right place for setup code or custom configuration code
+// do NOT add code here
+process._original = (function (_original) {
+  return function () {
+    return _original
+  }
+})(process)
 
 module.exports = mergePolarisPreset
