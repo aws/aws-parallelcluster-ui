@@ -41,7 +41,7 @@ export async function fillClusterSection(page: Page, config: Config) {
 
   if (config.region) {
     await page.getByLabel("Region").click();
-    await page.getByText(config.region).first().click();
+    await page.getByRole('option', { name: config.region }).click();
   }
 
   if (config.vpc) {
