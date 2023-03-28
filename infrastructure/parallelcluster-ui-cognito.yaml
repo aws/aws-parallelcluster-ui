@@ -65,7 +65,7 @@ Resources:
         AllowAdminCreateUserOnly: true
         InviteMessageTemplate:
           EmailSubject: "[AWS ParallelCluster UI] Welcome to AWS ParallelCluster UI, please verify your account."
-          EmailMessage: "You are invited to manage clusters with ParallelCluster UI. Your administrator will contact you with the link to access. Your username is {username} and your temporary password is {####} (you will need to change it in your first access)."
+          EmailMessage: "You are invited to manage clusters with ParallelCluster UI. Your administrator will contact you with the link to access. Your username is {username} and your temporary password (you will need to change it in your first access) is <br><br> {####}"
       UsernameAttributes:
         - 'email'
 
