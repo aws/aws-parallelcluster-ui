@@ -849,19 +849,13 @@ function SlurmAccounting(
     })
 }
 
-async function GetIdentity(successCallback?: Callback, throwing = false) {
-  try {
-    const response = await request('get', 'manager/get_identity')
-    if (response.status === 200) {
-      setState(['identity'], response.data)
-      successCallback && successCallback(response.data)
-    }
-  } catch (e) {
-    console.log(e)
-    if (throwing) {
-      throw e as AxiosError
-    }
+async function GetIdentity() {
+  const response = await request('get', 'manager/get_identity')
+  if (response.status === 200) {
+    setState(['identity'], response.data)
+    return response.data
   }
+  return undefined
 }
 
 async function GetAppConfig() {
