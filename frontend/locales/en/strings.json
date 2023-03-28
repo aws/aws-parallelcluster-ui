@@ -7,7 +7,7 @@
       "clusters": "Clusters",
       "images": "Images",
       "users": "Users",
-      "viewLicense": "View License"
+      "viewLicense": "View license"
     },
     "topBar": {
       "signOut": "Sign out",
@@ -164,9 +164,9 @@
       "mountPath": "Mount path",
       "name": "Name",
       "type": "Type",
-      "noFilesystems": "No filesystems",
+      "noFilesystems": "No filesystems to display",
       "noFilesystemsFound": "No filesystems found.",
-      "noFilesystemsToDisplay": "No filesystems to display.",
+      "noFilesystemsToDisplay": "Edit the cluster to add the storage of your choice.",
       "filter": {
         "loading": "Loading Filesystems...",
         "filteringPlaceholder": "Find filesystems",
@@ -198,6 +198,12 @@
       "costEstimate": {
         "title": "Cost estimate",
         "help": "This cost estimate is based on the time taken for the job to run, the number of nodes, and an estimate of the node cost. The estimate could be inaccurate and is only meant to be an overall estimate."
+      },
+      "filter": {
+        "empty": {
+          "title": "No jobs to display",
+          "subtitle": "Schedule a job on the cluster to monitor its status."
+        }
       }
     },
     "scheduling": {
@@ -214,7 +220,11 @@
       "ssmEnabled": "You must enable SSM to monitor jobs.",
       "filter": {
         "filteringAriaLabel": "Find jobs",
-        "filteringPlaceholder": "Find jobs"
+        "filteringPlaceholder": "Find jobs",
+        "empty": {
+          "title": "No jobs to display",
+          "subtitle": "Schedule a job on the cluster to monitor its status."
+        }
       },
       "loadingJobs": "Loading jobs...",
       "propertyNotAvailable": "N/A"
@@ -277,8 +287,8 @@
       "actionsLabel": "Actions",
       "filtering": {
         "empty": {
-          "title": "No clusters",
-          "subtitle": "No clusters to display",
+          "title": "No clusters to display",
+          "subtitle": "Click on Create cluster to create a cluster.",
           "action": "Create cluster"
         },
         "noMatch": {
@@ -322,7 +332,7 @@
       "preferencesModalDarkThemes": "Dark themes"
     },
     "fromClusterModal": {
-      "title": "Create Cluster From Another Cluster",
+      "title": "Create cluster from another cluster",
       "description": "Use an existing cluster as starting point for the configuration of your new cluster. Only clusters whose version matches the version of AWS ParallelCluster can be selected.",
       "actions": {
         "cancel": "Cancel",
@@ -397,8 +407,8 @@
         "countText": "Results: {{filteredItemsCount}}",
         "filteringPlaceholder": "Find messages",
         "empty": {
-          "title": "No messages",
-          "subtitle": "No messages to display. Select a log stream to browse the messages."
+          "title": "No messages to display",
+          "subtitle": "Select a log stream to browse the messages."
         },
         "noMatch": {
           "title": "No matches",
@@ -1201,8 +1211,8 @@
         "filteringAriaLabel": "Find custom images",
         "filteringPlaceholder": "Find custom images",
         "empty": {
-          "title": "No images",
-          "subtitle": "No images to display.",
+          "title": "No images to display",
+          "subtitle": "Click on Build image to create an image.",
           "action": "Build image"
         },
         "noMatch": {
@@ -1233,8 +1243,8 @@
           "filteringAriaLabel": "Find tags",
           "filteringPlaceholder": "Find tags",
           "empty": {
-            "title": "No tags",
-            "subtitle": "No tags to display."
+            "title": "No tags to display",
+            "subtitle": "Use the Tags property of the image configuration to add tags to the image."
           },
           "noMatch": {
             "title": "No matches",

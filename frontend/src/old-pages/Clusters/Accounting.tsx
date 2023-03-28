@@ -442,7 +442,12 @@ export default function ClusterAccounting() {
     jobs || [],
     extendCollectionsOptions({
       filtering: {
-        empty: <EmptyState title="No jobs" subtitle="No jobs to display." />,
+        empty: (
+          <EmptyState
+            title={t('cluster.accounting.filter.empty.title')}
+            subtitle={t('cluster.accounting.filter.empty.subtitle')}
+          />
+        ),
         noMatch: (
           <EmptyState
             title="No matches"
