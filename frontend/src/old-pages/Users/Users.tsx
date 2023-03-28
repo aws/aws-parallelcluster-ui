@@ -194,12 +194,11 @@ export default function Users() {
             info={<InfoLink helpPanel={<UsersHelpPanel />} />}
             actions={
               <SpaceBetween direction="horizontal" size="xs">
-                <Button className="action" onClick={refreshUsers}>
+                <Button onClick={refreshUsers}>
                   {t('users.actions.refresh')}
                 </Button>
                 <Button
                   disabled={isDeleteUserButtonDisabled()}
-                  className="action"
                   onClick={() => {
                     setState(['app', 'user', 'delete'], selectedUsers[0])
                     showDialog('deleteUser')
@@ -215,7 +214,7 @@ export default function Users() {
                     placeholder={t('users.list.createForm.emailPlaceholder')}
                   ></Input>
                 </div>
-                <Button className="action" onClick={createUser}>
+                <Button variant="primary" onClick={createUser}>
                   {t('users.actions.create')}
                 </Button>
               </SpaceBetween>

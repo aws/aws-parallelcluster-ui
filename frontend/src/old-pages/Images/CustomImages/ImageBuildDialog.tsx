@@ -105,7 +105,6 @@ export default function ImageBuildDialog() {
 
   return (
     <Modal
-      className="wizard-dialog"
       visible={open || false}
       onDismiss={handleClose}
       closeAriaLabel={t('customImages.dialogs.buildImage.closeAriaLabel')}
@@ -123,6 +122,7 @@ export default function ImageBuildDialog() {
             </Button>
             <Button
               disabled={pending}
+              variant="primary"
               onClick={() => {
                 buildImageValidate(missingImageIdError) && handleBuild()
               }}
