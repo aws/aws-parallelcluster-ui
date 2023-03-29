@@ -37,7 +37,7 @@ function app(state = {}, action: any) {
 function aws(state = {}, action: any) {
   return state
 }
-function identity(state = {}, action: any) {
+function identity(state = null, action: any) {
   return state
 }
 

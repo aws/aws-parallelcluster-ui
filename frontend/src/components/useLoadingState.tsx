@@ -1,8 +1,11 @@
-import {Box, SpaceBetween, Spinner} from '@cloudscape-design/components'
+import {Box, Spinner} from '@cloudscape-design/components'
 import React from 'react'
 import {GetAppConfig, GetIdentity} from '../model'
 import {AxiosError} from 'axios'
 import {BoxProps} from '@cloudscape-design/components/box/interfaces'
+import {useState} from '../store'
+import {AppConfig} from '../app-config/types'
+import {UserIdentity} from '../auth/types'
 
 const loadingSpinnerMargin: BoxProps.Spacing = {top: 'xxxl'}
 
@@ -20,7 +23,12 @@ interface UseLoadingStateResponse {
 function useLoadingState(
   wrappedComponents: React.ReactNode,
 ): UseLoadingStateResponse {
-  const [loading, setLoading] = React.useState(false)
+  const identity: UserIdentity | null = useState(['identity'])
+  const appConfig: AppConfig | null = useState(['app', 'appConfig'])
+
+  const shouldLoadData = !identity || !appConfig
+
+  const [loading, setLoading] = React.useState(shouldLoadData)
 
   React.useEffect(() => {
     const getPreliminaryInfo = async () => {
@@ -38,8 +46,10 @@ function useLoadingState(
       setLoading(false)
     }
 
-    getPreliminaryInfo()
-  }, [])
+    if (shouldLoadData) {
+      getPreliminaryInfo()
+    }
+  }, [shouldLoadData])
 
   return {
     loading,

@@ -1,19 +1,12 @@
 import {renderHook} from '@testing-library/react-hooks'
-
-jest.mock('../../model', () => {
-  return {
-    GetAppConfig: jest.fn(),
-    GetIdentity: jest.fn(),
-  }
-})
-
-import {GetIdentity, GetAppConfig} from '../../model'
 import {useLoadingState} from '../useLoadingState'
 import {Box} from '@cloudscape-design/components'
 import React from 'react'
-import {Mock} from 'jest-mock'
 import DoneCallback = jest.DoneCallback
 import {AxiosError} from 'axios'
+import {Provider} from 'react-redux'
+import {mock} from 'jest-mock-extended'
+import {Store} from '@reduxjs/toolkit'
 
 // @ts-ignore
 const _process = process._original()
@@ -38,29 +31,139 @@ function restoreOriginalJestListeners(originalJestListeners: {
   }
 }
 
-describe('given a prerequisite to allow a component to be displayed', () => {
+const mockGetAppConfig = jest.fn()
+const mockGetIdentity = jest.fn()
+
+jest.mock('../../model', () => {
+  return {
+    GetAppConfig: () => mockGetAppConfig(),
+    GetIdentity: () => mockGetIdentity(),
+  }
+})
+
+const mockStore = mock<Store>()
+const wrapper = (props: any) => (
+  <Provider store={mockStore}>{props.children}</Provider>
+)
+
+describe('given a hook to load all the data necessary for the app to boot', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
 
-  describe('when the prerequisites are met', () => {
-    it('should render the component', async () => {
-      const box = <Box></Box>
-      const {result, waitForNextUpdate} = renderHook(() => useLoadingState(box))
-
-      await waitForNextUpdate()
-
-      expect(result.current.loading).toBe(false)
-      expect(result.current.content).toEqual(box)
+  describe('when the necessary data is already available', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        identity: {
+          someKey: 'some-value',
+        },
+        app: {
+          appConfig: {
+            someKey: 'some-value',
+          },
+        },
+      })
     })
 
-    it('should invoke the necessary functions', async () => {
-      const {waitForNextUpdate} = renderHook(() => useLoadingState(<Box></Box>))
+    it('should set loading to false', () => {
+      const {result} = renderHook(() => useLoadingState(<></>), {wrapper})
+
+      expect(result.current.loading).toBe(false)
+    })
+
+    it('should return the wrapped component as is', () => {
+      const mockContent = <div />
+      const {result} = renderHook(() => useLoadingState(mockContent), {wrapper})
+
+      expect(result.current.content).toBe(mockContent)
+    })
+
+    it('should not request the data', () => {
+      renderHook(() => useLoadingState(<Box></Box>), {wrapper})
+
+      expect(mockGetAppConfig).toHaveBeenCalledTimes(0)
+      expect(mockGetIdentity).toHaveBeenCalledTimes(0)
+    })
+  })
+
+  describe('when the identity is not available', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        identity: null,
+        app: {
+          appConfig: {
+            someKey: 'some-value',
+          },
+        },
+      })
+    })
+
+    it('should request the data', async () => {
+      const {waitForNextUpdate} = renderHook(
+        () => useLoadingState(<Box></Box>),
+        {wrapper},
+      )
 
       await waitForNextUpdate()
 
-      expect(GetAppConfig).toHaveBeenCalledTimes(1)
-      expect(GetIdentity).toHaveBeenCalledTimes(1)
+      expect(mockGetAppConfig).toHaveBeenCalledTimes(1)
+      expect(mockGetIdentity).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('when the app config is not available', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        identity: {
+          someKey: 'some-value',
+        },
+        app: {
+          appConfig: null,
+        },
+      })
+    })
+
+    it('should request the data', async () => {
+      const {waitForNextUpdate} = renderHook(
+        () => useLoadingState(<Box></Box>),
+        {wrapper},
+      )
+
+      await waitForNextUpdate()
+
+      expect(mockGetAppConfig).toHaveBeenCalledTimes(1)
+      expect(mockGetIdentity).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('when some data is not available', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        identity: null,
+        app: null,
+      })
+    })
+
+    describe('when the data is being fetched', () => {
+      beforeEach(() => {
+        const neverResolve = new Promise(() => null)
+        mockGetAppConfig.mockReturnValue(neverResolve)
+      })
+
+      it('should set loading to true', async () => {
+        const {result} = renderHook(() => useLoadingState(<></>), {wrapper})
+
+        expect(result.current.loading).toBe(true)
+      })
+
+      it('should return some loading component', () => {
+        const mockContent = <div />
+        const {result} = renderHook(() => useLoadingState(mockContent), {
+          wrapper,
+        })
+
+        expect(result.current.content).not.toBe(mockContent)
+      })
     })
   })
 
@@ -85,9 +188,7 @@ describe('given a prerequisite to allow a component to be displayed', () => {
       } as AxiosError
 
       beforeEach(() =>
-        (GetIdentity as Mock).mockImplementation(() =>
-          Promise.reject(axiosError),
-        ),
+        mockGetIdentity.mockImplementation(() => Promise.reject(axiosError)),
       )
 
       it('should not re-throw the error', async () => {
@@ -96,9 +197,7 @@ describe('given a prerequisite to allow a component to be displayed', () => {
 
         _process.on('unhandledRejection', unhandledRejectionHandler)
 
-        const {waitForNextUpdate} = renderHook(() => useLoadingState(<></>))
-
-        await waitForNextUpdate()
+        renderHook(() => useLoadingState(<></>), {wrapper})
       })
     })
 
@@ -110,9 +209,7 @@ describe('given a prerequisite to allow a component to be displayed', () => {
       } as AxiosError
 
       beforeEach(() =>
-        (GetIdentity as Mock).mockImplementation(() =>
-          Promise.reject(axiosError),
-        ),
+        mockGetIdentity.mockImplementation(() => Promise.reject(axiosError)),
       )
 
       it('should re-throw the error', (done: DoneCallback) => {
@@ -121,30 +218,11 @@ describe('given a prerequisite to allow a component to be displayed', () => {
           done()
         })
 
-        renderHook(() => useLoadingState(<></>))
+        const {waitForNextUpdate} = renderHook(() => useLoadingState(<></>), {
+          wrapper,
+        })
+        waitForNextUpdate()
       })
-    })
-  })
-
-  describe('when the prerequisites are being checked', () => {
-    beforeEach(() => {
-      jest.useFakeTimers()
-      ;(GetIdentity as Mock).mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 10000)),
-      )
-      ;(GetAppConfig as Mock).mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 10000)),
-      )
-    })
-
-    afterEach(() => jest.useRealTimers())
-
-    it('should render a loading component', () => {
-      const {result} = renderHook(() => useLoadingState(<Box></Box>))
-
-      jest.advanceTimersByTime(1000)
-
-      expect(result.current.loading).toBe(true)
     })
   })
 })
