@@ -14,8 +14,6 @@ import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom'
 
 import {LoadInitialState} from '../model'
 
-import {useState} from '../store'
-
 import Clusters from '../old-pages/Clusters/Clusters'
 import Configure from '../old-pages/Configure/Configure'
 import Users from '../old-pages/Users/Users'

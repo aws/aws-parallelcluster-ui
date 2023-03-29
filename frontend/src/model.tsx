@@ -24,6 +24,7 @@ import {
   LogStreamView,
 } from './types/logs'
 import {AxiosError} from 'axios'
+import {UserIdentity} from './auth/types'
 
 // Types
 type Callback = (arg?: any) => void
@@ -849,13 +850,12 @@ function SlurmAccounting(
     })
 }
 
-async function GetIdentity() {
+async function GetIdentity(): Promise<UserIdentity | undefined> {
   const response = await request('get', 'manager/get_identity')
   if (response.status === 200) {
     setState(['identity'], response.data)
     return response.data
   }
-  return undefined
 }
 
 async function GetAppConfig() {
