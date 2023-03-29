@@ -1,10 +1,10 @@
 import {FlashbarProps} from '@cloudscape-design/components'
 import {ClickDetail} from '@cloudscape-design/components/internal/events'
 import {describe} from '@jest/globals'
-import {errorsToFlashbarItems} from '../Create'
 import {ConfigError, CreateErrors, UpdateError} from '../Create.types'
 import i18n from '../../../i18n'
 import {initReactI18next} from 'react-i18next'
+import {errorsToFlashbarItems} from '../errorsToFlashbarItems'
 
 i18n.use(initReactI18next).init({
   resources: {},

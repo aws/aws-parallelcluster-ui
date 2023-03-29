@@ -22,7 +22,6 @@ import {
   Input,
   Modal,
   SpaceBetween,
-  Spinner,
 } from '@cloudscape-design/components'
 
 import FileUploadButton from '../../../components/FileChooser'
@@ -32,7 +31,7 @@ import {setState, useState, getState, clearState} from '../../../store'
 import ConfigView from '../../../components/ConfigView'
 import {useTranslation} from 'react-i18next'
 import {AxiosError} from 'axios'
-import {errorsToFlashbarItems} from '../../Configure/Create'
+import {errorsToFlashbarItems} from '../../Configure/errorsToFlashbarItems'
 
 const buildImageErrorsPath = ['app', 'buildImage', 'errors']
 
