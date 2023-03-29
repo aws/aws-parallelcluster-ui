@@ -386,20 +386,15 @@ function GetCustomImageConfiguration(imageId: any, callback?: Callback) {
     })
 }
 
-function BuildImage(imageId: string, imageConfig: string) {
+async function BuildImage(imageId: string, imageConfig: string) {
   var url = 'api?path=/v3/images/custom'
   var body = {imageId: imageId, imageConfiguration: imageConfig}
-  return request('post', url, body).then((response: any) => {
-    if (response.status === 202) {
-      notify(`Successfully queued build for ${imageId}.`, 'success')
-      updateState(['customImages', 'index', imageId], (existing: any) => {
-        return {...existing, ...response.data}
-      })
-      return response.data
-    } else {
-      throw {response}
-    }
+  const {data} = await request('post', url, body)
+  notify(`Successfully queued build for ${imageId}.`, 'success')
+  updateState(['customImages', 'index', imageId], (existing: any) => {
+    return {...existing, ...data}
   })
+  return data
 }
 
 async function ListOfficialImages(region?: string) {
