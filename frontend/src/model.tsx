@@ -386,40 +386,20 @@ function GetCustomImageConfiguration(imageId: any, callback?: Callback) {
     })
 }
 
-function BuildImage(
-  imageId: any,
-  imageConfig: any,
-  successCallback?: Callback,
-  errorCallback?: Callback,
-) {
+function BuildImage(imageId: string, imageConfig: string) {
   var url = 'api?path=/v3/images/custom'
   var body = {imageId: imageId, imageConfiguration: imageConfig}
-  request('post', url, body)
-    .then((response: any) => {
-      if (response.status === 202) {
-        notify(`Successfully queued build for ${imageId}.`, 'success')
-        updateState(['customImages', 'index', imageId], (existing: any) => {
-          return {...existing, ...response.data}
-        })
-        successCallback && successCallback(response.data)
-      } else {
-        console.log(response)
-        notify(
-          `Error creating: ${imageId} -- ${response.data.message}`,
-          'error',
-        )
-      }
-    })
-    .catch((error: any) => {
-      if (error.response) {
-        notify(
-          `Error creating: ${imageId} - ${error.response.data.message}`,
-          'error',
-        )
-        errorCallback && errorCallback(error.response.data)
-      }
-      console.log(error.response.data)
-    })
+  return request('post', url, body).then((response: any) => {
+    if (response.status === 202) {
+      notify(`Successfully queued build for ${imageId}.`, 'success')
+      updateState(['customImages', 'index', imageId], (existing: any) => {
+        return {...existing, ...response.data}
+      })
+      return response.data
+    } else {
+      throw {response}
+    }
+  })
 }
 
 async function ListOfficialImages(region?: string) {
