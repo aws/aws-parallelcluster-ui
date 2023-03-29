@@ -1288,8 +1288,7 @@
         "build": "Build image",
         "imageIdLabel":"Image ID",
         "imageIdPlaceholder":"Enter image AMI ID",
-        "imageIdError":"Image ID must not be blank",
-        "loading": "Image Build request pending"
+        "imageIdError":"Image ID must not be blank"
       }
     }
   },
