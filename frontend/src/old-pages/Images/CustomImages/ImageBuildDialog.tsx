@@ -124,7 +124,17 @@ export default function ImageBuildDialog() {
       closeAriaLabel={t('customImages.dialogs.buildImage.closeAriaLabel')}
       size="large"
       header={
-        <Header variant="h2">
+        <Header
+          variant="h2"
+          actions={
+            <FileUploadButton
+              className="upload"
+              handleData={(data: any) => {
+                setState([...imageBuildPath, 'config'], data)
+              }}
+            />
+          }
+        >
           {t('customImages.dialogs.buildImage.title')}
         </Header>
       }
@@ -148,33 +158,20 @@ export default function ImageBuildDialog() {
       }
     >
       <SpaceBetween direction="vertical" size="xs">
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-          }}
+        <FormField
+          errorText={imageIdError}
+          label={t('customImages.dialogs.buildImage.imageIdLabel')}
         >
-          <FileUploadButton
-            className="upload"
-            handleData={(data: any) => {
-              setState([...imageBuildPath, 'config'], data)
+          <Input
+            value={imageId}
+            placeholder={t(
+              'customImages.dialogs.buildImage.imageIdPlaceholder',
+            )}
+            onChange={({detail}) => {
+              setImageId(detail.value)
             }}
           />
-          <div>{t('customImages.dialogs.buildImage.imageIdLabel')}</div>
-          <FormField errorText={imageIdError}>
-            <Input
-              value={imageId}
-              placeholder={t(
-                'customImages.dialogs.buildImage.imageIdPlaceholder',
-              )}
-              onChange={({detail}) => {
-                setImageId(detail.value)
-              }}
-            />
-          </FormField>
-        </div>
+        </FormField>
         <Flashbar items={flashbarItems} />
         {
           <ConfigView
