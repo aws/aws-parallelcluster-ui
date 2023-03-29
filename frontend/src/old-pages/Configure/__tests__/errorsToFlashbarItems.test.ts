@@ -325,4 +325,26 @@ describe('Given a function to map create/dry-run errors to FlashbarItems', () =>
       )
     })
   })
+
+  describe('when the request has errored without any specific configuration, validation or update errors', () => {
+    it('should present an error with the error message', () => {
+      expect(
+        errorsToFlashbarItems(
+          {
+            message:
+              'Bad Request: Configuration must be a valid YAML document. Parsed config is not a dict',
+          },
+          () => null,
+        ),
+      ).toMatchObject([
+        {
+          type: 'error',
+          dismissible: true,
+          header: 'Error',
+          content:
+            'Bad Request: Configuration must be a valid YAML document. Parsed config is not a dict',
+        },
+      ])
+    })
+  })
 })
