@@ -15,6 +15,8 @@ import {BuildImage} from '../../../model'
 import {
   Box,
   Button,
+  Flashbar,
+  FlashbarProps,
   FormField,
   Header,
   Input,
@@ -23,8 +25,6 @@ import {
   Spinner,
 } from '@cloudscape-design/components'
 
-// Components
-import ValidationErrors from '../../../components/ValidationErrors'
 import FileUploadButton from '../../../components/FileChooser'
 
 // State
@@ -32,6 +32,7 @@ import {setState, useState, getState, clearState} from '../../../store'
 import ConfigView from '../../../components/ConfigView'
 import {useTranslation} from 'react-i18next'
 import {AxiosError} from 'axios'
+import {errorsToFlashbarItems} from '../../Configure/Create'
 
 const buildImageErrorsPath = ['app', 'buildImage', 'errors']
 
@@ -67,6 +68,14 @@ export default function ImageBuildDialog() {
   let imageIdError = useState([...buildImageErrorsPath, 'imageId'])
   const missingImageIdError = t('customImages.dialogs.buildImage.imageIdError')
 
+  React.useEffect(() => {
+    setFlashbarItems(errorsToFlashbarItems(errors, setFlashbarItems))
+  }, [errors])
+
+  const [flashbarItems, setFlashbarItems] = React.useState<
+    FlashbarProps.MessageDefinition[]
+  >([])
+
   const handleClose = () => {
     setState([...imageBuildPath, 'dialog'], false)
     clearState([...imageBuildPath, 'errors'])
@@ -78,6 +87,7 @@ export default function ImageBuildDialog() {
     if (buildImageValidate(missingImageIdError)) {
       try {
         await BuildImage(imageId, imageConfig)
+        handleClose()
       } catch (error: unknown) {
         if ((error as AxiosError).response) {
           setState(
@@ -165,6 +175,7 @@ export default function ImageBuildDialog() {
             />
           </FormField>
         </div>
+        <Flashbar items={flashbarItems} />
         {
           <ConfigView
             config={imageConfig}
@@ -173,7 +184,6 @@ export default function ImageBuildDialog() {
             }}
           />
         }
-        {errors && <ValidationErrors errors={errors} />}
         {pending && (
           <div>
             <Spinner size="normal" />{' '}
