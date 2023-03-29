@@ -280,6 +280,20 @@ export function errorsToFlashbarItems(
     )
   })
 
+  if (items.length === 0 && !success) {
+    items.push(
+      dismissableMessage(
+        {
+          type: 'error',
+          header: 'Error',
+          content: errors.message,
+          id: 'config-err-0',
+        },
+        setFlashbarItems,
+      ),
+    )
+  }
+
   items.sort(compareFlashbarItems)
   return items
 }
