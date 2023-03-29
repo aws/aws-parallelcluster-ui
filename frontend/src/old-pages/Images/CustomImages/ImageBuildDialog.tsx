@@ -31,6 +31,7 @@ import FileUploadButton from '../../../components/FileChooser'
 import {setState, useState, getState, clearState} from '../../../store'
 import ConfigView from '../../../components/ConfigView'
 import {useTranslation} from 'react-i18next'
+import {AxiosError} from 'axios'
 
 const buildImageErrorsPath = ['app', 'buildImage', 'errors']
 
@@ -71,19 +72,22 @@ export default function ImageBuildDialog() {
     clearState([...imageBuildPath, 'errors'])
   }
 
-  const handleBuild = () => {
-    var errHandler = (err: any) => {
-      setState([...imageBuildPath, 'errors'], err)
-      setState([...imageBuildPath, 'pending'], false)
-    }
-    var successHandler = (_resp: any) => {
-      setState([...imageBuildPath, 'pending'], false)
-      handleClose()
-    }
+  const handleBuild = async () => {
     clearState([...imageBuildPath, 'errors'])
     setState([...imageBuildPath, 'pending'], true)
-    buildImageValidate(missingImageIdError) &&
-      BuildImage(imageId, imageConfig, successHandler, errHandler)
+    if (buildImageValidate(missingImageIdError)) {
+      try {
+        await BuildImage(imageId, imageConfig)
+      } catch (error: unknown) {
+        if ((error as AxiosError).response) {
+          setState(
+            [...imageBuildPath, 'errors'],
+            (error as AxiosError).response?.data,
+          )
+        }
+      }
+      setState([...imageBuildPath, 'pending'], false)
+    }
   }
 
   const setImageId = (newImageId: any) => {
