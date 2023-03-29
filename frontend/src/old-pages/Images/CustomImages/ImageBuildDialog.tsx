@@ -146,6 +146,7 @@ export default function ImageBuildDialog() {
             </Button>
             <Button
               disabled={pending}
+              loading={pending}
               variant="primary"
               onClick={() => {
                 buildImageValidate(missingImageIdError) && handleBuild()
@@ -181,12 +182,6 @@ export default function ImageBuildDialog() {
             }}
           />
         }
-        {pending && (
-          <div>
-            <Spinner size="normal" />{' '}
-            {t('customImages.dialogs.buildImage.loading')}
-          </div>
-        )}
       </SpaceBetween>
     </Modal>
   )
