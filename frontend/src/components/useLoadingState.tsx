@@ -37,13 +37,14 @@ function useLoadingState(
 
       try {
         await GetIdentity()
+        setLoading(false)
       } catch (error: any) {
         const status = (error as AxiosError)?.response?.status
         if (status != 403 && status != 401) {
+          setLoading(false)
           throw error // rethrow in case error is not authn/z related
         }
       }
-      setLoading(false)
     }
 
     if (shouldLoadData) {
