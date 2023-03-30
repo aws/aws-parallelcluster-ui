@@ -492,8 +492,8 @@
         "selectedAriaLabel": "Selected"
       },
       "imdsSupport": {
-        "label": "IMDS support",
-        "description": "The IMDS versions that are supported in the cluster nodes.",
+        "label": "IMDS settings",
+        "description": "The IMDS version that cluster nodes use.",
         "placeholder": "Select an IMDS version",
         "values": {
           "version10": "Version 1.0",
