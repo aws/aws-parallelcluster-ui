@@ -177,14 +177,18 @@ export default function ClusterProperties() {
                       triggerType="custom"
                       content={
                         <StatusIndicator type="success">
-                          mSSH command copied
+                          {t(
+                            'cluster.properties.ec2InstanceConnect.copySuccess',
+                          )}{' '}
                         </StatusIndicator>
                       }
                     >
                       <Button
                         variant="inline-icon"
                         iconName="copy"
-                        ariaLabel="Copy mSSH command"
+                        ariaLabel={t(
+                          'cluster.properties.ec2InstanceConnect.copyAria',
+                        )}
                         onClick={() => {
                           navigator.clipboard.writeText(
                             `mssh -r ${cluster.region} ${clusterDefaultUser(
