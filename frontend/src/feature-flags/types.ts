@@ -23,3 +23,4 @@ export type AvailableFeature =
   | 'ebs_deletion_policy'
   | 'efs_deletion_policy'
   | 'lustre_deletion_policy'
+  | 'imds_support'

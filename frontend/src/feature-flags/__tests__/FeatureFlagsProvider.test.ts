@@ -58,6 +58,7 @@ describe('given a feature flags provider and a list of rules', () => {
         'dynamic_fs_mount',
         'efs_deletion_policy',
         'lustre_deletion_policy',
+        'imds_support',
       ])
     })
   })
