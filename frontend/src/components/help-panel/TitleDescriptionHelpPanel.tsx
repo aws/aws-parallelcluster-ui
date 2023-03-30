@@ -39,13 +39,7 @@ function TitleDescriptionHelpPanel({
         <ul>
           {footerLinks.map(link => (
             <li key={link.href}>
-              <Link
-                external
-                externalIconAriaLabel={t('global.openNewTab')}
-                href={link.href}
-              >
-                {link.title}
-              </Link>
+              <Link href={link.href}>{link.title}</Link>
             </li>
           ))}
         </ul>
