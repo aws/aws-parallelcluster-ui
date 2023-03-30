@@ -181,9 +181,6 @@ export default function ClusterProperties() {
                         </StatusIndicator>
                       }
                     >
-                      {`mssh -r ${cluster.region} ${clusterDefaultUser(
-                        cluster,
-                      )}@${headNode.instanceId}`}
                       <Button
                         variant="inline-icon"
                         iconName="copy"
@@ -195,9 +192,10 @@ export default function ClusterProperties() {
                             )}@${headNode.instanceId}`,
                           )
                         }}
-                      >
-                        copy
-                      </Button>
+                      />
+                      {`mssh -r ${cluster.region} ${clusterDefaultUser(
+                        cluster,
+                      )}@${headNode.instanceId}`}
                     </Popover>
                   </Box>
                 </ValueWithLabel>
