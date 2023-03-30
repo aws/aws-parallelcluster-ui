@@ -20,6 +20,7 @@ import {Box, Button, Modal, SpaceBetween} from '@cloudscape-design/components'
 // Components
 import Loading from '../../components/Loading'
 import ConfigView from '../../components/ConfigView'
+import {useTranslation} from 'react-i18next'
 
 function downloadBlob(blob: any, filename: any) {
   const url = URL.createObjectURL(blob)
@@ -38,6 +39,7 @@ function downloadBlob(blob: any, filename: any) {
 }
 
 export default function ConfigDialog() {
+  const {t} = useTranslation()
   const open = useState(['app', 'clusters', 'clusterConfig', 'dialog'])
 
   const clusterName = useState(['app', 'clusters', 'selected'])
@@ -70,13 +72,15 @@ export default function ConfigDialog() {
                 })
               }}
             >
-              Download
+              {t('cluster.properties.configDialog.download')}
             </Button>
-            <Button onClick={close}>Close</Button>
+            <Button onClick={close}>
+              {t('cluster.properties.configDialog.close')}
+            </Button>
           </SpaceBetween>
         </Box>
       }
-      header="Cluster Configuration"
+      header={t('cluster.properties.configDialog.title')}
     >
       {configYaml ? <ConfigView config={configYaml} /> : <Loading />}
     </Modal>

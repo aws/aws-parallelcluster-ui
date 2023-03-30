@@ -56,10 +56,10 @@ export function AddStorageForm({storageTypes, onSubmit}: Props) {
 
   return (
     <SpaceBetween size="s">
-      <FormField label={t('wizard.storage.container.storageType')}>
+      <FormField label={t('wizard.storage.container.storageTypes')}>
         <Multiselect
           tokenLimit={0}
-          placeholder={t('wizard.storage.container.storageTypePlaceholder')}
+          placeholder={t('wizard.storage.container.storageTypesPlaceholder')}
           selectedOptions={selectedStorages}
           onChange={onSelectChange}
           options={storageTypesToDisplay}
