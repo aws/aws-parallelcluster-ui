@@ -55,6 +55,7 @@ import InfoLink from '../../components/InfoLink'
 import {ClusterNameField} from './Cluster/ClusterNameField'
 import {validateClusterNameAndSetErrors} from './Cluster/clusterName.validators'
 import Loading from '../../components/Loading'
+import {ImdsSupportFormField} from './Cluster/ImdsSupportFormField'
 
 // Constants
 const errorsPath = ['app', 'wizard', 'errors', 'cluster']
@@ -448,6 +449,7 @@ function Cluster() {
             validate={clusterValidate}
           />
           <VpcSelect />
+          <ImdsSupportFormField />
           {isMultiuserClusterActive && (
             <FormField>
               <CheckboxWithHelpPanel
