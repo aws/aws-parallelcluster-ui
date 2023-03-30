@@ -129,6 +129,11 @@
         "help": "Locally install mSSH helper and copy the provided command to connect to the head node with EC2 Instance Connect.",
         "copySuccess": "mSSH command copied",
         "copyAria": "Copy the mSSH command."
+      },
+      "configDialog": {
+        "title": "Cluster configuration",
+        "download": "Download",
+        "close": "Close"
       }
     },
     "instances": {
@@ -508,7 +513,7 @@
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/DirectoryService-v3.html?icmpid=docs_parallelcluster_hp_multi_user_v1"
         },
         "checkbox": {
-          "label": "Allow multiple users on a cluster"
+          "label": "Manage multiple users on a cluster"
         },
         "domainName": {
           "name": "Domain name",
@@ -681,13 +686,13 @@
         },
         "database": {
           "label": "Database",
-          "description": "Enter the path to the Slurm database.",
+          "description": "The path to the Slurm database.",
           "placeholder": "DNSName/ip:port"
         },
         "username": {
           "label": "Username",
           "placeholder": "Username",
-          "description": "Enter the user ID for access to the database."
+          "description": "The user ID for access to the database."
         },
         "password": {
           "label": "Password secret ARN",
@@ -718,8 +723,8 @@
       "container": {
         "title": "Storage settings",
         "noStorageSelected": "No shared storage options selected.",
-        "storageType": "Storage type",
-        "storageTypePlaceholder": "Select one or more storage types",
+        "storageTypes": "Storage types",
+        "storageTypesPlaceholder": "Select file system types",
         "volumePlaceholder": "Select a volume",
         "addStorage": "Add storage",
         "removeStorage": "Remove storage",
