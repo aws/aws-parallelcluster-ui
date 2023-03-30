@@ -1333,12 +1333,6 @@
     "ClusterFailedHelp": {
       "errorMessage": "Stack failed to create, see <0>CloudFormation stack events</0> or <1>Cluster logs</1> to see why."
     },
-    "ValidationErrors": {
-      "update": "Edit",
-      "validation": "Validation",
-      "errors": "Errors",
-      "warnings": "Warnings"
-    },
     "Loading": {
       "text": "Loading..."
     },
