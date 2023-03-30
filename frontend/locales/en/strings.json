@@ -126,7 +126,9 @@
       "versionLabel": "Version",
       "ec2InstanceConnect": {
         "label": "EC2 Instance Connect",
-        "help": "Locally install mSSH helper and copy the provided command to connect to the head node with EC2 Instance Connect."
+        "help": "Locally install mSSH helper and copy the provided command to connect to the head node with EC2 Instance Connect.",
+        "copySuccess": "mSSH command copied",
+        "copyAria": "Copy the mSSH command."
       }
     },
     "instances": {
