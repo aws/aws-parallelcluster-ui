@@ -141,6 +141,13 @@ describe('given a component to select the IMDS supported version', () => {
         )
       })
 
+      it('should not initialize ImdsSupport', () => {
+        expect(setState).not.toHaveBeenCalledWith(
+          ['app', 'wizard', 'config', 'Imds', 'ImdsSupport'],
+          expect.any(String),
+        )
+      })
+
       it('should be disabled', () => {
         const selectComponent = wrapper(screen.container).findSelect()!
         expect(selectComponent.isDisabled()).toBe(true)

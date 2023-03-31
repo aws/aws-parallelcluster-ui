@@ -27,9 +27,9 @@ export function ImdsSupportFormField() {
   const imdsSupport: string | null = useState(imdsSupportPath)
 
   useEffect(() => {
-    if (isImdsSupportActive && imdsSupport === null)
+    if (isImdsSupportActive && !editing && imdsSupport === null)
       setState(imdsSupportPath, DEFAULT_IMDS_SUPPORT_VALUE)
-  }, [imdsSupport, isImdsSupportActive])
+  }, [editing, imdsSupport, isImdsSupportActive])
 
   const options = useMemo(
     () => [
