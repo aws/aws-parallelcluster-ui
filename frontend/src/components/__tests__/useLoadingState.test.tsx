@@ -33,13 +33,27 @@ function restoreOriginalJestListeners(originalJestListeners: {
 
 const mockGetAppConfig = jest.fn()
 const mockGetIdentity = jest.fn()
+const mockGetVersion = jest.fn()
 
 jest.mock('../../model', () => {
   return {
     GetAppConfig: () => mockGetAppConfig(),
     GetIdentity: () => mockGetIdentity(),
+    GetVersion: () => mockGetVersion(),
   }
 })
+
+function expectDataToBeRequested() {
+  expect(mockGetAppConfig).toHaveBeenCalledTimes(1)
+  expect(mockGetIdentity).toHaveBeenCalledTimes(1)
+  expect(mockGetVersion).toHaveBeenCalledTimes(1)
+}
+
+function expectDataNotToBeRequested() {
+  expect(mockGetAppConfig).toHaveBeenCalledTimes(0)
+  expect(mockGetIdentity).toHaveBeenCalledTimes(0)
+  expect(mockGetVersion).toHaveBeenCalledTimes(0)
+}
 
 const mockStore = mock<Store>()
 const wrapper = (props: any) => (
@@ -58,6 +72,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
           someKey: 'some-value',
         },
         app: {
+          version: {full: '3.5.0'},
           appConfig: {
             someKey: 'some-value',
           },
@@ -81,8 +96,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
     it('should not request the data', () => {
       renderHook(() => useLoadingState(<Box></Box>), {wrapper})
 
-      expect(mockGetAppConfig).toHaveBeenCalledTimes(0)
-      expect(mockGetIdentity).toHaveBeenCalledTimes(0)
+      expectDataNotToBeRequested()
     })
   })
 
@@ -91,6 +105,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
       mockStore.getState.mockReturnValue({
         identity: null,
         app: {
+          version: {full: '3.5.0'},
           appConfig: {
             someKey: 'some-value',
           },
@@ -106,8 +121,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
 
       await waitForNextUpdate()
 
-      expect(mockGetAppConfig).toHaveBeenCalledTimes(1)
-      expect(mockGetIdentity).toHaveBeenCalledTimes(1)
+      expectDataToBeRequested()
     })
   })
 
@@ -118,6 +132,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
           someKey: 'some-value',
         },
         app: {
+          version: {full: '3.5.0'},
           appConfig: null,
         },
       })
@@ -131,8 +146,34 @@ describe('given a hook to load all the data necessary for the app to boot', () =
 
       await waitForNextUpdate()
 
-      expect(mockGetAppConfig).toHaveBeenCalledTimes(1)
-      expect(mockGetIdentity).toHaveBeenCalledTimes(1)
+      expectDataToBeRequested()
+    })
+  })
+
+  describe('when the version is not available', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        identity: {
+          someKey: 'some-value',
+        },
+        app: {
+          version: null,
+          appConfig: {
+            someKey: 'some-value',
+          },
+        },
+      })
+    })
+
+    it('should request the data', async () => {
+      const {waitForNextUpdate} = renderHook(
+        () => useLoadingState(<Box></Box>),
+        {wrapper},
+      )
+
+      await waitForNextUpdate()
+
+      expectDataToBeRequested()
     })
   })
 
