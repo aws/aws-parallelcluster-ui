@@ -27,6 +27,7 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
     'dynamic_fs_mount',
     'efs_deletion_policy',
     'lustre_deletion_policy',
+    'imds_support',
   ],
   '3.4.0': ['multi_az', 'on_node_updated'],
 }

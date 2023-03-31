@@ -496,6 +496,15 @@
         "description": "The VPC for the cluster instances.",
         "selectedAriaLabel": "Selected"
       },
+      "imdsSupport": {
+        "label": "IMDS settings",
+        "description": "The IMDS version that cluster nodes use.",
+        "placeholder": "Select an IMDS version",
+        "values": {
+          "version10": "Version 1.0",
+          "version20": "Version 2.0"
+        }
+      },
       "multiUser": {
         "title": "Multiple user management properties",
         "description": "Configure Active Directory access settings for multiple users on a cluster.",
