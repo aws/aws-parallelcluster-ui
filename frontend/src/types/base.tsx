@@ -55,7 +55,11 @@ export enum CloudFormationResourceStatus {
 
 export type Region = string
 
-export type Version = string
+export type Version = `${string}.${string}.${string}`
+
+export interface PCVersion {
+  full: Version
+}
 
 // Token to use for paginated requests.
 export type PaginationToken = string
