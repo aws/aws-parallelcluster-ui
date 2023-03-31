@@ -841,7 +841,6 @@ async function GetAppConfig() {
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
-  GetVersion()
   ListUsers()
   ListClusters()
   ListCustomImages()
