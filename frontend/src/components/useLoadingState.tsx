@@ -1,11 +1,12 @@
 import {Box, Spinner} from '@cloudscape-design/components'
 import React from 'react'
-import {GetAppConfig, GetIdentity} from '../model'
+import {GetAppConfig, GetIdentity, GetVersion} from '../model'
 import {AxiosError} from 'axios'
 import {BoxProps} from '@cloudscape-design/components/box/interfaces'
 import {useState} from '../store'
 import {AppConfig} from '../app-config/types'
 import {UserIdentity} from '../auth/types'
+import {PCVersion} from '../types/base'
 
 const loadingSpinnerMargin: BoxProps.Spacing = {top: 'xxxl'}
 
@@ -25,15 +26,16 @@ function useLoadingState(
 ): UseLoadingStateResponse {
   const identity: UserIdentity | null = useState(['identity'])
   const appConfig: AppConfig | null = useState(['app', 'appConfig'])
+  const version: PCVersion | null = useState(['app', 'version', 'full'])
 
-  const shouldLoadData = !identity || !appConfig
+  const shouldLoadData = !identity || !appConfig || !version
 
   const [loading, setLoading] = React.useState(shouldLoadData)
 
   React.useEffect(() => {
     const getPreliminaryInfo = async () => {
       setLoading(true)
-      await GetAppConfig()
+      await Promise.all([GetAppConfig(), GetVersion()])
 
       try {
         await GetIdentity()

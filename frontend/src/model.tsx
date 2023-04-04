@@ -25,6 +25,7 @@ import {
 } from './types/logs'
 import {AxiosError} from 'axios'
 import {UserIdentity} from './auth/types'
+import {PCVersion} from './types/base'
 
 // Types
 type Callback = (arg?: any) => void
@@ -642,30 +643,21 @@ const extractFsxVolumes = (volumes: any) => {
   }
 }
 
-function GetVersion() {
+async function GetVersion(): Promise<PCVersion> {
   var url = `manager/get_version`
-  request('get', url)
-    .then((response: any) => {
-      if (response.status === 200) {
-        console.log('api_version', response.data)
-        var [major, minor, patch] = response.data.version.split('.')
-        var major_int = parseInt(major)
-        var minor_int = parseInt(minor)
-        setState(['app', 'version'], {
-          full: response.data.version,
-          major: major_int,
-          minor: minor_int,
-          patch: patch,
-        })
-      }
-    })
-    .catch((error: any) => {
-      if (error.response) {
-        console.log(error.response)
-        notify(`Error: ${error.response.data.message}`, 'error')
-      }
-      console.log(error)
-    })
+  try {
+    const {data} = await request('get', url)
+    const versionObject = {
+      full: data.version,
+    }
+    setState(['app', 'version'], versionObject)
+    return versionObject
+  } catch (error) {
+    if ((error as AxiosError).response) {
+      notify(`Error: ${(error as any).response.data.message}`, 'error')
+    }
+    throw error
+  }
 }
 
 function Ec2Action(instanceId: any, action: any, callback?: Callback) {
@@ -849,7 +841,6 @@ async function GetAppConfig() {
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
-  GetVersion()
   ListUsers()
   ListClusters()
   ListCustomImages()
@@ -891,4 +882,5 @@ export {
   DeleteUser,
   GetIdentity,
   GetAppConfig,
+  GetVersion,
 }

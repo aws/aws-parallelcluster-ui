@@ -60,7 +60,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
                 clusterName: 'some-name',
                 clusterStatus: ClusterStatus.CreateComplete,
               },
-            ] as ClusterInfoSummary[],
+            ] as Partial<ClusterInfoSummary>[],
           },
         })
       })
@@ -91,7 +91,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
                   clusterName: 'some-name',
                   version: '3.5.1',
                 },
-              ] as ClusterInfoSummary[],
+              ] as Partial<ClusterInfoSummary>[],
             },
           })
         })
@@ -124,7 +124,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
                   clusterName: 'some-name-different-major',
                   version: '2.5.0',
                 },
-              ] as ClusterInfoSummary[],
+              ] as Partial<ClusterInfoSummary>[],
             },
           })
         })
@@ -157,7 +157,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
                   clusterName: 'some-name-different-minor',
                   version: '3.6.0',
                 },
-              ] as ClusterInfoSummary[],
+              ] as Partial<ClusterInfoSummary>[],
             },
           })
         })
