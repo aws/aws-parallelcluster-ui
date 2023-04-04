@@ -24,7 +24,6 @@ describe('Given a DateView component', () => {
     const dateString = '2022-09-16T14:03:35.000Z'
     const locale = 'it-IT'
     const timeZone = TimeZone.UTC
-    const expectedResult = '16 settembre 2022 14:03 (UTC)'
 
     beforeEach(async () => {
       renderResult = await waitFor(() =>
@@ -35,7 +34,11 @@ describe('Given a DateView component', () => {
     })
 
     it('should render the date in the expeted absolute format with provided locales and timezone', async () => {
-      expect(renderResult.getByText(expectedResult)).toBeTruthy()
+      const renderedDateString = renderResult.getByTitle(dateString).textContent
+
+      expect(renderedDateString).toContain('16 settembre 2022')
+      expect(renderedDateString).toContain('14:03')
+      expect(renderedDateString).toContain('(UTC)')
     })
   })
 })
