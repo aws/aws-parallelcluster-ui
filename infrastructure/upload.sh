@@ -24,7 +24,7 @@ then
   exit 1;
 fi
 
-FILES=(SSMSessionProfile-cfn.yaml parallelcluster-ui-cognito.yaml parallelcluster-ui.yaml)
+FILES=(parallelcluster-ui-cognito.yaml parallelcluster-ui.yaml)
 
 for INDEX in "${!BUCKETS[@]}"
 do
