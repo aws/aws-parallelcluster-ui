@@ -1,5 +1,5 @@
-## Setup Github and AWS credentials using Cloudformation
-To access AWS resources inside a Github workflow you need to create new IAM roles under AWS and use a specific action that will retrieve temporary credentials to access your account.
+## Setup GitHub and AWS credentials using Cloudformation
+To access AWS resources inside a GitHub workflow you need to create new IAM roles under AWS and use a specific action that will retrieve temporary credentials to access your account.
 
 To create the resources needed by the workflow action you can deploy the `./github-env-setup.yml` to [CloudFormation](https://aws.amazon.com/cloudformation/).
 - Go under `CloudFormation > Stacks > Create stack`
@@ -21,9 +21,8 @@ The same steps are required for the production release workflow, using the `./gi
 When a change is made to one of the following files:
 - parallelcluster-ui.yaml
 - parallelcluster-ui-cognito.yaml
-- SSMSessionProfile-cfn.yaml
 
-it is not sufficient to run the `build_and_update_lambda.sh` script to update the PCUI instances because it builds and deploys the Lambda image (with only the changes to backend and frontend().
+it is not sufficient to run the `build_and_update_lambda.sh` script to update the PCUI instances because it builds and deploys the Lambda image (with only the changes to backend and frontend).
 To update the infrastructure just run the `infrastructure/update-environment-infra.sh` and pass the environment to update.
 If you have to update the `demo` environment do the following:
 - gain `Admin` access to the AWS account in which the environment is hosted

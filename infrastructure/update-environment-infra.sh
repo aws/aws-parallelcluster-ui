@@ -19,7 +19,7 @@
 # Example: ./infrastructure/update-environment-infra.sh demo
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-FILES=(SSMSessionProfile-cfn.yaml parallelcluster-ui-cognito.yaml parallelcluster-ui.yaml)
+FILES=(parallelcluster-ui-cognito.yaml parallelcluster-ui.yaml)
 ENVIRONMENT=$1
 . "${SCRIPT_DIR}/environments/${ENVIRONMENT}-variables.sh"
 

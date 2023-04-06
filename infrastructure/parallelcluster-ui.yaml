@@ -135,17 +135,6 @@ Resources:
       TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
       TimeoutInMinutes: 30
 
-  SSMDefaultUser:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub 
-        - '${Bucket}/SSMSessionProfile-cfn.yaml'
-        - Bucket: !If 
-          - HasDefaultInfrastructure
-          - PLACEHOLDER
-          - !Sub ${InfrastructureBucket}
-      TimeoutInMinutes: 30
-
   ParallelClusterUIFunction:
     Type: AWS::Lambda::Function
     Properties:
