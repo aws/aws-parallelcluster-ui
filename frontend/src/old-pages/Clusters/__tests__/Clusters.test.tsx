@@ -68,7 +68,7 @@ describe('given a component to show the clusters list', () => {
       )
 
       expect(getByText('test-cluster')).toBeTruthy()
-      expect(getByText('CREATE COMPLETE')).toBeTruthy()
+      expect(getByText('Create complete')).toBeTruthy()
       expect(getByText('3.1.4')).toBeTruthy()
     })
 

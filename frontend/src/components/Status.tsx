@@ -16,8 +16,10 @@ import {
   ComputeFleetStatus,
 } from '../types/clusters'
 import {InstanceState, Instance, EC2Instance} from '../types/instances'
+import {ImageBuildStatus} from '../types/images'
 import {StackEvent} from '../types/stackevents'
 import {JobStateCode} from '../types/jobs'
+import capitalize from 'lodash/capitalize'
 import React from 'react'
 import {
   StatusIndicator,
@@ -25,6 +27,10 @@ import {
 } from '@cloudscape-design/components'
 
 export type StatusMap = Record<string, StatusIndicatorProps.Type>
+
+export function formatStatus(status?: string): string {
+  return capitalize(status?.replaceAll(/[_-]/g, ' '))
+}
 
 function ClusterStatusIndicator({
   cluster,
@@ -47,7 +53,7 @@ function ClusterStatusIndicator({
 
   return (
     <StatusIndicator type={statusMap[clusterStatus]}>
-      {clusterStatus.replaceAll('_', ' ')}
+      {formatStatus(clusterStatus)}
     </StatusIndicator>
   )
 }
@@ -82,7 +88,7 @@ function JobStatusIndicator({status}: {status: JobStateCode}) {
 
   return (
     <StatusIndicator type={statusMap[status]}>
-      {status.replaceAll('_', ' ')}
+      {formatStatus(status)}
     </StatusIndicator>
   )
 }
@@ -103,7 +109,7 @@ function ComputeFleetStatusIndicator({status}: {status: ComputeFleetStatus}) {
 
   return (
     <StatusIndicator type={statusMap[status]}>
-      {status.replaceAll('_', ' ')}
+      {formatStatus(status)}
     </StatusIndicator>
   )
 }
@@ -124,18 +130,12 @@ function InstanceStatusIndicator({
 
   return (
     <StatusIndicator type={statusMap[instance.state]}>
-      {instance.state.replaceAll('-', ' ').toUpperCase()}
+      {formatStatus(instance.state)}
     </StatusIndicator>
   )
 }
 
-function StackEventStatusIndicator({
-  stackEvent,
-  children,
-}: {
-  stackEvent: StackEvent
-  children?: React.ReactNode
-}) {
+function StackEventStatusIndicator({stackEvent}: {stackEvent: StackEvent}) {
   const statusMap: Record<
     CloudFormationResourceStatus,
     StatusIndicatorProps.Type
@@ -159,8 +159,28 @@ function StackEventStatusIndicator({
   }
   return (
     <StatusIndicator type={statusMap[stackEvent.resourceStatus]}>
-      {stackEvent.resourceStatus.replaceAll('_', ' ')}
-      {children}
+      {formatStatus(stackEvent.resourceStatus)}
+    </StatusIndicator>
+  )
+}
+
+function CustomImageStatusIndicator({
+  buildStatus,
+}: {
+  buildStatus: ImageBuildStatus
+}) {
+  const statusMap: Record<ImageBuildStatus, StatusIndicatorProps.Type> = {
+    BUILD_COMPLETE: 'success',
+    BUILD_FAILED: 'error',
+    BUILD_IN_PROGRESS: 'in-progress',
+    DELETE_COMPLETE: 'success',
+    DELETE_IN_PROGRESS: 'in-progress',
+    DELETE_FAILED: 'error',
+  }
+
+  return (
+    <StatusIndicator type={statusMap[buildStatus]}>
+      {formatStatus(buildStatus)}
     </StatusIndicator>
   )
 }
@@ -171,4 +191,5 @@ export {
   InstanceStatusIndicator,
   JobStatusIndicator,
   StackEventStatusIndicator,
+  CustomImageStatusIndicator,
 }
