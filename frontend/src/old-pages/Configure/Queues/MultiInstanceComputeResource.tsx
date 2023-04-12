@@ -218,7 +218,7 @@ export function ComputeResource({
             })}
           </h4>
         </TextContent>
-        {index > 0 && (
+        {computeResources.length > 1 && (
           <Button onClick={remove}>
             {t(
               'wizard.queues.computeResource.removeComputeResourceButton.label',
