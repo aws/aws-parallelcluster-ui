@@ -100,18 +100,20 @@ export default function ClusterInstances() {
   const {t} = useTranslation()
 
   const clusterName: ClusterName = useState(['app', 'clusters', 'selected'])
-  const instances: Instance[] = useState([
+  const instances: Instance[] | null = useState([
     'clusters',
     'index',
     clusterName,
     'instances',
   ])
-  const [selectedInstances, setSelectedInstances] = React.useState<Instance[]>(
-    [],
-  )
+  const [selectedInstanceId, setSelectedInstanceId] =
+    React.useState<Instance['instanceId']>()
+  const selectedInstances: Instance[] = instances
+    ? instances.filter(instance => instance.instanceId === selectedInstanceId)
+    : []
 
   const onSelectionChangeCallback = React.useCallback(({detail}) => {
-    setSelectedInstances(detail.selectedItems)
+    setSelectedInstanceId(detail.selectedItems[0].instanceId)
   }, [])
 
   React.useEffect(() => {
@@ -119,8 +121,7 @@ export default function ClusterInstances() {
       const clusterName = getState(['app', 'clusters', 'selected'])
       clusterName && GetClusterInstances(clusterName)
     }
-    const clusterName = getState(['app', 'clusters', 'selected'])
-    clusterName && GetClusterInstances(clusterName)
+    tick()
     const timerId = setInterval(tick, 10000)
     return () => {
       clearInterval(timerId)
@@ -174,7 +175,7 @@ export default function ClusterInstances() {
         <Header
           variant="h3"
           description=""
-          counter={instances && `(${instances.length})`}
+          counter={instances ? `(${instances.length})` : '(0)'}
           actions={<InstanceActions instance={selectedInstances[0]} />}
         >
           {t('cluster.instances.title')}
