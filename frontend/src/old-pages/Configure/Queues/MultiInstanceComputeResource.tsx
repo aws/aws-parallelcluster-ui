@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   ColumnLayout,
   FormField,
   Input,
@@ -8,7 +6,9 @@ import {
   MultiselectProps,
   Checkbox,
   SpaceBetween,
-  Header,
+  TextContent,
+  Button,
+  Box,
 } from '@cloudscape-design/components'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {useCallback, useEffect, useMemo} from 'react'
@@ -26,6 +26,7 @@ import {
 } from './queues.types'
 import {InstanceType} from '../Components.types'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
+import componentsStyle from '../Components.module.css'
 
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
@@ -208,23 +209,23 @@ export function ComputeResource({
 
   return (
     <SpaceBetween direction="vertical" size="s">
-      <Header
-        variant="h3"
-        actions={
-          index > 0 && (
-            <Button onClick={remove}>
-              {t(
-                'wizard.queues.computeResource.removeComputeResourceButton.label',
-              )}
-            </Button>
-          )
-        }
-      >
-        {t('wizard.queues.computeResource.name', {
-          index: index + 1,
-          crName: computeResource.Name,
-        })}
-      </Header>
+      <div className={componentsStyle['space-between-wrap']}>
+        <TextContent>
+          <h4>
+            {t('wizard.queues.computeResource.name', {
+              index: index + 1,
+              crName: computeResource.Name,
+            })}
+          </h4>
+        </TextContent>
+        {index > 0 && (
+          <Button onClick={remove}>
+            {t(
+              'wizard.queues.computeResource.removeComputeResourceButton.label',
+            )}
+          </Button>
+        )}
+      </div>
       <ColumnLayout columns={2}>
         <SpaceBetween direction="horizontal" size="l">
           <FormField label={t('wizard.queues.computeResource.staticNodes')}>
