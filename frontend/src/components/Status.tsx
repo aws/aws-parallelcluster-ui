@@ -18,6 +18,7 @@ import {
 import {InstanceState, Instance, EC2Instance} from '../types/instances'
 import {StackEvent} from '../types/stackevents'
 import {JobStateCode} from '../types/jobs'
+import capitalize from 'lodash/capitalize'
 import React from 'react'
 import {
   StatusIndicator,
@@ -25,6 +26,10 @@ import {
 } from '@cloudscape-design/components'
 
 export type StatusMap = Record<string, StatusIndicatorProps.Type>
+
+export function formatStatus(status?: string): string {
+  return capitalize(status?.replaceAll(/[_-]/g, ' '))
+}
 
 function ClusterStatusIndicator({
   cluster,
