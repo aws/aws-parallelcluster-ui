@@ -485,7 +485,10 @@ function Queue({index}: any) {
             </Header>
           }
           footer={
-            <ExpandableSection headerText="Advanced options" variant="footer">
+            <ExpandableSection
+              headerText={t('wizard.queues.advancedOptions.label')}
+              variant="footer"
+            >
               <SpaceBetween direction="vertical" size="xs">
                 <FormField label={t('wizard.queues.securityGroups.label')}>
                   <SecurityGroups basePath={[...queuesPath, index]} />

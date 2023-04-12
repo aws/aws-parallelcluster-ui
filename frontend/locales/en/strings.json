@@ -1009,6 +1009,7 @@
         "enableEfa": "Use EFA"
       },
       "advancedOptions": {
+        "label": "Advanced options",
         "iamPolicies": {
           "label": "IAM Policies"
         },
