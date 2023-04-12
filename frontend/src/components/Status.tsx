@@ -16,6 +16,7 @@ import {
   ComputeFleetStatus,
 } from '../types/clusters'
 import {InstanceState, Instance, EC2Instance} from '../types/instances'
+import {ImageBuildStatus} from '../types/images'
 import {StackEvent} from '../types/stackevents'
 import {JobStateCode} from '../types/jobs'
 import capitalize from 'lodash/capitalize'
@@ -163,10 +164,32 @@ function StackEventStatusIndicator({stackEvent}: {stackEvent: StackEvent}) {
   )
 }
 
+function CustomImageStatusIndicator({
+  buildStatus,
+}: {
+  buildStatus: ImageBuildStatus
+}) {
+  const statusMap: Record<ImageBuildStatus, StatusIndicatorProps.Type> = {
+    BUILD_COMPLETE: 'success',
+    BUILD_FAILED: 'error',
+    BUILD_IN_PROGRESS: 'in-progress',
+    DELETE_COMPLETE: 'success',
+    DELETE_IN_PROGRESS: 'in-progress',
+    DELETE_FAILED: 'error',
+  }
+
+  return (
+    <StatusIndicator type={statusMap[buildStatus]}>
+      {formatStatus(buildStatus)}
+    </StatusIndicator>
+  )
+}
+
 export {
   ClusterStatusIndicator,
   ComputeFleetStatusIndicator,
   InstanceStatusIndicator,
   JobStatusIndicator,
   StackEventStatusIndicator,
+  CustomImageStatusIndicator,
 }

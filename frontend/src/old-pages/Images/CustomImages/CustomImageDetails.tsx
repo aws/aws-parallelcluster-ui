@@ -39,6 +39,7 @@ import EmptyState from '../../../components/EmptyState'
 import {truncate} from 'lodash'
 import {ReadonlyConfigView} from '../../../components/ConfigView'
 import {extendCollectionsOptions} from '../../../shared/extendCollectionsOptions'
+import {CustomImageStatusIndicator} from '../../../components/Status'
 
 const customImagesPath = ['app', 'customImages']
 
@@ -135,7 +136,7 @@ function CustomImageProperties() {
           <ValueWithLabel
             label={t('customImages.imageDetails.properties.buildStatus')}
           >
-            {image.imageBuildStatus}
+            <CustomImageStatusIndicator buildStatus={image.imageBuildStatus} />
           </ValueWithLabel>
           <ValueWithLabel
             label={t('customImages.imageDetails.properties.amiId.label')}

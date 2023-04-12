@@ -38,6 +38,7 @@ import {TFunction, Trans, useTranslation} from 'react-i18next'
 import InfoLink from '../../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
 import {extendCollectionsOptions} from '../../../shared/extendCollectionsOptions'
+import {CustomImageStatusIndicator} from '../../../components/Status'
 
 const imageBuildPath = ['app', 'customImages', 'imageBuild']
 
@@ -167,7 +168,9 @@ function CustomImagesList() {
         {
           id: 'status',
           header: t('customImages.list.columns.status'),
-          cell: image => image.imageBuildStatus || '-',
+          cell: image => (
+            <CustomImageStatusIndicator buildStatus={image.imageBuildStatus} />
+          ),
           sortingField: 'imageBuildStatus',
         },
         {
