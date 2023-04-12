@@ -484,6 +484,39 @@ function Queue({index}: any) {
               })}
             </Header>
           }
+          footer={
+            <ExpandableSection headerText="Advanced options" variant="footer">
+              <SpaceBetween direction="vertical" size="xs">
+                <FormField label={t('wizard.queues.securityGroups.label')}>
+                  <SecurityGroups basePath={[...queuesPath, index]} />
+                </FormField>
+                <CustomAMISettings
+                  basePath={[...queuesPath, index]}
+                  appPath={['app', 'wizard', 'queues', index]}
+                  errorsPath={errorsPath}
+                  validate={queuesValidate}
+                />
+                <Header variant="h3">
+                  {t('wizard.queues.advancedOptions.scripts.title')}
+                </Header>
+                <ActionsEditor
+                  basePath={[...queuesPath, index]}
+                  errorsPath={errorsPath}
+                />
+                <Header variant="h3">
+                  {t('wizard.queues.advancedOptions.rootVolume.title')}
+                </Header>
+                <RootVolume
+                  basePath={[...queuesPath, index, 'ComputeSettings']}
+                  errorsPath={errorsPath}
+                />
+                <Header variant="h3">
+                  {t('wizard.queues.advancedOptions.iamPolicies.label')}
+                </Header>
+                <IamPoliciesEditor basePath={[...queuesPath, index]} />
+              </SpaceBetween>
+            </ExpandableSection>
+          }
         >
           <SpaceBetween direction="vertical" size="s">
             <ColumnLayout borders="horizontal">
@@ -576,37 +609,6 @@ function Queue({index}: any) {
                 canUseEFA={canUseEFA}
               />
             </ColumnLayout>
-            <ExpandableSection headerText="Advanced options">
-              <SpaceBetween direction="vertical" size="xs">
-                <FormField label={t('wizard.queues.securityGroups.label')}>
-                  <SecurityGroups basePath={[...queuesPath, index]} />
-                </FormField>
-                <CustomAMISettings
-                  basePath={[...queuesPath, index]}
-                  appPath={['app', 'wizard', 'queues', index]}
-                  errorsPath={errorsPath}
-                  validate={queuesValidate}
-                />
-                <Header variant="h3">
-                  {t('wizard.queues.advancedOptions.scripts.title')}
-                </Header>
-                <ActionsEditor
-                  basePath={[...queuesPath, index]}
-                  errorsPath={errorsPath}
-                />
-                <Header variant="h3">
-                  {t('wizard.queues.advancedOptions.rootVolume.title')}
-                </Header>
-                <RootVolume
-                  basePath={[...queuesPath, index, 'ComputeSettings']}
-                  errorsPath={errorsPath}
-                />
-                <Header variant="h3">
-                  {t('wizard.queues.advancedOptions.iamPolicies.label')}
-                </Header>
-                <IamPoliciesEditor basePath={[...queuesPath, index]} />
-              </SpaceBetween>
-            </ExpandableSection>
           </SpaceBetween>
         </Container>
       </div>
