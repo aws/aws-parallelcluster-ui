@@ -558,6 +558,15 @@ function Queue({index}: any) {
                   />
                 )}
               </FormField>
+              <Checkbox
+                checked={enablePlacementGroup}
+                disabled={!canUsePlacementGroup}
+                onChange={_e => {
+                  setEnablePG(!enablePlacementGroup)
+                }}
+              >
+                <Trans i18nKey="wizard.queues.placementGroup.label" />
+              </Checkbox>
               <FormField label={t('wizard.queues.purchaseType.label')}>
                 <Select
                   selectedOption={itemToOption(
@@ -585,15 +594,6 @@ function Queue({index}: any) {
                   />
                 </FormField>
               ) : null}
-              <Checkbox
-                checked={enablePlacementGroup}
-                disabled={!canUsePlacementGroup}
-                onChange={_e => {
-                  setEnablePG(!enablePlacementGroup)
-                }}
-              >
-                <Trans i18nKey="wizard.queues.placementGroup.label" />
-              </Checkbox>
             </ColumnLayout>
           </SpaceBetween>
           <ComputeResources queue={queue} index={index} canUseEFA={canUseEFA} />
