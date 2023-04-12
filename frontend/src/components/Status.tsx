@@ -129,13 +129,7 @@ function InstanceStatusIndicator({
   )
 }
 
-function StackEventStatusIndicator({
-  stackEvent,
-  children,
-}: {
-  stackEvent: StackEvent
-  children?: React.ReactNode
-}) {
+function StackEventStatusIndicator({stackEvent}: {stackEvent: StackEvent}) {
   const statusMap: Record<
     CloudFormationResourceStatus,
     StatusIndicatorProps.Type
@@ -160,7 +154,6 @@ function StackEventStatusIndicator({
   return (
     <StatusIndicator type={statusMap[stackEvent.resourceStatus]}>
       {stackEvent.resourceStatus.replaceAll('_', ' ')}
-      {children}
     </StatusIndicator>
   )
 }
