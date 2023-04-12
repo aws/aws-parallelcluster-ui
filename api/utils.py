@@ -21,7 +21,7 @@ from api.logging import RequestResponseLogging
 from api.security import SecurityHeaders
 
 # needed to only allow tests to disable auth
-DISABLE_AUTH=False
+DISABLE_AUTH=True
 
 def to_utc_datetime(time_in, default_timezone=datetime.timezone.utc) -> datetime.datetime:
     """

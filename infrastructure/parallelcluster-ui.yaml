@@ -145,6 +145,17 @@ Resources:
           - PLACEHOLDER
           - !Sub ${InfrastructureBucket}
       TimeoutInMinutes: 30
+  
+  ParallelClusterUILayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      LayerName: !Sub ParallelClusterUILayer-${AWS::StackName}
+      Description: Library which contains aws-parallelcluster-ui dependencies
+      Content:
+        S3Bucket: tsscarla-test
+        S3Key: lambda_layer.zip
+      CompatibleRuntimes:
+        - python3.9
 
   ParallelClusterUIFunction:
     Type: AWS::Lambda::Function
@@ -172,13 +183,11 @@ Resources:
       FunctionName: !Sub
         - ParallelClusterUIFunction-${StackIdSuffix}
         - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+      Layers:
+        - !Ref ParallelClusterUILayer
       Code:
-        ImageUri: !Sub
-          - ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${Repository}:${Version}
-          - Repository: !Ref PrivateEcrRepository
-            Version: !Join
-              - '-'
-              - [!Select [2, !Split ['/', !Ref EcrImage]], !Select [3, !Split ['/', !Ref EcrImage]]]
+        S3Bucket: tsscarla-test
+        S3Key: pcui.zip
 
   ApiGateway:
     Type: AWS::ApiGatewayV2::Api

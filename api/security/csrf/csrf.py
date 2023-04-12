@@ -37,7 +37,7 @@ def validate_csrf(secret_key, csrf_cookie, csrf_header):
 
 # needed to only allow tests to disable csrf
 def is_csrf_enabled():
-    return True
+    return False
 
 
 def set_csrf_cookie(resp, csrf_token, max_age=CSRF_DEFAULT_MAX_AGE):
