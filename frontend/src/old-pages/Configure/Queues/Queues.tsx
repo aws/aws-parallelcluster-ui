@@ -456,166 +456,150 @@ function Queue({index}: any) {
   }
 
   return (
-    <div className="queue">
-      <div className="queue-properties">
-        <Container
-          header={
-            <Header
-              variant="h2"
-              actions={
-                <SpaceBetween direction="horizontal" size="xs">
-                  <Button
-                    disabled={queues.length >= MAX_QUEUES}
-                    onClick={addQueue}
-                  >
-                    {t('wizard.queues.addQueueButton.label')}
-                  </Button>
-                  {queues.length > 1 && (
-                    <Button onClick={remove}>
-                      {t('wizard.queues.removeQueueButton.label')}
-                    </Button>
-                  )}
-                </SpaceBetween>
-              }
-            >
-              {t('wizard.queues.container.title', {
-                index: index + 1,
-                queueName: queue.Name,
-              })}
-            </Header>
-          }
-          footer={
-            <ExpandableSection
-              headerText={t('wizard.queues.advancedOptions.label')}
-              variant="footer"
-            >
-              <SpaceBetween direction="vertical" size="xs">
-                <FormField label={t('wizard.queues.securityGroups.label')}>
-                  <SecurityGroups basePath={[...queuesPath, index]} />
-                </FormField>
-                <CustomAMISettings
-                  basePath={[...queuesPath, index]}
-                  appPath={['app', 'wizard', 'queues', index]}
-                  errorsPath={errorsPath}
-                  validate={queuesValidate}
-                />
-                <Header variant="h3">
-                  {t('wizard.queues.advancedOptions.scripts.title')}
-                </Header>
-                <ActionsEditor
-                  basePath={[...queuesPath, index]}
-                  errorsPath={errorsPath}
-                />
-                <Header variant="h3">
-                  {t('wizard.queues.advancedOptions.rootVolume.title')}
-                </Header>
-                <RootVolume
-                  basePath={[...queuesPath, index, 'ComputeSettings']}
-                  errorsPath={errorsPath}
-                />
-                <Header variant="h3">
-                  {t('wizard.queues.advancedOptions.iamPolicies.label')}
-                </Header>
-                <IamPoliciesEditor basePath={[...queuesPath, index]} />
-              </SpaceBetween>
-            </ExpandableSection>
+    <Container
+      header={
+        <Header
+          variant="h2"
+          actions={
+            <SpaceBetween direction="horizontal" size="xs">
+              <Button disabled={queues.length >= MAX_QUEUES} onClick={addQueue}>
+                {t('wizard.queues.addQueueButton.label')}
+              </Button>
+              {queues.length > 1 && (
+                <Button onClick={remove}>
+                  {t('wizard.queues.removeQueueButton.label')}
+                </Button>
+              )}
+            </SpaceBetween>
           }
         >
-          <SpaceBetween direction="vertical" size="s">
-            <ColumnLayout borders="horizontal">
-              <SpaceBetween direction="vertical" size="m">
-                <ColumnLayout columns={2}>
-                  <FormField
-                    label={t('wizard.queues.name.label')}
-                    errorText={nameError}
-                  >
-                    <Input
-                      value={queue.Name}
-                      placeholder={t('wizard.queues.name.placeholder')}
-                      onKeyDown={e => {
-                        if (
-                          e.detail.key === 'Enter' ||
-                          e.detail.key === 'Escape'
-                        ) {
-                          e.stopPropagation()
-                          queueValidate(index)
-                        }
-                      }}
-                      onChange={({detail}) => renameQueue(detail.value)}
-                    />
-                  </FormField>
-                </ColumnLayout>
-                <ColumnLayout columns={2}>
-                  <FormField
-                    label={
-                      isMultiAZActive
-                        ? t('wizard.queues.subnet.label.multiple')
-                        : t('wizard.queues.subnet.label.single')
+          {t('wizard.queues.container.title', {
+            index: index + 1,
+            queueName: queue.Name,
+          })}
+        </Header>
+      }
+      footer={
+        <ExpandableSection
+          headerText={t('wizard.queues.advancedOptions.label')}
+          variant="footer"
+        >
+          <SpaceBetween direction="vertical" size="xs">
+            <FormField label={t('wizard.queues.securityGroups.label')}>
+              <SecurityGroups basePath={[...queuesPath, index]} />
+            </FormField>
+            <CustomAMISettings
+              basePath={[...queuesPath, index]}
+              appPath={['app', 'wizard', 'queues', index]}
+              errorsPath={errorsPath}
+              validate={queuesValidate}
+            />
+            <Header variant="h3">
+              {t('wizard.queues.advancedOptions.scripts.title')}
+            </Header>
+            <ActionsEditor
+              basePath={[...queuesPath, index]}
+              errorsPath={errorsPath}
+            />
+            <Header variant="h3">
+              {t('wizard.queues.advancedOptions.rootVolume.title')}
+            </Header>
+            <RootVolume
+              basePath={[...queuesPath, index, 'ComputeSettings']}
+              errorsPath={errorsPath}
+            />
+            <Header variant="h3">
+              {t('wizard.queues.advancedOptions.iamPolicies.label')}
+            </Header>
+            <IamPoliciesEditor basePath={[...queuesPath, index]} />
+          </SpaceBetween>
+        </ExpandableSection>
+      }
+    >
+      <SpaceBetween direction="vertical" size="s">
+        <ColumnLayout borders="horizontal">
+          <SpaceBetween direction="vertical" size="m">
+            <ColumnLayout columns={2}>
+              <FormField
+                label={t('wizard.queues.name.label')}
+                errorText={nameError}
+              >
+                <Input
+                  value={queue.Name}
+                  placeholder={t('wizard.queues.name.placeholder')}
+                  onKeyDown={e => {
+                    if (e.detail.key === 'Enter' || e.detail.key === 'Escape') {
+                      e.stopPropagation()
+                      queueValidate(index)
                     }
-                    errorText={subnetError}
-                  >
-                    {isMultiAZActive ? (
-                      <SubnetMultiSelect
-                        value={subnetsList}
-                        onChange={onSubnetMultiSelectChange}
-                      />
-                    ) : (
-                      <SubnetSelect
-                        value={subnetsList[0]}
-                        onChange={onSubnetSelectChange}
-                      />
-                    )}
-                  </FormField>
-                  <FormField label={t('wizard.queues.purchaseType.label')}>
-                    <Select
-                      selectedOption={itemToOption(
-                        findFirst(
-                          capacityTypes,
-                          x => x[0] === capacityType,
-                        ) || ['', ''],
-                      )}
-                      onChange={({detail}) => {
-                        setState(capacityTypePath, detail.selectedOption.value)
-                      }}
-                      options={capacityTypes.map(itemToOption)}
-                    />
-                  </FormField>
-                  {isMultiInstanceTypesActive ? (
-                    <FormField
-                      label={t('wizard.queues.allocationStrategy.title')}
-                    >
-                      <Select
-                        options={allocationStrategyOptions}
-                        selectedOption={
-                          allocationStrategyOptions.find(
-                            as => as.value === allocationStrategy,
-                          )!
-                        }
-                        onChange={setAllocationStrategy}
-                      />
-                    </FormField>
-                  ) : null}
-                  <Checkbox
-                    checked={enablePlacementGroup}
-                    disabled={!canUsePlacementGroup}
-                    onChange={_e => {
-                      setEnablePG(!enablePlacementGroup)
-                    }}
-                  >
-                    <Trans i18nKey="wizard.queues.placementGroup.label" />
-                  </Checkbox>
-                </ColumnLayout>
-              </SpaceBetween>
-              <ComputeResources
-                queue={queue}
-                index={index}
-                canUseEFA={canUseEFA}
-              />
+                  }}
+                  onChange={({detail}) => renameQueue(detail.value)}
+                />
+              </FormField>
+            </ColumnLayout>
+            <ColumnLayout columns={2}>
+              <FormField
+                label={
+                  isMultiAZActive
+                    ? t('wizard.queues.subnet.label.multiple')
+                    : t('wizard.queues.subnet.label.single')
+                }
+                errorText={subnetError}
+              >
+                {isMultiAZActive ? (
+                  <SubnetMultiSelect
+                    value={subnetsList}
+                    onChange={onSubnetMultiSelectChange}
+                  />
+                ) : (
+                  <SubnetSelect
+                    value={subnetsList[0]}
+                    onChange={onSubnetSelectChange}
+                  />
+                )}
+              </FormField>
+              <FormField label={t('wizard.queues.purchaseType.label')}>
+                <Select
+                  selectedOption={itemToOption(
+                    findFirst(capacityTypes, x => x[0] === capacityType) || [
+                      '',
+                      '',
+                    ],
+                  )}
+                  onChange={({detail}) => {
+                    setState(capacityTypePath, detail.selectedOption.value)
+                  }}
+                  options={capacityTypes.map(itemToOption)}
+                />
+              </FormField>
+              {isMultiInstanceTypesActive ? (
+                <FormField label={t('wizard.queues.allocationStrategy.title')}>
+                  <Select
+                    options={allocationStrategyOptions}
+                    selectedOption={
+                      allocationStrategyOptions.find(
+                        as => as.value === allocationStrategy,
+                      )!
+                    }
+                    onChange={setAllocationStrategy}
+                  />
+                </FormField>
+              ) : null}
+              <Checkbox
+                checked={enablePlacementGroup}
+                disabled={!canUsePlacementGroup}
+                onChange={_e => {
+                  setEnablePG(!enablePlacementGroup)
+                }}
+              >
+                <Trans i18nKey="wizard.queues.placementGroup.label" />
+              </Checkbox>
             </ColumnLayout>
           </SpaceBetween>
-        </Container>
-      </div>
-    </div>
+          <ComputeResources queue={queue} index={index} canUseEFA={canUseEFA} />
+        </ColumnLayout>
+      </SpaceBetween>
+    </Container>
   )
 }
 
