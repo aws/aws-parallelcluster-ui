@@ -52,7 +52,7 @@ function ClusterStatusIndicator({
 
   return (
     <StatusIndicator type={statusMap[clusterStatus]}>
-      {clusterStatus.replaceAll('_', ' ')}
+      {formatStatus(clusterStatus)}
     </StatusIndicator>
   )
 }
@@ -87,7 +87,7 @@ function JobStatusIndicator({status}: {status: JobStateCode}) {
 
   return (
     <StatusIndicator type={statusMap[status]}>
-      {status.replaceAll('_', ' ')}
+      {formatStatus(status)}
     </StatusIndicator>
   )
 }
@@ -108,7 +108,7 @@ function ComputeFleetStatusIndicator({status}: {status: ComputeFleetStatus}) {
 
   return (
     <StatusIndicator type={statusMap[status]}>
-      {status.replaceAll('_', ' ')}
+      {formatStatus(status)}
     </StatusIndicator>
   )
 }
@@ -129,7 +129,7 @@ function InstanceStatusIndicator({
 
   return (
     <StatusIndicator type={statusMap[instance.state]}>
-      {instance.state.replaceAll('-', ' ').toUpperCase()}
+      {formatStatus(instance.state)}
     </StatusIndicator>
   )
 }
@@ -158,7 +158,7 @@ function StackEventStatusIndicator({stackEvent}: {stackEvent: StackEvent}) {
   }
   return (
     <StatusIndicator type={statusMap[stackEvent.resourceStatus]}>
-      {stackEvent.resourceStatus.replaceAll('_', ' ')}
+      {formatStatus(stackEvent.resourceStatus)}
     </StatusIndicator>
   )
 }
