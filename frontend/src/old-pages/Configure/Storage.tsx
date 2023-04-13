@@ -293,6 +293,16 @@ export function FsxLustreSettings({index}: any) {
     [t],
   )
 
+  const lustreTypeFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Fsx.lustreType.link.title'),
+        href: t('wizard.storage.Fsx.lustreType.link.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <SpaceBetween direction="vertical" size="m">
       <ColumnLayout columns={2}>
@@ -308,15 +318,9 @@ export function FsxLustreSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Fsx.lustreType.label')}
-                  description={
-                    <Trans i18nKey="wizard.storage.Fsx.lustreType.help">
-                      <a
-                        rel="noreferrer"
-                        target="_blank"
-                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DeploymentType"
-                      ></a>
-                    </Trans>
+                  description={<Trans i18nKey="wizard.storage.Fsx.lustreType.help" />
                   }
+                  footerLinks={lustreTypeFooterLinks}
                 />
               }
             />
@@ -1189,7 +1193,21 @@ function Storage() {
   return (
     <SpaceBetween direction="vertical" size="l">
       <Container
-        header={<Header>{t('wizard.storage.container.title')}</Header>}
+        header={
+          <Header
+            description={
+              <Trans i18nKey="wizard.storage.container.description">
+                <a
+                  rel="noreferrer"
+                  target="_blank"
+                  href="https://docs.aws.amazon.com/parallelcluster/latest/ug/shared-storage-quotas-v3.html"
+                ></a>
+              </Trans>
+            }
+          >
+            {t('wizard.storage.container.title')}
+          </Header>
+        }
       >
         <SpaceBetween direction="vertical" size="m">
           {!hasAddedStorage && (
