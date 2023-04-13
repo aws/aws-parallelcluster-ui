@@ -549,8 +549,34 @@ export function EfsSettings({index}: any) {
   )
 
   return (
-    <SpaceBetween direction="vertical" size="s">
-      <ColumnLayout columns={2} borders="vertical">
+    <SpaceBetween direction="vertical" size="m">
+      <ColumnLayout columns={2}>
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
+            checked={encrypted}
+            onChange={toggleEncrypted}
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Efs.encrypted.label')}
+                description={t('wizard.storage.Efs.encrypted.help')}
+                footerLinks={encryptionFooterLinks}
+              />
+            }
+          >
+            {t('wizard.storage.Efs.encrypted.label')}
+          </CheckboxWithHelpPanel>
+          {encrypted ? (
+            <Input
+              value={kmsId}
+              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
+              onChange={({detail}) => {
+                setState(kmsPath, detail.value)
+              }}
+            />
+          ) : null}
+        </SpaceBetween>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <FormField label={t('wizard.storage.Efs.performanceMode.label')}>
           <Select
             selectedOption={strToOption(performanceMode)}
@@ -560,13 +586,8 @@ export function EfsSettings({index}: any) {
             options={performanceModes.map(strToOption)}
           />
         </FormField>
-        {isDeletionPolicyEnabled && (
-          <DeletionPolicyFormField
-            options={supportedDeletionPolicies}
-            value={deletionPolicy}
-            onDeletionPolicyChange={onDeletionPolicyChange}
-          />
-        )}
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             helpPanel={
@@ -602,31 +623,16 @@ export function EfsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
-        <SpaceBetween direction="vertical" size="xxs">
-          <CheckboxWithHelpPanel
-            checked={encrypted}
-            onChange={toggleEncrypted}
-            helpPanel={
-              <TitleDescriptionHelpPanel
-                title={t('wizard.storage.Efs.encrypted.label')}
-                description={t('wizard.storage.Efs.encrypted.help')}
-                footerLinks={encryptionFooterLinks}
-              />
-            }
-          >
-            {t('wizard.storage.Efs.encrypted.label')}
-          </CheckboxWithHelpPanel>
-          {encrypted ? (
-            <Input
-              value={kmsId}
-              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
-              onChange={({detail}) => {
-                setState(kmsPath, detail.value)
-              }}
-            />
-          ) : null}
-        </SpaceBetween>
       </ColumnLayout>
+      {isDeletionPolicyEnabled && (
+        <ColumnLayout columns={2}>
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
+          />
+        </ColumnLayout>
+      )}
     </SpaceBetween>
   )
 }
