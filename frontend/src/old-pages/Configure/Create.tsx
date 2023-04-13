@@ -58,8 +58,6 @@ function handleCreate(
 ) {
   const clusterName = getState(['app', 'wizard', 'clusterName'])
   const editing = getState(['app', 'wizard', 'editing'])
-  const disableRollback =
-    getState(['app', 'wizard', 'disableRollback']) || false
   const forceUpdate = getState(['app', 'wizard', 'forceUpdate'])
   const clusterConfig = getState(configPath) || ''
   const dryRun = false
@@ -99,7 +97,6 @@ function handleCreate(
       clusterConfig,
       region,
       selectedRegion,
-      disableRollback,
       dryRun,
       successHandler,
       errHandler,
@@ -114,7 +111,6 @@ function handleDryRun() {
   const clusterConfig = getState(configPath) || ''
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
-  const disableRollback = false
   const dryRun = true
   var errHandler = (err: any) => {
     setState(['app', 'wizard', 'errors', 'create'], err)
@@ -141,7 +137,6 @@ function handleDryRun() {
       clusterConfig,
       region,
       selectedRegion,
-      disableRollback,
       dryRun,
       successHandler,
       errHandler,
@@ -196,8 +191,6 @@ function Create() {
   const {t} = useTranslation()
   const clusterConfig = useState(configPath)
   const forceUpdate = useState(['app', 'wizard', 'forceUpdate']) || false
-  const disableRollback =
-    useState(['app', 'wizard', 'disableRollback']) || false
   const errors = useState(['app', 'wizard', 'errors', 'create'])
   const pending = useState(['app', 'wizard', 'pending'])
   const editing = getState(['app', 'wizard', 'editing'])
@@ -252,16 +245,6 @@ function Create() {
             }
           >
             {t('wizard.create.configuration.forceUpdate')}
-          </Checkbox>
-        )}
-        {!editing && (
-          <Checkbox
-            checked={disableRollback}
-            onChange={() =>
-              setState(['app', 'wizard', 'disableRollback'], !disableRollback)
-            }
-          >
-            {t('wizard.create.configuration.disableRollback')}
           </Checkbox>
         )}
       </SpaceBetween>

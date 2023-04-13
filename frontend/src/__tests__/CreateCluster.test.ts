@@ -54,7 +54,6 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         mockRegion,
         mockSelectedRegion,
         false,
-        false,
         mockSuccessCallback,
       )
       expect(mockSuccessCallback).toHaveBeenCalledTimes(1)
@@ -70,35 +69,12 @@ describe('given a CreateCluster command and a cluster configuration', () => {
           clusterConfiguration,
           mockRegion,
           mockSelectedRegion,
-          false,
           mockDryRun,
         )
         expect(mockRequest).toHaveBeenCalledTimes(1)
         expect(mockRequest).toHaveBeenCalledWith(
           'post',
           'api?path=/v3/clusters&dryrun=true&region=some-region',
-          expect.any(Object),
-          expect.any(Object),
-          expect.any(Object),
-        )
-      })
-    })
-
-    describe('when stack rollback on failure is disabled', () => {
-      const mockDisableRollback = true
-
-      it('should add set the rollbackOnFailure query parameter', async () => {
-        await CreateCluster(
-          clusterName,
-          clusterConfiguration,
-          mockRegion,
-          mockSelectedRegion,
-          mockDisableRollback,
-        )
-        expect(mockRequest).toHaveBeenCalledTimes(1)
-        expect(mockRequest).toHaveBeenCalledWith(
-          'post',
-          'api?path=/v3/clusters&rollbackOnFailure=false&region=some-region',
           expect.any(Object),
           expect.any(Object),
           expect.any(Object),
@@ -128,7 +104,6 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         clusterConfiguration,
         mockRegion,
         mockSelectedRegion,
-        false,
         false,
         undefined,
         mockErrorCallback,

@@ -1053,8 +1053,7 @@
         "title": "Cluster configuration",
         "description": "Check/edit the yaml file that is used to create the cluster",
         "pending": "{{action}} request pending...",
-        "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running.",
-        "disableRollback": "Disable rollback: Retain the cluster resources in case of a cluster create failure."
+        "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running."
       },
       "flashBar": {
         "success": "Success"
