@@ -17,8 +17,9 @@ test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () =
     await visitAndLogin(page)
   
     await page.getByRole('button', { name: 'Create cluster' }).first().click();
-    await page.getByRole('menuitem', { name: 'Use interface' }).click();
+    await page.getByRole('menuitem', { name: 'Step by step' }).click();
     
     await fillWizard(page, {vpc: /vpc-.*/, region: 'eu-west-1'})
   });
 })
+  
