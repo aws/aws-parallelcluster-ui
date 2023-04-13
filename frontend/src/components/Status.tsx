@@ -16,7 +16,7 @@ import {
   ComputeFleetStatus,
 } from '../types/clusters'
 import {InstanceState, Instance, EC2Instance} from '../types/instances'
-import {ImageBuildStatus} from '../types/images'
+import {Ec2AmiState, ImageBuildStatus} from '../types/images'
 import {StackEvent} from '../types/stackevents'
 import {JobStateCode} from '../types/jobs'
 import capitalize from 'lodash/capitalize'
@@ -185,6 +185,24 @@ function CustomImageStatusIndicator({
   )
 }
 
+function AMIStatusIndicator({state}: {state: Ec2AmiState}) {
+  const statusMap: Record<Ec2AmiState, StatusIndicatorProps.Type> = {
+    AVAILABLE: 'success',
+    DEREGISTERED: 'error',
+    ERROR: 'error',
+    FAILED: 'error',
+    INVALID: 'error',
+    PENDING: 'in-progress',
+    TRANSIENT: 'in-progress',
+  }
+
+  return (
+    <StatusIndicator type={statusMap[state]}>
+      {formatStatus(state)}
+    </StatusIndicator>
+  )
+}
+
 export {
   ClusterStatusIndicator,
   ComputeFleetStatusIndicator,
@@ -192,4 +210,5 @@ export {
   JobStatusIndicator,
   StackEventStatusIndicator,
   CustomImageStatusIndicator,
+  AMIStatusIndicator,
 }

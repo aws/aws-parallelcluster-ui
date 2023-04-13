@@ -39,7 +39,10 @@ import EmptyState from '../../../components/EmptyState'
 import {truncate} from 'lodash'
 import {ReadonlyConfigView} from '../../../components/ConfigView'
 import {extendCollectionsOptions} from '../../../shared/extendCollectionsOptions'
-import {CustomImageStatusIndicator} from '../../../components/Status'
+import {
+  AMIStatusIndicator,
+  CustomImageStatusIndicator,
+} from '../../../components/Status'
 
 const customImagesPath = ['app', 'customImages']
 
@@ -98,7 +101,9 @@ function CustomImageProperties() {
           <ValueWithLabel
             label={t('customImages.imageDetails.properties.state')}
           >
-            {image.ec2AmiInfo && image.ec2AmiInfo.state}
+            {image.ec2AmiInfo && (
+              <AMIStatusIndicator state={image.ec2AmiInfo.state} />
+            )}
             {!image.ec2AmiInfo && loadingText}
           </ValueWithLabel>
         </SpaceBetween>
