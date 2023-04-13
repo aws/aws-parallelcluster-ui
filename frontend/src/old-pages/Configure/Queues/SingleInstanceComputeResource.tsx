@@ -6,6 +6,7 @@ import {
   Input,
   Checkbox,
   SpaceBetween,
+  TextContent,
 } from '@cloudscape-design/components'
 import {useEffect} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
@@ -15,6 +16,7 @@ import {
   QueueValidationErrors,
   SingleInstanceComputeResource,
 } from './queues.types'
+import componentsStyle from '../Components.module.css'
 
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
@@ -147,23 +149,23 @@ export function ComputeResource({index, queueIndex, computeResource}: any) {
   return (
     <div className="compute-resource">
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <ColumnLayout columns={2}>
-          <h3>
-            {t('wizard.queues.computeResource.name', {
-              index: index + 1,
-              crName: computeResource.Name,
-            })}
-          </h3>
-          <Box margin={{top: 'xs'}} textAlign="right">
-            {index > 0 && (
-              <Button onClick={remove}>
-                {t(
-                  'wizard.queues.computeResource.removeComputeResourceButton.label',
-                )}
-              </Button>
-            )}
-          </Box>
-        </ColumnLayout>
+        <div className={componentsStyle['space-between-wrap']}>
+          <TextContent>
+            <h4>
+              {t('wizard.queues.computeResource.name', {
+                index: index + 1,
+                crName: computeResource.Name,
+              })}
+            </h4>
+          </TextContent>
+          {computeResources.length > 1 && (
+            <Button onClick={remove}>
+              {t(
+                'wizard.queues.computeResource.removeComputeResourceButton.label',
+              )}
+            </Button>
+          )}
+        </div>
         <ColumnLayout columns={2}>
           <div style={{display: 'flex', flexDirection: 'row', gap: '20px'}}>
             <FormField label={t('wizard.queues.computeResource.staticNodes')}>
