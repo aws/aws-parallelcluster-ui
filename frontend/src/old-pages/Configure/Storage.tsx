@@ -14,7 +14,7 @@
 import React, {useCallback} from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
-import {findFirst, clamp} from '../../util'
+import {clamp} from '../../util'
 
 // UI Elements
 import {
@@ -901,8 +901,8 @@ function StorageInstance({index}: any) {
         </Header>
       }
     >
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <ColumnLayout columns={2} borders="vertical">
+      <SpaceBetween direction="vertical" size="m">
+        <ColumnLayout columns={2}>
           <FormField
             label={t('wizard.storage.instance.sourceName.label')}
             errorText={storageNameErrors}
@@ -913,6 +913,8 @@ function StorageInstance({index}: any) {
               placeholder={t('wizard.storage.instance.sourceName.placeholder')}
             />
           </FormField>
+        </ColumnLayout>
+        <ColumnLayout columns={2}>
           <FormField
             label={t('wizard.storage.instance.mountPoint.label')}
             info={
@@ -934,6 +936,8 @@ function StorageInstance({index}: any) {
               }}
             />
           </FormField>
+        </ColumnLayout>
+        <ColumnLayout columns={2}>
           <SpaceBetween direction="vertical" size="xxs">
             {STORAGE_TYPE_PROPS[storageType].maxToCreate > 0 ? (
               <SpaceBetween direction="horizontal" size="s">
@@ -1073,7 +1077,7 @@ function StorageInstance({index}: any) {
             FsxOntap: null,
             FsxOpenZfs: null,
           }[storageType]}
-      </div>
+      </SpaceBetween>
     </Container>
   )
 }
