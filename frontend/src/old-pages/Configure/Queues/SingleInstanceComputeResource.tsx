@@ -186,7 +186,7 @@ export function ComputeResource({index, queueIndex, computeResource}: any) {
             </FormField>
           </div>
           <FormField
-            label={t('wizard.queues.computeResource.instanceType')}
+            label={t('wizard.queues.computeResource.instanceType.label')}
             errorText={typeError}
           >
             <InstanceSelect
