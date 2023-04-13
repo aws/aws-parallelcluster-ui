@@ -14,10 +14,11 @@ import {useTranslation} from 'react-i18next'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {
   Button,
-  FormField,
   SpaceBetween,
   Multiselect,
   MultiselectProps,
+  ColumnLayout,
+  TextContent,
 } from '@cloudscape-design/components'
 import {StorageType} from '../Storage.types'
 import {useMemo} from 'react'
@@ -55,8 +56,11 @@ export function AddStorageForm({storageTypes, onSubmit}: Props) {
     }, [])
 
   return (
-    <SpaceBetween size="s">
-      <FormField label={t('wizard.storage.container.storageTypes')}>
+    <SpaceBetween direction="vertical" size="xxxs">
+      <TextContent>
+        <h5>{t('wizard.storage.container.storageTypes')}</h5>
+      </TextContent>
+      <ColumnLayout columns={2}>
         <Multiselect
           tokenLimit={0}
           placeholder={t('wizard.storage.container.storageTypesPlaceholder')}
@@ -64,10 +68,10 @@ export function AddStorageForm({storageTypes, onSubmit}: Props) {
           onChange={onSelectChange}
           options={storageTypesToDisplay}
         />
-      </FormField>
-      <Button onClick={onAddStorageClick} disabled={isAddStorageDisabled}>
-        {t('wizard.storage.container.addStorage')}
-      </Button>
+        <Button onClick={onAddStorageClick} disabled={isAddStorageDisabled}>
+          {t('wizard.storage.container.addStorage')}
+        </Button>
+      </ColumnLayout>
     </SpaceBetween>
   )
 }

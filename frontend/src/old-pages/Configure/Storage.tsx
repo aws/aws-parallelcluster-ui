@@ -14,7 +14,7 @@
 import React, {useCallback} from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
-import {findFirst, clamp} from '../../util'
+import {clamp} from '../../util'
 
 // UI Elements
 import {
@@ -294,154 +294,157 @@ export function FsxLustreSettings({index}: any) {
   )
 
   return (
-    <ColumnLayout columns={2} borders="vertical">
-      <FormField
-        label={
-          <Trans
-            i18nKey="wizard.storage.Fsx.lustreType.label"
-            values={{storageCapacity: storageCapacity}}
-          />
-        }
-        info={
-          <InfoLink
-            helpPanel={
-              <TitleDescriptionHelpPanel
-                title={t('wizard.storage.Fsx.lustreType.label')}
-                description={
-                  <Trans i18nKey="wizard.storage.Fsx.lustreType.help">
-                    <a
-                      rel="noreferrer"
-                      target="_blank"
-                      href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DeploymentType"
-                    ></a>
-                  </Trans>
-                }
-              />
-            }
-          />
-        }
-      >
-        <Select
-          selectedOption={strToOption(lustreType || 'PERSISTENT_1')}
-          onChange={({detail}) => {
-            setState(lustreTypePath, detail.selectedOption.value)
-            setDefaultStorageThroughput(
-              detail.selectedOption.value!,
-              storageThroughputPath,
-            )
-          }}
-          options={lustreTypes.map(strToOption)}
-        />
-      </FormField>
-      <FormField label={t('wizard.storage.Fsx.capacity.label')}>
-        <Input
-          value={storageCapacity}
-          placeholder={t('wizard.storage.Fsx.capacity.placeholder')}
-          step={1200}
-          onChange={({detail}) => {
-            setState(storageCapacityPath, detail.value)
-          }}
-          onBlur={_e => {
-            setState(storageCapacityPath, clampCapacity(storageCapacity))
-          }}
-          type="number"
-        />
-      </FormField>
-      {lustreType === 'PERSISTENT_1' && (
-        <>
-          <FormField
-            label={t('wizard.storage.Fsx.import.label')}
-            info={
-              <InfoLink
-                helpPanel={
-                  <TitleDescriptionHelpPanel
-                    title={t('wizard.storage.Fsx.import.label')}
-                    description={
-                      <Trans i18nKey="wizard.storage.Fsx.import.help">
-                        <a
-                          rel="noreferrer"
-                          target="_blank"
-                          href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-ImportPath"
-                        ></a>
-                      </Trans>
-                    }
-                  />
-                }
-              />
-            }
-          >
-            <Input
-              placeholder={t('wizard.storage.Fsx.import.placeholder')}
-              value={importPath}
-              onChange={({detail}) => setImportPath(detail.value)}
-            />
-          </FormField>
-          <FormField
-            label={t('wizard.storage.Fsx.export.label')}
-            info={
-              <InfoLink
-                helpPanel={
-                  <TitleDescriptionHelpPanel
-                    title={t('wizard.storage.Fsx.export.label')}
-                    description={
-                      <Trans i18nKey="wizard.storage.Fsx.export.help">
-                        <a
-                          rel="noreferrer"
-                          target="_blank"
-                          href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-ExportPath"
-                        ></a>
-                      </Trans>
-                    }
-                  />
-                }
-              />
-            }
-          >
-            <Input
-              placeholder={t('wizard.storage.Fsx.export.placeholder')}
-              value={exportPath}
-              onChange={({detail}) => {
-                setExportPath(detail.value)
-              }}
-            />
-          </FormField>
-        </>
-      )}
-
-      {isPersistentFsx(lustreType) && (
+    <SpaceBetween direction="vertical" size="m">
+      <ColumnLayout columns={2}>
         <FormField
-          label={t('wizard.storage.Fsx.throughput.label')}
+          label={
+            <Trans
+              i18nKey="wizard.storage.Fsx.lustreType.label"
+              values={{storageCapacity: storageCapacity}}
+            />
+          }
           info={
             <InfoLink
               helpPanel={
                 <TitleDescriptionHelpPanel
-                  title={t('wizard.storage.Fsx.throughput.label')}
-                  description={t('wizard.storage.Fsx.throughput.help')}
-                  footerLinks={throughputFooterLinks}
+                  title={t('wizard.storage.Fsx.lustreType.label')}
+                  description={
+                    <Trans i18nKey="wizard.storage.Fsx.lustreType.help">
+                      <a
+                        rel="noreferrer"
+                        target="_blank"
+                        href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DeploymentType"
+                      ></a>
+                    </Trans>
+                  }
                 />
               }
             />
           }
         >
           <Select
-            selectedOption={strToOption(storageThroughput || '')}
+            selectedOption={strToOption(lustreType || 'PERSISTENT_1')}
             onChange={({detail}) => {
-              setState(storageThroughputPath, detail.selectedOption.value)
+              setState(lustreTypePath, detail.selectedOption.value)
+              setDefaultStorageThroughput(
+                detail.selectedOption.value!,
+                storageThroughputPath,
+              )
             }}
-            options={
-              lustreType == 'PERSISTENT_1'
-                ? storageThroughputsP1.map(strToOption)
-                : storageThroughputsP2.map(strToOption)
-            }
+            options={lustreTypes.map(strToOption)}
           />
         </FormField>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
+        <FormField label={t('wizard.storage.Fsx.capacity.label')}>
+          <Input
+            value={storageCapacity}
+            placeholder={t('wizard.storage.Fsx.capacity.placeholder')}
+            step={1200}
+            onChange={({detail}) => {
+              setState(storageCapacityPath, detail.value)
+            }}
+            onBlur={_e => {
+              setState(storageCapacityPath, clampCapacity(storageCapacity))
+            }}
+            type="number"
+          />
+        </FormField>
+      </ColumnLayout>
+      {lustreType === 'PERSISTENT_1' && (
+        <>
+          <ColumnLayout columns={2}>
+            <FormField
+              label={t('wizard.storage.Fsx.import.label')}
+              info={
+                <InfoLink
+                  helpPanel={
+                    <TitleDescriptionHelpPanel
+                      title={t('wizard.storage.Fsx.import.label')}
+                      description={
+                        <Trans i18nKey="wizard.storage.Fsx.import.help">
+                          <a
+                            rel="noreferrer"
+                            target="_blank"
+                            href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-ImportPath"
+                          ></a>
+                        </Trans>
+                      }
+                    />
+                  }
+                />
+              }
+            >
+              <Input
+                placeholder={t('wizard.storage.Fsx.import.placeholder')}
+                value={importPath}
+                onChange={({detail}) => setImportPath(detail.value)}
+              />
+            </FormField>
+          </ColumnLayout>
+          <ColumnLayout columns={2}>
+            <FormField
+              label={t('wizard.storage.Fsx.export.label')}
+              info={
+                <InfoLink
+                  helpPanel={
+                    <TitleDescriptionHelpPanel
+                      title={t('wizard.storage.Fsx.export.label')}
+                      description={
+                        <Trans i18nKey="wizard.storage.Fsx.export.help">
+                          <a
+                            rel="noreferrer"
+                            target="_blank"
+                            href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-ExportPath"
+                          ></a>
+                        </Trans>
+                      }
+                    />
+                  }
+                />
+              }
+            >
+              <Input
+                placeholder={t('wizard.storage.Fsx.export.placeholder')}
+                value={exportPath}
+                onChange={({detail}) => {
+                  setExportPath(detail.value)
+                }}
+              />
+            </FormField>
+          </ColumnLayout>
+        </>
       )}
-      {isDeletionPolicyEnabled && (
-        <DeletionPolicyFormField
-          options={supportedDeletionPolicies}
-          value={deletionPolicy}
-          onDeletionPolicyChange={onDeletionPolicyChange}
-        />
+
+      {isPersistentFsx(lustreType) && (
+        <ColumnLayout columns={2}>
+          <FormField
+            label={t('wizard.storage.Fsx.throughput.label')}
+            info={
+              <InfoLink
+                helpPanel={
+                  <TitleDescriptionHelpPanel
+                    title={t('wizard.storage.Fsx.throughput.label')}
+                    description={t('wizard.storage.Fsx.throughput.help')}
+                    footerLinks={throughputFooterLinks}
+                  />
+                }
+              />
+            }
+          >
+            <Select
+              selectedOption={strToOption(storageThroughput || '')}
+              onChange={({detail}) => {
+                setState(storageThroughputPath, detail.selectedOption.value)
+              }}
+              options={
+                lustreType == 'PERSISTENT_1'
+                  ? storageThroughputsP1.map(strToOption)
+                  : storageThroughputsP2.map(strToOption)
+              }
+            />
+          </FormField>
+        </ColumnLayout>
       )}
       <SpaceBetween direction="horizontal" size="xs">
         <Checkbox checked={compression !== null} onChange={toggleCompression}>
@@ -464,7 +467,16 @@ export function FsxLustreSettings({index}: any) {
           }
         />
       </SpaceBetween>
-    </ColumnLayout>
+      {isDeletionPolicyEnabled && (
+        <ColumnLayout columns={2}>
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
+          />
+        </ColumnLayout>
+      )}
+    </SpaceBetween>
   )
 }
 
@@ -537,8 +549,34 @@ export function EfsSettings({index}: any) {
   )
 
   return (
-    <SpaceBetween direction="vertical" size="s">
-      <ColumnLayout columns={2} borders="vertical">
+    <SpaceBetween direction="vertical" size="m">
+      <ColumnLayout columns={2}>
+        <SpaceBetween direction="vertical" size="xxs">
+          <CheckboxWithHelpPanel
+            checked={encrypted}
+            onChange={toggleEncrypted}
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.storage.Efs.encrypted.label')}
+                description={t('wizard.storage.Efs.encrypted.help')}
+                footerLinks={encryptionFooterLinks}
+              />
+            }
+          >
+            {t('wizard.storage.Efs.encrypted.label')}
+          </CheckboxWithHelpPanel>
+          {encrypted ? (
+            <Input
+              value={kmsId}
+              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
+              onChange={({detail}) => {
+                setState(kmsPath, detail.value)
+              }}
+            />
+          ) : null}
+        </SpaceBetween>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <FormField label={t('wizard.storage.Efs.performanceMode.label')}>
           <Select
             selectedOption={strToOption(performanceMode)}
@@ -548,13 +586,8 @@ export function EfsSettings({index}: any) {
             options={performanceModes.map(strToOption)}
           />
         </FormField>
-        {isDeletionPolicyEnabled && (
-          <DeletionPolicyFormField
-            options={supportedDeletionPolicies}
-            value={deletionPolicy}
-            onDeletionPolicyChange={onDeletionPolicyChange}
-          />
-        )}
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             helpPanel={
@@ -590,31 +623,16 @@ export function EfsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
-        <SpaceBetween direction="vertical" size="xxs">
-          <CheckboxWithHelpPanel
-            checked={encrypted}
-            onChange={toggleEncrypted}
-            helpPanel={
-              <TitleDescriptionHelpPanel
-                title={t('wizard.storage.Efs.encrypted.label')}
-                description={t('wizard.storage.Efs.encrypted.help')}
-                footerLinks={encryptionFooterLinks}
-              />
-            }
-          >
-            {t('wizard.storage.Efs.encrypted.label')}
-          </CheckboxWithHelpPanel>
-          {encrypted ? (
-            <Input
-              value={kmsId}
-              placeholder={t('wizard.storage.Efs.encrypted.kmsId')}
-              onChange={({detail}) => {
-                setState(kmsPath, detail.value)
-              }}
-            />
-          ) : null}
-        </SpaceBetween>
       </ColumnLayout>
+      {isDeletionPolicyEnabled && (
+        <ColumnLayout columns={2}>
+          <DeletionPolicyFormField
+            options={supportedDeletionPolicies}
+            value={deletionPolicy}
+            onDeletionPolicyChange={onDeletionPolicyChange}
+          />
+        </ColumnLayout>
+      )}
     </SpaceBetween>
   )
 }
@@ -695,7 +713,7 @@ export function EbsSettings({index}: any) {
 
   return (
     <SpaceBetween direction="vertical" size="m">
-      <ColumnLayout columns={2} borders="vertical">
+      <ColumnLayout columns={2}>
         <FormField label={t('wizard.storage.Ebs.volumeType.label')}>
           <Select
             placeholder={t('wizard.queues.validation.scriptWithArgs', {
@@ -708,6 +726,8 @@ export function EbsSettings({index}: any) {
             options={volumeTypes.map(strToOption)}
           />
         </FormField>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <FormField
           label={t('wizard.storage.Ebs.volumeSize.label')}
           errorText={volumeErrors}
@@ -723,6 +743,8 @@ export function EbsSettings({index}: any) {
             }}
           />
         </FormField>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             checked={encrypted}
@@ -748,6 +770,8 @@ export function EbsSettings({index}: any) {
             />
           ) : null}
         </SpaceBetween>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             checked={snapshotId !== null}
@@ -774,14 +798,16 @@ export function EbsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
-        {isDeletionPolicyEnabled && (
+      </ColumnLayout>
+      {isDeletionPolicyEnabled && (
+        <ColumnLayout columns={2}>
           <DeletionPolicyFormField
             options={supportedDeletionPolicies}
             value={deletionPolicy}
             onDeletionPolicyChange={onDeletionPolicyChange}
           />
-        )}
-      </ColumnLayout>
+        </ColumnLayout>
+      )}
     </SpaceBetween>
   )
 }
@@ -901,8 +927,8 @@ function StorageInstance({index}: any) {
         </Header>
       }
     >
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <ColumnLayout columns={2} borders="vertical">
+      <SpaceBetween direction="vertical" size="m">
+        <ColumnLayout columns={2}>
           <FormField
             label={t('wizard.storage.instance.sourceName.label')}
             errorText={storageNameErrors}
@@ -913,6 +939,8 @@ function StorageInstance({index}: any) {
               placeholder={t('wizard.storage.instance.sourceName.placeholder')}
             />
           </FormField>
+        </ColumnLayout>
+        <ColumnLayout columns={2}>
           <FormField
             label={t('wizard.storage.instance.mountPoint.label')}
             info={
@@ -934,6 +962,8 @@ function StorageInstance({index}: any) {
               }}
             />
           </FormField>
+        </ColumnLayout>
+        <ColumnLayout columns={2}>
           <SpaceBetween direction="vertical" size="xxs">
             {STORAGE_TYPE_PROPS[storageType].maxToCreate > 0 ? (
               <SpaceBetween direction="horizontal" size="s">
@@ -1073,7 +1103,7 @@ function StorageInstance({index}: any) {
             FsxOntap: null,
             FsxOpenZfs: null,
           }[storageType]}
-      </div>
+      </SpaceBetween>
     </Container>
   )
 }
