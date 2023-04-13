@@ -223,7 +223,9 @@ function Create() {
       }
     >
       <SpaceBetween direction="vertical" size="s">
-        <Flashbar {...flashbarProps} />
+        {flashbarProps.items.length > 0 ? (
+          <Flashbar {...flashbarProps} />
+        ) : null}
         <ConfigView
           config={clusterConfig}
           pending={!clusterConfig}
