@@ -713,7 +713,7 @@ export function EbsSettings({index}: any) {
 
   return (
     <SpaceBetween direction="vertical" size="m">
-      <ColumnLayout columns={2} borders="vertical">
+      <ColumnLayout columns={2}>
         <FormField label={t('wizard.storage.Ebs.volumeType.label')}>
           <Select
             placeholder={t('wizard.queues.validation.scriptWithArgs', {
@@ -726,6 +726,8 @@ export function EbsSettings({index}: any) {
             options={volumeTypes.map(strToOption)}
           />
         </FormField>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <FormField
           label={t('wizard.storage.Ebs.volumeSize.label')}
           errorText={volumeErrors}
@@ -741,6 +743,8 @@ export function EbsSettings({index}: any) {
             }}
           />
         </FormField>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             checked={encrypted}
@@ -766,6 +770,8 @@ export function EbsSettings({index}: any) {
             />
           ) : null}
         </SpaceBetween>
+      </ColumnLayout>
+      <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
             checked={snapshotId !== null}
@@ -792,14 +798,16 @@ export function EbsSettings({index}: any) {
             />
           )}
         </SpaceBetween>
-        {isDeletionPolicyEnabled && (
+      </ColumnLayout>
+      {isDeletionPolicyEnabled && (
+        <ColumnLayout columns={2}>
           <DeletionPolicyFormField
             options={supportedDeletionPolicies}
             value={deletionPolicy}
             onDeletionPolicyChange={onDeletionPolicyChange}
           />
-        )}
-      </ColumnLayout>
+        </ColumnLayout>
+      )}
     </SpaceBetween>
   )
 }
