@@ -204,7 +204,7 @@ export default function Users() {
                     showDialog('deleteUser')
                   }}
                 >
-                  {t('users.actions.delete')}
+                  {t('users.actions.remove')}
                 </Button>
                 <div onKeyPress={e => e.key === 'Enter' && createUser()}>
                   <Input
@@ -215,7 +215,7 @@ export default function Users() {
                   ></Input>
                 </div>
                 <Button variant="primary" onClick={createUser}>
-                  {t('users.actions.create')}
+                  {t('users.actions.add')}
                 </Button>
               </SpaceBetween>
             }

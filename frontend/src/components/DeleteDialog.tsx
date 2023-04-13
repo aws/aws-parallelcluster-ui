@@ -43,7 +43,7 @@ export function DeleteDialog({children, deleteCallback, header, id}: any) {
           <SpaceBetween direction="horizontal" size="xs">
             <Button onClick={cancel}>{t('users.actions.cancel')}</Button>
             <Button onClick={deleteCallback}>
-              {t('users.actions.delete')}
+              {t('users.actions.remove')}
             </Button>
           </SpaceBetween>
         </Box>

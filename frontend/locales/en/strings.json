@@ -117,7 +117,7 @@
         "tooltiptext": "Copy the command to SSH into the head node. If the key pair you use to create the head node isn't the default, you must specify the path to the key pair. See <0>Connect to your Linux instance using an SSH Client</0> for more information."
       },
       "configurationLabel": "Cluster configuration",
-      "configurationLink": "VIEW",
+      "configurationLink": "View YAML",
       "statusLabel": "Cluster status",
       "computeFleetStatusLabel": "Compute fleet status",
       "creationTimeLabel": "Created time",
@@ -280,14 +280,14 @@
         "cancel": "Cancel",
         "create": "Create cluster",
         "edit": "Edit cluster",
-        "createFromWizard": "Use interface",
-        "createFromTemplate": "Upload a template",
-        "createFromCluster": "From another cluster",
+        "createFromWizard": "Step by step",
+        "createFromTemplate": "With a template",
+        "createFromCluster": "With an existing cluster",
         "start": "Start fleet",
         "stop": "Stop fleet",
         "delete": "Delete cluster",
         "shell": "Shell",
-        "filesystem": "File system",
+        "filesystem": "View file system",
         "dcv": "DCV",
         "logs": "View logs"
       },
@@ -339,8 +339,8 @@
       "preferencesModalDarkThemes": "Dark themes"
     },
     "fromClusterModal": {
-      "title": "Create cluster from another cluster",
-      "description": "Use an existing cluster as starting point for the configuration of your new cluster. Only clusters whose version matches the version of AWS ParallelCluster can be selected.",
+      "title": "Start with an existing cluster",
+      "description": "Choose an existing cluster to populate the wizard before you start. Only clusters whose version matches the version of AWS ParallelCluster can be selected.",
       "actions": {
         "cancel": "Cancel",
         "create": "Create"
@@ -575,12 +575,12 @@
     },
     "headNode": {
       "title": "Head node",
-      "description": "Configure the head node.",
+      "description": "Configure the cluster head node.",
       "instance": {
         "title": "Head node instance"
       },
       "help": {
-        "main": "<p>Configure the head node of your cluster.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
+        "main": "<p>Configure the head node of your cluster. The head node serves as the management node for cluster operations. You use the head node to access and manage the cluster and users. Cluster users access the head node to submit jobs.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "instanceSelectionLink": {
           "title": "Head node instance type selection",
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/best-practices-v3.html?icmpid=docs_parallelcluster_hp_headnode_v1#best-practices-head-node-instance-type"
@@ -648,7 +648,7 @@
         "header": "Networking",
         "subnetId": {
           "label": "Subnet ID",
-          "description": "Subnet ID for head node."
+          "description": "Subnet ID for the head node."
         }
       },
       "security": {
@@ -728,9 +728,10 @@
     },
     "storage": {
       "title": "Storage",
-      "description": "Configure shared storage for your cluster.",
+      "description": "Add and configure shared storage for your cluster. Shared storage is shared between the head node and compute nodes.",
       "container": {
         "title": "Storage settings",
+        "description": "Add up to <0>20 file systems</0> for shared storage.",
         "noStorageSelected": "No shared storage options selected.",
         "storageTypes": "Storage types",
         "storageTypesPlaceholder": "Select file system types",
@@ -786,7 +787,11 @@
         },
         "lustreType": {
           "label": "FSx for Lustre",
-          "help": "Choose SCRATCH_1 and SCRATCH_2 deployment types when you need temporary storage and shorter-term processing of data. The SCRATCH_2 deployment type provides in-transit encryption of data and higher burst throughput capacity than SCRATCH_1. Choose the PERSISTENT_2 deployment type for longer-term storage and workloads and encryption of data in transit, choose PERSISTENT_1 only for backwards compatibility. See <0>DeploymentType</0>."
+          "help": "<p>Choose <code>SCRATCH_1</code> and <code>SCRATCH_2</code> deployment types when you need temporary storage and shorter-term processing of data.</p><p>The <code>SCRATCH_2</code> deployment type provides in-transit encryption of data and higher burst throughput capacity than <code>SCRATCH_1</code>.</p><p>Choose the <code>PERSISTENT_2</code> deployment type for longer-term storage and workloads and encryption of data in transit.</p><p>Choose <code>PERSISTENT_1</code> only for backwards compatibility.</p>",
+          "link": {
+            "title": "DeploymentType settings",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DeploymentType"
+          }
         },
         "import": {
           "label": "Import path",
@@ -799,7 +804,7 @@
           "help": "Set Export path to write files from your file system into an S3 bucket. See <0>ExportPath</0>."
         },
         "throughput": {
-          "label": "Per unit storage throughput",
+          "label": "Per unit storage throughput (MB/s/TiB)",
           "help": "Configure the amount of read and write throughput for each 1 tebibyte of storage, in MB/s/TiB.",
           "link": {
             "title": "PerUnitStorageThroughput",
@@ -963,7 +968,7 @@
           }
         },
         "toggle": {
-          "label": "Slurm memory based scheduling"
+          "label": "Use Slurm memory based scheduling"
         },
         "info": {
           "header": "You can use Slurm memory based scheduling only when you select one instance type",
@@ -973,7 +978,15 @@
       "allocationStrategy": {
         "title": "Allocation strategy",
         "lowestPrice": "Lowest price",
-        "capacityOptimized": "Capacity optimized"
+        "capacityOptimized": "Capacity optimized",
+        "helpPanel": {
+          "title": "Allocation strategy",
+          "description": "Choose the strategy for allocating instances to compute resources.",
+          "link": {
+            "title": "AllocationStrategy setting",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/Scheduling-v3.html#yaml-Scheduling-SlurmQueues-AllocationStrategy"
+          }
+        }
       },
       "schedulableMemory": {
         "name": "Schedulable memory (in MiB)",
@@ -1041,7 +1054,15 @@
         "placeholder": "Select a subnet"
       },
       "purchaseType": {
-        "label": "Purchase type"
+        "label": "Purchase type",
+        "helpPanel": {
+          "title": "Purchase type",
+          "description": "Choose the instance purchasing type for compute resources.",
+          "link": {
+            "title": "CapacityType setting",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/Scheduling-v3.html#yaml-Scheduling-SlurmQueues-CapacityType"
+          }
+        }
       },
       "securityGroups": {
         "label": "Additional security groups"
@@ -1051,8 +1072,8 @@
       "title": "Create",
       "description": "Review or edit your cluster configuration and create your cluster.",
       "configuration": {
-        "title": "Cluster configuration",
-        "description": "Check/edit the yaml file that is used to create the cluster",
+        "title": "Cluster configuration YAML file",
+        "description": "Review or edit the YAML file that is used to create your cluster",
         "pending": "{{action}} request pending...",
         "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running."
       },
@@ -1138,14 +1159,14 @@
       "description": "The list of users that have permission to access the AWS ParallelCluster User Interface."
     },
     "actions": {
-      "create": "Create",
+      "add": "Add user",
       "refresh": "Refresh",
-      "delete": "Delete",
+      "remove": "Remove",
       "cancel": "Cancel"
     },
     "helpPanel": {
       "title": "Users",
-      "description": "Maintain the list of cognito users with credentials that only permit access to the $t(global.projectName).<p>Enter a user email address and choose <strong>Create user</strong> to add a user.</p><p>Choose <strong>Delete</strong> to remove a user.</p><p>Choose <strong>Refresh</strong> to view changes to the list of users.</p>"
+      "description": "Maintain the list of cognito users with credentials that only permit access to the $t(global.projectName).<p>Enter a user email address and choose <strong>Add user</strong></p><p>Choose <strong>Remove</strong> to remove a user.</p><p>Choose <strong>Refresh</strong> to view changes to the list of users.</p>"
     },
     "list": {
       "columns": {
@@ -1203,7 +1224,7 @@
     },
     "helpPanel": {
       "title": "Custom images",
-      "description": "Choose <strong>Build image</strong> to create your custom image.<p>You can only <strong>Create images</strong> with the same AWS ParallelCluster version that was used to create the $t(global.projectName).</p><p>If you choose <strong>Build image</strong>, you proceed to create a custom image by uploading a configuration, by entering the ID of an existing image, or by manually entering the configuration.</p><p>You can only <strong>Create images</strong> with the same AWS ParallelCluster version that was used to create the $t(global.projectName).</p><p>After you have provided the configuration, you choose <strong>Build image</strong>.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.",
+      "description": "Choose <strong>Build image</strong> to create your custom image.<p>You can only build images with the same AWS ParallelCluster version that was used to create the $t(global.projectName).</p><p>If you choose <strong>Build image</strong>, you proceed to create a custom image by uploading a configuration, by entering the ID of an existing image, or by manually entering the configuration.</p><p>After you have provided the configuration, you choose <strong>Build image</strong>.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.",
       "amiCustomizationlink": {
         "title": "AWS ParallelCluster AMI customization",
         "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/custom-ami-v3.html?icmpid=docs_parallelcluster_hp_custom_images_v1"

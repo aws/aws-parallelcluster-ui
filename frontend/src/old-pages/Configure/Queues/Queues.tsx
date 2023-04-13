@@ -59,6 +59,7 @@ import {
   queueNameErrorsMapping,
   QUEUE_NAME_MAX_LENGTH,
 } from './queues.validators'
+import InfoLink from '../../../components/InfoLink'
 
 // Constants
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
@@ -455,6 +456,26 @@ function Queue({index}: any) {
     )
   }
 
+  const purchaseTypeFooterLinks = React.useMemo(
+    () => [
+      {
+        title: t('wizard.queues.purchaseType.helpPanel.link.title'),
+        href: t('wizard.queues.purchaseType.helpPanel.link.href'),
+      },
+    ],
+    [t],
+  )
+
+  const allocationStrategyFooterLinks = React.useMemo(
+    () => [
+      {
+        title: t('wizard.queues.allocationStrategy.helpPanel.link.title'),
+        href: t('wizard.queues.allocationStrategy.helpPanel.link.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <Container
       header={
@@ -567,7 +588,22 @@ function Queue({index}: any) {
               >
                 <Trans i18nKey="wizard.queues.placementGroup.label" />
               </Checkbox>
-              <FormField label={t('wizard.queues.purchaseType.label')}>
+              <FormField
+                label={t('wizard.queues.purchaseType.label')}
+                info={
+                  <InfoLink
+                    helpPanel={
+                      <TitleDescriptionHelpPanel
+                        title={t('wizard.queues.purchaseType.helpPanel.title')}
+                        description={t(
+                          'wizard.queues.purchaseType.helpPanel.description',
+                        )}
+                        footerLinks={purchaseTypeFooterLinks}
+                      />
+                    }
+                  />
+                }
+              >
                 <Select
                   selectedOption={itemToOption(
                     findFirst(capacityTypes, x => x[0] === capacityType) || [
@@ -582,7 +618,24 @@ function Queue({index}: any) {
                 />
               </FormField>
               {isMultiInstanceTypesActive ? (
-                <FormField label={t('wizard.queues.allocationStrategy.title')}>
+                <FormField
+                  label={t('wizard.queues.allocationStrategy.title')}
+                  info={
+                    <InfoLink
+                      helpPanel={
+                        <TitleDescriptionHelpPanel
+                          title={t(
+                            'wizard.queues.allocationStrategy.helpPanel.title',
+                          )}
+                          description={t(
+                            'wizard.queues.allocationStrategy.helpPanel.description',
+                          )}
+                          footerLinks={allocationStrategyFooterLinks}
+                        />
+                      }
+                    />
+                  }
+                >
                   <Select
                     options={allocationStrategyOptions}
                     selectedOption={
