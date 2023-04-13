@@ -25,7 +25,7 @@ test.describe('environment: @demo', () => {
         page.on("filechooser", (fileChooser: FileChooser) => {
           fileChooser.setFiles([TEMPLATE_PATH]);
         })
-        await page.getByRole('menuitem', { name: 'Upload a template' }).click();
+        await page.getByRole('menuitem', { name: 'With a template' }).click();
         
         await fillWizard(page)
       });

@@ -21,7 +21,7 @@ test.describe('environment: @demo', () => {
         await visitAndLogin(page)
 
         await page.getByRole('button', { name: 'Create cluster' }).first().click();
-        await page.getByRole('menuitem', { name: 'From another cluster' }).click();
+        await page.getByRole('menuitem', { name: 'With an existing cluster' }).click();
 
         await page.getByRole('button', { name: 'Select a cluster' }).click();
         await page.getByRole('option', { name: CLUSTER_TO_COPY_FROM }).click();
