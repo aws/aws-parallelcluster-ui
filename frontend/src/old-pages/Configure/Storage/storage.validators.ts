@@ -1,4 +1,4 @@
-import {EbsStorage, Storage} from '../Storage.types'
+import {EbsStorage, EfsStorage, Storage} from '../Storage.types'
 import {mapStorageToExternalFileSystem} from './storage.mapper'
 
 export const STORAGE_NAME_MAX_LENGTH = 30
@@ -11,9 +11,15 @@ export const storageNameErrorsMapping = {
 type StorageNameErrorKind = keyof typeof storageNameErrorsMapping
 
 export const ebsErrorsMapping = {
-  invalid_ebs_size: 'wizard.storage.validation.volumeSize',
+  invalid_ebs_size: 'wizard.storage.Ebs.validation.volumeSize',
 }
 type EbsErrorKind = keyof typeof ebsErrorsMapping
+
+export const efsErrorsMapping = {
+  provisioned_throughput_undefined:
+    'wizard.storage.Efs.validation.provisionedThroughput',
+}
+type EfsErrorKind = keyof typeof efsErrorsMapping
 
 export const externalFsErrorsMapping = {
   external_fs_undefined: 'wizard.storage.instance.useExisting.error',
@@ -43,6 +49,17 @@ export function validateEbs(ebsStorage: EbsStorage): [boolean, EbsErrorKind?] {
 
   if (volumeSize === undefined || volumeSize < 35 || volumeSize > 2048) {
     return [false, 'invalid_ebs_size']
+  } else {
+    return [true]
+  }
+}
+
+export function validateEfs(efsStorage: EfsStorage): [boolean, EfsErrorKind?] {
+  const throughputMode = efsStorage.EfsSettings?.ThroughputMode
+  const provisionedThroughput = efsStorage.EfsSettings?.ProvisionedThroughput
+
+  if (throughputMode === 'provisioned' && !provisionedThroughput) {
+    return [false, 'provisioned_throughput_undefined']
   } else {
     return [true]
   }
