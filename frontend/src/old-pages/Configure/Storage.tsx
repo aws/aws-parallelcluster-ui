@@ -29,6 +29,7 @@ import {
   SpaceBetween,
   Checkbox,
   Alert,
+  Link,
 } from '@cloudscape-design/components'
 
 // State
@@ -318,7 +319,8 @@ export function FsxLustreSettings({index}: any) {
               helpPanel={
                 <TitleDescriptionHelpPanel
                   title={t('wizard.storage.Fsx.lustreType.label')}
-                  description={<Trans i18nKey="wizard.storage.Fsx.lustreType.help" />
+                  description={
+                    <Trans i18nKey="wizard.storage.Fsx.lustreType.help" />
                   }
                   footerLinks={lustreTypeFooterLinks}
                 />
@@ -1197,11 +1199,12 @@ function Storage() {
           <Header
             description={
               <Trans i18nKey="wizard.storage.container.description">
-                <a
-                  rel="noreferrer"
-                  target="_blank"
+                <Link
+                  variant="primary"
+                  external
+                  externalIconAriaLabel={t('global.openNewTab')}
                   href="https://docs.aws.amazon.com/parallelcluster/latest/ug/shared-storage-quotas-v3.html"
-                ></a>
+                />
               </Trans>
             }
           >
