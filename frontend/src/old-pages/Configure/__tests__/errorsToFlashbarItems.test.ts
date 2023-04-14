@@ -183,12 +183,10 @@ describe('Given a function to map create/dry-run errors to FlashbarItems', () =>
   describe('when errors contain update errors', () => {
     const updateErrors: UpdateError[] = [
       {
-        level: 'ERROR',
         message: 'ErrorMessage',
-      },
-      {
-        level: 'WARNING',
-        message: 'WarningMessage',
+        parameter: '',
+        currentValue: '',
+        requestedValue: '',
       },
     ]
     const errors: CreateErrors = {
@@ -201,16 +199,9 @@ describe('Given a function to map create/dry-run errors to FlashbarItems', () =>
         {
           type: 'error',
           dismissible: true,
-          header: 'Error',
+          header: 'wizard.create.flashBar.error',
           content: updateErrors[0].message,
           id: 'update-err-0',
-        },
-        {
-          type: 'warning',
-          dismissible: true,
-          header: 'Warning',
-          content: updateErrors[1].message,
-          id: 'update-err-1',
         },
       ]
       expect(errorsToFlashbarItems(errors, setFlashbarItems)).toMatchObject(
@@ -220,47 +211,47 @@ describe('Given a function to map create/dry-run errors to FlashbarItems', () =>
   })
 
   describe('when errors contain messages with different types', () => {
-    const updateErrors: UpdateError[] = [
+    const configErrors: ConfigError[] = [
       {
         level: 'INFO',
         message: 'InfoMessage',
+        id: '0',
+        type: '',
       },
       {
         level: 'ERROR',
         message: 'ErrorMessage',
+        id: '1',
+        type: '',
       },
       {
         level: 'WARNING',
         message: 'WarningMessage',
+        id: '2',
+        type: '',
       },
     ]
     const errors: CreateErrors = {
       message: 'Invalid cluster configuration',
-      updateValidationErrors: updateErrors,
+      configurationValidationErrors: configErrors,
     }
 
-    it('should return error items, with expected type and content, ordered by the following priority: ["success", "error", "warning", "info"]', () => {
+    it('should return items ordered by the following priority: ["error", "success", "warning", "info"]', () => {
       const expected: FlashbarProps.MessageDefinition[] = [
         {
           type: 'error',
           dismissible: true,
           header: 'Error',
-          content: updateErrors[1].message,
-          id: 'update-err-1',
         },
         {
           type: 'warning',
           dismissible: true,
           header: 'Warning',
-          content: updateErrors[2].message,
-          id: 'update-err-2',
         },
         {
           type: 'info',
           dismissible: true,
           header: 'Info',
-          content: updateErrors[0].message,
-          id: 'update-err-0',
         },
       ]
       expect(errorsToFlashbarItems(errors, setFlashbarItems)).toMatchObject(
@@ -270,54 +261,53 @@ describe('Given a function to map create/dry-run errors to FlashbarItems', () =>
   })
 
   describe('when errors contain messages with different types, including a success message', () => {
-    const updateErrors: UpdateError[] = [
+    const configErrors: ConfigError[] = [
       {
         level: 'INFO',
-        message: 'InfoMessage1',
+        message: 'InfoMessage',
+        id: '0',
+        type: 'Type',
+      },
+      {
+        level: 'ERROR',
+        message: 'ErrorMessage',
+        id: '1',
+        type: 'Type',
       },
       {
         level: 'WARNING',
         message: 'WarningMessage',
-      },
-      {
-        level: 'INFO',
-        message: 'InfoMessage2',
+        id: '2',
+        type: 'Type',
       },
     ]
     const errors: CreateErrors = {
       message: 'Request would have succeeded, but DryRun flag is set.',
-      updateValidationErrors: updateErrors,
+      configurationValidationErrors: configErrors,
     }
 
-    it('should return error items, with expected type and content, ordered by the following priority: ["success", "error", "warning", "info"]', () => {
+    it('should return items ordered by the following priority: ["error", "success", "warning", "info"]', () => {
       const expected: FlashbarProps.MessageDefinition[] = [
+        {
+          type: 'error',
+          dismissible: true,
+          header: 'Error',
+        },
         {
           type: 'success',
           dismissible: true,
           header: 'wizard.create.flashBar.success',
-          content: errors.message,
           id: 'success',
         },
         {
           type: 'warning',
           dismissible: true,
           header: 'Warning',
-          content: updateErrors[1].message,
-          id: 'update-err-1',
         },
         {
           type: 'info',
           dismissible: true,
           header: 'Info',
-          content: updateErrors[0].message,
-          id: 'update-err-0',
-        },
-        {
-          type: 'info',
-          dismissible: true,
-          header: 'Info',
-          content: updateErrors[2].message,
-          id: 'update-err-2',
         },
       ]
       expect(errorsToFlashbarItems(errors, setFlashbarItems)).toMatchObject(
@@ -340,7 +330,7 @@ describe('Given a function to map create/dry-run errors to FlashbarItems', () =>
         {
           type: 'error',
           dismissible: true,
-          header: 'Error',
+          header: 'wizard.create.flashBar.error',
           content:
             'Bad Request: Configuration must be a valid YAML document. Parsed config is not a dict',
         },

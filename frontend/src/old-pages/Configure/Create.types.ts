@@ -8,8 +8,10 @@ export type ConfigError = {
 }
 
 export type UpdateError = {
+  parameter: string
+  currentValue: string
+  requestedValue: string
   message: string
-  level: ErrorLevel
 }
 
 export type CreateErrors = {

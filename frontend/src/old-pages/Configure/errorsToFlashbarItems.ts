@@ -80,8 +80,8 @@ export function errorsToFlashbarItems(
     items.push(
       dismissableMessage(
         {
-          type: error.level.toLowerCase() as FlashbarProps.Type,
-          header: capitalize(error.level.toLowerCase()),
+          type: 'error',
+          header: i18next.t('wizard.create.flashBar.error'),
           content: error.message,
           id: `update-err-${index}`,
         },
@@ -95,7 +95,7 @@ export function errorsToFlashbarItems(
       dismissableMessage(
         {
           type: 'error',
-          header: 'Error',
+          header: i18next.t('wizard.create.flashBar.error'),
           content: errors.message,
           id: 'config-err-0',
         },
