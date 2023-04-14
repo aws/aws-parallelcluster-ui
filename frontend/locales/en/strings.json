@@ -772,9 +772,6 @@
           }
         }
       },
-      "validation": {
-        "volumeSize": "You must specify a valid volume size."
-      },
       "Fsx": {
         "existing": {
           "fsxLustre": "FSx Lustre Filesystem",
@@ -838,6 +835,9 @@
             "title": "ThroughputMode section",
             "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EfsSettings-ThroughputMode"
           }
+        },
+        "validation": {
+          "provisionedThroughput": "You must specify a valid provisioned throughput value."
         }
       },
       "Ebs": {
@@ -867,6 +867,9 @@
             "title": "SnapshotID",
             "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-EbsSettings-SnapshotId"
           }
+        },
+        "validation": {
+          "volumeSize": "You must specify a valid volume size."
         }
       },
       "instance": {

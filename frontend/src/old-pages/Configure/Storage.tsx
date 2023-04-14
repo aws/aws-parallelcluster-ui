@@ -47,6 +47,7 @@ import {
   STORAGE_TYPE_PROPS,
   UIStorageSettings,
   EbsStorage,
+  EfsStorage,
 } from './Storage.types'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import InfoLink from '../../components/InfoLink'
@@ -55,10 +56,12 @@ import {useMemo} from 'react'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {
   ebsErrorsMapping,
+  efsErrorsMapping,
   externalFsErrorsMapping,
   storageNameErrorsMapping,
   STORAGE_NAME_MAX_LENGTH,
   validateEbs,
+  validateEfs,
   validateExternalFileSystem,
   validateStorageName,
 } from './Storage/storage.validators'
@@ -121,6 +124,24 @@ function storageValidate() {
             valid = false
           } else {
             clearState([...errorsPath, index, 'EbsSettings', 'Size'])
+          }
+        }
+        if (storage.StorageType === 'Efs') {
+          const [efsValid, error] = validateEfs(storage as EfsStorage)
+          if (!efsValid) {
+            const errorMessage = i18next.t(efsErrorsMapping[error!])
+            setState(
+              [...errorsPath, index, 'EfsSettings', 'ProvisionedThroughput'],
+              errorMessage,
+            )
+            valid = false
+          } else {
+            clearState([
+              ...errorsPath,
+              index,
+              'EfsSettings',
+              'ProvisionedThroughput',
+            ])
           }
         }
       }
@@ -508,6 +529,13 @@ export function EfsSettings({index}: any) {
   const isDeletionPolicyEnabled = useFeatureFlag('efs_deletion_policy')
   const supportedDeletionPolicies: EfsDeletionPolicy[] = ['Delete', 'Retain']
 
+  const provisionedThroughputErrors = useState([
+    ...errorsPath,
+    index,
+    'EfsSettings',
+    'ProvisionedThroughput',
+  ])
+
   React.useEffect(() => {
     const efsPath = [...storagePath, index, 'EfsSettings']
     const throughputModePath = [...efsPath, 'ThroughputMode']
@@ -605,28 +633,34 @@ export function EfsSettings({index}: any) {
             }
             checked={throughputMode !== 'bursting'}
             onChange={_event => {
-              setState(
-                throughputModePath,
-                throughputMode === 'bursting' ? 'provisioned' : 'bursting',
-              )
-              if (throughputMode === 'provisioned')
-                setState(provisionedThroughputPath, 128)
+              const newThroughputMode =
+                throughputMode === 'bursting' ? 'provisioned' : 'bursting'
+              setState(throughputModePath, newThroughputMode)
+              newThroughputMode === 'provisioned'
+                ? setState(provisionedThroughputPath, 128)
+                : clearState(provisionedThroughputPath)
             }}
           >
             {t('wizard.storage.Efs.provisioned.label')}
           </CheckboxWithHelpPanel>
           {throughputMode === 'provisioned' && (
-            <Input
-              type="number"
-              placeholder={t('wizard.storage.Efs.provisioned.placeholder')}
-              value={clamp(parseInt(provisionedThroughput), 1, 1024).toString()}
-              onChange={({detail}) => {
-                setState(
-                  provisionedThroughputPath,
-                  clamp(parseInt(detail.value), 1, 1024).toString(),
-                )
-              }}
-            />
+            <FormField errorText={provisionedThroughputErrors}>
+              <Input
+                type="number"
+                placeholder={t('wizard.storage.Efs.provisioned.placeholder')}
+                value={clamp(
+                  parseInt(provisionedThroughput),
+                  1,
+                  1024,
+                ).toString()}
+                onChange={({detail}) => {
+                  setState(
+                    provisionedThroughputPath,
+                    clamp(parseInt(detail.value), 1, 1024),
+                  )
+                }}
+              />
+            </FormField>
           )}
         </SpaceBetween>
       </ColumnLayout>
