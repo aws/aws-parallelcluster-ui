@@ -1,5 +1,9 @@
 import {NavigateFunction} from 'react-router-dom'
-import {clearClusterOnRegionChange, regions} from '../TopBar'
+import {
+  clearClusterOnRegionChange,
+  isRegionSelectionDisabled,
+  regions,
+} from '../TopBar'
 
 describe('Given a TopBar component', () => {
   let navigate: NavigateFunction
@@ -7,7 +11,7 @@ describe('Given a TopBar component', () => {
     navigate = jest.fn()
   })
 
-  describe('when changing the region', () => {
+  describe('when the region has been changed', () => {
     describe('when inside the clusters section', () => {
       it('should clear the selected cluster', () => {
         clearClusterOnRegionChange('/clusters/selected-cluster', navigate)
@@ -20,6 +24,19 @@ describe('Given a TopBar component', () => {
         clearClusterOnRegionChange('/custom-images', navigate)
 
         expect(navigate).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('when user tries to change the region', () => {
+    describe('when inside the wizard', () => {
+      it('should disable the region selection', () => {
+        expect(isRegionSelectionDisabled('/configure')).toBe(true)
+      })
+    })
+    describe('when inside another section', () => {
+      it('should enable the region selection', () => {
+        expect(isRegionSelectionDisabled('/any-page')).toBe(false)
       })
     })
   })
