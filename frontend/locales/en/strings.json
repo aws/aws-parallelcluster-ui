@@ -1078,7 +1078,8 @@
         "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running."
       },
       "flashBar": {
-        "success": "Success"
+        "success": "Success",
+        "error": "Error"
       },
       "helpPanel": {
         "title": "Cluster configuration",
