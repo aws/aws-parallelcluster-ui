@@ -16,8 +16,9 @@ import {LoadInitialState} from '../model'
 // UI Elements
 import TopNavigation from '@cloudscape-design/components/top-navigation'
 import {useQueryClient} from 'react-query'
-import {NavigateFunction, useNavigate} from 'react-router-dom'
+import {NavigateFunction, useLocation, useNavigate} from 'react-router-dom'
 import {ButtonDropdownProps} from '@cloudscape-design/components'
+import {colorTextInteractiveDisabled} from '@cloudscape-design/design-tokens'
 import {useTranslation} from 'react-i18next'
 
 export function regions(selected: string) {
@@ -103,16 +104,23 @@ export const clearClusterOnRegionChange = (
   }
 }
 
+export const isRegionSelectionDisabled = (path: string) => {
+  return path.indexOf('/configure') !== -1
+}
+
 export default function Topbar() {
   const {t} = useTranslation()
   let username = useState(['identity', 'attributes', 'email'])
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const defaultRegionText = t('global.topBar.regionSelector.defaultRegionText')
   const defaultRegion = useState(['aws', 'region']) || defaultRegionText
   const selectedRegion = useState(['app', 'selectedRegion']) || defaultRegion
   const displayedRegions = regions(selectedRegion)
+
+  const isRegionDropdownDisabled = isRegionSelectionDisabled(location.pathname)
 
   const selectRegion = (region: any) => {
     let newRegion = region.detail.id
@@ -164,8 +172,18 @@ export default function Topbar() {
               type: 'menu-dropdown',
               ariaLabel: t('global.topBar.regionSelector.ariaLabel'),
               disableUtilityCollapse: true,
+              disabled: isRegionDropdownDisabled,
               text: (
-                <span style={{fontWeight: 'normal'}}>{selectedRegion}</span>
+                <span
+                  style={{
+                    fontWeight: 'normal',
+                    color: isRegionDropdownDisabled
+                      ? colorTextInteractiveDisabled
+                      : undefined,
+                  }}
+                >
+                  {selectedRegion}
+                </span>
               ),
               onItemClick: selectRegion,
               items: regionsToDropdownItems(displayedRegions, selectedRegion),
