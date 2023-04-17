@@ -8,7 +8,7 @@ const mockRequest = executeRequest as jest.Mock
 
 describe('given a CreateCluster command and a cluster configuration', () => {
   const clusterName = 'any-name'
-  const clusterConfiguration = ''
+  const clusterConfiguration = 'Imds:\n  ImdsSupport: v2.0'
   const mockRegion = 'some-region'
   const mockSelectedRegion = 'some-region'
 
@@ -26,7 +26,9 @@ describe('given a CreateCluster command and a cluster configuration', () => {
 
     it('should emit the API request', async () => {
       const expectedBody = {
-        clusterConfiguration,
+        clusterConfiguration: expect.stringContaining(
+          'Imds:\n  ImdsSupport: v2.0',
+        ),
         clusterName,
       }
 
@@ -113,6 +115,84 @@ describe('given a CreateCluster command and a cluster configuration', () => {
       expect(mockErrorCallback).toHaveBeenCalledWith({
         message: 'some-error-message',
       })
+    })
+  })
+
+  describe('when it contains no custom tags', () => {
+    beforeEach(() => {
+      mockRequest.mockResolvedValueOnce({status: 202, data: {}})
+    })
+    it('should append a tag to specify the cluster has been created with the UI', () => {
+      CreateCluster(
+        clusterName,
+        'Imds:\n  ImdsSupport: v2.0',
+        mockRegion,
+        mockSelectedRegion,
+      )
+
+      expect(mockRequest).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+        expect.objectContaining({
+          clusterConfiguration: expect.stringContaining(
+            "Tags:\n  - Key: parallelcluster-ui\n    Value: 'true'",
+          ),
+        }),
+        expect.anything(),
+        null,
+      )
+    })
+  })
+
+  describe('when it contains existing tags', () => {
+    beforeEach(() => {
+      mockRequest.mockResolvedValueOnce({status: 202, data: {}})
+    })
+    it('should not remove any of the existing tags', () => {
+      CreateCluster(
+        clusterName,
+        'Imds:\n  ImdsSupport: v2.0\nTags:\n  - Key: foo\n    Value: bar',
+        mockRegion,
+        mockSelectedRegion,
+      )
+
+      expect(mockRequest).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+        expect.objectContaining({
+          clusterConfiguration: expect.stringContaining(
+            'Tags:\n  - Key: foo\n    Value: bar',
+          ),
+        }),
+        expect.anything(),
+        null,
+      )
+    })
+  })
+
+  describe('when it contains an existing PCUI tag', () => {
+    beforeEach(() => {
+      mockRequest.mockResolvedValueOnce({status: 202, data: {}})
+    })
+    it('should not duplicate the tag', () => {
+      CreateCluster(
+        clusterName,
+        "Imds:\n  ImdsSupport: v2.0\nTags:\n  - Key: parallelcluster-ui\n    Value: 'true'",
+        mockRegion,
+        mockSelectedRegion,
+      )
+
+      expect(mockRequest).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+        expect.objectContaining({
+          clusterConfiguration: expect.stringContaining(
+            "Tags:\n  - Key: parallelcluster-ui\n    Value: 'true'\n  - Key: parallelcluster-ui\n    Value: 'true'",
+          ),
+        }),
+        expect.anything(),
+        null,
+      )
     })
   })
 })
