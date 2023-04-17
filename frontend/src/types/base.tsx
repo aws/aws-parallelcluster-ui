@@ -85,3 +85,12 @@ export type ConfigValidationMessage = {
 }
 
 export type ValidationMessages = ConfigValidationMessage[]
+
+export type ConfigTag = {
+  Key: string
+  Value: string
+}
+
+export type ConfigObject = {[key: string]: unknown} & {
+  Tags?: ConfigTag[]
+}

@@ -12,6 +12,9 @@ import {ClusterInfoSummary} from './types/clusters'
 import {clearState, getState, setState, updateState} from './store'
 import {generateRandomId} from './util'
 
+// @ts-expect-error TS(7016) FIXME: Could not find a declaration file for module 'js-y... Remove this comment to see the full error message
+import {load, dump} from 'js-yaml'
+
 // UI Elements
 import {AppConfig} from './app-config/types'
 import {getAppConfig} from './app-config'
@@ -25,7 +28,8 @@ import {
 } from './types/logs'
 import {AxiosError} from 'axios'
 import {UserIdentity} from './auth/types'
-import {PCVersion} from './types/base'
+import {ConfigObject, ConfigTag, PCVersion} from './types/base'
+import flowRight from 'lodash/flowRight'
 
 // Types
 type Callback = (arg?: any) => void
@@ -71,6 +75,8 @@ function request(method: HTTPMethod, url: string, body: any = undefined) {
   return executeRequest(method, url, body, {}, appConfig)
 }
 
+const mapAndApplyTags = flowRight([dump, applyProductTags, load])
+
 function CreateCluster(
   clusterName: string,
   clusterConfig: string,
@@ -83,7 +89,10 @@ function CreateCluster(
   var url = 'api?path=/v3/clusters'
   url += dryrun ? '&dryrun=true' : ''
   url += region ? `&region=${region}` : ''
-  var body = {clusterName: clusterName, clusterConfiguration: clusterConfig}
+  var body = {
+    clusterName: clusterName,
+    clusterConfiguration: mapAndApplyTags(clusterConfig),
+  }
   request('post', url, body)
     .then((response: any) => {
       if (response.status === 202) {
@@ -105,6 +114,24 @@ function CreateCluster(
         console.log(error.response.data)
       }
     })
+}
+
+const PCUI_TAG_KEY = 'parallelcluster-ui'
+function applyProductTags(config: ConfigObject): ConfigObject {
+  const tags: ConfigTag[] = config?.Tags ?? []
+  const hasProductTags = tags.find(tag => tag.Key === PCUI_TAG_KEY)
+  return {
+    ...config,
+    Tags: hasProductTags
+      ? tags
+      : [
+          ...tags,
+          {
+            Key: PCUI_TAG_KEY,
+            Value: 'true',
+          },
+        ],
+  }
 }
 
 function UpdateCluster(
