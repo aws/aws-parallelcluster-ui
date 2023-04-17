@@ -1,4 +1,4 @@
-import {renderHook} from '@testing-library/react-hooks'
+import {renderHook} from '@testing-library/react'
 import {useLoadingState} from '../useLoadingState'
 import {Box} from '@cloudscape-design/components'
 import React from 'react'

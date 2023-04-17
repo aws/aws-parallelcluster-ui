@@ -10,7 +10,7 @@
 // limitations under the License.
 
 import {Store} from '@reduxjs/toolkit'
-import {renderHook} from '@testing-library/react-hooks'
+import {renderHook} from '@testing-library/react'
 import {mock} from 'jest-mock-extended'
 import {PropsWithChildren} from 'react'
 import {Provider} from 'react-redux'
