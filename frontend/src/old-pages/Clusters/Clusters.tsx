@@ -271,7 +271,6 @@ const CLUSTERS_HELP_PANEL_LIST = [
   <Trans key="cluster.help.scheduling" i18nKey="cluster.help.scheduling" />,
   <Trans key="cluster.help.accounting" i18nKey="cluster.help.accounting" />,
   <Trans key="cluster.help.events" i18nKey="cluster.help.events" />,
-  <Trans key="cluster.help.logs" i18nKey="cluster.help.logs" />,
 ]
 
 const ClustersHelpPanel = () => {

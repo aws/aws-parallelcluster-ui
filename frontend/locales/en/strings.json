@@ -105,7 +105,7 @@
       "details": "Details",
       "instances": "Instances",
       "storage": "Storage",
-      "scheduling": "Job scheduling",
+      "scheduling": "Job status",
       "accounting": "Accounting",
       "stackEvents": "Stack events"
     },
@@ -166,20 +166,20 @@
       }
     },
     "storage": {
-      "tableTitle":"Filesystems",
+      "tableTitle":"File systems",
       "id": "ID",
       "mountPath": "Mount path",
       "name": "Name",
       "type": "Type",
-      "noFilesystems": "No filesystems to display",
-      "noFilesystemsFound": "No filesystems found.",
-      "noFilesystemsToDisplay": "Edit the cluster to add the storage of your choice.",
+      "noFilesystems": "No file systems to display",
+      "noFilesystemsFound": "No file systems found.",
+      "noFilesystemsToDisplay": "Edit the cluster to add file systems.",
       "filter": {
-        "loading": "Loading Filesystems...",
-        "filteringPlaceholder": "Find filesystems",
-        "filteringAriaLabel": "Find filesystems",
+        "loading": "Loading file systems...",
+        "filteringPlaceholder": "Find file systems",
+        "filteringAriaLabel": "Find file systems",
         "noMatches": "No matches",
-        "noFilesystems": "No filesystems match the filters.",
+        "noFilesystems": "No file systems match the filters.",
         "clear": "Clear filter"
       }
     },
@@ -209,7 +209,7 @@
       "filter": {
         "empty": {
           "title": "No jobs to display",
-          "subtitle": "Schedule a job on the cluster to monitor its status."
+          "subtitle": "From the cluster head node, submit a job and monitor its status."
         }
       }
     },
@@ -230,7 +230,7 @@
         "filteringPlaceholder": "Find jobs",
         "empty": {
           "title": "No jobs to display",
-          "subtitle": "Schedule a job on the cluster to monitor its status."
+          "subtitle": "From the cluster head node, submit a job and monitor its status."
         }
       },
       "loadingJobs": "Loading jobs...",
@@ -240,14 +240,13 @@
       "label": "Select a log stream from the left."
     },
     "help": {
-      "main": "<p><strong>Create</strong> a new cluster or select a listed cluster to view detailed information. You can also choose <strong>Stop fleet</strong> or <strong>Start fleet</strong> to stop or start the cluster compute fleet, and <strong>Edit</strong> or <strong>Delete</strong> a selected cluster.</p><p>You can only <strong>Create</strong> and <strong>Edit</strong> clusters with the same AWS ParallelCluster version that was used to create the $t(global.projectName).</p><p>Depending on the cluster configuration, you can use an AWS Systems Manager shell session or a DCV virtual desktop to access the head node of the selected cluster. You can also access the file system of the selected cluster.</p><p>Enter text in the search field to find clusters by name, status, or version.</p>Select a listed cluster to view its details.<0></0><p>Choose <strong>Create</strong> to create and configure a cluster.</p>Choose <strong>Edit</strong> to update the cluster configuration. Some configuration updates require that you first stop the compute fleet, and some updates can't be performed.",
-      "details": "<strong>Details</strong> shows a summary of cluster properties, starting with a link to the CloudFormation stack that created your cluster.To connect to the head node instance, use the link provided by the <strong>EC2 Instance Connect</strong> helper.",
+      "main": "<p>Create a new cluster or select a listed cluster to view detailed information.</p><p>Choose <strong>Create cluster</strong> to create and configure a cluster. Choose <strong>Step by step</strong> to create a cluster by using the widget only. Choose <strong>With a template</strong> if you want to choose a template to populate the wizard before you start. Choose <strong>With an existing cluster</strong> if you want to choose and existing cluster to populate the wizard before you start.</p><p>Choose <strong>Actions</strong>, <strong>Edit cluster</strong> to update the cluster configuration. Some configuration updates require that you first stop the compute fleet, and some updates can't be performed.</p><p>You can toggle <strong>Stop fleet</strong> | <strong>Start fleet</strong> to stop or start the cluster compute fleet. Choose <strong>Actions</strong> to <strong>Delete cluster</strong>.</p><p>You can only <strong>Create</strong> and <strong>Edit</strong> clusters with the same AWS ParallelCluster version that was used to create the AWS ParallelCluster UI.</p><p>Depending on the cluster configuration, you can use an AWS Systems Manager shell session or a DCV virtual desktop to access the head node of the selected cluster. From <strong>Actions</strong>, choose <strong>View file system</strong> to navigate to the cluster file system in the AWS management console, or choose <strong>View logs</strong> to view AWS ParallelCluster logs.</p><p>Enter text in the search field to find clusters by name, status, or version. Select a listed cluster to view its details.</p><0></0>",
+      "details": "<strong>Details</strong> shows a summary of cluster properties. To connect to the head node instance, use the link provided by the <strong>EC2 Instance Connect</strong> helper.",
       "instances": "<strong>Instances</strong> shows the list of cluster EC2 instances.",
       "storage": "<strong>Storage</strong> shows the list of your configured file systems.",
       "scheduling": "<strong>Job scheduling</strong> shows running jobs.",
-      "accounting": "<strong>Accounting</strong> is a dashboard for your configured Slurm accounting data.",
+      "accounting": "<strong>Accounting</strong> shows a dashboard for your configured Slurm accounting data.",
       "events": "<strong>Stack events</strong> shows the record of cluster CloudFormation stack create, update, and delete events.",
-      "logs": "<strong>Logs</strong> shows the AWS ParallelCluster logs created for your cluster.",
       "dcvLink": {
         "title": "NICE DCV",
         "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/dcv-v3.html?icmpid=docs_parallelcluster_hp_clusters_v1"
@@ -474,7 +473,7 @@
       },
       "clusterName": {
         "label": "Name",
-        "description": "The name must start with an alphabetical character. Valid characters: A-Z, a-z, 0-9, and - (hyphen).",
+        "description": "The name must start with an alphabetical character and can have up to 60 characters. If Slurm accounting is configured, the name can have up to 40 characters. Valid characters: A-Z, a-z, 0-9, and - (hyphen).",
         "placeholder": "Enter your cluster name",
         "cannotBeBlank": "Cluster name must not be blank.",
         "alreadyExists": "Cluster with name {{clusterName}} already exists. Choose a unique name.",
@@ -601,7 +600,7 @@
           "title": "What are custom actions?",
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/custom-bootstrap-actions-v3.html?icmpid=docs_parallelcluster_hp_headnode_v1"
         },
-        "slurmSettings": "<p>Configure Slurm accounting settings and queue update strategy settings for your cluster.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
+        "slurmSettings": "<p>Configure Slurm accounting settings for your cluster.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "accountingLink": {
           "title": "How Slurm accounting works with AWS ParallelCluster",
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/slurm-accounting-v3.html?icmpid=docs_parallelcluster_hp_headnode_accounting_v1"
@@ -609,10 +608,6 @@
         "databaseLink": {
           "title": "Slurm accounting database setting",
           "href": "https://alpha.www.docs.aws.a2z.com/parallelcluster/latest/ug/Scheduling-v3.html#Scheduling-v3-SlurmSettings-Database"
-        },
-        "queueLink": {
-          "title": "Queue update strategy setting",
-          "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/Scheduling-v3.html#yaml-Scheduling-SlurmSettings-QueueUpdateStrategy"
         }
       },
       "validation": {
@@ -637,12 +632,16 @@
       },
       "keypair": {
         "label": "Key pair",
-        "description": "Choose a key pair to connect the head node by using SSH."
+        "description": "Choose a key pair to connect to the head node by using SSH."
       },
       "imdsSecured": {
         "label": "IMDS",
         "set": "Set IMDS secured",
-        "help": "IMDS secured restricts access to IMDS (and thus instance credentials) to users with superuser permissions. For more information, see <0>How instance metadata service version 2 works</0> in the <i>Amazon EC2 User Guide for Linux Instances</i>."
+        "help": "IMDS secured restricts access to IMDS (and thus instance credentials) to users with superuser permissions.",
+        "imdsv2Link": {
+          "title": "How instance metadata service version 2 works",
+          "href": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
+        }
       },
       "networking": {
         "header": "Networking",
@@ -656,7 +655,6 @@
       },
       "securityGroups": {
        "label": "Additional security groups",
-       "help": "Select one or more security groups.",
        "select": "Select one or more security groups"
       },
       "localStorage": {
@@ -810,7 +808,11 @@
         },
         "compression": {
           "label": "Compress file system data",
-          "help": "When data compression is used, Amazon FSx for Lustre automatically compresses newly written files before they are written to disk and automatically uncompresses them when they are read. See <0>DataCompressionType</0>."
+          "help": "When data compression is used, Amazon FSx for Lustre automatically compresses newly written files before they are written to disk and automatically uncompresses them when they are read.",
+          "link": {
+            "title": "DataCompressionType setting",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DataCompressionType"
+          }
         }
       },
       "Efs": {
@@ -960,7 +962,7 @@
       "slurmMemorySettings": {
         "container": {
           "title": "Slurm settings",
-          "help": "<p>Use Slurm memory-based scheduling to specify the amount of memory per node required by a job with Slurm's --mem parameter.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
+          "help": "<p>Use Slurm memory-based scheduling to specify the amount of memory per node required by a job with Slurm's <code>--mem</code> parameter.</p><p>Choose a queue update strategy.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
           "memorySchedulingLink": {
             "title": "How Slurm memory-based scheduling works with AWS ParallelCluster",
             "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/slurm-mem-based-scheduling-v3.html?icmpid=docs_parallelcluster_hp_queues_slurm_memory_v1"
@@ -968,6 +970,10 @@
           "schedulingPropertiesLink": {
             "title": "Slurm memory-based scheduling setting",
             "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/Scheduling-v3.html#yaml-Scheduling-SlurmSettings-EnableMemoryBasedScheduling"
+          },
+          "queueUpdateStrategyLink": {
+            "title": "Queue update strategy setting",
+            "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/Scheduling-v3.html#yaml-Scheduling-SlurmSettings-QueueUpdateStrategy"
           }
         },
         "toggle": {
@@ -1160,7 +1166,7 @@
   "users": {
     "header": {
       "title": "Users",
-      "description": "The list of users that have permission to access the AWS ParallelCluster User Interface."
+      "description": "The list of users that have permission to access the AWS ParallelCluster UI."
     },
     "actions": {
       "add": "Add user",

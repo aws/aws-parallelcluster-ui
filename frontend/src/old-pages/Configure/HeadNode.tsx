@@ -385,6 +385,16 @@ function IMDSSecuredSettings() {
     setState(imdsSecuredPath, !imdsSecured)
   }, [imdsSecured])
 
+  const footerLinks = React.useMemo(
+    () => [
+      {
+        title: t('wizard.headNode.imdsSecured.imdsv2Link.title'),
+        href: t('wizard.headNode.imdsSecured.imdsv2Link.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <CheckboxWithHelpPanel
       disabled={editing}
@@ -393,15 +403,8 @@ function IMDSSecuredSettings() {
       helpPanel={
         <TitleDescriptionHelpPanel
           title={t('wizard.headNode.imdsSecured.label')}
-          description={
-            <Trans i18nKey="wizard.headNode.imdsSecured.help">
-              <a
-                rel="noreferrer"
-                target="_blank"
-                href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-v2-how-it-works"
-              ></a>
-            </Trans>
-          }
+          description={t('wizard.headNode.imdsSecured.help')}
+          footerLinks={footerLinks}
         />
       }
     >
@@ -449,19 +452,7 @@ function HeadNode() {
             headerText={t('wizard.headNode.advancedOptions.label')}
           >
             <SpaceBetween size="xs">
-              <FormField
-                label={t('wizard.headNode.securityGroups.label')}
-                info={
-                  <InfoLink
-                    helpPanel={
-                      <TitleDescriptionHelpPanel
-                        title={t('wizard.headNode.securityGroups.label')}
-                        description={t('wizard.headNode.securityGroups.help')}
-                      />
-                    }
-                  />
-                }
-              >
+              <FormField label={t('wizard.headNode.securityGroups.label')}>
                 <SecurityGroups basePath={headNodePath} />
               </FormField>
               <SpaceBetween size="xxs">
