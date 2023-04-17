@@ -29,10 +29,6 @@ const SlurmAccountingsHelpPanel = ({title}: {title: string}) => {
         title: t('wizard.headNode.help.databaseLink.title'),
         href: t('wizard.headNode.help.databaseLink.href'),
       },
-      {
-        title: t('wizard.headNode.help.queueLink.title'),
-        href: t('wizard.headNode.help.queueLink.href'),
-      },
     ],
     [t],
   )

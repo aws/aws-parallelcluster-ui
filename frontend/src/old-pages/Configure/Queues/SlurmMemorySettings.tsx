@@ -171,6 +171,14 @@ const SlurmMemorySettingsHelpPanel = () => {
           'wizard.queues.slurmMemorySettings.container.schedulingPropertiesLink.href',
         ),
       },
+      {
+        title: t(
+          'wizard.queues.slurmMemorySettings.container.queueUpdateStrategyLink.title',
+        ),
+        href: t(
+          'wizard.queues.slurmMemorySettings.container.queueUpdateStrategyLink.href',
+        ),
+      },
     ],
     [t],
   )

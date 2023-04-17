@@ -325,6 +325,16 @@ export function FsxLustreSettings({index}: any) {
     [t],
   )
 
+  const lustreCompressionFooterLinks = useMemo(
+    () => [
+      {
+        title: t('wizard.storage.Fsx.compression.link.title'),
+        href: t('wizard.storage.Fsx.compression.link.href'),
+      },
+    ],
+    [t],
+  )
+
   return (
     <SpaceBetween direction="vertical" size="m">
       <ColumnLayout columns={2}>
@@ -481,15 +491,8 @@ export function FsxLustreSettings({index}: any) {
           helpPanel={
             <TitleDescriptionHelpPanel
               title={t('wizard.storage.Fsx.compression.label')}
-              description={
-                <Trans i18nKey="wizard.storage.Fsx.compression.help">
-                  <a
-                    rel="noreferrer"
-                    target="_blank"
-                    href="https://docs.aws.amazon.com/parallelcluster/latest/ug/SharedStorage-v3.html#yaml-SharedStorage-FsxLustreSettings-DataCompressionType"
-                  ></a>
-                </Trans>
-              }
+              description={t('wizard.storage.Fsx.compression.help')}
+              footerLinks={lustreCompressionFooterLinks}
             />
           }
         />
