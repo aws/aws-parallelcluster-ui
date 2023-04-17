@@ -38,7 +38,6 @@ import {setState, getState, useState} from '../../store'
 import {NavigateFunction} from 'react-router-dom'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
-import {StackedFlashbarProps} from '@cloudscape-design/components/flashbar/interfaces'
 import {errorsToFlashbarItems} from './errorsToFlashbarItems'
 
 // Constants
@@ -209,7 +208,7 @@ function Create() {
     FlashbarProps.MessageDefinition[]
   >([])
 
-  const flashbarProps: StackedFlashbarProps = {
+  const flashbarProps: FlashbarProps = {
     stackItems: true,
     items: flashbarItems,
   }
