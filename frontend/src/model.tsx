@@ -72,8 +72,8 @@ function request(method: HTTPMethod, url: string, body: any = undefined) {
 }
 
 function CreateCluster(
-  clusterName: any,
-  clusterConfig: any,
+  clusterName: string,
+  clusterConfig: string,
   region: string,
   selectedRegion: string,
   dryrun = false,
