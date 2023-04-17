@@ -580,7 +580,7 @@
         "title": "Head node instance"
       },
       "help": {
-        "main": "<p>Configure the head node of your cluster. The head node serves as the management node for cluster operations. You use the head node to access and manage the cluster and users. Cluster users access the head node to submit jobs.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
+        "main": "<p>Configure the head node of your cluster. The head node serves as the management node for cluster operations. You use the head node to access and manage the cluster and manage users. Cluster users access the head node to submit jobs.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "instanceSelectionLink": {
           "title": "Head node instance type selection",
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/best-practices-v3.html?icmpid=docs_parallelcluster_hp_headnode_v1#best-practices-head-node-instance-type"
