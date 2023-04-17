@@ -9,22 +9,26 @@ changelog:
       - wontfix
 
   categories:
-    - title: Features 🎉
+    - title: Features
       labels:
         - release:feature
 
-    - title: Changes 🏇
+    - title: Changes
       labels:
         - release:improvement
 
-    - title: Bugfixes 🐛
+    - title: Bugfixes
       labels:
         - release:bugfix
 
-    - title: Deprecated ☢️
+    - title: Deprecated
       labels:
         - release:deprecated
         
-    - title: Breaking Changes ☢️
+    - title: Breaking Changes
       labels:
         - release:breaking-change
+
+    - title: Known issues
+      labels:
+        - bug
