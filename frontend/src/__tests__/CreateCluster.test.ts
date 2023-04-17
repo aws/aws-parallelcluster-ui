@@ -8,7 +8,7 @@ const mockRequest = executeRequest as jest.Mock
 
 describe('given a CreateCluster command and a cluster configuration', () => {
   const clusterName = 'any-name'
-  const clusterConfiguration = {}
+  const clusterConfiguration = ''
   const mockRegion = 'some-region'
   const mockSelectedRegion = 'some-region'
 
