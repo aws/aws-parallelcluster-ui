@@ -1,4 +1,4 @@
-import {renderHook} from '@testing-library/react-hooks'
+import {renderHook, waitFor} from '@testing-library/react'
 import {useLoadingState} from '../useLoadingState'
 import {Box} from '@cloudscape-design/components'
 import React from 'react'
@@ -44,9 +44,9 @@ jest.mock('../../model', () => {
 })
 
 function expectDataToBeRequested() {
-  expect(mockGetAppConfig).toHaveBeenCalledTimes(1)
-  expect(mockGetIdentity).toHaveBeenCalledTimes(1)
-  expect(mockGetVersion).toHaveBeenCalledTimes(1)
+  waitFor(() => expect(mockGetAppConfig).toHaveBeenCalledTimes(1))
+  waitFor(() => expect(mockGetIdentity).toHaveBeenCalledTimes(1))
+  waitFor(() => expect(mockGetVersion).toHaveBeenCalledTimes(1))
 }
 
 function expectDataNotToBeRequested() {
@@ -114,12 +114,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
     })
 
     it('should request the data', async () => {
-      const {waitForNextUpdate} = renderHook(
-        () => useLoadingState(<Box></Box>),
-        {wrapper},
-      )
-
-      await waitForNextUpdate()
+      renderHook(() => useLoadingState(<Box></Box>), {wrapper})
 
       expectDataToBeRequested()
     })
@@ -139,12 +134,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
     })
 
     it('should request the data', async () => {
-      const {waitForNextUpdate} = renderHook(
-        () => useLoadingState(<Box></Box>),
-        {wrapper},
-      )
-
-      await waitForNextUpdate()
+      renderHook(() => useLoadingState(<Box></Box>), {wrapper})
 
       expectDataToBeRequested()
     })
@@ -166,12 +156,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
     })
 
     it('should request the data', async () => {
-      const {waitForNextUpdate} = renderHook(
-        () => useLoadingState(<Box></Box>),
-        {wrapper},
-      )
-
-      await waitForNextUpdate()
+      renderHook(() => useLoadingState(<Box></Box>), {wrapper})
 
       expectDataToBeRequested()
     })
@@ -259,10 +244,9 @@ describe('given a hook to load all the data necessary for the app to boot', () =
           done()
         })
 
-        const {waitForNextUpdate} = renderHook(() => useLoadingState(<></>), {
+        renderHook(() => useLoadingState(<></>), {
           wrapper,
         })
-        waitForNextUpdate()
       })
     })
   })

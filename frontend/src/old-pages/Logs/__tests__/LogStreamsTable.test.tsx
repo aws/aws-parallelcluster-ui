@@ -10,7 +10,7 @@
 // limitations under the License.
 
 import {Store} from '@reduxjs/toolkit'
-import {render, RenderResult} from '@testing-library/react'
+import {render, RenderResult, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {mock} from 'jest-mock-extended'
 import {I18nextProvider, initReactI18next} from 'react-i18next'
@@ -142,7 +142,7 @@ describe('given a component to show the log streams list and a cluster name', ()
 
     describe('when the user selects a log stream', () => {
       it('should call the selection handler with the selected log stream name', async () => {
-        await userEvent.click(screen.getByRole('radio'))
+        await waitFor(() => userEvent.click(screen.getByRole('radio')))
         expect(mockOnLogStreamSelect).toHaveBeenCalledTimes(1)
         expect(mockOnLogStreamSelect).toHaveBeenCalledWith(
           'hostname.instanceId.logIdentifier',

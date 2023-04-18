@@ -1,5 +1,5 @@
 import {Store} from '@reduxjs/toolkit'
-import {renderHook} from '@testing-library/react-hooks'
+import {renderHook} from '@testing-library/react'
 import {mock} from 'jest-mock-extended'
 import {Provider} from 'react-redux'
 import {useWizardNavigation} from '../useWizardNavigation'
