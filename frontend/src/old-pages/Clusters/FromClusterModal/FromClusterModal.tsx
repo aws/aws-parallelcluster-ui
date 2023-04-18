@@ -23,7 +23,7 @@ import {
   NonCancelableEventHandler,
 } from '@cloudscape-design/components/internal/events'
 import React, {useCallback} from 'react'
-import {useTranslation} from 'react-i18next'
+import {Trans, useTranslation} from 'react-i18next'
 import {useClustersToCopyFrom} from './useClustersToCopyFrom'
 
 interface Props {
@@ -81,7 +81,7 @@ export const FromClusterModal: React.FC<Props> = ({
       header={t('cluster.fromClusterModal.title')}
     >
       <SpaceBetween size="s">
-        <Box>{t('cluster.fromClusterModal.description')}</Box>
+        <Trans i18nKey="cluster.fromClusterModal.description" />
         <Select
           selectedOption={selectedCluster}
           options={clustersToDisplay}

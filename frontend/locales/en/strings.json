@@ -339,7 +339,7 @@
     },
     "fromClusterModal": {
       "title": "Start with an existing cluster",
-      "description": "Choose an existing cluster to populate the wizard before you start. Only clusters whose version matches the version of AWS ParallelCluster can be selected.",
+      "description": "Choose an existing cluster to populate the wizard before you start. You can only <strong>Create</strong> clusters with the same AWS ParallelCluster version that was used to create the AWS ParallelCluster UI.",
       "actions": {
         "cancel": "Cancel",
         "create": "Create"
