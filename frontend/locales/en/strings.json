@@ -507,7 +507,7 @@
       "multiUser": {
         "title": "Multiple user management properties",
         "description": "Configure Active Directory access settings for multiple users on a cluster.",
-        "help": "<p>Configure access to your Active Directory by using LDAP.</p><p>Use your existing Active Directory or create one by using the quick create method in the tutorial in <strong>Learn more</strong>.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
+        "help": "<p>Configure access to your Active Directory by using LDAP.</p><p>Use your existing Active Directory or create one by using the quick create method described in the <0>$t(wizard.cluster.multiUser.adLink.title)</0>.</p><p>Choose <strong>Refresh</strong> to view recently changed or added AWS resources.</p>",
         "multiUserAccessLink": {
           "title": "Multiple user access to clusters",
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/multi-user-v3.html?icmpid=docs_parallelcluster_hp_multi_user_v1"

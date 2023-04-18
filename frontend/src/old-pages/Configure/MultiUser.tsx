@@ -22,6 +22,7 @@ import {
   Input,
   SpaceBetween,
   CheckboxProps,
+  Link,
 } from '@cloudscape-design/components'
 
 // State
@@ -305,10 +306,6 @@ export const MultiUserHelpPanel = () => {
         href: t('wizard.cluster.multiUser.multiUserAccessLink.href'),
       },
       {
-        title: t('wizard.cluster.multiUser.adLink.title'),
-        href: t('wizard.cluster.multiUser.adLink.href'),
-      },
-      {
         title: t('wizard.cluster.multiUser.directoryServiceLink.title'),
         href: t('wizard.cluster.multiUser.directoryServiceLink.href'),
       },
@@ -318,7 +315,15 @@ export const MultiUserHelpPanel = () => {
   return (
     <TitleDescriptionHelpPanel
       title={t('wizard.cluster.multiUser.title')}
-      description={<Trans i18nKey="wizard.cluster.multiUser.help" />}
+      description={
+        <Trans i18nKey="wizard.cluster.multiUser.help">
+          <Link
+            external
+            externalIconAriaLabel={t('global.openNewTab')}
+            href={t('wizard.cluster.multiUser.adLink.href')}
+          />
+        </Trans>
+      }
       footerLinks={footerLinks}
     />
   )
