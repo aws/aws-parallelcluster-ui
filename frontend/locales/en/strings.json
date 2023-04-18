@@ -1083,7 +1083,7 @@
       "configuration": {
         "title": "Cluster configuration YAML file",
         "description": "Review or edit the YAML file that is used to create your cluster",
-        "pending": "{{action}} request pending...",
+        "pending": "<strong>{{clusterName}}</strong> {{action}} is in progress. In <strong>Clusters</strong>, view <strong>{{clusterName}}</strong> {{action}} status.",
         "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running."
       },
       "flashBar": {

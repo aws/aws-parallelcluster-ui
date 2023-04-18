@@ -24,7 +24,6 @@ import {
   Container,
   Header,
   Checkbox,
-  Spinner,
   SpaceBetween,
   Flashbar,
   FlashbarProps,
@@ -34,7 +33,7 @@ import {
 import ConfigView from '../../components/ConfigView'
 
 // State
-import {setState, getState, useState} from '../../store'
+import {setState, getState, useState, updateState} from '../../store'
 import {NavigateFunction} from 'react-router-dom'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
@@ -189,6 +188,7 @@ const EditReviewHelpPanel = () => {
 function Create() {
   const {t} = useTranslation()
   const clusterConfig = useState(configPath)
+  const clusterName = useState(['app', 'wizard', 'clusterName'])
   const forceUpdate = useState(['app', 'wizard', 'forceUpdate']) || false
   const errors = useState(['app', 'wizard', 'errors', 'create'])
   const pending = useState(['app', 'wizard', 'pending'])
@@ -200,9 +200,44 @@ function Create() {
 
   useHelpPanel(<HelpPanelComponent />)
 
+  const setPendingFlashbar = React.useCallback(
+    (pending: boolean) => {
+      const content = (
+        <Trans
+          i18nKey="wizard.create.configuration.pending"
+          values={{
+            clusterName: clusterName,
+            action: editing ? 'update' : 'create',
+          }}
+        />
+      )
+      const messageId = 'cluster-loading'
+      if (pending) {
+        updateState(
+          ['app', 'messages'],
+          (currentMessages: Array<FlashbarProps.MessageDefinition>) =>
+            (currentMessages || []).concat({
+              id: messageId,
+              content: content,
+              loading: true,
+              type: 'success',
+            }),
+        )
+      } else {
+        updateState(
+          ['app', 'messages'],
+          (currentMessages: Array<FlashbarProps.MessageDefinition>) =>
+            (currentMessages || []).filter(message => message.id !== messageId),
+        )
+      }
+    },
+    [clusterName, editing],
+  )
+
   React.useEffect(() => {
     setFlashbarItems(errorsToFlashbarItems(errors, setFlashbarItems))
-  }, [errors])
+    if (pending !== null) setPendingFlashbar(pending)
+  }, [errors, pending, setPendingFlashbar])
 
   const [flashbarItems, setFlashbarItems] = React.useState<
     FlashbarProps.MessageDefinition[]
@@ -232,12 +267,6 @@ function Create() {
             setState(configPath, detail.value)
           }}
         />
-        {pending && (
-          <div>
-            <Spinner size="normal" />{' '}
-            {t('wizard.create.configuration.pending', {action: pending})}
-          </div>
-        )}
         {editing && (
           <Checkbox
             checked={forceUpdate}
