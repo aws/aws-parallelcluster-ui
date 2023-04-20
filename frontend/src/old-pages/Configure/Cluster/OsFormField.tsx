@@ -13,6 +13,7 @@ import {FormField, Tiles, TilesProps} from '@cloudscape-design/components'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {useCallback} from 'react'
 import {useTranslation} from 'react-i18next'
+import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 import {setState, useState} from '../../../store'
 
 const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
@@ -23,15 +24,17 @@ const SUPPORTED_OSES_LIST: TilesProps.TilesDefinition[] = [
   {value: 'ubuntu1804', label: 'Ubuntu 18.04'},
   {value: 'ubuntu2004', label: 'Ubuntu 20.04'},
 ]
+const RHEL8_OS = {value: 'rhel8', label: 'Red Hat Enterprise Linux 8'}
 
 export function OsFormField() {
   const {t} = useTranslation()
   const editing = useState(['app', 'wizard', 'editing'])
   const selectedOsValue = useState(osPath) || 'alinux2'
 
-  const osesList = editing
-    ? SUPPORTED_OSES_LIST.map(os => ({...os, disabled: true}))
+  let osesList = useFeatureFlag('rhel8')
+    ? SUPPORTED_OSES_LIST.concat(RHEL8_OS)
     : SUPPORTED_OSES_LIST
+  osesList = editing ? osesList.map(os => ({...os, disabled: true})) : osesList
 
   const handleChange: NonCancelableEventHandler<TilesProps.ChangeDetail> =
     useCallback(({detail}) => {

@@ -24,3 +24,4 @@ export type AvailableFeature =
   | 'efs_deletion_policy'
   | 'lustre_deletion_policy'
   | 'imds_support'
+  | 'rhel8'
