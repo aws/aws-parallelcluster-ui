@@ -38,6 +38,7 @@ from api.PclusterApiHandler import (
     scontrol_job,
     CLIENT_ID, CLIENT_SECRET, USER_POOL_ID, pc
 )
+from api.costmonitoring import costs
 from api.logging import parse_log_entry, push_log_entry
 from api.pcm_globals import logger
 from api.security.csrf import CSRF
@@ -216,6 +217,7 @@ def run():
         return utils.serve_frontend(app, base)
 
     app.register_blueprint(pc, url_prefix='/api')
+    app.register_blueprint(costs, url_prefix='/costs')
     return app
 
 
