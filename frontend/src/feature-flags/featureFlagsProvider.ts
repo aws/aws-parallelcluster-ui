@@ -46,6 +46,12 @@ function composeFlagsListByVersion(currentVersion: string): AvailableFeature[] {
 
 export function featureFlagsProvider(version: string): AvailableFeature[] {
   const features: AvailableFeature[] = []
+  const additionalFeatures = window.sessionStorage.getItem('additionalFeatures')
+  const additionalFeaturesParsed = additionalFeatures
+    ? JSON.parse(additionalFeatures)
+    : []
 
-  return features.concat(composeFlagsListByVersion(version))
+  return features
+    .concat(composeFlagsListByVersion(version))
+    .concat(additionalFeaturesParsed)
 }
