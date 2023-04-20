@@ -62,4 +62,25 @@ describe('given a feature flags provider and a list of rules', () => {
       ])
     })
   })
+
+  describe('when an additional feature has been enabled through the browser session storage', () => {
+    beforeEach(() => {
+      window.sessionStorage.clear()
+      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
+    })
+    it('should be included in the list of features', async () => {
+      const features = await subject('3.1.5')
+      expect(features).toEqual(['multiuser_cluster', 'cost_monitoring'])
+    })
+  })
+
+  describe('when no additional features have been enabled through the browser session storage', () => {
+    beforeEach(() => {
+      window.sessionStorage.clear()
+    })
+    it('should not be included in the list of features', async () => {
+      const features = await subject('3.1.5')
+      expect(features).toEqual(['multiuser_cluster'])
+    })
+  })
 })
