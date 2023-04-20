@@ -11,15 +11,14 @@
 import React, {useCallback, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 import {useCollection} from '@cloudscape-design/collection-hooks'
-import {clearState, setState, getState, useState} from '../../store'
+import {clearState, setState, useState} from '../../store'
 
-import {CreateUser, DeleteUser, ListUsers, notify} from '../../model'
+import {DeleteUser, ListUsers} from '../../model'
 
 // UI Elements
 import {
   Button,
   Header,
-  Input,
   Pagination,
   SpaceBetween,
   Table,
@@ -41,11 +40,8 @@ import {Trans, useTranslation} from 'react-i18next'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
 import {extendCollectionsOptions} from '../../shared/extendCollectionsOptions'
+import AddUserModal from './AddUserModal'
 
-// Constants
-const usernamePath = ['app', 'users', 'newUser', 'Username']
-
-// selectors
 const selectUserIndex = (state: any) => state.users.index
 
 function UsersHelpPanel() {
@@ -75,12 +71,7 @@ export default function Users() {
   const deletedUser = useState(['app', 'user', 'delete'])
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([])
   const currentUserEmail = useState(['identity', 'attributes', 'email'])
-
-  const newUser = useState(['app', 'users', 'newUser'])
-  const [createUserInputValidated, setCreateUserInputValidated] =
-    React.useState(true)
-
-  const username = useState(usernamePath)
+  const [addUserModalVisible, setAddUserModalVisible] = React.useState(false)
 
   useHelpPanel(<UsersHelpPanel />)
 
@@ -91,19 +82,6 @@ export default function Users() {
   const refreshUsers = useCallback(() => {
     ListUsers()
   }, [])
-
-  const createUser = useCallback(() => {
-    const validated = userValidate()
-    setCreateUserInputValidated(validated)
-
-    if (validated) {
-      CreateUser(newUser, () => {
-        clearState(['app', 'users', 'newUser'])
-      })
-    } else {
-      notify(t('users.list.createForm.invalidEmail'), 'error')
-    }
-  }, [newUser, t])
 
   const {
     items,
@@ -165,11 +143,6 @@ export default function Users() {
     setSelectedUsers(detail.selectedItems)
   }, [])
 
-  const onCreateUserChangeCallback = useCallback(({detail}) => {
-    setState(usernamePath, detail.value)
-    setCreateUserInputValidated(true)
-  }, [])
-
   return (
     <Layout pageSlug={usersSlug}>
       <DeleteDialog
@@ -179,6 +152,10 @@ export default function Users() {
       >
         {t('users.list.dialogs.delete.body', {userEmail})}
       </DeleteDialog>
+      <AddUserModal
+        visible={addUserModalVisible}
+        setVisible={setAddUserModalVisible}
+      />
       <Table
         {...collectionProps}
         resizableColumns
@@ -206,15 +183,10 @@ export default function Users() {
                 >
                   {t('users.actions.remove')}
                 </Button>
-                <div onKeyPress={e => e.key === 'Enter' && createUser()}>
-                  <Input
-                    onChange={onCreateUserChangeCallback}
-                    invalid={!createUserInputValidated}
-                    value={username}
-                    placeholder={t('users.list.createForm.emailPlaceholder')}
-                  ></Input>
-                </div>
-                <Button variant="primary" onClick={createUser}>
+                <Button
+                  variant="primary"
+                  onClick={() => setAddUserModalVisible(true)}
+                >
                   {t('users.actions.add')}
                 </Button>
               </SpaceBetween>
@@ -258,10 +230,4 @@ export default function Users() {
       />
     </Layout>
   )
-}
-
-function userValidate() {
-  const username = getState(['app', 'users', 'newUser', 'Username'])
-  const regex = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/
-  return regex.test(username)
 }
