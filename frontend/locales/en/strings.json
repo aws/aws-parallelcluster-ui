@@ -1179,6 +1179,9 @@
       "title": "Users",
       "description": "Maintain the list of cognito users with credentials that only permit access to the $t(global.projectName).<p>Enter a user email address and choose <strong>Add user</strong></p><p>Choose <strong>Remove</strong> to remove a user.</p><p>Choose <strong>Refresh</strong> to view changes to the list of users.</p>"
     },
+    "errors": {
+      "invalidEmail": "You must enter a valid email"
+    },
     "list": {
       "columns": {
         "email": "Email",
@@ -1190,10 +1193,9 @@
           "body": "Are you sure you want to delete user {{userEmail}}?"
         }
       },
-      "createForm": {
-        "phoneNumberPlaceholder": "+11234567890",
-        "emailPlaceholder": "email@domain.com",
-        "invalidEmail": "You must enter a valid email"
+      "createModal": {
+        "emailLabel": "Email",
+        "emailPlaceholder": "email@domain.com"
       },
       "filtering": {
         "loadingText": "Loading users...",
