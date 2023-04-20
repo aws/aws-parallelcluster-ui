@@ -90,4 +90,48 @@ describe('given a component to select an Operating System', () => {
       })
     })
   })
+
+  describe('when the version is >= 3.6.0', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {version: {full: '3.6.0'}},
+      })
+    })
+
+    describe('when the user choose between supported oses', () => {
+      beforeEach(() => {
+        screen = render(
+          <MockProviders>
+            <OsFormField />
+          </MockProviders>,
+        )
+      })
+
+      it('should have RHEL 8 as an available option', () => {
+        expect(screen.getByLabelText('Red Hat Enterprise Linux 8')).toBeTruthy()
+      })
+    })
+  })
+
+  describe('when the version is < 3.6.0', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {version: {full: '3.3.0'}},
+      })
+    })
+
+    describe('when the user choose between supported oses', () => {
+      beforeEach(() => {
+        screen = render(
+          <MockProviders>
+            <OsFormField />
+          </MockProviders>,
+        )
+      })
+
+      it('should not have RHEL 8 as an available option', () => {
+        expect(screen.queryByText('Red Hat Enterprise Linux 8')).toBeNull()
+      })
+    })
+  })
 })
