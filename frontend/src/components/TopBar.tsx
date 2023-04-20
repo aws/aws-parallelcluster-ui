@@ -127,7 +127,6 @@ export default function Topbar() {
     setState(['app', 'selectedRegion'], newRegion)
     clearClusterOnRegionChange(location.pathname, navigate)
     clearAllState()
-    LoadInitialState()
     queryClient.invalidateQueries()
   }
 
