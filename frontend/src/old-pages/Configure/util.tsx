@@ -11,11 +11,13 @@
 // limitations under the License.
 
 import {setState, getState, clearState} from '../../store'
-import {LoadAwsConfig} from '../../model'
+import {GetConfiguration, LoadAwsConfig} from '../../model'
 import {getIn, setIn} from '../../util'
 import {mapComputeResources} from './Queues/queues.mapper'
 import {mapStorageToUiSettings} from './Storage/storage.mapper'
 import {Storages} from './Storage.types'
+// @ts-expect-error TS(7016) FIXME: Could not find a declaration file for module 'js-y... Remove this comment to see the full error message
+import {load} from 'js-yaml'
 
 function loadTemplateLazy(config: any, callback?: () => void) {
   const loadingPath = ['app', 'wizard', 'source', 'loading']
@@ -154,4 +156,13 @@ function subnetName(subnet: any) {
   return tags.length > 0 ? tags[0].Value : null
 }
 
-export {loadTemplate, subnetName}
+const wizardLoadingPath = ['app', 'wizard', 'source', 'loading']
+
+function loadTemplateFromCluster(clusterName: string) {
+  setState(wizardLoadingPath, true)
+  GetConfiguration(clusterName, (configuration: any) => {
+    loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
+  })
+}
+
+export {loadTemplate, subnetName, loadTemplateFromCluster}
