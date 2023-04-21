@@ -41,6 +41,8 @@ import {ButtonDropdown} from '@cloudscape-design/components'
 import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {ButtonDropdownProps} from '@cloudscape-design/components/button-dropdown/interfaces'
 
+const loadingPath = ['app', 'wizard', 'source', 'loading']
+
 export default function Actions() {
   const clusterName = useState(['app', 'clusters', 'selected'])
   const clusterPath = ['clusters', 'index', clusterName]
@@ -106,8 +108,11 @@ export default function Actions() {
 
     navigate('/configure')
 
+    setState(loadingPath, true)
     GetConfiguration(clusterName, (configuration: any) => {
-      loadTemplate(jsyaml.load(configuration))
+      loadTemplate(jsyaml.load(configuration), () =>
+        setState(loadingPath, false),
+      )
     })
   }, [clusterName, navigate])
 
