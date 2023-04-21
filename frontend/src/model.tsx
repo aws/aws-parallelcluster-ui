@@ -34,12 +34,19 @@ import flowRight from 'lodash/flowRight'
 // Types
 type Callback = (arg?: any) => void
 
-function notify(text: any, type = 'info', id?: string, dismissible = true) {
+function notify(
+  text: any,
+  type = 'info',
+  id?: string,
+  dismissible = true,
+  loading = false,
+) {
   let messageId = id || generateRandomId()
   let newMessage = {
     type: type,
     content: text,
     id: messageId,
+    loading: loading,
     dismissible: dismissible,
     onDismiss: () =>
       updateState(['app', 'messages'], (currentMessages: Array<any>) =>
@@ -97,7 +104,6 @@ function CreateCluster(
     .then((response: any) => {
       if (response.status === 202) {
         if (!dryrun && region === selectedRegion) {
-          notify('Successfully created: ' + clusterName, 'success')
           updateState(['clusters', 'index', clusterName], (existing: any) => {
             return {...existing, ...response.data}
           })
