@@ -1080,10 +1080,11 @@
     "create": {
       "title": "Create",
       "description": "Review or edit your cluster configuration and create your cluster.",
+      "pending": "<strong>{{clusterName}}</strong> create is in progress. In <strong>Clusters</strong>, view <strong>{{clusterName}}</strong> create status.",
+      "success": "<strong>{{clusterName}}</strong> successfully created.",
       "configuration": {
         "title": "Cluster configuration YAML file",
         "description": "Review or edit the YAML file that is used to create your cluster.",
-        "pending": "<strong>{{clusterName}}</strong> {{action}} is in progress. In <strong>Clusters</strong>, view <strong>{{clusterName}}</strong> {{action}} status.",
         "forceUpdate": "Force update: Edit the cluster while the compute fleet is still running."
       },
       "flashBar": {
@@ -1101,6 +1102,7 @@
     },
     "update": {
       "title": "Edit",
+      "pending": "<strong>{{clusterName}}</strong> update is in progress. In <strong>Clusters</strong>, view <strong>{{clusterName}}</strong> update status.",
       "helpPanel": {
         "title": "Cluster configuration",
         "description": "<p>Review, edit and test cluster configuration.</p><p>Choose <strong>Dry run</strong> to validate your configuration without editing your cluster.</p><p>Choose <strong>Edit cluster</strong> to validate your configuration and edit your cluster in one step.</p>",
@@ -1109,6 +1111,9 @@
           "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/cluster-configuration-file-v3.html?icmpid=docs_parallelcluster_hp_config_create_v1"
         }
       }
+    },
+    "dryRun": {
+      "pending": "<strong>{{clusterName}}</strong> dry-run is in progress."
     },
     "components": {
       "instanceSelect": {

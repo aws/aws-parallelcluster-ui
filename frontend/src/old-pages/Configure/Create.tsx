@@ -11,13 +11,7 @@
 // limitations under the License.
 import * as React from 'react'
 import {Trans, useTranslation} from 'react-i18next'
-import {
-  CreateCluster,
-  UpdateCluster,
-  ListClusters,
-  DescribeCluster,
-  notify,
-} from '../../model'
+import {CreateCluster, UpdateCluster, ListClusters, notify} from '../../model'
 
 // UI Elements
 import {
@@ -41,6 +35,7 @@ import {errorsToFlashbarItems} from './errorsToFlashbarItems'
 
 // Constants
 const configPath = ['app', 'wizard', 'clusterConfigYaml']
+const clusterLoadingMsgId = 'cluster-loading'
 
 function handleWarnings(resp: any) {
   if (!resp.validationMessages) return
@@ -48,6 +43,45 @@ function handleWarnings(resp: any) {
   resp.validationMessages.forEach((message: any) => {
     notify(message.message, 'warning')
   })
+}
+
+function setClusterLoadingMsg(
+  clusterName: string,
+  editing: boolean,
+  dryRun: boolean,
+) {
+  let content: React.ReactElement
+  if (dryRun) {
+    content = (
+      <Trans
+        i18nKey={'wizard.dryRun.pending'}
+        values={{clusterName: clusterName}}
+      />
+    )
+  } else {
+    content = editing ? (
+      <Trans
+        i18nKey={'wizard.update.pending'}
+        values={{clusterName: clusterName}}
+      />
+    ) : (
+      <Trans
+        i18nKey={'wizard.create.pending'}
+        values={{clusterName: clusterName}}
+      />
+    )
+  }
+  notify(content, 'success', clusterLoadingMsgId, true, true)
+}
+
+function removeClusterLoadingMsg() {
+  updateState(
+    ['app', 'messages'],
+    (currentMessages: Array<FlashbarProps.MessageDefinition>) =>
+      (currentMessages || []).filter(
+        message => message.id !== clusterLoadingMsgId,
+      ),
+  )
 }
 
 function handleCreate(
@@ -61,25 +95,32 @@ function handleCreate(
   const dryRun = false
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
+  setClusterLoadingMsg(clusterName, editing, dryRun)
+
   var errHandler = (err: any) => {
     setState(['app', 'wizard', 'errors', 'create'], err)
-    setState(['app', 'wizard', 'pending'], false)
+    removeClusterLoadingMsg()
   }
   var successHandler = (resp: any) => {
     let href = `/clusters/${clusterName}/stack-events`
     handleWarnings(resp)
-
-    setState(['app', 'wizard', 'pending'], false)
-    DescribeCluster(clusterName)
+    setState(['app', 'selectedRegion'], region)
     setState(['app', 'clusters', 'selected'], clusterName)
+
     ListClusters()
     clearWizardState()
+    notify(
+      <Trans
+        i18nKey={'wizard.create.success'}
+        values={{clusterName: clusterName}}
+      />,
+      'success',
+    )
     navigate(href)
   }
   setState(['app', 'wizard', 'errors', 'create'], null)
 
   if (editing) {
-    setState(['app', 'wizard', 'pending'], 'Update')
     UpdateCluster(
       clusterName,
       clusterConfig,
@@ -89,7 +130,6 @@ function handleCreate(
       errHandler,
     )
   } else {
-    setState(['app', 'wizard', 'pending'], 'Create')
     CreateCluster(
       clusterName,
       clusterConfig,
@@ -110,15 +150,15 @@ function handleDryRun() {
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
   const dryRun = true
+  setClusterLoadingMsg(clusterName, editing, dryRun)
+
   var errHandler = (err: any) => {
     setState(['app', 'wizard', 'errors', 'create'], err)
-    setState(['app', 'wizard', 'pending'], false)
+    removeClusterLoadingMsg()
   }
   var successHandler = (resp: any) => {
     handleWarnings(resp)
-    setState(['app', 'wizard', 'pending'], false)
   }
-  setState(['app', 'wizard', 'pending'], 'Dry Run')
   setState(['app', 'wizard', 'errors', 'create'], null)
   if (editing)
     UpdateCluster(
@@ -188,10 +228,8 @@ const EditReviewHelpPanel = () => {
 function Create() {
   const {t} = useTranslation()
   const clusterConfig = useState(configPath)
-  const clusterName = useState(['app', 'wizard', 'clusterName'])
   const forceUpdate = useState(['app', 'wizard', 'forceUpdate']) || false
   const errors = useState(['app', 'wizard', 'errors', 'create'])
-  const pending = useState(['app', 'wizard', 'pending'])
   const editing = getState(['app', 'wizard', 'editing'])
 
   const HelpPanelComponent = editing
@@ -200,44 +238,9 @@ function Create() {
 
   useHelpPanel(<HelpPanelComponent />)
 
-  const setPendingFlashbar = React.useCallback(
-    (pending: boolean) => {
-      const content = (
-        <Trans
-          i18nKey="wizard.create.configuration.pending"
-          values={{
-            clusterName: clusterName,
-            action: editing ? 'update' : 'create',
-          }}
-        />
-      )
-      const messageId = 'cluster-loading'
-      if (pending) {
-        updateState(
-          ['app', 'messages'],
-          (currentMessages: Array<FlashbarProps.MessageDefinition>) =>
-            (currentMessages || []).concat({
-              id: messageId,
-              content: content,
-              loading: true,
-              type: 'success',
-            }),
-        )
-      } else {
-        updateState(
-          ['app', 'messages'],
-          (currentMessages: Array<FlashbarProps.MessageDefinition>) =>
-            (currentMessages || []).filter(message => message.id !== messageId),
-        )
-      }
-    },
-    [clusterName, editing],
-  )
-
   React.useEffect(() => {
     setFlashbarItems(errorsToFlashbarItems(errors, setFlashbarItems))
-    if (pending !== null) setPendingFlashbar(pending)
-  }, [errors, pending, setPendingFlashbar])
+  }, [errors])
 
   const [flashbarItems, setFlashbarItems] = React.useState<
     FlashbarProps.MessageDefinition[]
