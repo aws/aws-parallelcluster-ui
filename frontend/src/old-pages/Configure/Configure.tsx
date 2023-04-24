@@ -106,6 +106,7 @@ function Configure() {
   const clusterName = useState(['app', 'wizard', 'clusterName'])
   const editing = useState(['app', 'wizard', 'editing'])
   const currentPage = useState(['app', 'wizard', 'page']) || INITIAL_WIZARD_PAGE
+  const loadingExistingConfiguration = useState(loadingPath)
   const [refreshing, setRefreshing] = React.useState(false)
   let navigate = useNavigate()
 
@@ -242,7 +243,7 @@ function Configure() {
         onSubmit={handleSubmit}
         activeStepIndex={pages.indexOf(currentPage)}
         secondaryActions={showSecondaryActions()}
-        isLoadingNextStep={refreshing}
+        isLoadingNextStep={refreshing || loadingExistingConfiguration}
         steps={[
           {
             title: t('wizard.cluster.title'),

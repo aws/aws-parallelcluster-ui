@@ -12,18 +12,9 @@ import {ClusterStatus} from '../../types/clusters'
 import React from 'react'
 import {useNavigate} from 'react-router-dom'
 
-// @ts-expect-error TS(7016) FIXME: Could not find a declaration file for module 'js-y... Remove this comment to see the full error message
-import jsyaml from 'js-yaml'
-
 import {setState, useState, ssmPolicy, consoleDomain} from '../../store'
-import {
-  UpdateComputeFleet,
-  GetConfiguration,
-  GetDcvSession,
-  DeleteCluster,
-} from '../../model'
+import {UpdateComputeFleet, GetDcvSession, DeleteCluster} from '../../model'
 import {findFirst, clusterDefaultUser} from '../../util'
-import {loadTemplate} from '../Configure/util'
 import {useTranslation} from 'react-i18next'
 
 import Button from '@cloudscape-design/components/button'
@@ -40,6 +31,7 @@ import {wizardShow} from '../Configure/Configure'
 import {ButtonDropdown} from '@cloudscape-design/components'
 import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {ButtonDropdownProps} from '@cloudscape-design/components/button-dropdown/interfaces'
+import {loadTemplateFromCluster} from '../Configure/util'
 
 export default function Actions() {
   const clusterName = useState(['app', 'clusters', 'selected'])
@@ -105,10 +97,7 @@ export default function Actions() {
     setState(['app', 'wizard', 'editing'], true)
 
     navigate('/configure')
-
-    GetConfiguration(clusterName, (configuration: any) => {
-      loadTemplate(jsyaml.load(configuration))
-    })
+    loadTemplateFromCluster(clusterName)
   }, [clusterName, navigate])
 
   const deleteCluster = React.useCallback(() => {
