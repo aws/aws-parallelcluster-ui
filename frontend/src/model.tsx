@@ -30,6 +30,10 @@ import {AxiosError} from 'axios'
 import {UserIdentity} from './auth/types'
 import {ConfigObject, ConfigTag, PCVersion} from './types/base'
 import flowRight from 'lodash/flowRight'
+import {
+  CostMonitoringStatus,
+  CostMonitoringStatusResponse,
+} from './old-pages/Costs/costs.types'
 
 // Types
 type Callback = (arg?: any) => void
@@ -869,6 +873,21 @@ async function GetAppConfig() {
   }
 }
 
+async function GetCostMonitoringStatus(): Promise<CostMonitoringStatus> {
+  var url = `costs`
+  try {
+    const {data}: {data: CostMonitoringStatusResponse} = await request(
+      'get',
+      url,
+    )
+    return data?.active || false
+  } catch (error) {
+    if ((error as AxiosError).response) {
+      notify(`Error: ${(error as any).response.data.message}`, 'error')
+    }
+    throw error
+  }
+}
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
@@ -914,4 +933,5 @@ export {
   GetIdentity,
   GetAppConfig,
   GetVersion,
+  GetCostMonitoringStatus,
 }
