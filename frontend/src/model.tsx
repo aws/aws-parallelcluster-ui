@@ -888,6 +888,13 @@ async function GetCostMonitoringStatus(): Promise<CostMonitoringStatus> {
     throw error
   }
 }
+
+async function ActivateCostMonitoring() {
+  var url = `costs`
+
+  return request('put', url)
+}
+
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
@@ -934,4 +941,5 @@ export {
   GetAppConfig,
   GetVersion,
   GetCostMonitoringStatus,
+  ActivateCostMonitoring,
 }
