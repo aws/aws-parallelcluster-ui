@@ -26,7 +26,7 @@ export function EnableCostMonitoringButton() {
   const isExperimentalModeActive = useFeatureFlag('experimental')
   const canFetchStatus = isExperimentalModeActive && isCostMonitoringActive
 
-  const {data: costMonitoringStatus} = useQuery(
+  const {data: costMonitoringStatus, isLoading} = useQuery(
     COST_MONITORING_STATUS_QUERY_KEY,
     () => GetCostMonitoringStatus(),
     {enabled: canFetchStatus},
@@ -38,6 +38,7 @@ export function EnableCostMonitoringButton() {
   }, [costMonitoringStatusMutation])
 
   if (
+    isLoading ||
     costMonitoringStatus ||
     !isExperimentalModeActive ||
     !isCostMonitoringActive
