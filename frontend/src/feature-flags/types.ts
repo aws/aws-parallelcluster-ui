@@ -25,3 +25,5 @@ export type AvailableFeature =
   | 'lustre_deletion_policy'
   | 'imds_support'
   | 'rhel8'
+  | 'cost_monitoring'
+  | 'experimental'
