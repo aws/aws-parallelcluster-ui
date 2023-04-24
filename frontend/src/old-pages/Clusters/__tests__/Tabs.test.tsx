@@ -11,14 +11,18 @@ import {
   ClusterStatus,
 } from '../../../types/clusters'
 import ClusterTabs from '../Details'
+import {QueryClient, QueryClientProvider} from 'react-query'
 
+const queryClient = new QueryClient()
 const mockStore = mock<Store>()
 const MockProviders = (props: any) => (
-  <Provider store={mockStore}>
-    <I18nextProvider i18n={i18n}>
-      <BrowserRouter>{props.children}</BrowserRouter>
-    </I18nextProvider>
-  </Provider>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={mockStore}>
+      <I18nextProvider i18n={i18n}>
+        <BrowserRouter>{props.children}</BrowserRouter>
+      </I18nextProvider>
+    </Provider>
+  </QueryClientProvider>
 )
 
 const baseClusterProps: Partial<ClusterDescription> = {

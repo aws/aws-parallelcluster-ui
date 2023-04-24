@@ -110,6 +110,7 @@
       "stackEvents": "Stack events"
     },
     "properties": {
+      "title": "Properties",
       "sshcommand": {
         "label": "SSH command",
         "success": "SSH command copied",
