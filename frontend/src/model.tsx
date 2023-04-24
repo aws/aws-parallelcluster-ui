@@ -34,17 +34,25 @@ import {
   CostMonitoringStatus,
   CostMonitoringStatusResponse,
 } from './old-pages/Costs/costs.types'
+import {FlashbarProps} from '@cloudscape-design/components'
 
 // Types
 type Callback = (arg?: any) => void
+export type NotifyFn = (
+  text: any,
+  type?: FlashbarProps.MessageDefinition['type'],
+  id?: string,
+  dismissible?: FlashbarProps.MessageDefinition['dismissible'],
+  loading?: FlashbarProps.MessageDefinition['loading']
+) => void
 
-function notify(
+const notify: NotifyFn = (
   text: any,
   type = 'info',
   id?: string,
   dismissible = true,
   loading = false,
-) {
+) => {
   let messageId = id || generateRandomId()
   let newMessage = {
     type: type,

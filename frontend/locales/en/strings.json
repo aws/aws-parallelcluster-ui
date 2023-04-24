@@ -427,6 +427,12 @@
       }
     }
   },
+  "costMonitoring": {
+    "activateButton": {
+      "activationSuccess": "Cost monitoring activation may take up to 24 hours to be enabled. Your request is being processed!",
+      "costExplorerCannotBeAccessed": "In order to use cost monitoring with PCUI, you must enable Cost Explorer for your account by opening Cost Explorer for the first time in the AWS Cost Management console." 
+    }
+  },
   "wizard": {
     "actions": {
       "refreshConfig": "Refresh",
