@@ -1,9 +1,10 @@
 import boto3
-from botocore.exceptions import ClientError
 from flask import Blueprint
 
-from .costexplorer_client import CostExplorerClient, CostMonitoringActivationException
+from .costexplorer_client import CostExplorerClient, CostExplorerNotActiveException
 from ..PclusterApiHandler import authenticated
+from ..pcm_globals import logger
+from ..security.csrf.csrf import csrf_needed
 
 COST_ALLOCATION_TAGS = ['parallelcluster:cluster-name']
 
@@ -13,29 +14,23 @@ costexplorer = boto3.client('ce')
 client = CostExplorerClient(costexplorer, cost_allocation_tags=COST_ALLOCATION_TAGS)
 
 
-@costs.get('/')
+@costs.get('')
 @authenticated({'admin'})
 def cost_monitoring_status():
     active = client.is_active()
     return {'active': active}, 200
 
 
-@costs.put('/')
+@costs.put('')
 @authenticated({'admin'})
+@csrf_needed
 def activate_cost_monitoring():
     client.activate()
     return {}, 204
 
 
-@costs.errorhandler(ClientError)
+@costs.errorhandler(CostExplorerNotActiveException)
 def handle_costexplorer_not_init_error(err):
-    code, message = 400, err.response['Error']['Message']
-    if message == 'User not enabled for cost explorer access':
-        code = 405
-
-    return {'code': code, 'message': message}, code
-
-
-@costs.errorhandler(CostMonitoringActivationException)
-def handle_costmonitoring_errors(err):
-    return {'code': 400, 'message': str(err)}, 400
+    code, description = 405, str(err)
+    logger.error(description, extra=dict(status=code, exception=type(err)))
+    return {'code': code, 'message': str(err)}, code
