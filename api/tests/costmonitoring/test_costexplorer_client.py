@@ -8,19 +8,6 @@ def costexplorer(mocker):
     return mocker.Mock()
 
 
-def test_costexplorerclient_init(mocker):
-    """
-    Given a cost exporer client
-        and valid list of cost allocation tags
-            it should be able to instantiate an object
-    """
-
-    tags = ['parallelcluster:cluster-name']
-    costexplorer = mocker.Mock()
-
-    client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
-
-
 def test_costexplorerclient_init_failing(costexplorer):
     """
     Given a cost exporer client
