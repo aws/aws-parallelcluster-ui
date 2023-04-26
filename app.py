@@ -217,7 +217,7 @@ def run():
         return utils.serve_frontend(app, base)
 
     app.register_blueprint(pc, url_prefix='/api')
-    app.register_blueprint(costs, url_prefix='/costs')
+    app.register_blueprint(costs, url_prefix='/cost-monitoring')
     return app
 
 
