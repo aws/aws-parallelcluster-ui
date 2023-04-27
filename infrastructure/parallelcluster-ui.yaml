@@ -627,8 +627,7 @@ Resources:
         - !Ref EC2Policy
         - !Ref DescribeFsxPolicy
         - !Ref DescribeEfsPolicy
-        - !Ref PricingPolicy
-        - !Ref CostMonitoringPolicy
+        - !Ref CostMonitoringAndPricingPolicy
         - !Ref SsmSendPolicy
         - !Ref SsmGetCommandInvocationPolicy
 
@@ -736,20 +735,7 @@ Resources:
             Effect: Allow
             Sid: EfsPolicy
 
-  PricingPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Action:
-              - pricing:GetProducts
-            Resource:
-              - '*'
-            Effect: Allow
-            Sid: PricingPolicy
-
-  CostMonitoringPolicy:
+  CostMonitoringAndPricingPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       PolicyDocument:
@@ -763,6 +749,12 @@ Resources:
               - !Sub 'arn:aws:ce:us-east-1:${AWS::AccountId}:/*' # CE only available in us-east-1, aws partition, see https://docs.aws.amazon.com/general/latest/gr/billing.html
             Effect: Allow
             Sid: CostMonitoringPolicy
+          - Action:
+              - pricing:GetProducts
+            Resource:
+              - '*'
+            Effect: Allow
+            Sid: PricingPolicy
 
 
   SsmSendPolicy:
