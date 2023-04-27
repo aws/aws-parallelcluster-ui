@@ -760,7 +760,7 @@ Resources:
               - ce:UpdateCostAllocationTagsStatus
               - ce:GetCostAndUsage
             Resource:
-              - !Sub 'arn:aws:ce:us-east-1:${AWS::AccountId}:/*'
+              - !Sub 'arn:aws:ce:us-east-1:${AWS::AccountId}:/*' # CE only available in us-east-1, aws partition, see https://docs.aws.amazon.com/general/latest/gr/billing.html
             Effect: Allow
             Sid: CostMonitoringPolicy
 
