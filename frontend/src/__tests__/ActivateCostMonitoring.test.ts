@@ -29,7 +29,7 @@ describe('given a ActivateCostMonitoring command', () => {
       expect(mockRequest).toHaveBeenCalledTimes(1)
       expect(mockRequest).toHaveBeenCalledWith(
         'put',
-        'costs',
+        'cost-monitoring',
         undefined,
         expect.any(Object),
         expect.any(Object),

@@ -37,7 +37,10 @@ describe('given a GetCostMonitoringStatus command', () => {
       await GetCostMonitoringStatus()
 
       expect(mockGet).toHaveBeenCalledTimes(1)
-      expect(mockGet).toHaveBeenCalledWith('costs', expect.any(Object))
+      expect(mockGet).toHaveBeenCalledWith(
+        'cost-monitoring',
+        expect.any(Object),
+      )
     })
 
     it('should return the status', async () => {

@@ -43,7 +43,7 @@ export type NotifyFn = (
   type?: FlashbarProps.MessageDefinition['type'],
   id?: string,
   dismissible?: FlashbarProps.MessageDefinition['dismissible'],
-  loading?: FlashbarProps.MessageDefinition['loading']
+  loading?: FlashbarProps.MessageDefinition['loading'],
 ) => void
 
 const notify: NotifyFn = (
@@ -882,7 +882,7 @@ async function GetAppConfig() {
 }
 
 async function GetCostMonitoringStatus(): Promise<CostMonitoringStatus> {
-  var url = `costs`
+  var url = `cost-monitoring`
   try {
     const {data}: {data: CostMonitoringStatusResponse} = await request(
       'get',
@@ -898,7 +898,7 @@ async function GetCostMonitoringStatus(): Promise<CostMonitoringStatus> {
 }
 
 async function ActivateCostMonitoring() {
-  var url = `costs`
+  var url = `cost-monitoring`
 
   return request('put', url)
 }
