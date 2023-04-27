@@ -628,6 +628,7 @@ Resources:
         - !Ref DescribeFsxPolicy
         - !Ref DescribeEfsPolicy
         - !Ref PricingPolicy
+        - !Ref CostMonitoringPolicy
         - !Ref SsmSendPolicy
         - !Ref SsmGetCommandInvocationPolicy
 
@@ -747,6 +748,22 @@ Resources:
               - '*'
             Effect: Allow
             Sid: PricingPolicy
+
+  CostMonitoringPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - ce:ListCostAllocationTags
+              - ce:UpdateCostAllocationTagsStatus
+              - ce:GetCostAndUsage
+            Resource:
+              - !Sub 'arn:aws:ce:us-east-1:${AWS::AccountId}:/*'
+            Effect: Allow
+            Sid: CostMonitoringPolicy
+
 
   SsmSendPolicy:
     Type: AWS::IAM::ManagedPolicy
