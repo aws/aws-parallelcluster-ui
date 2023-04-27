@@ -30,17 +30,29 @@ import {AxiosError} from 'axios'
 import {UserIdentity} from './auth/types'
 import {ConfigObject, ConfigTag, PCVersion} from './types/base'
 import flowRight from 'lodash/flowRight'
+import {
+  CostMonitoringStatus,
+  CostMonitoringStatusResponse,
+} from './old-pages/Costs/costs.types'
+import {FlashbarProps} from '@cloudscape-design/components'
 
 // Types
 type Callback = (arg?: any) => void
+export type NotifyFn = (
+  text: any,
+  type?: FlashbarProps.MessageDefinition['type'],
+  id?: string,
+  dismissible?: FlashbarProps.MessageDefinition['dismissible'],
+  loading?: FlashbarProps.MessageDefinition['loading'],
+) => void
 
-function notify(
+const notify: NotifyFn = (
   text: any,
   type = 'info',
   id?: string,
   dismissible = true,
   loading = false,
-) {
+) => {
   let messageId = id || generateRandomId()
   let newMessage = {
     type: type,
@@ -869,6 +881,28 @@ async function GetAppConfig() {
   }
 }
 
+async function GetCostMonitoringStatus(): Promise<CostMonitoringStatus> {
+  var url = `cost-monitoring`
+  try {
+    const {data}: {data: CostMonitoringStatusResponse} = await request(
+      'get',
+      url,
+    )
+    return data?.active || false
+  } catch (error) {
+    if ((error as AxiosError).response) {
+      notify(`Error: ${(error as any).response.data.message}`, 'error')
+    }
+    throw error
+  }
+}
+
+async function ActivateCostMonitoring() {
+  var url = `cost-monitoring`
+
+  return request('put', url)
+}
+
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
@@ -914,4 +948,6 @@ export {
   GetIdentity,
   GetAppConfig,
   GetVersion,
+  GetCostMonitoringStatus,
+  ActivateCostMonitoring,
 }
