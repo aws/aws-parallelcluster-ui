@@ -13,23 +13,21 @@ import {Button} from '@cloudscape-design/components'
 import {useCallback} from 'react'
 import {useTranslation} from 'react-i18next'
 import {useQuery} from 'react-query'
-import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 import {GetCostMonitoringStatus, notify} from '../../model'
 import {
   COST_MONITORING_STATUS_QUERY_KEY,
   useActivateCostMonitoringMutation,
 } from './costs.queries'
+import {useCostMonitoringFeature} from './useCostMonitoringFeature'
 
 export function EnableCostMonitoringButton() {
   const {t} = useTranslation()
-  const isCostMonitoringActive = useFeatureFlag('cost_monitoring')
-  const isExperimentalModeActive = useFeatureFlag('experimental')
-  const canFetchStatus = isExperimentalModeActive && isCostMonitoringActive
+  const isCostMonitoringActive = useCostMonitoringFeature()
 
   const {data: costMonitoringStatus, isLoading} = useQuery(
     COST_MONITORING_STATUS_QUERY_KEY,
     () => GetCostMonitoringStatus(),
-    {enabled: canFetchStatus},
+    {enabled: isCostMonitoringActive},
   )
   const costMonitoringStatusMutation = useActivateCostMonitoringMutation(notify)
 
@@ -37,13 +35,7 @@ export function EnableCostMonitoringButton() {
     costMonitoringStatusMutation.mutate()
   }, [costMonitoringStatusMutation])
 
-  if (
-    isLoading ||
-    costMonitoringStatus ||
-    !isExperimentalModeActive ||
-    !isCostMonitoringActive
-  )
-    return null
+  if (isLoading || costMonitoringStatus || !isCostMonitoringActive) return null
 
   return (
     <Button onClick={onClick}>
