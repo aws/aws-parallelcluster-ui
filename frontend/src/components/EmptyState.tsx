@@ -12,7 +12,13 @@
 // UI Elements
 import {Box} from '@cloudscape-design/components'
 
-export default function EmptyState({title, subtitle, action}: any) {
+interface Props {
+  title: string
+  subtitle: string
+  action?: React.ReactElement
+}
+
+export default function EmptyState({title, subtitle, action}: Props) {
   return (
     <Box textAlign="center" color="inherit">
       <Box variant="strong" textAlign="center" color="inherit">
