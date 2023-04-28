@@ -441,6 +441,36 @@
       "title": "$t(costMonitoring.title)",
       "description": "<p>View the costs for your cluster.</p>"
     },
+    "costData": {
+      "title": "Spending analysis",
+      "viewInCostExplorer": "View in Cost Explorer",
+      "viewBudgets": "View Budgets and Alarms",
+      "chart": {
+        "title": "Spending analysis chart",
+        "yTitle": "Spent",
+        "xTitle": "Months",
+        "loadingText": "Loading spending data...",
+        "errorText": "Could not load spending data.",
+        "recoveryText": "Retry",
+        "empty": {
+          "title": "No spending data",
+          "subtitle": "No spending data to display."
+        },
+        "months": {
+          "jan": "January",
+          "feb": "February",
+          "mar": "March",
+          "apr": "April",
+          "may": "May",
+          "jun": "June",
+          "jul": "July",
+          "aug": "August",
+          "sep": "September",
+          "oct": "October",
+          "nov": "November",
+          "dec": "December"
+        }
+      }
     }
   },
   "wizard": {

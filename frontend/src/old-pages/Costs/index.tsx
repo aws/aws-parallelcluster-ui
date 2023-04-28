@@ -22,6 +22,7 @@ import InfoLink from '../../components/InfoLink'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import Layout from '../Layout'
+import {CostData} from './CostData'
 
 function CostMonitoringHelpPanel({clusterName}: {clusterName: string}) {
   const {t} = useTranslation()
@@ -67,7 +68,9 @@ export function Costs() {
             {t('costMonitoring.title', {clusterName})}
           </Header>
         }
-      ></ContentLayout>
+      >
+        <CostData clusterName={clusterName!} />
+      </ContentLayout>
     </Layout>
   )
 }
