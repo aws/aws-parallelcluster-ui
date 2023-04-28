@@ -289,7 +289,8 @@
         "shell": "Shell",
         "filesystem": "View file system",
         "dcv": "DCV",
-        "logs": "View logs"
+        "logs": "View logs",
+        "costs": "View costs"
       },
       "actionsLabel": "Actions",
       "filtering": {
@@ -429,10 +430,17 @@
     }
   },
   "costMonitoring": {
+    "title": "Cluster {{clusterName}} costs",
+    "breadcrumbLabel": "Costs",
     "activateButton": {
       "label": "Activate cost monitoring",
       "activationSuccess": "Cost monitoring activation may take up to 24 hours to be enabled. Your request is being processed!",
       "costExplorerCannotBeAccessed": "In order to use cost monitoring with PCUI, you must enable Cost Explorer for your account by opening Cost Explorer for the first time in the AWS Cost Management console." 
+    },
+    "helpPanel": {
+      "title": "$t(costMonitoring.title)",
+      "description": "<p>View the costs for your cluster.</p>"
+    },
     }
   },
   "wizard": {

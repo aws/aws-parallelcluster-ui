@@ -32,6 +32,8 @@ import {ButtonDropdown} from '@cloudscape-design/components'
 import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {ButtonDropdownProps} from '@cloudscape-design/components/button-dropdown/interfaces'
 import {loadTemplateFromCluster} from '../Configure/util'
+import {useCostMonitoringFeature} from '../Costs/useCostMonitoringFeature'
+import {useCostMonitoringStatus} from '../Costs/costs.queries'
 
 export default function Actions() {
   const clusterName = useState(['app', 'clusters', 'selected'])
@@ -67,6 +69,9 @@ export default function Actions() {
     'AdditionalIamPolicies',
   ])
   const ssmEnabled = iamPolicies && findFirst(iamPolicies, isSsmPolicy)
+
+  const isCostMonitoringFeatureEnabled = useCostMonitoringFeature()
+  const {data: isCostMonitoringStatusActive} = useCostMonitoringStatus()
 
   const isHeadNode =
     headNode && headNode.publicIpAddress && headNode.publicIpAddress !== ''
@@ -170,6 +175,9 @@ export default function Actions() {
           case 'logs':
             navigate(`/clusters/${clusterName}/logs`)
             break
+          case 'costs':
+            navigate(`/clusters/${clusterName}/costs`)
+            break
           case 'delete':
             showDialog('deleteCluster')
             break
@@ -185,6 +193,13 @@ export default function Actions() {
           id: 'logs',
           text: t('cluster.list.actions.logs'),
         },
+        isCostMonitoringFeatureEnabled
+          ? {
+              id: 'costs',
+              text: t('cluster.list.actions.costs'),
+              disabled: !isCostMonitoringStatusActive,
+            }
+          : null,
         {
           id: 'filesystem',
           text: t('cluster.list.actions.filesystem'),
@@ -202,8 +217,15 @@ export default function Actions() {
           text: t('cluster.list.actions.delete'),
           disabled: isDeleteDisabled,
         },
-      ]
-    }, [isSsmDisabled, isEditDisabled, isDeleteDisabled, t])
+      ].filter(Boolean) as ButtonDropdownProps.ItemOrGroup[]
+    }, [
+      t,
+      isCostMonitoringFeatureEnabled,
+      isCostMonitoringStatusActive,
+      isSsmDisabled,
+      isEditDisabled,
+      isDeleteDisabled,
+    ])
 
   const isActionsDisabled = isSsmDisabled && isEditDisabled && isDeleteDisabled
 
