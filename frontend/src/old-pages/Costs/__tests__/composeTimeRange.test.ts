@@ -10,18 +10,31 @@
 // limitations under the License.
 
 import {composeTimeRange} from '../composeTimeRange'
+import tzmock from 'timezone-mock'
 
 describe('given a function to generate a time range for the last 12 months', () => {
+  beforeEach(() => {
+    tzmock.register('UTC')
+  })
+
+  afterEach(() => {
+    tzmock.unregister()
+  })
+
   describe('given a date', () => {
-    const mockDate = new Date('2023-04-21T12:11:15Z')
+    let mockDate: Date
+
+    beforeEach(() => {
+      mockDate = new Date('2023-04-21T12:11:15Z')
+    })
 
     it('returns the given date in ISO string', () => {
-      expect(composeTimeRange(mockDate).toDate).toBe('2023-04-20T22:00:00.000Z')
+      expect(composeTimeRange(mockDate).toDate).toBe('2023-04-21T00:00:00.000Z')
     })
 
     it('returns the date of 12 months earlier in ISO string', () => {
       expect(composeTimeRange(mockDate).fromDate).toBe(
-        '2022-04-20T22:00:00.000Z',
+        '2022-04-21T00:00:00.000Z',
       )
     })
   })
