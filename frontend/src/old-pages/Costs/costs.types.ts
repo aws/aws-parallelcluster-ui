@@ -14,3 +14,16 @@ export type CostMonitoringStatus = boolean
 export interface CostMonitoringStatusResponse {
   active: CostMonitoringStatus
 }
+
+export interface CostMonitoringData {
+  period: {
+    start: string
+    end: string
+  }
+  amount: number
+  unit: string
+}
+
+export interface CostMonitoringDataResponse {
+  data: CostMonitoringData[]
+}
