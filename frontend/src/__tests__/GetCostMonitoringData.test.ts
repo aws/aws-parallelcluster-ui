@@ -28,7 +28,7 @@ describe('given a GetCostMonitoringData command', () => {
   const mockStartDate = 'some-start-date'
   const mockEndDate = 'some-end-date'
   const mockResponse: CostMonitoringDataResponse = {
-    data: [
+    costs: [
       {
         amount: 10,
         period: {
@@ -62,7 +62,7 @@ describe('given a GetCostMonitoringData command', () => {
         mockEndDate,
       )
 
-      expect(data).toEqual<CostMonitoringData[]>(mockResponse.data)
+      expect(data).toEqual<CostMonitoringData[]>(mockResponse.costs)
     })
   })
 

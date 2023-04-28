@@ -912,7 +912,7 @@ async function GetCostMonitoringData(
 ): Promise<CostMonitoringData[]> {
   var url = `cost-monitoring/clusters/${clusterName}?start=${fromDate}&end=${toDate}`
   const {data}: {data: CostMonitoringDataResponse} = await request('get', url)
-  return data?.data || []
+  return data?.costs || []
 }
 
 async function LoadInitialState() {

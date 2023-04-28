@@ -25,5 +25,5 @@ export interface CostMonitoringData {
 }
 
 export interface CostMonitoringDataResponse {
-  data: CostMonitoringData[]
+  costs: CostMonitoringData[]
 }
