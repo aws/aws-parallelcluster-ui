@@ -131,4 +131,10 @@ class PCProxyBodySchema(Schema):
     def request_body_not_exceeding(self, data, **kwargs):
         size_not_exceeding(data, self.max_size)
 
-PCProxyBody = PCProxyBodySchema(max_size=1000000,unknown=INCLUDE)
+PCProxyBody = PCProxyBodySchema(max_size=1000000, unknown=INCLUDE)
+
+class GetCostDataSchema(Schema):
+    start = fields.DateTime(required=True)
+    end = fields.DateTime()
+
+GetCostData = GetCostDataSchema(unknown=INCLUDE)
