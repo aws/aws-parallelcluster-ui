@@ -11,10 +11,26 @@
 
 import {AxiosError} from 'axios'
 import {useTranslation} from 'react-i18next'
-import {useMutation, useQueryClient} from 'react-query'
-import {ActivateCostMonitoring, NotifyFn} from '../../model'
+import {useMutation, useQuery, useQueryClient} from 'react-query'
+import {
+  ActivateCostMonitoring,
+  GetCostMonitoringStatus,
+  NotifyFn,
+} from '../../model'
+import {useCostMonitoringFeature} from './useCostMonitoringFeature'
 
 export const COST_MONITORING_STATUS_QUERY_KEY = ['COST_MONITORING_STATUS']
+
+export function useCostMonitoringStatus() {
+  const isCostMonitoringActive = useCostMonitoringFeature()
+  return useQuery(
+    COST_MONITORING_STATUS_QUERY_KEY,
+    () => GetCostMonitoringStatus(),
+    {
+      enabled: isCostMonitoringActive,
+    },
+  )
+}
 
 export function useActivateCostMonitoringMutation(notify: NotifyFn) {
   const {t} = useTranslation()

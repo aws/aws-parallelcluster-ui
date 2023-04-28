@@ -12,11 +12,10 @@
 import {Button} from '@cloudscape-design/components'
 import {useCallback} from 'react'
 import {useTranslation} from 'react-i18next'
-import {useQuery} from 'react-query'
-import {GetCostMonitoringStatus, notify} from '../../model'
+import {notify} from '../../model'
 import {
-  COST_MONITORING_STATUS_QUERY_KEY,
   useActivateCostMonitoringMutation,
+  useCostMonitoringStatus,
 } from './costs.queries'
 import {useCostMonitoringFeature} from './useCostMonitoringFeature'
 
@@ -24,11 +23,7 @@ export function EnableCostMonitoringButton() {
   const {t} = useTranslation()
   const isCostMonitoringActive = useCostMonitoringFeature()
 
-  const {data: costMonitoringStatus, isLoading} = useQuery(
-    COST_MONITORING_STATUS_QUERY_KEY,
-    () => GetCostMonitoringStatus(),
-    {enabled: isCostMonitoringActive},
-  )
+  const {data: costMonitoringStatus, isLoading} = useCostMonitoringStatus()
   const costMonitoringStatusMutation = useActivateCostMonitoringMutation(notify)
 
   const onClick = useCallback(() => {
