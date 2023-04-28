@@ -1,7 +1,14 @@
 from botocore.exceptions import ClientError
 
+from api.pcm_globals import logger
+
 USER_DEFINED_TAG_TYPE = 'UserDefined'
 ACTIVE_TAG_STATUS = 'Active'
+
+COST_DATA_FILTER_DEFAULT_GRANULARITY = 'MONTHLY'
+COST_DATA_FILTER_CLUSTER_NAME = 'parallelcluster:cluster-name'
+COST_DATA_FILTER_METRIC = 'UnblendedCost'
+COST_DATA_FILTER_MATCH_OPTIONS = ['EQUALS']
 
 
 def is_costexplorer_not_active_exception(error: ClientError):
@@ -57,6 +64,62 @@ class CostExplorerClient:
         )
 
         return response['CostAllocationTags']
+
+    def get_cost_data(self, cluster_name, start, end, granularity=COST_DATA_FILTER_DEFAULT_GRANULARITY,
+                      metric=COST_DATA_FILTER_METRIC):
+        if not cluster_name:
+            raise ValueError('Missing mandatory `cluster_name` parameter')
+        if not start or not end:
+            raise ValueError('Missing mandatory `start` and/or `stop` parameters')
+
+        costs, next_token = self.__retrieve_cost_data(cluster_name, start, end, granularity, [metric])
+
+        while next_token is not None:
+            _costs, next_token = self.__retrieve_cost_data(cluster_name, start, end, granularity, [metric])
+            costs.extend(_costs)
+
+        costs = self.map_cost_values(costs, metric)
+        return sorted(costs, key=lambda cost: cost['period']['start'])
+
+    @clienterror_handled
+    def __retrieve_cost_data(self, cluster_name, start, end, granularity, metrics):
+        response = self.client.get_cost_and_usage(
+            TimePeriod={
+                'Start': start,
+                'End': end
+            },
+            Granularity=granularity,
+            Filter={
+                'Tags': {
+                    'Key': COST_DATA_FILTER_CLUSTER_NAME,
+                    'Values': [cluster_name],
+                    'MatchOptions': COST_DATA_FILTER_MATCH_OPTIONS
+                }
+            },
+            Metrics=metrics
+        )
+        if not self.__is_boto_response_successful(response):
+            logger.error(f'Unable to retrieve costs data for cluster: "{cluster_name}"',
+                         extra={'cluster_name': cluster_name, 'start': start, 'end': end})
+            raise Exception(f'Unable to retrieve costs data for cluster: "{cluster_name}"')
+
+        costs = response['ResultsByTime']
+        next_token = response.get('NextPageToken')
+
+        return costs, next_token
+
+    @staticmethod
+    def map_cost_values(costs, metric=COST_DATA_FILTER_METRIC):
+        return list(map(lambda cost: CostExplorerClient.__map_cost(cost, metric), costs))
+
+    @staticmethod
+    def __map_cost(cost, metric):
+        start, end = cost['TimePeriod']['Start'], cost['TimePeriod']['End']
+        total = cost['Total'][metric]
+        return {'period': {'start': start, 'end': end}, 'amount': total['Amount'], 'unit': total['Unit']}
+
+    def __is_boto_response_successful(self, response):
+        return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
 
 class CostMonitoringActivationException(Exception):
