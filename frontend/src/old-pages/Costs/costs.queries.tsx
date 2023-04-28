@@ -28,6 +28,7 @@ export function useCostMonitoringStatus() {
     () => GetCostMonitoringStatus(),
     {
       enabled: isCostMonitoringActive,
+      staleTime: Infinity,
     },
   )
 }
