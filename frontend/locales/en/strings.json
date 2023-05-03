@@ -446,8 +446,8 @@
       "viewInCostExplorer": "View in Cost Explorer",
       "viewBudgets": "View Budgets and Alarms",
       "chart": {
-        "title": "Spending analysis chart",
-        "yTitle": "Spent",
+        "title": "Spent",
+        "yTitle": "Spent ($)",
         "xTitle": "Months",
         "loadingText": "Loading spending data...",
         "errorText": "Could not load spending data.",
