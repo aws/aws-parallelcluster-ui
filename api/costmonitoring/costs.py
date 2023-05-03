@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import boto3
 from flask import Blueprint, request, jsonify
@@ -45,17 +45,7 @@ def get_cost_data_for(cluster_name):
 
     cost_amounts = client.get_cost_data(cluster_name=cluster_name, start=start, end=end)
 
-    return __cached_response(jsonify({'costs': cost_amounts}), max_age=CACHED_RESPONSE_MAX_AGE)
-
-
-def __cached_response(response, max_age):
-    response.cache_control.max_age = max_age
-    response.cache_control.private = True
-    response.cache_control.immutable = True
-    response.last_modified = datetime.now()
-    response.expires = datetime.now() + timedelta(seconds=max_age)
-
-    return response
+    return jsonify({'costs': cost_amounts})
 
 
 @costs.errorhandler(CostExplorerNotActiveException)
