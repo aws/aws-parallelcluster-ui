@@ -70,7 +70,7 @@ class CostExplorerClient:
         if not cluster_name:
             raise ValueError('Missing mandatory `cluster_name` parameter')
         if not start or not end:
-            raise ValueError('Missing mandatory `start` and/or `stop` parameters')
+            raise ValueError('Missing mandatory `start` and/or `end` parameters')
 
         costs, next_token = self.__retrieve_cost_data(cluster_name, start, end, granularity, [metric])
 
@@ -116,7 +116,7 @@ class CostExplorerClient:
     def __map_cost(cost, metric):
         start, end = cost['TimePeriod']['Start'], cost['TimePeriod']['End']
         total = cost['Total'][metric]
-        return {'period': {'start': start, 'end': end}, 'amount': total['Amount'], 'unit': total['Unit']}
+        return {'period': {'start': start, 'end': end}, 'amount': float(total['Amount']), 'unit': total['Unit']}
 
     def __is_boto_response_successful(self, response):
         return response['ResponseMetadata']['HTTPStatusCode'] == 200
