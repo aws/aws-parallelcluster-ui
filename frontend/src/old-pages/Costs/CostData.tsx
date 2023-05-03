@@ -24,12 +24,24 @@ import {consoleDomain, useState} from '../../store'
 import {useCostMonitoringDataQuery} from './costs.queries'
 import {CostMonitoringData} from './costs.types'
 import {toFullDollarAmount, toShortDollarAmount} from './valueFormatter'
+import i18next from 'i18next'
 
 interface Props {
   clusterName: string
 }
 
 type XAxisValueType = string
+
+function rotateArray<T = unknown>(arr: T[], k: number): T[] {
+  return arr.slice(k).concat(arr.slice(0, k))
+}
+
+function rotateToCurrentMonth(months: string[], today = new Date()): string[] {
+  const currentMonthIndex = today.getMonth()
+  const rotatedMonths = rotateArray(months, currentMonthIndex + 1)
+
+  return rotatedMonths
+}
 
 function toSeriesData(months: string[], data: CostMonitoringData[]) {
   const upTo12points = data.slice(Math.max(data.length - 12, 0))
@@ -51,6 +63,21 @@ function toStatusType(
   return undefined
 }
 
+const months = [
+  i18next.t('costMonitoring.costData.chart.months.jan'),
+  i18next.t('costMonitoring.costData.chart.months.feb'),
+  i18next.t('costMonitoring.costData.chart.months.mar'),
+  i18next.t('costMonitoring.costData.chart.months.apr'),
+  i18next.t('costMonitoring.costData.chart.months.may'),
+  i18next.t('costMonitoring.costData.chart.months.jun'),
+  i18next.t('costMonitoring.costData.chart.months.jul'),
+  i18next.t('costMonitoring.costData.chart.months.aug'),
+  i18next.t('costMonitoring.costData.chart.months.sep'),
+  i18next.t('costMonitoring.costData.chart.months.oct'),
+  i18next.t('costMonitoring.costData.chart.months.nov'),
+  i18next.t('costMonitoring.costData.chart.months.dec'),
+]
+
 export function CostData({clusterName}: Props) {
   const {t} = useTranslation()
   const defaultRegion = useState(['aws', 'region'])
@@ -59,23 +86,7 @@ export function CostData({clusterName}: Props) {
   const {data, refetch, isLoading, isError, isSuccess} =
     useCostMonitoringDataQuery(clusterName)
 
-  const months = useMemo(
-    () => [
-      t('costMonitoring.costData.chart.months.jan'),
-      t('costMonitoring.costData.chart.months.feb'),
-      t('costMonitoring.costData.chart.months.mar'),
-      t('costMonitoring.costData.chart.months.apr'),
-      t('costMonitoring.costData.chart.months.may'),
-      t('costMonitoring.costData.chart.months.jun'),
-      t('costMonitoring.costData.chart.months.jul'),
-      t('costMonitoring.costData.chart.months.aug'),
-      t('costMonitoring.costData.chart.months.sep'),
-      t('costMonitoring.costData.chart.months.oct'),
-      t('costMonitoring.costData.chart.months.nov'),
-      t('costMonitoring.costData.chart.months.dec'),
-    ],
-    [t],
-  )
+  const last12Months = useMemo(() => rotateToCurrentMonth(months), [])
 
   const series: BarChartProps<XAxisValueType>['series'] = useMemo(
     () =>
@@ -84,12 +95,12 @@ export function CostData({clusterName}: Props) {
             {
               title: t('costMonitoring.costData.chart.title'),
               type: 'bar',
-              data: toSeriesData(months, data),
+              data: toSeriesData(last12Months, data),
               valueFormatter: toFullDollarAmount,
             },
           ]
         : [],
-    [data, isSuccess, months, t],
+    [data, isSuccess, last12Months, t],
   )
 
   const domain = consoleDomain(region)
@@ -137,7 +148,7 @@ export function CostData({clusterName}: Props) {
         yTitle={t('costMonitoring.costData.chart.yTitle')}
         xTitle={t('costMonitoring.costData.chart.xTitle')}
         xScaleType="categorical"
-        xDomain={months}
+        xDomain={last12Months}
         statusType={toStatusType(isLoading, isError, isSuccess)}
         errorText={t('costMonitoring.costData.chart.errorText')}
         loadingText={t('costMonitoring.costData.chart.loadingText')}
