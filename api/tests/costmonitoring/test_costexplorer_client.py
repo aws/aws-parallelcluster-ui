@@ -81,7 +81,7 @@ def test_costexplorer_get_cost_monitoring_tags(costexplorer):
 
 def test_costexplorer_is_active(costexplorer, mocker):
     """
-    Give a cost explorer client with valid tags
+    Given a cost explorer client with valid tags
         and not all target tags activated
             it should return False
     """
@@ -95,9 +95,10 @@ def test_costexplorer_is_active(costexplorer, mocker):
     assert not is_active
     client.get_cost_monitoring_tags.assert_called_once()
 
+
 def test_costexplorer_is_active_true(costexplorer, mocker):
     """
-    Give a cost explorer client with valid tags
+    Given a cost explorer client with valid tags
         and all target tags activated
             it should return True
     """
@@ -110,3 +111,88 @@ def test_costexplorer_is_active_true(costexplorer, mocker):
 
     assert is_active
     client.get_cost_monitoring_tags.assert_called_once()
+
+
+def test_get_cost_data(costexplorer):
+    """
+    Given a cost explorer client with valid tags
+      when retrieving cost data with valid parameters
+        it should return mapped cost data
+        it should return data ordered by "start" field
+    """
+    costexplorer.get_cost_and_usage.return_value = {
+        'ResponseMetadata': {'HTTPStatusCode': 200},
+        'ResultsByTime': [
+            {
+                'TimePeriod': {
+                    'Start': '2023-05-01',
+                    'End': '2023-06-01'
+                },
+                'Total': {
+                    'UnblendedCost': {
+                        'Amount': '42',
+                        'Unit': 'USD'
+                    }
+                }
+            },
+            {
+                'TimePeriod': {
+                    'Start': '2023-06-01',
+                    'End': '2023-07-01'
+                },
+                'Total': {
+                    'UnblendedCost': {
+                        'Amount': '35',
+                        'Unit': 'USD'
+                    }
+                }
+            }
+        ]
+    }
+
+    tags = ['parallelcluster:cluster-name']
+    client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
+
+    costs = client.get_cost_data('cluster-name', start='2023-05-01', end='2023-07-01')
+
+    assert costs == [
+        {'period': {'start': '2023-05-01', 'end': '2023-06-01'}, 'amount': 42, 'unit': 'USD'},
+        {'period': {'start': '2023-06-01', 'end': '2023-07-01'}, 'amount': 35, 'unit': 'USD'}
+    ]
+
+
+def test_get_cost_data_failing(costexplorer):
+    """
+    Given a cost explorer client with valid tags
+      when retrieving cost data with valid parameters
+        when an unpredictable exception occurs
+        it should re-raise the same Error
+    """
+    tags = ['parallelcluster:cluster-name']
+    client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
+    costexplorer.get_cost_and_usage.side_effect = ArithmeticError
+
+    with pytest.raises(ArithmeticError):
+        client.get_cost_data('cluster-name', '2023-05-01', '2023-06-02')
+
+
+
+def test_get_cost_data_missing_parameter(costexplorer):
+    """
+    Given a cost explorer client with valid tags
+      when retrieving cost data
+        it should validate mandatory parameters presence
+    """
+    tags = ['parallelcluster:cluster-name']
+    client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
+
+    with pytest.raises(ValueError) as ex_cluster_name:
+        client.get_cost_data(None, start='start-date', end='end-date')
+    with pytest.raises(ValueError) as ex_start_date:
+        client.get_cost_data('cluster-name', start=None, end='end-date')
+    with pytest.raises(ValueError) as ex_end_date:
+        client.get_cost_data('cluster-name', start='start-date', end=None)
+
+    assert 'cluster_name' in str(ex_cluster_name.value)
+    assert 'start' in str(ex_start_date.value)
+    assert 'end' in str(ex_end_date.value)
