@@ -31,6 +31,10 @@ export function useCostMonitoringDataQuery(clusterName: string) {
     [...COST_MONITORING_DATA_QUERY_KEY, clusterName],
     () => GetCostMonitoringData(clusterName, fromDate, toDate),
     {
+      /**
+       * The upstream service can be costly,
+       * we reduce the amount of calls to the minimum
+       */
       staleTime: Infinity,
     },
   )
@@ -43,6 +47,10 @@ export function useCostMonitoringStatus() {
     () => GetCostMonitoringStatus(),
     {
       enabled: isCostMonitoringActive,
+      /**
+       * The upstream service can be costly,
+       * we reduce the amount of calls to the minimum
+       */
       staleTime: Infinity,
     },
   )
