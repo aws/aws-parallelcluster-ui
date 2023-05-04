@@ -38,7 +38,6 @@ describe('given a feature flags provider and a list of rules', () => {
         'memory_based_scheduling',
         'slurm_queue_update_strategy',
         'ebs_deletion_policy',
-        'cost_monitoring',
       ])
     })
   })
@@ -54,7 +53,6 @@ describe('given a feature flags provider and a list of rules', () => {
         'memory_based_scheduling',
         'slurm_queue_update_strategy',
         'ebs_deletion_policy',
-        'cost_monitoring',
         'slurm_accounting',
         'queues_multiple_instance_types',
         'dynamic_fs_mount',

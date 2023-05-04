@@ -17,6 +17,7 @@ import {EnableCostMonitoringButton} from '../EnableCostMonitoringButton'
 import {Store} from '@reduxjs/toolkit'
 import {mock} from 'jest-mock-extended'
 import {Provider} from 'react-redux'
+import {COST_MONITORING_STATUS_QUERY_KEY} from '../costs.queries'
 
 i18n.use(initReactI18next).init({
   resources: {},
@@ -52,90 +53,59 @@ describe('given a component to activate cost monitoring for the account', () => 
 
   beforeEach(() => {
     jest.clearAllMocks()
+    window.sessionStorage.clear()
   })
 
-  describe('when the experimental flag is enabled', () => {
+  describe('when the cost monitoring feature is enabled', () => {
     beforeEach(() => {
-      window.sessionStorage.setItem('additionalFeatures', '["experimental"]')
+      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
+
+      screen = render(
+        <MockProviders>
+          <EnableCostMonitoringButton />
+        </MockProviders>,
+      )
     })
 
-    describe('when the PC version supports cost monitoring', () => {
-      beforeEach(() => {
-        mockStore.getState.mockReturnValue({
-          app: {version: {full: '3.2.0'}},
-        })
-
-        screen = render(
-          <MockProviders>
-            <EnableCostMonitoringButton />
-          </MockProviders>,
-        )
-      })
-
-      it('should request the cost monitoring status', async () => {
-        expect(mockGetCostMonitoringStatus).toHaveBeenCalledTimes(1)
-      })
-
-      describe('when user tries to activate cost monitoring', () => {
-        beforeEach(async () => {
-          await waitFor(() => fireEvent.click(screen.getByRole('button')))
-        })
-
-        it('should request the cost monitoring activation', () => {
-          expect(mockActivateCostMonitoring).toHaveBeenCalledTimes(1)
-        })
-      })
+    it('should request the cost monitoring status', async () => {
+      expect(mockGetCostMonitoringStatus).toHaveBeenCalledTimes(1)
     })
 
-    describe('when cost monitoring is already active for the account', () => {
-      beforeEach(() => {
-        mockGetCostMonitoringStatus.mockResolvedValueOnce(true)
-        mockStore.getState.mockReturnValue({
-          app: {version: {full: '3.2.0'}},
-        })
-
-        screen = render(
-          <MockProviders>
-            <EnableCostMonitoringButton />
-          </MockProviders>,
-        )
+    describe('when user tries to activate cost monitoring', () => {
+      beforeEach(async () => {
+        await waitFor(() => fireEvent.click(screen.getByRole('button')))
       })
 
-      it('should not render the button', () => {
-        expect(screen.queryByRole('button')).toBeNull()
-      })
-    })
-
-    describe('when the PC version does not support cost monitoring', () => {
-      beforeEach(() => {
-        mockStore.getState.mockReturnValue({
-          app: {version: {full: '3.1.0'}},
-        })
-
-        screen = render(
-          <MockProviders>
-            <EnableCostMonitoringButton />
-          </MockProviders>,
-        )
-      })
-
-      it('should not request the cost monitoring status', async () => {
-        expect(mockGetCostMonitoringStatus).toHaveBeenCalledTimes(0)
-      })
-
-      it('should not render the button', () => {
-        expect(screen.queryByRole('button')).toBeNull()
+      it('should request the cost monitoring activation', () => {
+        expect(mockActivateCostMonitoring).toHaveBeenCalledTimes(1)
       })
     })
   })
 
-  describe('when neither flag is enabled', () => {
+  describe('when cost monitoring is already active for the account', () => {
     beforeEach(() => {
-      window.sessionStorage.setItem('additionalFeatures', '[]')
-      mockStore.getState.mockReturnValue({
-        app: {version: {full: '3.1.0'}},
-      })
+      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
+      mockGetCostMonitoringStatus.mockResolvedValue(true)
 
+      screen = render(
+        <MockProviders>
+          <EnableCostMonitoringButton />
+        </MockProviders>,
+      )
+    })
+
+    it('should not render the button', async () => {
+      await waitFor(() =>
+        expect(
+          queryClient.getQueryState(COST_MONITORING_STATUS_QUERY_KEY)?.status,
+        ).toBe('success'),
+      )
+      expect(screen.queryByRole('button')).toBeNull()
+    })
+  })
+
+  describe('when the cost monitoring feature is not enabled', () => {
+    beforeEach(() => {
       screen = render(
         <MockProviders>
           <EnableCostMonitoringButton />

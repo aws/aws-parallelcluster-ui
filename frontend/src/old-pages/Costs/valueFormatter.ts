@@ -9,25 +9,20 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-// UI Elements
-import {Box} from '@cloudscape-design/components'
+export function toShortDollarAmount(value: number) {
+  const absValue = Math.abs(value)
 
-interface Props {
-  title: string
-  subtitle: string
-  action?: React.ReactElement
-}
+  if (absValue >= 1e9) {
+    return (value / 1e9).toFixed(1) + 'G'
+  }
 
-export default function EmptyState({title, subtitle, action}: Props) {
-  return (
-    <Box textAlign="center" color="inherit">
-      <Box variant="strong" textAlign="center" color="inherit">
-        {title}
-      </Box>
-      <Box variant="p" padding={{bottom: 's'}} color="inherit">
-        {subtitle}
-      </Box>
-      {action}
-    </Box>
-  )
+  if (absValue >= 1e6) {
+    return (value / 1e6).toFixed(1) + 'M'
+  }
+
+  if (absValue >= 1e3) {
+    return (value / 1e3).toFixed(1) + 'K'
+  }
+
+  return value.toFixed(2)
 }

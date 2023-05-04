@@ -9,25 +9,25 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-// UI Elements
-import {Box} from '@cloudscape-design/components'
-
-interface Props {
-  title: string
-  subtitle: string
-  action?: React.ReactElement
+function clearTimeData(date: Date) {
+  date.setHours(0)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
 }
 
-export default function EmptyState({title, subtitle, action}: Props) {
-  return (
-    <Box textAlign="center" color="inherit">
-      <Box variant="strong" textAlign="center" color="inherit">
-        {title}
-      </Box>
-      <Box variant="p" padding={{bottom: 's'}} color="inherit">
-        {subtitle}
-      </Box>
-      {action}
-    </Box>
-  )
+export function composeTimeRange(today = new Date()) {
+  const twelveMonthsAgo = new Date(today)
+
+  clearTimeData(today)
+  clearTimeData(twelveMonthsAgo)
+
+  const currentYear = today.getFullYear()
+
+  twelveMonthsAgo.setFullYear(currentYear - 1)
+
+  return {
+    fromDate: twelveMonthsAgo.toISOString(),
+    toDate: today.toISOString(),
+  }
 }

@@ -31,6 +31,8 @@ import {UserIdentity} from './auth/types'
 import {ConfigObject, ConfigTag, PCVersion} from './types/base'
 import flowRight from 'lodash/flowRight'
 import {
+  CostMonitoringData,
+  CostMonitoringDataResponse,
   CostMonitoringStatus,
   CostMonitoringStatusResponse,
 } from './old-pages/Costs/costs.types'
@@ -903,6 +905,16 @@ async function ActivateCostMonitoring() {
   return request('put', url)
 }
 
+async function GetCostMonitoringData(
+  clusterName: string,
+  fromDate: string,
+  toDate: string,
+): Promise<CostMonitoringData[]> {
+  var url = `cost-monitoring/clusters/${clusterName}?start=${fromDate}&end=${toDate}`
+  const {data}: {data: CostMonitoringDataResponse} = await request('get', url)
+  return data?.costs || []
+}
+
 async function LoadInitialState() {
   const region = getState(['app', 'selectedRegion'])
   clearState(['app', 'aws'])
@@ -950,4 +962,5 @@ export {
   GetVersion,
   GetCostMonitoringStatus,
   ActivateCostMonitoring,
+  GetCostMonitoringData,
 }

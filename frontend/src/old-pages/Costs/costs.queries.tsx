@@ -11,10 +11,50 @@
 
 import {AxiosError} from 'axios'
 import {useTranslation} from 'react-i18next'
-import {useMutation, useQueryClient} from 'react-query'
-import {ActivateCostMonitoring, NotifyFn} from '../../model'
+import {useMutation, useQuery, useQueryClient} from 'react-query'
+import {
+  ActivateCostMonitoring,
+  GetCostMonitoringData,
+  GetCostMonitoringStatus,
+  NotifyFn,
+} from '../../model'
+import {composeTimeRange} from './composeTimeRange'
+import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
+export const COST_MONITORING_DATA_QUERY_KEY = ['COST_MONITORING_DATA']
 export const COST_MONITORING_STATUS_QUERY_KEY = ['COST_MONITORING_STATUS']
+
+export function useCostMonitoringDataQuery(clusterName: string) {
+  const {fromDate, toDate} = composeTimeRange()
+
+  return useQuery(
+    [...COST_MONITORING_DATA_QUERY_KEY, clusterName],
+    () => GetCostMonitoringData(clusterName, fromDate, toDate),
+    {
+      /**
+       * The upstream service can be costly,
+       * we reduce the amount of calls to the minimum
+       */
+      staleTime: Infinity,
+    },
+  )
+}
+
+export function useCostMonitoringStatus() {
+  const isCostMonitoringActive = useFeatureFlag('cost_monitoring')
+  return useQuery(
+    COST_MONITORING_STATUS_QUERY_KEY,
+    () => GetCostMonitoringStatus(),
+    {
+      enabled: isCostMonitoringActive,
+      /**
+       * The upstream service can be costly,
+       * we reduce the amount of calls to the minimum
+       */
+      staleTime: Infinity,
+    },
+  )
+}
 
 export function useActivateCostMonitoringMutation(notify: NotifyFn) {
   const {t} = useTranslation()

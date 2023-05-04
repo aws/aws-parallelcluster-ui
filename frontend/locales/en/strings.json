@@ -69,7 +69,8 @@
       "removeTokenButtonAriaLabel": "Remove token {{propertyKey}} {{operator}} {{value}}",
       "enteredTextLabel": "Use: '{{text}}'"
     },
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "intlCurrency": "{{value, currency(USD)}}"
   },
   "errorBoundary": {
     "modal": {
@@ -289,7 +290,8 @@
         "shell": "Shell",
         "filesystem": "View file system",
         "dcv": "DCV",
-        "logs": "View logs"
+        "logs": "View logs",
+        "costs": "View costs"
       },
       "actionsLabel": "Actions",
       "filtering": {
@@ -429,10 +431,47 @@
     }
   },
   "costMonitoring": {
+    "title": "Cluster {{clusterName}} costs",
+    "breadcrumbLabel": "Costs",
     "activateButton": {
       "label": "Activate cost monitoring",
       "activationSuccess": "Cost monitoring activation may take up to 24 hours to be enabled. Your request is being processed!",
       "costExplorerCannotBeAccessed": "In order to use cost monitoring with PCUI, you must enable Cost Explorer for your account by opening Cost Explorer for the first time in the AWS Cost Management console." 
+    },
+    "helpPanel": {
+      "title": "$t(costMonitoring.title)",
+      "description": "<p>View the costs for your cluster.</p>"
+    },
+    "costData": {
+      "title": "Spending analysis",
+      "viewInCostExplorer": "View in Cost Explorer",
+      "viewBudgets": "View Budgets and Alarms",
+      "chart": {
+        "title": "Monthly spending",
+        "yTitle": "Spent ($)",
+        "xTitle": "Months",
+        "loadingText": "Loading spending data...",
+        "errorText": "Could not load spending data.",
+        "recoveryText": "Retry",
+        "empty": {
+          "title": "No spending data",
+          "subtitle": "No spending data to display."
+        },
+        "months": {
+          "jan": "January",
+          "feb": "February",
+          "mar": "March",
+          "apr": "April",
+          "may": "May",
+          "jun": "June",
+          "jul": "July",
+          "aug": "August",
+          "sep": "September",
+          "oct": "October",
+          "nov": "November",
+          "dec": "December"
+        }
+      }
     }
   },
   "wizard": {
