@@ -446,7 +446,7 @@
       "viewInCostExplorer": "View in Cost Explorer",
       "viewBudgets": "View Budgets and Alarms",
       "chart": {
-        "title": "Spent",
+        "title": "Monthly spending",
         "yTitle": "Spent ($)",
         "xTitle": "Months",
         "loadingText": "Loading spending data...",
