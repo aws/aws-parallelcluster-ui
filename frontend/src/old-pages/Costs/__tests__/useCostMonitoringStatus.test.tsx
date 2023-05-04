@@ -12,20 +12,21 @@ import {renderHook} from '@testing-library/react'
 import {PropsWithChildren} from 'react'
 import {QueryClient, QueryClientProvider} from 'react-query'
 import {useCostMonitoringStatus} from '../costs.queries'
+import {mock} from 'jest-mock-extended'
+import {Store} from '@reduxjs/toolkit'
+import {Provider} from 'react-redux'
 
 const mockQueryClient = new QueryClient({
   defaultOptions: {queries: {retry: false}},
 })
+const mockStore = mock<Store>()
 const wrapper: React.FC<PropsWithChildren<any>> = ({children}) => (
-  <QueryClientProvider client={mockQueryClient}>{children}</QueryClientProvider>
+  <QueryClientProvider client={mockQueryClient}>
+    <Provider store={mockStore}>{children}</Provider>
+  </QueryClientProvider>
 )
 
 const mockGetCostMonitoringStatus = jest.fn()
-const mockUseCostMonitoringFeature = jest.fn()
-
-jest.mock('../useCostMonitoringFeature', () => ({
-  useCostMonitoringFeature: () => mockUseCostMonitoringFeature(),
-}))
 
 jest.mock('../../../model', () => {
   const originalModule = jest.requireActual('../../../model')
@@ -39,13 +40,13 @@ jest.mock('../../../model', () => {
 
 describe('given a hook to get the cost monitoring status', () => {
   beforeEach(() => {
-    mockUseCostMonitoringFeature.mockClear()
+    window.sessionStorage.clear()
     mockGetCostMonitoringStatus.mockClear()
   })
 
   describe('when the cost monitoring feature is enabled', () => {
     beforeEach(() => {
-      mockUseCostMonitoringFeature.mockReturnValueOnce(true)
+      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
     })
 
     it('should request the cost monitoring status', async () => {
@@ -56,10 +57,6 @@ describe('given a hook to get the cost monitoring status', () => {
   })
 
   describe('when the cost monitoring feature is not enabled', () => {
-    beforeEach(() => {
-      mockUseCostMonitoringFeature.mockReturnValueOnce(false)
-    })
-
     it('should not request the cost monitoring status', async () => {
       renderHook(() => useCostMonitoringStatus(), {wrapper})
 

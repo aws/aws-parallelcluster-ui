@@ -36,11 +36,6 @@ const MockProviders = (props: any) => (
 )
 const mockGetCostMonitoringStatus = jest.fn()
 const mockActivateCostMonitoring = jest.fn()
-const mockUseCostMonitoringFeature = jest.fn()
-
-jest.mock('../useCostMonitoringFeature', () => ({
-  useCostMonitoringFeature: () => mockUseCostMonitoringFeature(),
-}))
 
 jest.mock('../../../model', () => {
   const originalModule = jest.requireActual('../../../model')
@@ -58,11 +53,12 @@ describe('given a component to activate cost monitoring for the account', () => 
 
   beforeEach(() => {
     jest.clearAllMocks()
+    window.sessionStorage.clear()
   })
 
   describe('when the cost monitoring feature is enabled', () => {
     beforeEach(() => {
-      mockUseCostMonitoringFeature.mockReturnValue(true)
+      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
 
       screen = render(
         <MockProviders>
@@ -88,7 +84,7 @@ describe('given a component to activate cost monitoring for the account', () => 
 
   describe('when cost monitoring is already active for the account', () => {
     beforeEach(() => {
-      mockUseCostMonitoringFeature.mockReturnValue(true)
+      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
       mockGetCostMonitoringStatus.mockResolvedValue(true)
 
       screen = render(
@@ -110,8 +106,6 @@ describe('given a component to activate cost monitoring for the account', () => 
 
   describe('when the cost monitoring feature is not enabled', () => {
     beforeEach(() => {
-      mockUseCostMonitoringFeature.mockReturnValue(false)
-
       screen = render(
         <MockProviders>
           <EnableCostMonitoringButton />

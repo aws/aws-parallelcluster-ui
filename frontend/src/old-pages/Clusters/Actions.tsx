@@ -32,8 +32,8 @@ import {ButtonDropdown} from '@cloudscape-design/components'
 import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {ButtonDropdownProps} from '@cloudscape-design/components/button-dropdown/interfaces'
 import {loadTemplateFromCluster} from '../Configure/util'
-import {useCostMonitoringFeature} from '../Costs/useCostMonitoringFeature'
 import {useCostMonitoringStatus} from '../Costs/costs.queries'
+import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
 export default function Actions() {
   const clusterName = useState(['app', 'clusters', 'selected'])
@@ -70,7 +70,7 @@ export default function Actions() {
   ])
   const ssmEnabled = iamPolicies && findFirst(iamPolicies, isSsmPolicy)
 
-  const isCostMonitoringFeatureEnabled = useCostMonitoringFeature()
+  const isCostMonitoringFeatureEnabled = useFeatureFlag('cost_monitoring')
   const {data: isCostMonitoringStatusActive} = useCostMonitoringStatus()
 
   const isHeadNode =

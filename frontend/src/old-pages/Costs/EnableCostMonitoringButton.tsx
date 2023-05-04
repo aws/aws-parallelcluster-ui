@@ -17,11 +17,11 @@ import {
   useActivateCostMonitoringMutation,
   useCostMonitoringStatus,
 } from './costs.queries'
-import {useCostMonitoringFeature} from './useCostMonitoringFeature'
+import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
 export function EnableCostMonitoringButton() {
   const {t} = useTranslation()
-  const isCostMonitoringActive = useCostMonitoringFeature()
+  const isCostMonitoringActive = useFeatureFlag('cost_monitoring')
 
   const {data: costMonitoringStatus, isLoading} = useCostMonitoringStatus()
   const costMonitoringStatusMutation = useActivateCostMonitoringMutation(notify)

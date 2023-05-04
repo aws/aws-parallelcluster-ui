@@ -20,7 +20,6 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
     'multiuser_cluster',
     'slurm_queue_update_strategy',
     'ebs_deletion_policy',
-    'cost_monitoring',
   ],
   '3.3.0': [
     'slurm_accounting',

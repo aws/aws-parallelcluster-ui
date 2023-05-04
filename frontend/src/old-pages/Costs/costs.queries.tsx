@@ -19,7 +19,7 @@ import {
   NotifyFn,
 } from '../../model'
 import {composeTimeRange} from './composeTimeRange'
-import {useCostMonitoringFeature} from './useCostMonitoringFeature'
+import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
 export const COST_MONITORING_DATA_QUERY_KEY = ['COST_MONITORING_DATA']
 export const COST_MONITORING_STATUS_QUERY_KEY = ['COST_MONITORING_STATUS']
@@ -37,7 +37,7 @@ export function useCostMonitoringDataQuery(clusterName: string) {
 }
 
 export function useCostMonitoringStatus() {
-  const isCostMonitoringActive = useCostMonitoringFeature()
+  const isCostMonitoringActive = useFeatureFlag('cost_monitoring')
   return useQuery(
     COST_MONITORING_STATUS_QUERY_KEY,
     () => GetCostMonitoringStatus(),

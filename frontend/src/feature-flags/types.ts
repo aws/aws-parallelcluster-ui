@@ -26,4 +26,3 @@ export type AvailableFeature =
   | 'imds_support'
   | 'rhel8'
   | 'cost_monitoring'
-  | 'experimental'
