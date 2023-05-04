@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {toFullDollarAmount, toShortDollarAmount} from '../valueFormatter'
+import {toShortDollarAmount} from '../valueFormatter'
 
 describe('toShortDollarAmount', () => {
   test('returns correct value for input >= 1e9', () => {
@@ -35,22 +35,5 @@ describe('toShortDollarAmount', () => {
   test('returns correct value for negative input', () => {
     const result = toShortDollarAmount(-1234567890)
     expect(result).toEqual('-1.2G')
-  })
-})
-
-describe('toFullDollarAmount', () => {
-  test('returns correct value for integer input', () => {
-    const result = toFullDollarAmount(5000)
-    expect(result).toEqual('$5,000')
-  })
-
-  test('returns correct value for decimal input', () => {
-    const result = toFullDollarAmount(1234.56)
-    expect(result).toEqual('$1,234.56')
-  })
-
-  test('returns correct value for negative input', () => {
-    const result = toFullDollarAmount(-1234.56)
-    expect(result).toEqual('$-1,234.56')
   })
 })

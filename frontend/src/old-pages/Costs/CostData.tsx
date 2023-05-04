@@ -23,7 +23,7 @@ import EmptyState from '../../components/EmptyState'
 import {consoleDomain, useState} from '../../store'
 import {useCostMonitoringDataQuery} from './costs.queries'
 import {CostMonitoringData} from './costs.types'
-import {toFullDollarAmount, toShortDollarAmount} from './valueFormatter'
+import {toShortDollarAmount} from './valueFormatter'
 import i18next from 'i18next'
 
 interface Props {
@@ -96,7 +96,8 @@ export function CostData({clusterName}: Props) {
               title: t('costMonitoring.costData.chart.title'),
               type: 'bar',
               data: toSeriesData(last12Months, data),
-              valueFormatter: toFullDollarAmount,
+              valueFormatter: (value: number) =>
+                t('global.intlCurrency', {value}),
             },
           ]
         : [],

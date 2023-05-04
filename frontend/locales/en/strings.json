@@ -69,7 +69,8 @@
       "removeTokenButtonAriaLabel": "Remove token {{propertyKey}} {{operator}} {{value}}",
       "enteredTextLabel": "Use: '{{text}}'"
     },
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "intlCurrency": "{{value, currency(USD)}}"
   },
   "errorBoundary": {
     "modal": {
