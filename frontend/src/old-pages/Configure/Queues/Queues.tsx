@@ -48,7 +48,10 @@ import {
 } from '../../../feature-flags/useFeatureFlag'
 import * as SingleInstanceCR from './SingleInstanceComputeResource'
 import * as MultiInstanceCR from './MultiInstanceComputeResource'
-import {AllocationStrategy, ComputeResource, Queue} from './queues.types'
+import {
+  AllocationStrategy,
+  ClusterResourcesLimits,
+  ComputeResource, Queue} from './queues.types'
 import {SubnetMultiSelect} from './SubnetMultiSelect'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
@@ -64,8 +67,12 @@ import InfoLink from '../../../components/InfoLink'
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
 
-const MAX_COMPUTE_RESOURCES = 5
-export const MAX_QUEUES = 10
+export function useClusterResourcesLimits(): ClusterResourcesLimits {
+  const newResourcesLimits = useFeatureFlag('new_resources_limits')
+  return newResourcesLimits
+    ? {maxQueues: 100, maxCRPerQueue: 40, maxCRPerCluster: 150}
+    : {maxQueues: 10, maxCRPerQueue: 5, maxCRPerCluster: 50}
+}
 
 function itemToOption([value, label]: string[]) {
   return {
@@ -270,6 +277,19 @@ function ComputeResources({queue, index, canUseEFA}: any) {
   const {ViewComponent} = useComputeResourceAdapter()
   const computeResourceAdapter = useComputeResourceAdapter()
 
+  const {maxCRPerCluster, maxCRPerQueue} = useClusterResourcesLimits()
+  const queues = useState([...queuesPath])
+  const currentComputeResources = React.useMemo(
+    () =>
+      queues
+        .map((queue: Queue) => queue.ComputeResources.length)
+        .reduce(
+          (total: number, computeResources: number) => total + computeResources,
+          0,
+        ),
+    [queues],
+  )
+
   const addComputeResource = () => {
     const existingCRs = queue.ComputeResources || []
     setState([...queuesPath, index], {
@@ -291,7 +311,10 @@ function ComputeResources({queue, index, canUseEFA}: any) {
         actions={
           <SpaceBetween direction="horizontal" size="xs">
             <Button
-              disabled={queue.ComputeResources.length >= MAX_COMPUTE_RESOURCES}
+              disabled={
+                queue.ComputeResources.length >= maxCRPerQueue ||
+                currentComputeResources >= maxCRPerCluster
+              }
               onClick={addComputeResource}
             >
               {t('wizard.queues.computeResource.addComputeResource')}
@@ -299,7 +322,7 @@ function ComputeResources({queue, index, canUseEFA}: any) {
           </SpaceBetween>
         }
         description={t('wizard.queues.computeResource.header.description', {
-          limit: MAX_COMPUTE_RESOURCES,
+          limit: maxCRPerQueue,
         })}
       >
         {t('wizard.queues.computeResource.header.title')}
@@ -341,6 +364,7 @@ const useAllocationStrategyOptions = () => {
 function Queue({index}: any) {
   const {t} = useTranslation()
   const queues = useState(queuesPath)
+  const {maxQueues} = useClusterResourcesLimits()
   const computeResourceAdapter = useComputeResourceAdapter()
   const queue = useState([...queuesPath, index])
   const enablePlacementGroupPath = React.useMemo(
@@ -482,7 +506,7 @@ function Queue({index}: any) {
           variant="h2"
           actions={
             <SpaceBetween direction="horizontal" size="xs">
-              <Button disabled={queues.length >= MAX_QUEUES} onClick={addQueue}>
+              <Button disabled={queues.length >= maxQueues} onClick={addQueue}>
                 {t('wizard.queues.addQueueButton.label')}
               </Button>
               {queues.length > 1 && (

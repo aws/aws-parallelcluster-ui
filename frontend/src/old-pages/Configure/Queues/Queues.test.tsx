@@ -73,21 +73,38 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe("when they're 10 or more", () => {
-    const queues = new Array(11).fill(null).map((_, index) => ({
-      Name: `queue-${index + 1}`,
-      ComputeResources: [],
-      ComputeSettings: {
-        LocalStorage: {
-          RootVolume: {
-            VolumeType: 'gp3',
+  describe.each([
+    {version: '3.5.0', maxQueues: 10},
+    {version: '3.6.0', maxQueues: 100},
+  ])('when they are $maxQueues or more', ({version, maxQueues}) => {
+    beforeEach(() => {
+      window.sessionStorage.clear()
+      if (version === '3.6.0') {
+        window.sessionStorage.setItem(
+          'additionalFeatures',
+          '["new_resources_limits"]',
+        )
+      }
+      const queues = new Array(maxQueues).fill(null).map((_, index) => ({
+        Name: `queue-${index + 1}`,
+        ComputeResources: [],
+        ComputeSettings: {
+          LocalStorage: {
+            RootVolume: {
+              VolumeType: 'gp3',
+            },
           },
         },
-      },
-    }))
-    beforeEach(() => {
+      }))
+
       mockStore.getState.mockReturnValue({
+        aws: {
+          subnets: [],
+        },
         app: {
+          version: {
+            full: version,
+          },
           wizard: {
             config: {
               Scheduling: {
@@ -114,8 +131,11 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe("when they're less than 10", () => {
-    const queues = new Array(5).fill(null).map((_, index) => ({
+  describe.each([
+    {version: '3.5.0', maxQueues: 10},
+    {version: '3.6.0', maxQueues: 100},
+  ])('when they are less than $maxQueues', ({version, maxQueues}) => {
+    const queues = new Array(maxQueues / 2).fill(null).map((_, index) => ({
       Name: `queue-${index + 1}`,
       ComputeResources: [],
       ComputeSettings: {
@@ -127,8 +147,21 @@ describe('Given a list of queues', () => {
       },
     }))
     beforeEach(() => {
+      window.sessionStorage.clear()
+      if (version === '3.6.0') {
+        window.sessionStorage.setItem(
+          'additionalFeatures',
+          '["new_resources_limits"]',
+        )
+      }
       mockStore.getState.mockReturnValue({
+        aws: {
+          subnets: [],
+        },
         app: {
+          version: {
+            full: version,
+          },
           wizard: {
             config: {
               Scheduling: {
@@ -152,21 +185,156 @@ describe('Given a list of queues', () => {
     })
   })
 
-  describe('when the compute resources of a queue are 5', () => {
+  describe.each([
+    {version: '3.5.0', maxComputeResources: 5},
+    {version: '3.6.0', maxComputeResources: 40},
+  ])(
+    'when the compute resources of a queue are $maxComputeResources',
+    ({version, maxComputeResources}) => {
+      beforeEach(() => {
+        window.sessionStorage.clear()
+        if (version === '3.6.0') {
+          window.sessionStorage.setItem(
+            'additionalFeatures',
+            '["new_resources_limits"]',
+          )
+        }
+
+        mockStore.getState.mockReturnValue({
+          aws: {
+            subnets: [],
+          },
+          app: {
+            version: {
+              full: version,
+            },
+            wizard: {
+              config: {
+                Scheduling: {
+                  SlurmQueues: [
+                    {
+                      Name: 'queue-1',
+                      ComputeResources: new Array(maxComputeResources)
+                        .fill(null)
+                        .map(index => ({
+                          Name: `cr-${index}`,
+                          Instances: [{InstanceType: 'c5n.large'}],
+                        })),
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        })
+      })
+      it('should not allow to add more compute resources', () => {
+        const {getByText} = render(
+          <MockProviders store={mockStore}>
+            <Queues />
+          </MockProviders>,
+        )
+
+        const button = getByText('Add resource')
+        fireEvent.click(button)
+        expect(setState).not.toHaveBeenCalledWith(
+          ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
+          expect.anything(),
+        )
+      })
+    },
+  )
+
+  describe.each([
+    {version: '3.5.0', maxComputeResources: 5},
+    {version: '3.6.0', maxComputeResources: 40},
+  ])(
+    'when the compute resources of a queue are less then $maxComputeResources',
+    ({version, maxComputeResources}) => {
+      beforeEach(() => {
+        window.sessionStorage.clear()
+        if (version === '3.6.0') {
+          window.sessionStorage.setItem(
+            'additionalFeatures',
+            '["new_resources_limits"]',
+          )
+        }
+        mockStore.getState.mockReturnValue({
+          aws: {
+            subnets: [],
+          },
+          app: {
+            version: {
+              full: version,
+            },
+            wizard: {
+              config: {
+                Scheduling: {
+                  SlurmQueues: [
+                    {
+                      Name: 'queue-1',
+                      ComputeResources: new Array(
+                        Math.floor(maxComputeResources / 2),
+                      )
+                        .fill(null)
+                        .map(index => ({
+                          Name: `cr-${index}`,
+                          Instances: [{InstanceType: 'c5n.large'}],
+                        })),
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        })
+      })
+      it('should allow to add more compute resources', () => {
+        const {getByText} = render(
+          <MockProviders store={mockStore}>
+            <Queues />
+          </MockProviders>,
+        )
+
+        const button = getByText('Add resource')
+        fireEvent.click(button)
+        expect(setState).toHaveBeenCalledWith(
+          ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
+          expect.anything(),
+        )
+      })
+    },
+  )
+
+  describe('when the total compute resources of a cluster are 150', () => {
     beforeEach(() => {
+      const queues = new Array(5).fill(null).map((_, index) => ({
+        Name: `queue-${index + 1}`,
+        ComputeResources: new Array(30).fill(null).map(index => ({
+          Name: `cr-${index}`,
+          Instances: [{InstanceType: 'c5n.large'}],
+        })),
+        ComputeSettings: {
+          LocalStorage: {
+            RootVolume: {
+              VolumeType: 'gp3',
+            },
+          },
+        },
+      }))
+
       mockStore.getState.mockReturnValue({
+        aws: {
+          subnets: [],
+        },
         app: {
+          version: {
+            full: '3.6.0',
+          },
           wizard: {
             config: {
               Scheduling: {
-                SlurmQueues: [
-                  {
-                    Name: 'queue-1',
-                    ComputeResources: new Array(5).fill(null).map(index => ({
-                      Name: `cr-${index}`,
-                    })),
-                  },
-                ],
+                SlurmQueues: queues,
               },
             },
           },
@@ -174,52 +342,15 @@ describe('Given a list of queues', () => {
       })
     })
     it('should not allow to add more compute resources', () => {
-      const {getByText} = render(
+      const {getAllByText} = render(
         <MockProviders store={mockStore}>
           <Queues />
         </MockProviders>,
       )
 
-      const button = getByText('Add resource')
+      const button = getAllByText('Add resource')[0]
       fireEvent.click(button)
       expect(setState).not.toHaveBeenCalledWith(
-        ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
-        expect.anything(),
-      )
-    })
-  })
-
-  describe('when the compute resources of a queue are less then 5', () => {
-    beforeEach(() => {
-      mockStore.getState.mockReturnValue({
-        app: {
-          wizard: {
-            config: {
-              Scheduling: {
-                SlurmQueues: [
-                  {
-                    Name: 'queue-1',
-                    ComputeResources: new Array(2).fill(null).map(index => ({
-                      Name: `cr-${index}`,
-                    })),
-                  },
-                ],
-              },
-            },
-          },
-        },
-      })
-    })
-    it('should allow to add more compute resources', () => {
-      const {getByText} = render(
-        <MockProviders store={mockStore}>
-          <Queues />
-        </MockProviders>,
-      )
-
-      const button = getByText('Add resource')
-      fireEvent.click(button)
-      expect(setState).toHaveBeenCalledWith(
         ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues', 0],
         expect.anything(),
       )
