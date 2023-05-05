@@ -19,9 +19,7 @@ import safeGet from 'lodash/get'
 
 // UI Elements
 import {
-  Alert,
   Box,
-  Checkbox,
   ColumnLayout,
   Container,
   ExpandableSection,
@@ -55,7 +53,6 @@ import {
   CheckboxWithHelpPanel,
 } from './Components'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
-import InfoLink from '../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 
@@ -413,6 +410,15 @@ function IMDSSecuredSettings() {
   )
 }
 
+const headNodeSubnetPath = [
+  'app',
+  'wizard',
+  'config',
+  'HeadNode',
+  'Networking',
+  'SubnetId',
+]
+
 function HeadNode() {
   const {t} = useTranslation()
 
@@ -422,6 +428,23 @@ function HeadNode() {
   const subnetValue = useState(subnetPath) || ''
   const editing = useState(['app', 'wizard', 'editing'])
   const isOnNodeUpdatedActive = useFeatureFlag('on_node_updated')
+
+  const subnets = useState(['aws', 'subnets'])
+  const vpcId = useState(['app', 'wizard', 'vpc'])
+  const currentHeadNodeSubnet = useState(headNodeSubnetPath)
+
+  React.useEffect(() => {
+    if (currentHeadNodeSubnet) {
+      return
+    }
+    const filteredSubnets = (subnets || []).filter(
+      (s: any) => s.VpcId === vpcId,
+    )
+    if (filteredSubnets.length > 0) {
+      var subnet = filteredSubnets[0]
+      setState(headNodeSubnetPath, subnet.SubnetId)
+    }
+  }, [subnets, vpcId, currentHeadNodeSubnet])
 
   useHelpPanel(<HeadNodePropertiesHelpPanel />)
 
