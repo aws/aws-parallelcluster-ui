@@ -972,7 +972,10 @@
     },
     "queues": {
       "title": "Queues",
-      "description": "Configure up to {{limit}} cluster queues.",
+      "description": {
+        "default": "Configure up to {{limit}} cluster queues.",
+        "newResourcesLimits": "Configure up to {{limit}} queues, with a total of {{maxCRPerCluster}} compute resources for each cluster."
+      },
       "container": {
         "title": "Queue {{index}} - {{queueName}}"
       },

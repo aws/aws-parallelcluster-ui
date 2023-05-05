@@ -29,7 +29,7 @@ import {
 } from './HeadNode'
 import {Storage, StorageHelpPanel, storageValidate} from './Storage'
 import {
-  MAX_QUEUES,
+  useClusterResourcesLimits,
   Queues,
   QueuesHelpPanel,
   queuesValidate,
@@ -57,6 +57,7 @@ import {
 import {ComputeFleetStatus} from '../../types/clusters'
 import {useClusterPoll} from '../../components/useClusterPoll'
 import InfoLink from '../../components/InfoLink'
+import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
 const validators: {[key: string]: (...args: any[]) => boolean} = {
   cluster: clusterValidate,
@@ -117,6 +118,7 @@ function Configure() {
   ])
 
   const clusterPoll = useClusterPoll(clusterName, false)
+  const {maxQueues, maxCRPerCluster} = useClusterResourcesLimits()
 
   useEffect(() => {
     if (fleetStatus === 'STOP_REQUESTED') {
@@ -258,7 +260,12 @@ function Configure() {
           },
           {
             title: t('wizard.queues.title'),
-            description: t('wizard.queues.description', {limit: MAX_QUEUES}),
+            description: useFeatureFlag('new_resources_limits')
+              ? t('wizard.queues.description.newResourcesLimits', {
+                  limit: maxQueues,
+                  maxCRPerCluster: maxCRPerCluster,
+                })
+              : t('wizard.queues.description.default', {limit: maxQueues}),
             content: <Queues />,
             info: <InfoLink helpPanel={<QueuesHelpPanel />} />,
           },

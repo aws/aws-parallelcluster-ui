@@ -42,3 +42,9 @@ export type Subnet = {
   VpcId: string
   Tags?: Tag[]
 }
+
+export type ClusterResourcesLimits = {
+  maxQueues: number
+  maxCRPerQueue: number
+  maxCRPerCluster: number
+}
