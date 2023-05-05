@@ -90,11 +90,17 @@ Conditions:
       - !Not [!Equals [!Ref SNSRole, ""]]
   UseNewCognito:
     !Not [ Condition: UseExistingCognito]
-  UseNonDockerizedPCAPI: !Or
-      - !Equals [!Ref Version, '3.6.0']
-      - !Equals [!Ref Version, '3.6.0b1']
-  UseDockerizedPCAPI:
-    !Not [ Condition: UseNonDockerizedPCAPI]
+  UseNonDockerizedPCAPI:
+    !Not [ Condition: UseDockerizedPCAPI]
+  UseDockerizedPCAPI: !And
+    - !Equals ['3', !Select [ 0, !Split ['.', !Ref Version] ] ] # Check PC version major is 3 and PC version minor is 0-5
+    - !Or
+      - !Equals ['0', !Select [ 1, !Split ['.', !Ref Version] ] ]
+      - !Equals ['1', !Select [ 1, !Split ['.', !Ref Version] ] ]
+      - !Equals ['2', !Select [ 1, !Split ['.', !Ref Version] ] ]
+      - !Equals ['3', !Select [ 1, !Split ['.', !Ref Version] ] ]
+      - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
+      - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
 
 Mappings:
   ParallelClusterUI:
@@ -126,10 +132,6 @@ Resources:
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
-        PublicEcrImageUri: !If
-          - UseNonDockerizedPCAPI
-          - !Ref AWS::NoValue
-          - !Sub public.ecr.aws/parallelcluster/pcluster-api:${Version}
         ImageBuilderSubnetId: !If
           - UseNonDockerizedPCAPI
           - !Ref AWS::NoValue
