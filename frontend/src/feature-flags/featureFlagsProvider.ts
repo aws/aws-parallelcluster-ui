@@ -30,7 +30,7 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
     'imds_support',
   ],
   '3.4.0': ['multi_az', 'on_node_updated'],
-  '3.6.0': ['rhel8'],
+  '3.6.0': ['rhel8', 'new_resources_limits'],
 }
 
 function composeFlagsListByVersion(currentVersion: string): AvailableFeature[] {
