@@ -16,7 +16,6 @@ import {findFirst} from '../../../util'
 // UI Elements
 import {
   Button,
-  Box,
   Container,
   ColumnLayout,
   ExpandableSection,
@@ -49,7 +48,7 @@ import {
 } from '../../../feature-flags/useFeatureFlag'
 import * as SingleInstanceCR from './SingleInstanceComputeResource'
 import * as MultiInstanceCR from './MultiInstanceComputeResource'
-import {AllocationStrategy, ComputeResource} from './queues.types'
+import {AllocationStrategy, ComputeResource, Queue} from './queues.types'
 import {SubnetMultiSelect} from './SubnetMultiSelect'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
@@ -656,8 +655,41 @@ function Queue({index}: any) {
   )
 }
 
+const headNodeSubnetPath = [
+  'app',
+  'wizard',
+  'config',
+  'HeadNode',
+  'Networking',
+  'SubnetId',
+]
+
+const DEFAULT_QUEUES: Queue[] = []
+
 function QueuesView() {
-  const queues = useState(queuesPath) || []
+  const queues = useState(queuesPath) || DEFAULT_QUEUES
+  const headNodeSubnet = useState(headNodeSubnetPath)
+
+  React.useEffect(() => {
+    queues.forEach((queue: Queue, i: number) => {
+      if (!queue.Networking?.SubnetIds) {
+        setState(
+          [
+            'app',
+            'wizard',
+            'config',
+            'Scheduling',
+            'SlurmQueues',
+            i,
+            'Networking',
+            'SubnetIds',
+          ],
+          [headNodeSubnet],
+        )
+      }
+    })
+  }, [headNodeSubnet, queues])
+
   return (
     <SpaceBetween direction="vertical" size="l">
       {queues.map((queue: any, i: any) => (
