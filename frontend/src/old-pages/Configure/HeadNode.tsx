@@ -515,7 +515,6 @@ function HeadNode() {
       </Container>
       <ExpandableSection
         variant="container"
-        headerCounter={t('wizard.headNode.localStorage.optional')}
         headerText={t('wizard.headNode.localStorage.title')}
       >
         <RootVolume basePath={headNodePath} errorsPath={errorsPath} />

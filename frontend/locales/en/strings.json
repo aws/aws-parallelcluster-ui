@@ -705,8 +705,7 @@
        "select": "Select one or more security groups"
       },
       "localStorage": {
-        "title": "Local storage",
-        "optional": "- optional"
+        "title": "Local storage"
       },
       "advancedOptions": {
         "label": "Advanced options",
@@ -735,8 +734,7 @@
         },
         "container": {
           "title": "Slurm settings",
-          "description": "Connect with an external Slurm database to monitor and analyze cluster usage.",
-          "optional": "- optional"
+          "description": "Connect with an external Slurm database to monitor and analyze cluster usage."
         },
         "database": {
           "label": "Database",

@@ -88,7 +88,6 @@ function SlurmSettings() {
     <ExpandableSection
       variant="container"
       headerText={t('wizard.headNode.slurmSettings.container.title')}
-      headerCounter={t('wizard.headNode.slurmSettings.container.optional')}
       headerDescription={t(
         'wizard.headNode.slurmSettings.container.description',
       )}
