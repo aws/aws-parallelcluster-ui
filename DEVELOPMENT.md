@@ -10,11 +10,31 @@ export API_BASE_URL=https://[API_ID].execute-api.us-east-2.amazonaws.com/prod  #
 export ENV=dev
 ```
 
-Install dependencies by running:
-
+If you don't have a virtual environment setup already, you can run from the base dir of the project:
 ```bash
-pip3 install -r requirements.txt
+python3 -m venv venv
+. ./venv/bin/activate
 ```
+
+Install dependencies in your virtual environment:
+```bash
+pip install -r requirements.txt
+```
+
+When workin on the project, you may need to add a dependency.
+To do that you can the dependency with a specified version to the `requirements.in` file, and compile that file to produce the `requirements.txt`
+After that, make sure to compile it using [pip-tools](https://github.com/jazzband/pip-tools).
+To install pip-tools, just run
+```bash
+pip install pip-tools==6.13.0
+```
+
+To compile the `requirements.in` file, run:
+```bash
+pip-compile
+```
+
+This will produce the `requirements.txt` file (or update it, if it exists already).
 
 ## Backend with Cognito
 From the Cognito service page of the AWS account where PCUI has been deployed, click on the user pool
