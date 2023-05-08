@@ -107,7 +107,10 @@ describe('Given a list of queues', () => {
 
       const button = getAllByText('Add queue')[0]
       fireEvent.click(button)
-      expect(setState).not.toHaveBeenCalled()
+      expect(setState).not.toHaveBeenCalledWith(
+        ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'],
+        expect.anything(),
+      )
     })
   })
 
@@ -247,6 +250,98 @@ describe('Given a queue', () => {
         'subnet-2',
       ])
       expect(queueValidate).toHaveBeenCalledWith(queueIndex)
+    })
+  })
+
+  const basicHeadNodeSubnetConfig: any = {
+    aws: {
+      subnets: [],
+    },
+    app: {
+      version: {
+        full: '3.4.0',
+      },
+      wizard: {
+        config: {
+          HeadNode: {
+            Networking: {
+              SubnetId: 'test-subnet',
+            },
+          },
+          Scheduling: {
+            SlurmQueues: [
+              {
+                Name: `queue-1`,
+                ComputeResources: [
+                  {
+                    Instances: [{InstanceType: 'hpc6a.48xlarge'}],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    },
+  }
+
+  describe('when the queues page is loaded', () => {
+    describe('when the queue has no subnet set', () => {
+      beforeEach(() => {
+        mockStore.getState.mockReturnValue(basicHeadNodeSubnetConfig)
+      })
+      it('should set the queue subnet the same as the headnode subnet', () => {
+        render(
+          <MockProviders store={mockStore}>
+            <Queues />
+          </MockProviders>,
+        )
+
+        expect(setState).toHaveBeenCalledWith(
+          [
+            'app',
+            'wizard',
+            'config',
+            'Scheduling',
+            'SlurmQueues',
+            0,
+            'Networking',
+            'SubnetIds',
+          ],
+          ['test-subnet'],
+        )
+      })
+    })
+  })
+
+  describe('when the queue has already a subnet set', () => {
+    beforeEach(() => {
+      const state = {...basicHeadNodeSubnetConfig}
+      state.app.wizard.config.Scheduling.SlurmQueues[0].Networking = {
+        SubnetIds: ['test-subnet'],
+      }
+      mockStore.getState.mockReturnValue(state)
+    })
+    it('should not modify it', () => {
+      render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      expect(setState).not.toHaveBeenCalledWith(
+        [
+          'app',
+          'wizard',
+          'config',
+          'Scheduling',
+          'SlurmQueues',
+          0,
+          'Networking',
+          'SubnetIds',
+        ],
+        expect.anything(),
+      )
     })
   })
 

@@ -19,7 +19,6 @@ import {findFirst, getIn} from '../../util'
 
 // UI Elements
 import {
-  Checkbox,
   CheckboxProps,
   Container,
   FormField,
@@ -319,41 +318,6 @@ function VpcSelect() {
   const setVpc = (vpcId: any) => {
     setState(['app', 'wizard', 'vpc'], vpcId)
     setState([...errorsPath, 'vpc'], null)
-    const headNodeSubnetPath = [
-      'app',
-      'wizard',
-      'config',
-      'HeadNode',
-      'Networking',
-      'SubnetId',
-    ]
-
-    const filteredSubnets =
-      subnets &&
-      subnets.filter((s: any) => {
-        return s.VpcId === vpcId
-      })
-    if (filteredSubnets.length > 0) {
-      const subnetSet = new Set(filteredSubnets)
-      var subnet = filteredSubnets[0]
-      if (!subnetSet.has(getState(headNodeSubnetPath)))
-        setState(headNodeSubnetPath, subnet.SubnetId)
-      if (queues)
-        queues.forEach((_queue: any, i: any) => {
-          const queueSubnetPath = [
-            'app',
-            'wizard',
-            'config',
-            'Scheduling',
-            'SlurmQueues',
-            i,
-            'Networking',
-            'SubnetIds',
-          ]
-          if (!subnetSet.has(getState(queueSubnetPath)))
-            setState(queueSubnetPath, [subnet.SubnetId])
-        })
-    }
   }
 
   return (

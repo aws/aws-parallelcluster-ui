@@ -2,6 +2,9 @@ export type Queue = {
   Name: string
   AllocationStrategy: AllocationStrategy
   ComputeResources: MultiInstanceComputeResource[]
+  Networking?: {
+    SubnetIds: string[]
+  }
 }
 
 export type QueueValidationErrors = Record<
