@@ -156,6 +156,11 @@ export function CostData({clusterName}: Props) {
         recoveryText={t('costMonitoring.costData.chart.recoveryText')}
         onRecoveryClick={onRecoveryClick}
         i18nStrings={i18nStrings}
+        /**
+         * Limit the height of the bar chart
+         * to better fit inside the SplitPanel
+         */
+        height={350}
         empty={
           <EmptyState
             title={t('costMonitoring.costData.chart.empty.title')}
