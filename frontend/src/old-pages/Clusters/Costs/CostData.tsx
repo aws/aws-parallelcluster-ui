@@ -93,7 +93,7 @@ export function CostData({clusterName}: Props) {
       isSuccess
         ? [
             {
-              title: t('costMonitoring.costData.chart.title'),
+              title: clusterName,
               type: 'bar',
               data: toSeriesData(last12Months, data),
               valueFormatter: (value: number) =>
@@ -101,7 +101,7 @@ export function CostData({clusterName}: Props) {
             },
           ]
         : [],
-    [data, isSuccess, last12Months, t],
+    [clusterName, data, isSuccess, last12Months, t],
   )
 
   const domain = consoleDomain(region)
