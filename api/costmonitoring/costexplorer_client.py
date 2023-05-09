@@ -48,7 +48,10 @@ class CostExplorerClient:
             raise CostMonitoringActivationException(errors)
 
     def is_active(self):
-        tags = self.get_cost_monitoring_tags()
+        try:
+          tags = self.get_cost_monitoring_tags()
+        except CostExplorerNotActiveException:
+          return False
 
         active = len(tags) > 0
         for tag_status in (tag['Status'] for tag in tags):

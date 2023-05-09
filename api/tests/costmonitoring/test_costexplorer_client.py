@@ -1,5 +1,6 @@
 import pytest
 
+from botocore.exceptions import ClientError
 from api.costmonitoring.costexplorer_client import CostExplorerClient, CostMonitoringActivationException
 
 
@@ -95,6 +96,51 @@ def test_costexplorer_is_active(costexplorer, mocker):
     assert not is_active
     client.get_cost_monitoring_tags.assert_called_once()
 
+def test_costexplorer_is_active_when_ce_cannot_be_accessed(costexplorer, mocker):
+    """
+    Given a cost explorer client with valid tags
+        and Cost Explorer cannot be accessed
+            it should return False
+    """
+    tags = ['parallelcluster:cluster-name']
+
+    client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
+    costexplorer.list_cost_allocation_tags.side_effect=ClientError(
+        {
+            "Error": {
+                "Code": "AccessDeniedException",
+                "Message": "User not enabled for cost explorer access"
+            }
+        },
+        "list_cost_allocation_tags"   
+    )
+
+    is_active = client.is_active()
+
+    assert not is_active
+
+def test_costexplorer_is_active_failing(costexplorer):
+    """
+    Given a cost explorer client with valid tags
+      and an error occurs while listing the allocation tags
+        it should rethrow the error
+    """
+    tags = ['parallelcluster:cluster-name']
+
+    client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
+    costexplorer.list_cost_allocation_tags.side_effect=ClientError(
+        {
+            "Error": {
+                "Code": "AccessDeniedException",
+                "Message": "any_other_message"
+            }
+        },
+        "list_cost_allocation_tags"   
+    )
+
+    with pytest.raises(Exception):
+        client = CostExplorerClient(costexplorer, cost_allocation_tags=tags)
+        client.is_active()
 
 def test_costexplorer_is_active_true(costexplorer, mocker):
     """
