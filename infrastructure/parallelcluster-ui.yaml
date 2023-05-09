@@ -3,10 +3,10 @@ Parameters:
     Description: Email address of administrative user to setup by default (only with new Cognito instances).
     Type: String
     Default: ''
-  PublicEcrImageUri:
-    Description: When specified, the URI of the Docker image for the Lambda of the ParallelCluster UI container
+  PCUIVersion:
+    Description: Version of AWS ParallelCluster UI deploy
     Type: String
-    Default: public.ecr.aws/pcm/parallelcluster-ui:2023.04.0
+    Default: 2023.04.0
   UserPoolId:
     Description: UserPoolId of a previously deployed PCUI Cognito User Pool. Leave blank to create a new one.
     Type: String
@@ -35,6 +35,11 @@ Parameters:
     Description: (Optional) S3 bucket where CloudFormation files are stored. Change this parameter only when testing changes made to the infrastructure itself.
     Type: String
     Default: ''
+  LambdaBucketName:
+    Description: (Optional) S3 bucket where the lambda code is stored as a zip archive. Change this parameter only when testing changes made to the lambda code.
+    Type: String
+    Default: ''
+
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -46,7 +51,7 @@ Metadata:
       - Label:
           default: ParallelCluster UI
         Parameters:
-          - PublicEcrImageUri
+          - PCUIVersion
       - Label:
           default: (Optional) External PCUI Cognito
         Parameters:
@@ -63,9 +68,10 @@ Metadata:
           - ImageBuilderVpcId
           - ImageBuilderSubnetId
       - Label:
-          default: (Debugging only) Infrastructure S3 Bucket
+          default: (Debugging only) Infrastructure and lambda code archive S3 Buckets
         Parameters:
           - InfrastructureBucket
+          - LambdaBucketName
 
     ParameterLabels:
       AdminUserEmail:
@@ -83,6 +89,7 @@ Conditions:
       - !Not [!Equals [!Ref ImageBuilderVpcId, ""]]
       - !Not [!Equals [!Ref ImageBuilderSubnetId, ""]]
   HasDefaultInfrastructure: !Equals [!Ref InfrastructureBucket, '']
+  HasDefaultLambda: !Equals [!Ref LambdaBucketName, '']
   UseExistingCognito:
     !And
       - !Not [!Equals [!Ref UserPoolId, ""]]
@@ -153,7 +160,6 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Role: !GetAtt ParallelClusterUIUserRole.Arn
-      PackageType: Image
       MemorySize: 512
       Timeout: 30
       Tags:
@@ -175,13 +181,15 @@ Resources:
       FunctionName: !Sub
         - ParallelClusterUIFunction-${StackIdSuffix}
         - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+      Handler: lambda_function.lambda_handler
+      PackageType: Zip
+      Runtime: python3.8
       Code:
-        ImageUri: !Sub
-          - ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${Repository}:${Version}
-          - Repository: !Ref PrivateEcrRepository
-            Version: !Join
-              - '-'
-              - [!Select [2, !Split ['/', !Ref EcrImage]], !Select [3, !Split ['/', !Ref EcrImage]]]
+        S3Bucket: !If
+          - HasDefaultLambda
+          - parallelcluster-ui-releases
+          - !Ref LambdaBucketName
+        S3Key: !Sub '${PCUIVersion}/pcui-lambda.zip'
 
   ApiGateway:
     Type: AWS::ApiGatewayV2::Api
@@ -381,238 +389,6 @@ Resources:
                   - secretsmanager:DeleteSecret
                 Resource:
                   - !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${AWS::StackName}*
-
-  PrivateEcrRepository:
-    DependsOn: ParallelClusterApi
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: !Sub
-        - 'parallelcluster-ui-${StackIdSuffix}'
-        - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-
-  ImageBuilderInstanceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      ManagedPolicyArns:
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action:
-              - sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service:
-                - !Sub ec2.${AWS::URLSuffix}
-        Version: '2012-10-17'
-      Path: /executionServiceEC2Role/
-
-  ImageBuilderInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Path: /executionServiceEC2Role/
-      Roles:
-        - !Ref ImageBuilderInstanceRole
-
-  InfrastructureConfigurationSecurityGroup:
-    Condition: NonDefaultVpc
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      VpcId: !Ref ImageBuilderVpcId
-      GroupDescription: Parallel cluster image builder security group
-
-  InfrastructureConfiguration:
-    Type: AWS::ImageBuilder::InfrastructureConfiguration
-    Properties:
-      Name: !Sub
-        - ParallelClusterUIImageBuilderInfrastructureConfiguration-${Version}-${StackIdSuffix}
-        - { Version: !Join ['_', !Split ['.', !FindInMap [ParallelClusterUI, Constants, Version]]], StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-      InstanceProfileName: !Ref ImageBuilderInstanceProfile
-      TerminateInstanceOnFailure: true
-      SubnetId:
-        Fn::If:
-          - NonDefaultVpc
-          - !Ref ImageBuilderSubnetId
-          - !Ref AWS::NoValue
-      SecurityGroupIds:
-        Fn::If:
-          - NonDefaultVpc
-          - [!Ref InfrastructureConfigurationSecurityGroup]
-          - !Ref AWS::NoValue
-      InstanceMetadataOptions:
-        HttpTokens: required
-
-  EcrImageRecipe:
-    Type: AWS::ImageBuilder::ContainerRecipe
-    Properties:
-      Components:
-        - ComponentArn: !Sub arn:${AWS::Partition}:imagebuilder:${AWS::Region}:aws:component/update-linux/x.x.x
-      ContainerType: DOCKER
-      Name: !Sub
-        - 'parallelcluster-ui-${Version}-${StackIdSuffix}'
-        - { Version: !Join ['_', !Split ['.', !FindInMap [ParallelClusterUI, Constants, Version]]], StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-      Version: !FindInMap [ParallelClusterUI, Constants, Version]
-      ParentImage: !Ref PublicEcrImageUri
-      PlatformOverride: Linux
-      TargetRepository:
-        Service: ECR
-        RepositoryName: !Ref PrivateEcrRepository
-      DockerfileTemplateData: 'FROM {{{ imagebuilder:parentImage }}}'
-      WorkingDirectory: '/tmp'
-
-  EcrImage:
-    Type: AWS::ImageBuilder::Image
-    Properties:
-      ContainerRecipeArn: !Ref EcrImageRecipe
-      EnhancedImageMetadataEnabled: true
-      InfrastructureConfigurationArn: !Ref InfrastructureConfiguration
-      ImageTestsConfiguration:
-        ImageTestsEnabled: false
-
-  EcrImagePipeline:
-    Type: AWS::ImageBuilder::ImagePipeline
-    Properties:
-      Name: !Sub
-        - 'EcrImagePipeline-${Version}-${StackIdSuffix}'
-        - { Version: !Join ['_', !Split ['.', !FindInMap [ParallelClusterUI, Constants, Version]]], StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-      Status: ENABLED
-      ContainerRecipeArn: !Ref EcrImageRecipe
-      InfrastructureConfigurationArn: !Ref InfrastructureConfiguration
-      ImageTestsConfiguration:
-        ImageTestsEnabled: false
-
-  EcrImageDeletionLambda:
-    Type: AWS::Lambda::Function
-    Properties:
-      MemorySize: 128
-      Code:
-        ZipFile: |
-          import cfnresponse
-          import boto3
-          import random
-          import string
-
-          ecr = boto3.client('ecr')
-          imagebuilder = boto3.client('imagebuilder')
-
-          def get_image_ids(repository_name, version):
-              image_digests = set()
-              paginator = ecr.get_paginator('list_images')
-              response_iterator = paginator.paginate(repositoryName=repository_name, filter={'tagStatus': 'TAGGED'})
-              for response in response_iterator:
-                  image_digests.update([image_id['imageDigest'] for image_id in response['imageIds']])
-              return list({'imageDigest': image_digest} for image_digest in image_digests)
-
-          def get_imagebuilder_images(ecr_image_pipeline_arn):
-              response = imagebuilder.list_image_pipeline_images(imagePipelineArn=ecr_image_pipeline_arn)
-              images = [image['arn'] for image in response['imageSummaryList']]
-              while 'nextToken' in response:
-                  response = imagebuilder.list_image_pipeline_images(imagePipelineArn=ecr_image_pipeline_arn, nextToken=response['nextToken'])
-                  images.extend([image['arn'] for image in response['imageSummaryList']])
-              return images
-
-          def create_physical_resource_id():
-              alnum = string.ascii_uppercase + string.ascii_lowercase + string.digits
-              return ''.join(random.choice(alnum) for _ in range(16))
-
-          def handler(event, context):
-              print(event)
-              print('boto version {}'.format(boto3.__version__))
-
-              response_data = {}
-              reason = None
-              response_status = cfnresponse.SUCCESS
-
-              if event['RequestType'] == 'Create':
-                  response_data['Message'] = 'Resource creation successful!'
-                  physical_resource_id = create_physical_resource_id()
-              else:
-                  physical_resource_id = event['PhysicalResourceId']
-
-              if event['RequestType'] == 'Update' or event['RequestType'] == 'Delete':
-                  try:
-                      resource_key = 'OldResourceProperties' if 'OldResourceProperties' in event else 'ResourceProperties'
-                      ecr_repository_name = event[resource_key]['EcrRepositoryName']
-                      ecr_image_pipeline_arn = event[resource_key]['EcrImagePipelineArn']
-                      version = event[resource_key]['Version']
-
-                      image_ids = get_image_ids(ecr_repository_name, version)
-                      if image_ids:
-                          ecr.batch_delete_image(repositoryName=ecr_repository_name, imageIds=image_ids)
-                          reason = 'Image deletion successful!'
-                      else:
-                          reason = 'No image found, considering image deletion successful'
-
-                      for imagebuilder_image in get_imagebuilder_images(ecr_image_pipeline_arn):
-                          imagebuilder.delete_image(imageBuildVersionArn=imagebuilder_image)
-
-                  except ecr.exceptions.RepositoryNotFoundException:
-                      reason = 'Repository was not found, considering image deletion successfull'
-                  except Exception as exception:
-                      response_status = cfnresponse.FAILED
-                      reason = 'Failed image deletion with error: {}'.format(exception)
-
-              cfnresponse.send(event, context, response_status, response_data, physical_resource_id, reason)
-
-      Handler: index.handler
-      Runtime: python3.7
-      Role: !GetAtt EcrImageDeletionLambdaRole.Arn
-
-  EcrImageDeletionLambdaLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub /aws/lambda/${EcrImageDeletionLambda}
-
-  EcrImageDeletionLambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action:
-              - 'sts:AssumeRole'
-      Policies:
-        - PolicyName: LoggingPolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
-        - PolicyName: BatchDeletePolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ecr:BatchDeleteImage
-                  - ecr:ListImages
-                Resource: !GetAtt PrivateEcrRepository.Arn
-              - Effect: Allow
-                Action:
-                  - imagebuilder:ListImagePipelineImages
-                Resource: !Sub
-                  - arn:${AWS::Partition}:imagebuilder:${AWS::Region}:${AWS::AccountId}:image-pipeline/ecrimagepipeline-*${StackIdSuffix}*
-                  - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-              - Effect: Allow
-                Action:
-                  - imagebuilder:DeleteImage
-                Resource: !Sub
-                  - arn:${AWS::Partition}:imagebuilder:${AWS::Region}:${AWS::AccountId}:image/*${StackIdSuffix}*
-                  - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-
-  EcrImagesRemover:
-    Type: Custom::EcrImagesRemover
-    Properties:
-      ServiceToken: !GetAtt EcrImageDeletionLambda.Arn
-      EcrRepositoryName: !Ref PrivateEcrRepository
-      Version: !FindInMap [ParallelClusterUI, Constants, Version]
-      EcrImagePipelineArn: !GetAtt EcrImagePipeline.Arn
 
   ParallelClusterUILambdaLogGroup:
     Type: AWS::Logs::LogGroup
