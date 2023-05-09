@@ -108,7 +108,8 @@
       "storage": "Storage",
       "scheduling": "Job status",
       "accounting": "Accounting",
-      "stackEvents": "Stack events"
+      "stackEvents": "Stack events",
+      "costMonitoring": "Cost monitoring"
     },
     "properties": {
       "title": "Properties",

@@ -26,6 +26,7 @@ import Properties from './Properties'
 import Loading from '../../components/Loading'
 import {useTranslation} from 'react-i18next'
 import {Alert} from '@cloudscape-design/components'
+import {Costs} from './Costs'
 
 export default function ClusterTabs() {
   const {t} = useTranslation()
@@ -90,6 +91,11 @@ export default function ClusterTabs() {
             label: t('cluster.tabs.stackEvents'),
             id: 'stack-events',
             content: <StackEvents />,
+          },
+          {
+            label: t('cluster.tabs.costMonitoring'),
+            id: 'cost-monitoring',
+            content: <Costs />,
           },
         ]}
         onChange={({detail}) => {
