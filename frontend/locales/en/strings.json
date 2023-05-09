@@ -449,7 +449,7 @@
         "recoveryText": "Retry",
         "empty": {
           "title": "No spending data",
-          "subtitle": "No spending data to display."
+          "subtitle": "No spending data to display. It might take 24 hours for data to be available."
         },
         "months": {
           "jan": "January",

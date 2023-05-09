@@ -43,6 +43,11 @@ function rotateToCurrentMonth(months: string[], today = new Date()): string[] {
   return rotatedMonths
 }
 
+function dataIsAllZeroes(data: CostMonitoringData[]) {
+  const upTo12points = data.slice(Math.max(data.length - 12, 0))
+  return upTo12points.every(data => data.amount === 0)
+}
+
 function toSeriesData(months: string[], data: CostMonitoringData[]) {
   const upTo12points = data.slice(Math.max(data.length - 12, 0))
   const mapped = upTo12points.map(({amount}, index) => ({
@@ -88,9 +93,11 @@ export function CostData({clusterName}: Props) {
 
   const last12Months = useMemo(() => rotateToCurrentMonth(months), [])
 
+  const isEmpty = data && dataIsAllZeroes(data)
+
   const series: BarChartProps<XAxisValueType>['series'] = useMemo(
     () =>
-      isSuccess
+      isSuccess && !isEmpty
         ? [
             {
               title: clusterName,
@@ -101,7 +108,7 @@ export function CostData({clusterName}: Props) {
             },
           ]
         : [],
-    [clusterName, data, isSuccess, last12Months, t],
+    [clusterName, data, isEmpty, isSuccess, last12Months, t],
   )
 
   const domain = consoleDomain(region)
