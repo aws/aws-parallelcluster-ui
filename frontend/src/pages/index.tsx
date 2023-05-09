@@ -23,7 +23,6 @@ import {NoMatch} from '../components/NoMatch'
 import {Images} from '../old-pages/Images'
 import {Logs} from '../old-pages/Logs'
 import {useLoadingState} from '../components/useLoadingState'
-import {Costs} from '../old-pages/Clusters/Costs'
 
 export default function App() {
   const {loading, content} = useLoadingState(
@@ -40,7 +39,6 @@ export default function App() {
           </Route>
         </Route>
         <Route path="clusters/:clusterName/logs" element={<Logs />} />
-        <Route path="clusters/:clusterName/costs" element={<Costs />} />
         <Route path="configure" element={<Configure />} />
         <Route path="images" element={<Images />} />
         <Route path="users" element={<Users />} />
