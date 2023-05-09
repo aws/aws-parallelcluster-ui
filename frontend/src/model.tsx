@@ -35,7 +35,7 @@ import {
   CostMonitoringDataResponse,
   CostMonitoringStatus,
   CostMonitoringStatusResponse,
-} from './old-pages/Costs/costs.types'
+} from './old-pages/Clusters/Costs/costs.types'
 import {FlashbarProps} from '@cloudscape-design/components'
 
 // Types

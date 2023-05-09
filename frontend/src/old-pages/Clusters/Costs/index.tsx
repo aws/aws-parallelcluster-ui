@@ -18,10 +18,10 @@ import {
 import {useMemo} from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {useParams} from 'react-router-dom'
-import InfoLink from '../../components/InfoLink'
-import {useHelpPanel} from '../../components/help-panel/HelpPanel'
-import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
-import Layout from '../Layout'
+import InfoLink from '../../../components/InfoLink'
+import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
+import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
+import Layout from '../../Layout'
 import {CostData} from './CostData'
 
 function CostMonitoringHelpPanel({clusterName}: {clusterName: string}) {

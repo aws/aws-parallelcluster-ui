@@ -12,7 +12,7 @@
 import {fireEvent, render, RenderResult, waitFor} from '@testing-library/react'
 import {I18nextProvider, initReactI18next} from 'react-i18next'
 import {QueryClient, QueryClientProvider} from 'react-query'
-import i18n from '../../../i18n'
+import i18n from '../../../../i18n'
 import {EnableCostMonitoringButton} from '../EnableCostMonitoringButton'
 import {Store} from '@reduxjs/toolkit'
 import {mock} from 'jest-mock-extended'
@@ -37,8 +37,8 @@ const MockProviders = (props: any) => (
 const mockGetCostMonitoringStatus = jest.fn()
 const mockActivateCostMonitoring = jest.fn()
 
-jest.mock('../../../model', () => {
-  const originalModule = jest.requireActual('../../../model')
+jest.mock('../../../../model', () => {
+  const originalModule = jest.requireActual('../../../../model')
 
   return {
     __esModule: true,
