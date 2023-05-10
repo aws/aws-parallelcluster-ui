@@ -291,8 +291,7 @@
         "shell": "Shell",
         "filesystem": "View file system",
         "dcv": "DCV",
-        "logs": "View logs",
-        "costs": "View costs"
+        "logs": "View logs"
       },
       "actionsLabel": "Actions",
       "filtering": {
