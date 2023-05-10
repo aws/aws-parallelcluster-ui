@@ -36,11 +36,13 @@ jest.mock('../../../../model', () => ({
 }))
 
 describe('given a mutation to activate cost monitoring', () => {
-  let mockNotify: jest.Mock
+  let mockOnSuccess: jest.Mock
+  let mockOnError: jest.Mock
 
   beforeEach(() => {
     mockActivateCostMonitoring.mockClear()
-    mockNotify = jest.fn()
+    mockOnSuccess = jest.fn()
+    mockOnError = jest.fn()
   })
 
   describe('when cost monitoring can be activated successfully', () => {
@@ -50,7 +52,7 @@ describe('given a mutation to activate cost monitoring', () => {
 
     it('should set the cost monitoring status to true', async () => {
       const {result} = renderHook(
-        () => useActivateCostMonitoringMutation(mockNotify),
+        () => useActivateCostMonitoringMutation(mockOnError, mockOnSuccess),
         {wrapper},
       )
 
@@ -64,7 +66,7 @@ describe('given a mutation to activate cost monitoring', () => {
 
     it('should notify the user about the success', async () => {
       const {result} = renderHook(
-        () => useActivateCostMonitoringMutation(mockNotify),
+        () => useActivateCostMonitoringMutation(mockOnError, mockOnSuccess),
         {wrapper},
       )
 
@@ -72,10 +74,7 @@ describe('given a mutation to activate cost monitoring', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(mockNotify).toHaveBeenCalledTimes(1)
-      expect(mockNotify).toHaveBeenCalledWith(
-        'costMonitoring.activateButton.activationSuccess',
-      )
+      expect(mockOnSuccess).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -87,17 +86,16 @@ describe('given a mutation to activate cost monitoring', () => {
 
       it('should notify the user about the failure', async () => {
         const {result} = renderHook(
-          () => useActivateCostMonitoringMutation(mockNotify),
+          () => useActivateCostMonitoringMutation(mockOnError, mockOnSuccess),
           {wrapper},
         )
 
         result.current.mutate()
 
-        await waitFor(() => expect(mockNotify).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(mockOnError).toHaveBeenCalledTimes(1))
         await waitFor(() =>
-          expect(mockNotify).toHaveBeenCalledWith(
-            'costMonitoring.activateButton.costExplorerCannotBeAccessed',
-            'error',
+          expect(mockOnError).toHaveBeenCalledWith(
+            'costExplorerCannotBeAccessed',
           ),
         )
       })
@@ -112,17 +110,17 @@ describe('given a mutation to activate cost monitoring', () => {
 
       it('should notify the user about the failure', async () => {
         const {result} = renderHook(
-          () => useActivateCostMonitoringMutation(mockNotify),
+          () => useActivateCostMonitoringMutation(mockOnError, mockOnSuccess),
           {wrapper},
         )
 
         result.current.mutate()
 
-        await waitFor(() => expect(mockNotify).toHaveBeenCalledTimes(1))
+        await waitFor(() => expect(mockOnError).toHaveBeenCalledTimes(1))
         await waitFor(() =>
-          expect(mockNotify).toHaveBeenCalledWith(
+          expect(mockOnError).toHaveBeenCalledWith(
+            'genericError',
             'some-error-message',
-            'error',
           ),
         )
       })
