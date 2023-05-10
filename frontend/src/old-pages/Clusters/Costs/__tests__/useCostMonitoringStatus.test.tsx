@@ -28,8 +28,8 @@ const wrapper: React.FC<PropsWithChildren<any>> = ({children}) => (
 
 const mockGetCostMonitoringStatus = jest.fn()
 
-jest.mock('../../../model', () => {
-  const originalModule = jest.requireActual('../../../model')
+jest.mock('../../../../model', () => {
+  const originalModule = jest.requireActual('../../../../model')
 
   return {
     __esModule: true,

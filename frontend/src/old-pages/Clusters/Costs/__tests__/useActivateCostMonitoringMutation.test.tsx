@@ -12,7 +12,7 @@ import {renderHook, waitFor} from '@testing-library/react'
 import {PropsWithChildren} from 'react'
 import {I18nextProvider, initReactI18next} from 'react-i18next'
 import {QueryClient, QueryClientProvider} from 'react-query'
-import i18n from '../../../i18n'
+import i18n from '../../../../i18n'
 import {useActivateCostMonitoringMutation} from '../costs.queries'
 
 i18n.use(initReactI18next).init({
@@ -31,7 +31,7 @@ const wrapper: React.FC<PropsWithChildren<any>> = ({children}) => (
 
 const mockActivateCostMonitoring = jest.fn()
 
-jest.mock('../../../model', () => ({
+jest.mock('../../../../model', () => ({
   ActivateCostMonitoring: () => mockActivateCostMonitoring(),
 }))
 

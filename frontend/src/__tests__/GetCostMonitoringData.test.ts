@@ -13,7 +13,7 @@ import {GetCostMonitoringData} from '../model'
 import {
   CostMonitoringData,
   CostMonitoringDataResponse,
-} from '../old-pages/Costs/costs.types'
+} from '../old-pages/Clusters/Costs/costs.types'
 
 const mockGet = jest.fn()
 

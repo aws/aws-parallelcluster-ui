@@ -12,12 +12,12 @@
 import {Button} from '@cloudscape-design/components'
 import {useCallback} from 'react'
 import {useTranslation} from 'react-i18next'
-import {notify} from '../../model'
+import {notify} from '../../../model'
 import {
   useActivateCostMonitoringMutation,
   useCostMonitoringStatus,
 } from './costs.queries'
-import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
+import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 
 export function EnableCostMonitoringButton() {
   const {t} = useTranslation()

@@ -38,7 +38,7 @@ import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescript
 import InfoLink from '../../components/InfoLink'
 import {useClusterPoll} from '../../components/useClusterPoll'
 import {ValueWithLabel} from '../../components/ValueWithLabel'
-import {EnableCostMonitoringButton} from '../Costs/EnableCostMonitoringButton'
+import {EnableCostMonitoringButton} from './Costs/EnableCostMonitoringButton'
 
 export default function ClusterProperties() {
   const {t} = useTranslation()

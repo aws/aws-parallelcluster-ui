@@ -23,7 +23,7 @@ import {NoMatch} from '../components/NoMatch'
 import {Images} from '../old-pages/Images'
 import {Logs} from '../old-pages/Logs'
 import {useLoadingState} from '../components/useLoadingState'
-import {Costs} from '../old-pages/Costs'
+import {Costs} from '../old-pages/Clusters/Costs'
 
 export default function App() {
   const {loading, content} = useLoadingState(

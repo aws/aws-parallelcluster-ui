@@ -19,8 +19,8 @@ import {
 } from '@cloudscape-design/components'
 import {useCallback, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
-import EmptyState from '../../components/EmptyState'
-import {consoleDomain, useState} from '../../store'
+import EmptyState from '../../../components/EmptyState'
+import {consoleDomain, useState} from '../../../store'
 import {useCostMonitoringDataQuery} from './costs.queries'
 import {CostMonitoringData} from './costs.types'
 import {toShortDollarAmount} from './valueFormatter'
@@ -41,6 +41,11 @@ function rotateToCurrentMonth(months: string[], today = new Date()): string[] {
   const rotatedMonths = rotateArray(months, currentMonthIndex + 1)
 
   return rotatedMonths
+}
+
+function dataIsAllZeroes(data: CostMonitoringData[]) {
+  const upTo12points = data.slice(Math.max(data.length - 12, 0))
+  return upTo12points.every(data => data.amount === 0)
 }
 
 function toSeriesData(months: string[], data: CostMonitoringData[]) {
@@ -88,12 +93,14 @@ export function CostData({clusterName}: Props) {
 
   const last12Months = useMemo(() => rotateToCurrentMonth(months), [])
 
+  const isEmpty = data && dataIsAllZeroes(data)
+
   const series: BarChartProps<XAxisValueType>['series'] = useMemo(
     () =>
-      isSuccess
+      isSuccess && !isEmpty
         ? [
             {
-              title: t('costMonitoring.costData.chart.title'),
+              title: clusterName,
               type: 'bar',
               data: toSeriesData(last12Months, data),
               valueFormatter: (value: number) =>
@@ -101,7 +108,7 @@ export function CostData({clusterName}: Props) {
             },
           ]
         : [],
-    [data, isSuccess, last12Months, t],
+    [clusterName, data, isEmpty, isSuccess, last12Months, t],
   )
 
   const domain = consoleDomain(region)
@@ -156,6 +163,11 @@ export function CostData({clusterName}: Props) {
         recoveryText={t('costMonitoring.costData.chart.recoveryText')}
         onRecoveryClick={onRecoveryClick}
         i18nStrings={i18nStrings}
+        /**
+         * Limit the height of the bar chart
+         * to better fit inside the SplitPanel
+         */
+        height={350}
         empty={
           <EmptyState
             title={t('costMonitoring.costData.chart.empty.title')}

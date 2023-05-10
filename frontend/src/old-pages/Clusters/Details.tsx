@@ -26,6 +26,8 @@ import Properties from './Properties'
 import Loading from '../../components/Loading'
 import {useTranslation} from 'react-i18next'
 import {Alert} from '@cloudscape-design/components'
+import {Costs} from './Costs'
+import {useCostMonitoringStatus} from './Costs/costs.queries'
 
 export default function ClusterTabs() {
   const {t} = useTranslation()
@@ -34,6 +36,8 @@ export default function ClusterTabs() {
   const cluster = useState(clusterPath)
   const selectedClusterName = useState(['app', 'clusters', 'selected'])
   const apiVersion = useState(['app', 'version', 'full'])
+
+  const {data: isCostMonitoringActive} = useCostMonitoringStatus()
 
   function isAccountingEnabled() {
     const accountingPath = [
@@ -91,6 +95,15 @@ export default function ClusterTabs() {
             id: 'stack-events',
             content: <StackEvents />,
           },
+          ...(isCostMonitoringActive
+            ? [
+                {
+                  label: t('cluster.tabs.costMonitoring'),
+                  id: 'cost-monitoring',
+                  content: <Costs />,
+                },
+              ]
+            : []),
         ]}
         onChange={({detail}) => {
           navigate(`/clusters/${selectedClusterName}/${detail.activeTabId}`)

@@ -108,7 +108,8 @@
       "storage": "Storage",
       "scheduling": "Job status",
       "accounting": "Accounting",
-      "stackEvents": "Stack events"
+      "stackEvents": "Stack events",
+      "costMonitoring": "Cost monitoring"
     },
     "properties": {
       "title": "Properties",
@@ -431,23 +432,16 @@
     }
   },
   "costMonitoring": {
-    "title": "Cluster {{clusterName}} costs",
-    "breadcrumbLabel": "Costs",
     "activateButton": {
       "label": "Activate cost monitoring",
       "activationSuccess": "Cost monitoring activation may take up to 24 hours to be enabled. Your request is being processed!",
       "costExplorerCannotBeAccessed": "In order to use cost monitoring with PCUI, you must enable Cost Explorer for your account by opening Cost Explorer for the first time in the AWS Cost Management console." 
-    },
-    "helpPanel": {
-      "title": "$t(costMonitoring.title)",
-      "description": "<p>View the costs for your cluster.</p>"
     },
     "costData": {
       "title": "Spending analysis",
       "viewInCostExplorer": "View in Cost Explorer",
       "viewBudgets": "View Budgets and Alarms",
       "chart": {
-        "title": "Monthly spending",
         "yTitle": "Spent ($)",
         "xTitle": "Months",
         "loadingText": "Loading spending data...",
@@ -455,7 +449,7 @@
         "recoveryText": "Retry",
         "empty": {
           "title": "No spending data",
-          "subtitle": "No spending data to display."
+          "subtitle": "No spending data to display. It might take 24 hours for data to be available."
         },
         "months": {
           "jan": "January",

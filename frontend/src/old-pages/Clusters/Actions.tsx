@@ -32,7 +32,7 @@ import {ButtonDropdown} from '@cloudscape-design/components'
 import {CancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {ButtonDropdownProps} from '@cloudscape-design/components/button-dropdown/interfaces'
 import {loadTemplateFromCluster} from '../Configure/util'
-import {useCostMonitoringStatus} from '../Costs/costs.queries'
+import {useCostMonitoringStatus} from './Costs/costs.queries'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
 export default function Actions() {

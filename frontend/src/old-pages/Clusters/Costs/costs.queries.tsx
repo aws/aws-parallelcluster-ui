@@ -17,9 +17,9 @@ import {
   GetCostMonitoringData,
   GetCostMonitoringStatus,
   NotifyFn,
-} from '../../model'
+} from '../../../model'
 import {composeTimeRange} from './composeTimeRange'
-import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
+import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 
 export const COST_MONITORING_DATA_QUERY_KEY = ['COST_MONITORING_DATA']
 export const COST_MONITORING_STATUS_QUERY_KEY = ['COST_MONITORING_STATUS']
