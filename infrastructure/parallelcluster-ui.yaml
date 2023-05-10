@@ -3,10 +3,6 @@ Parameters:
     Description: Email address of administrative user to setup by default (only with new Cognito instances).
     Type: String
     Default: ''
-  PCUIVersion:
-    Description: Version of AWS ParallelCluster UI deploy
-    Type: String
-    Default: 2023.04.0
   UserPoolId:
     Description: UserPoolId of a previously deployed PCUI Cognito User Pool. Leave blank to create a new one.
     Type: String
@@ -35,10 +31,6 @@ Parameters:
     Description: (Optional) S3 bucket where CloudFormation files are stored. Change this parameter only when testing changes made to the infrastructure itself.
     Type: String
     Default: ''
-  LambdaBucketName:
-    Description: (Optional) S3 bucket where the lambda code is stored as a zip archive. Change this parameter only when testing changes made to the lambda code.
-    Type: String
-    Default: ''
 
 
 Metadata:
@@ -48,10 +40,6 @@ Metadata:
           default: Admin User (only with new Cognito instances)
         Parameters: 
           - AdminUserEmail
-      - Label:
-          default: ParallelCluster UI
-        Parameters:
-          - PCUIVersion
       - Label:
           default: (Optional) External PCUI Cognito
         Parameters:
@@ -68,10 +56,9 @@ Metadata:
           - ImageBuilderVpcId
           - ImageBuilderSubnetId
       - Label:
-          default: (Debugging only) Infrastructure and lambda code archive S3 Buckets
+          default: (Optional) S3 bucket where deployment files are stored. Change this parameter only when testing changes made to the infrastructure itself.
         Parameters:
           - InfrastructureBucket
-          - LambdaBucketName
 
     ParameterLabels:
       AdminUserEmail:
@@ -89,7 +76,6 @@ Conditions:
       - !Not [!Equals [!Ref ImageBuilderVpcId, ""]]
       - !Not [!Equals [!Ref ImageBuilderSubnetId, ""]]
   HasDefaultInfrastructure: !Equals [!Ref InfrastructureBucket, '']
-  HasDefaultLambda: !Equals [!Ref LambdaBucketName, '']
   UseExistingCognito:
     !And
       - !Not [!Equals [!Ref UserPoolId, ""]]
@@ -186,10 +172,10 @@ Resources:
       Runtime: python3.8
       Code:
         S3Bucket: !If
-          - HasDefaultLambda
-          - parallelcluster-ui-releases
-          - !Ref LambdaBucketName
-        S3Key: !Sub '${PCUIVersion}/pcui-lambda.zip'
+          - HasDefaultInfrastructure
+          - !Select [ 2, !Split [ '/', !Select [ 0, !Split [ '.', PLACEHOLDER ] ] ] ]
+          - !Select [ 2, !Split [ '/', !Select [ 0, !Split [ '.', !Ref InfrastructureBucket ] ] ] ]
+        S3Key: pcui-lambda.zip
 
   ApiGateway:
     Type: AWS::ApiGatewayV2::Api
