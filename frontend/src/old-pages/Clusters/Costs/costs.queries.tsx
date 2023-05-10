@@ -56,23 +56,30 @@ export function useCostMonitoringStatus() {
   )
 }
 
-export function useActivateCostMonitoringMutation(notify: NotifyFn) {
-  const {t} = useTranslation()
+export type CostMonitoringActivationErrorKind =
+  | 'costExplorerCannotBeAccessed'
+  | 'genericError'
+
+export function useActivateCostMonitoringMutation(
+  onError: (kind: CostMonitoringActivationErrorKind, message?: string) => void,
+  onSuccess: () => void,
+) {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: () => ActivateCostMonitoring(),
     onSuccess: () => {
       queryClient.setQueryData(COST_MONITORING_STATUS_QUERY_KEY, true)
-      notify(t('costMonitoring.activateButton.activationSuccess'))
+      onSuccess()
     },
     onError: (error: AxiosError) => {
       if (error.response) {
         const costExplorerCannotBeAccessed = error.response.status === 405
-        const message = costExplorerCannotBeAccessed
-          ? t('costMonitoring.activateButton.costExplorerCannotBeAccessed')
-          : error.response.data.message
-        notify(message, 'error')
+        if (costExplorerCannotBeAccessed) {
+          onError('costExplorerCannotBeAccessed')
+        } else {
+          onError('genericError', error.response.data.message)
+        }
       }
     },
   })

@@ -433,8 +433,16 @@
   "costMonitoring": {
     "activateButton": {
       "label": "Activate cost monitoring",
-      "activationSuccess": "Cost monitoring activation may take up to 24 hours to be enabled. Your request is being processed!",
-      "costExplorerCannotBeAccessed": "In order to use cost monitoring with PCUI, you must enable Cost Explorer for your account by opening Cost Explorer for the first time in the AWS Cost Management console." 
+      "activationSuccess": "Cost monitoring activation might take up to 24 hours to complete. We are processing your request."
+    },
+    "enableCostExplorerModal": {
+      "title": "Activating Cost Explorer",
+      "description": "To use cost monitoring in the PCUI, open Cost Explorer in your account:<p>1. Log in to the AWS Management console and navigate to AWS Cost Management.<br/>2. In the navigation pane, choose Cost Explorer.<br/>3. In the Welcome page, choose Launch Cost Explorer.</p>",
+      "closeAriaLabel": "Close",
+      "actions": {
+        "cancel": "Not now",
+        "goToCostExplorer": "Activate Cost Explorer"
+      }
     },
     "costData": {
       "title": "Spending analysis",
