@@ -1,15 +1,16 @@
 #!/bin/bash
 set -e
 # This script must be run from the root of the project
-# The only output on standard error will be the path to the archive file generated
-# You can obtain the path of the generated zip archive by doing
+# The archive file will be in the target folder and will have the specified archive name
 #
-# $ ARCHIVE_PATH=`build_lambda_archive.sh`
-# $ echo $ARCHIVE_PATH
-# PROJECT_ROOT/lambda_package/pcui-lambda.zip
+# Example
+# $ ./scripts/build_lambda_archive.sh --target-folder lambda_package --archive-name pcui-lambda.zip
+#
+# After the script's execution, the generated archive will be in ./lambda_package/pcui-lambda.zip
+
 
 PROJECT_ROOT=`realpath $(dirname $(dirname "${BASH_SOURCE[0]}"))`
-USAGE="$(basename "$0") [-h] [--target-folder, defaults to 'lambda_package'] [--archive-name, defaults to pcui-lambda.zip]"
+USAGE="$(basename "$0") [-h] --target-folder FOLDER --archive-name ARCHIVE_NAME"
 
 print_err() {
   echo $@ 1>&2
@@ -19,8 +20,6 @@ print_usage() {
   print_err "$USAGE"
 }
 
-TARGET_FOLDER='lambda_package'
-ARCHIVE_NAME='pcui-lambda.zip'
 
 while [[ $# -gt 0 ]]
 do
@@ -48,48 +47,53 @@ case $key in
 esac
 done
 
+if [ -z "$TARGET_FOLDER" ] || [ -z "$ARCHIVE_NAME" ]; then
+  print_err "You must specify both '--target-folder' and '--archive-name' parameters"
+  exit 1
+fi
 
 if [ -r "${PROJECT_ROOT}/${TARGET_FOLDER}" ] && ! [ -z "$(ls -A "${PROJECT_ROOT}/${TARGET_FOLDER}")" ]; then
    print_err "${PROJECT_ROOT}/${TARGET_FOLDER} is not empty, please delete contents before proceeding"
    exit 1
 fi
 
+
 print_err "Downloading backend dependencies"
-mkdir -p "${PROJECT_ROOT}/${TARGET_FOLDER}" 1>&2
-pip install -r "${PROJECT_ROOT}/requirements.txt" -t "${PROJECT_ROOT}/${TARGET_FOLDER}" 1>&2
+mkdir -p "${PROJECT_ROOT}/${TARGET_FOLDER}"
+pip install -r "${PROJECT_ROOT}/requirements.txt" -t "${PROJECT_ROOT}/${TARGET_FOLDER}"
 
 pushd "${PROJECT_ROOT}/frontend" >> /dev/null
 print_err "Exporting static frontend code"
 
 # produce the frontend export inside PROJECT_ROOT/frontend/build
-npm run export 1>&2
+npm run export
 
 # enter safe temporary workspace
 pushd "${PROJECT_ROOT}/${TARGET_FOLDER}" >> /dev/null
 
 # Add frontend files
-mkdir -p frontend/public 1>&2
-cp -r "${PROJECT_ROOT}"/frontend/build/* frontend/public 1>&2
-cp "${PROJECT_ROOT}"/frontend/resources/attributions/npm-python-attributions.txt frontend/public/license.txt 1>&2
+mkdir -p frontend/public
+cp -r "${PROJECT_ROOT}"/frontend/build/* frontend/public
+cp "${PROJECT_ROOT}"/frontend/resources/attributions/npm-python-attributions.txt frontend/public/license.txt
 
 # Add PCUI backend folders
 print_err "Adding PCUI files"
-cp -r "${PROJECT_ROOT}/awslambda" ./awslambda 1>&2
+cp -r "${PROJECT_ROOT}/awslambda" ./awslambda
 mv ./awslambda/entrypoint.py lambda_function.py
 
-cp -r "${PROJECT_ROOT}/api" ./api 1>&2
+cp -r "${PROJECT_ROOT}/api" ./api
 # remove tests from backend code
-rm -r ./api/tests 1>&2
+rm -r ./api/tests
 
 
 # Add main webapp file
 cp "${PROJECT_ROOT}/app.py" ./app.py
 
 print_err "Generating the archive '$ARCHIVE_NAME'"
-zip -r "$ARCHIVE_NAME" . 1>&2
+zip -r "$ARCHIVE_NAME" .
 
 # Add main lambda handler
-zip -g "$ARCHIVE_NAME" lambda_function.py 1>&2
+zip -g "$ARCHIVE_NAME" lambda_function.py
 
 echo `pwd`/"${ARCHIVE_NAME}"
 

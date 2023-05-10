@@ -9,4 +9,3 @@ infrastructure/cognitolambda/node_modules
 public/*
 /frontend/tsconfig.tsbuildinfo
 .idea/
-lambda_package
