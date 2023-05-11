@@ -53,12 +53,15 @@ describe('given a component to activate cost monitoring for the account', () => 
 
   beforeEach(() => {
     jest.clearAllMocks()
-    window.sessionStorage.clear()
   })
 
-  describe('when the cost monitoring feature is enabled', () => {
+  describe('when PC version is at least 3.2.0', () => {
     beforeEach(() => {
-      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {full: '3.2.0'},
+        },
+      })
 
       screen = render(
         <MockProviders>
@@ -84,7 +87,11 @@ describe('given a component to activate cost monitoring for the account', () => 
 
   describe('when cost monitoring is already active for the account', () => {
     beforeEach(() => {
-      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {full: '3.2.0'},
+        },
+      })
       mockGetCostMonitoringStatus.mockResolvedValue(true)
 
       screen = render(
@@ -104,8 +111,14 @@ describe('given a component to activate cost monitoring for the account', () => 
     })
   })
 
-  describe('when the cost monitoring feature is not enabled', () => {
+  describe('when PC version is less than 3.2.0', () => {
     beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {full: '3.1.5'},
+        },
+      })
+
       screen = render(
         <MockProviders>
           <EnableCostMonitoringButton />

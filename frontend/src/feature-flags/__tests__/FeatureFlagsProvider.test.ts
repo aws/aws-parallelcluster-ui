@@ -9,6 +9,7 @@
 // limitations under the License.
 
 import {featureFlagsProvider} from '../featureFlagsProvider'
+import {AvailableFeature} from '../types'
 
 describe('given a feature flags provider and a list of rules', () => {
   const subject = featureFlagsProvider
@@ -16,21 +17,21 @@ describe('given a feature flags provider and a list of rules', () => {
   describe('when the features list is retrieved', () => {
     it('should return the list', async () => {
       const features = await subject('0.0.0')
-      expect(features).toEqual([])
+      expect(features).toEqual<AvailableFeature[]>([])
     })
   })
 
   describe('when the version is between 3.1.0 and 3.2.0', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.1.5')
-      expect(features).toEqual(['multiuser_cluster'])
+      expect(features).toEqual<AvailableFeature[]>(['multiuser_cluster'])
     })
   })
 
   describe('when the version is between 3.2.0 and 3.3.0', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.2.5')
-      expect(features).toEqual([
+      expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -38,6 +39,7 @@ describe('given a feature flags provider and a list of rules', () => {
         'memory_based_scheduling',
         'slurm_queue_update_strategy',
         'ebs_deletion_policy',
+        'cost_monitoring',
       ])
     })
   })
@@ -45,7 +47,7 @@ describe('given a feature flags provider and a list of rules', () => {
   describe('when the version is above 3.3.0', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.3.2')
-      expect(features).toEqual([
+      expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -53,6 +55,7 @@ describe('given a feature flags provider and a list of rules', () => {
         'memory_based_scheduling',
         'slurm_queue_update_strategy',
         'ebs_deletion_policy',
+        'cost_monitoring',
         'slurm_accounting',
         'queues_multiple_instance_types',
         'dynamic_fs_mount',
@@ -70,7 +73,10 @@ describe('given a feature flags provider and a list of rules', () => {
     })
     it('should be included in the list of features', async () => {
       const features = await subject('3.1.5')
-      expect(features).toEqual(['multiuser_cluster', 'cost_monitoring'])
+      expect(features).toEqual<AvailableFeature[]>([
+        'multiuser_cluster',
+        'cost_monitoring',
+      ])
     })
   })
 
@@ -80,7 +86,7 @@ describe('given a feature flags provider and a list of rules', () => {
     })
     it('should not be included in the list of features', async () => {
       const features = await subject('3.1.5')
-      expect(features).toEqual(['multiuser_cluster'])
+      expect(features).toEqual<AvailableFeature[]>(['multiuser_cluster'])
     })
   })
 })
