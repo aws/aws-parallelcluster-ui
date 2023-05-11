@@ -40,13 +40,16 @@ jest.mock('../../../../model', () => {
 
 describe('given a hook to get the cost monitoring status', () => {
   beforeEach(() => {
-    window.sessionStorage.clear()
-    mockGetCostMonitoringStatus.mockClear()
+    jest.clearAllMocks()
   })
 
-  describe('when the cost monitoring feature is enabled', () => {
+  describe('when PC version is at least 3.2.0', () => {
     beforeEach(() => {
-      window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {full: '3.2.0'},
+        },
+      })
     })
 
     it('should request the cost monitoring status', async () => {
@@ -56,7 +59,14 @@ describe('given a hook to get the cost monitoring status', () => {
     })
   })
 
-  describe('when the cost monitoring feature is not enabled', () => {
+  describe('when PC version is less than 3.2.0', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {full: '3.1.5'},
+        },
+      })
+    })
     it('should not request the cost monitoring status', async () => {
       renderHook(() => useCostMonitoringStatus(), {wrapper})
 
