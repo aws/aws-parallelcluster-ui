@@ -80,13 +80,6 @@ describe('Given a list of queues', () => {
     'when the PC version is $version and they are $maxQueues or more',
     ({version, maxQueues}) => {
       beforeEach(() => {
-        window.sessionStorage.clear()
-        if (version === '3.6.0') {
-          window.sessionStorage.setItem(
-            'additionalFeatures',
-            '["new_resources_limits"]',
-          )
-        }
         const queues = new Array(maxQueues).fill(null).map((_, index) => ({
           Name: `queue-${index + 1}`,
           ComputeResources: [],
@@ -152,13 +145,6 @@ describe('Given a list of queues', () => {
         },
       }))
       beforeEach(() => {
-        window.sessionStorage.clear()
-        if (version === '3.6.0') {
-          window.sessionStorage.setItem(
-            'additionalFeatures',
-            '["new_resources_limits"]',
-          )
-        }
         mockStore.getState.mockReturnValue({
           aws: {
             subnets: [],
@@ -198,14 +184,6 @@ describe('Given a list of queues', () => {
     'when the PC version is $version and the compute resources of a queue are $maxComputeResources',
     ({version, maxComputeResources}) => {
       beforeEach(() => {
-        window.sessionStorage.clear()
-        if (version === '3.6.0') {
-          window.sessionStorage.setItem(
-            'additionalFeatures',
-            '["new_resources_limits"]',
-          )
-        }
-
         mockStore.getState.mockReturnValue({
           aws: {
             subnets: [],
@@ -258,13 +236,6 @@ describe('Given a list of queues', () => {
     'when the PC version is $version and the compute resources of a queue are less then $maxComputeResources',
     ({version, maxComputeResources}) => {
       beforeEach(() => {
-        window.sessionStorage.clear()
-        if (version === '3.6.0') {
-          window.sessionStorage.setItem(
-            'additionalFeatures',
-            '["new_resources_limits"]',
-          )
-        }
         mockStore.getState.mockReturnValue({
           aws: {
             subnets: [],
