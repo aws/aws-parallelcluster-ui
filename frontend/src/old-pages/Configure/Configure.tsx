@@ -82,6 +82,7 @@ function wizardShow(navigate: any) {
   navigate('/configure')
 }
 const loadingPath = ['app', 'wizard', 'source', 'loading']
+const wizardSubmissionLoading = ['app', 'wizard', 'submit', 'loading']
 
 function clearWizardState(
   clearState: (path: any) => void,
@@ -108,6 +109,7 @@ function Configure() {
   const editing = useState(['app', 'wizard', 'editing'])
   const currentPage = useState(['app', 'wizard', 'page']) || INITIAL_WIZARD_PAGE
   const loadingExistingConfiguration = useState(loadingPath)
+  const isSubmittingWizard = useState(wizardSubmissionLoading)
   const [refreshing, setRefreshing] = React.useState(false)
   let navigate = useNavigate()
 
@@ -201,7 +203,7 @@ function Configure() {
           </Button>
         )}
         {currentPage === 'create' && (
-          <Button onClick={wizardHandleDryRun}>
+          <Button disabled={isSubmittingWizard} onClick={wizardHandleDryRun}>
             {t('wizard.actions.dryRun')}
           </Button>
         )}
@@ -245,7 +247,9 @@ function Configure() {
         onSubmit={handleSubmit}
         activeStepIndex={pages.indexOf(currentPage)}
         secondaryActions={showSecondaryActions()}
-        isLoadingNextStep={refreshing || loadingExistingConfiguration}
+        isLoadingNextStep={
+          refreshing || loadingExistingConfiguration || isSubmittingWizard
+        }
         steps={[
           {
             title: t('wizard.cluster.title'),
