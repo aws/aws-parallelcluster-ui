@@ -71,7 +71,7 @@ function setClusterLoadingMsg(
       />
     )
   }
-  notify(content, 'success', clusterLoadingMsgId, true, true)
+  notify(content, 'info', clusterLoadingMsgId, true, true)
 }
 
 function removeClusterLoadingMsg() {
@@ -109,13 +109,6 @@ function handleCreate(
 
     ListClusters()
     clearWizardState()
-    notify(
-      <Trans
-        i18nKey={'wizard.create.success'}
-        values={{clusterName: clusterName}}
-      />,
-      'success',
-    )
     navigate(href)
   }
   setState(['app', 'wizard', 'errors', 'create'], null)

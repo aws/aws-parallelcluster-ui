@@ -1130,7 +1130,6 @@
       "title": "Create",
       "description": "Review or edit your cluster configuration and create your cluster.",
       "pending": "<strong>{{clusterName}}</strong> create is in progress. In <strong>Clusters</strong>, view <strong>{{clusterName}}</strong> create status.",
-      "success": "<strong>{{clusterName}}</strong> successfully created.",
       "configuration": {
         "title": "Cluster configuration YAML file",
         "description": "Review or edit the YAML file that is used to create your cluster.",
