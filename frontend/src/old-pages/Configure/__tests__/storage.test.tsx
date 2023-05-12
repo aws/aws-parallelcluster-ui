@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {render, RenderResult} from '@testing-library/react'
+import {fireEvent, render, RenderResult} from '@testing-library/react'
 import {I18nextProvider} from 'react-i18next'
 import i18n from 'i18next'
 import {initReactI18next} from 'react-i18next'
@@ -441,6 +441,50 @@ describe('given a component to display an Ebs storage instance', () => {
       expect(
         screen.queryByLabelText('wizard.storage.instance.deletionPolicy.label'),
       ).toBeNull()
+    })
+  })
+
+  describe('when the snapshot id property is unchecked', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {
+            full: '3.2.0',
+          },
+          wizard: {
+            config: {
+              SharedStorage: [
+                {
+                  Name: 'ebs-0',
+                  EbsSettings: {
+                    SnapshotId: 'test-snapshot',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+    })
+
+    it('should be removed from the store too', () => {
+      let {getByText} = render(
+        <MockProviders>
+          <EbsSettings index={0} />
+        </MockProviders>,
+      )
+
+      fireEvent.click(getByText('wizard.storage.Ebs.snapshotId.label'))
+
+      expect(clearState).toHaveBeenCalledWith([
+        'app',
+        'wizard',
+        'config',
+        'SharedStorage',
+        0,
+        'EbsSettings',
+        'SnapshotId',
+      ])
     })
   })
 })
