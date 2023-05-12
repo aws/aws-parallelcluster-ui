@@ -11,7 +11,7 @@
 // limitations under the License.
 
 // Fameworks
-import React, {useCallback} from 'react'
+import React, {useCallback, useState as reactUseState} from 'react'
 import i18next from 'i18next'
 import {Trans, useTranslation} from 'react-i18next'
 import {clamp} from '../../util'
@@ -691,7 +691,7 @@ export function EbsSettings({index}: any) {
   const volumeSizePath = [...ebsPath, 'Size']
   const encryptedPath = [...ebsPath, 'Encrypted']
   const kmsPath = [...ebsPath, 'KmsKeyId']
-  const snapshotIdPath = [...ebsPath, 'SnapshotId']
+  const snapshotIdPath = useMemo(() => [...ebsPath, 'SnapshotId'], [ebsPath])
 
   const deletionPolicyPath = [...ebsPath, 'DeletionPolicy']
   const supportedDeletionPolicies: EbsDeletionPolicy[] = [
@@ -707,6 +707,7 @@ export function EbsSettings({index}: any) {
   let encrypted = useState(encryptedPath)
   let kmsId = useState(kmsPath)
   let snapshotId = useState(snapshotIdPath)
+  const [snapshostVisible, setSnapshotVisible] = reactUseState(!!snapshotId)
   let deletionPolicy = useState(deletionPolicyPath)
 
   let validated = useState([...errorsPath, 'validated'])
@@ -726,6 +727,11 @@ export function EbsSettings({index}: any) {
     setState(encryptedPath, setEncrypted)
     if (!setEncrypted) clearState(kmsPath)
   }
+
+  const toggleSnapshotVisibility = useCallback(() => {
+    clearState(snapshotIdPath)
+    setSnapshotVisible(!snapshostVisible)
+  }, [setSnapshotVisible, snapshostVisible, snapshotIdPath])
 
   const encryptionFooterLinks = useMemo(
     () => [
@@ -817,10 +823,8 @@ export function EbsSettings({index}: any) {
       <ColumnLayout columns={2}>
         <SpaceBetween direction="vertical" size="xxs">
           <CheckboxWithHelpPanel
-            checked={snapshotId !== null}
-            onChange={_event => {
-              setState(snapshotIdPath, snapshotId === null ? '' : null)
-            }}
+            checked={snapshostVisible}
+            onChange={toggleSnapshotVisibility}
             helpPanel={
               <TitleDescriptionHelpPanel
                 title={t('wizard.storage.Ebs.snapshotId.label')}
@@ -831,7 +835,7 @@ export function EbsSettings({index}: any) {
           >
             {t('wizard.storage.Ebs.snapshotId.label')}
           </CheckboxWithHelpPanel>
-          {snapshotId !== null && (
+          {snapshostVisible && (
             <Input
               value={snapshotId}
               placeholder={t('wizard.storage.Ebs.snapshotId.placeholder')}
