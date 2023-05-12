@@ -51,7 +51,9 @@ import * as MultiInstanceCR from './MultiInstanceComputeResource'
 import {
   AllocationStrategy,
   ClusterResourcesLimits,
-  ComputeResource, Queue} from './queues.types'
+  ComputeResource,
+  Queue,
+} from './queues.types'
 import {SubnetMultiSelect} from './SubnetMultiSelect'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
@@ -70,7 +72,7 @@ const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
 export function useClusterResourcesLimits(): ClusterResourcesLimits {
   const newResourcesLimits = useFeatureFlag('new_resources_limits')
   return newResourcesLimits
-    ? {maxQueues: 100, maxCRPerQueue: 40, maxCRPerCluster: 150}
+    ? {maxQueues: 50, maxCRPerQueue: 50, maxCRPerCluster: 50}
     : {maxQueues: 10, maxCRPerQueue: 5, maxCRPerCluster: 50}
 }
 

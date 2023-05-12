@@ -75,17 +75,72 @@ describe('Given a list of queues', () => {
 
   describe.each([
     {version: '3.5.0', maxQueues: 10},
-    {version: '3.6.0', maxQueues: 100},
-  ])('when they are $maxQueues or more', ({version, maxQueues}) => {
-    beforeEach(() => {
-      window.sessionStorage.clear()
-      if (version === '3.6.0') {
-        window.sessionStorage.setItem(
-          'additionalFeatures',
-          '["new_resources_limits"]',
+    {version: '3.6.0', maxQueues: 50},
+  ])(
+    'when the PC version is $version and they are $maxQueues or more',
+    ({version, maxQueues}) => {
+      beforeEach(() => {
+        window.sessionStorage.clear()
+        if (version === '3.6.0') {
+          window.sessionStorage.setItem(
+            'additionalFeatures',
+            '["new_resources_limits"]',
+          )
+        }
+        const queues = new Array(maxQueues).fill(null).map((_, index) => ({
+          Name: `queue-${index + 1}`,
+          ComputeResources: [],
+          ComputeSettings: {
+            LocalStorage: {
+              RootVolume: {
+                VolumeType: 'gp3',
+              },
+            },
+          },
+        }))
+
+        mockStore.getState.mockReturnValue({
+          aws: {
+            subnets: [],
+          },
+          app: {
+            version: {
+              full: version,
+            },
+            wizard: {
+              config: {
+                Scheduling: {
+                  SlurmQueues: queues,
+                },
+              },
+            },
+          },
+        })
+      })
+      it('should not allow to add more queues', () => {
+        const {getAllByText} = render(
+          <MockProviders store={mockStore}>
+            <Queues />
+          </MockProviders>,
         )
-      }
-      const queues = new Array(maxQueues).fill(null).map((_, index) => ({
+
+        const button = getAllByText('Add queue')[0]
+        fireEvent.click(button)
+        expect(setState).not.toHaveBeenCalledWith(
+          ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'],
+          expect.anything(),
+        )
+      })
+    },
+  )
+
+  describe.each([
+    {version: '3.5.0', maxQueues: 10},
+    {version: '3.6.0', maxQueues: 50},
+  ])(
+    'when the PC version is $version and they are less than $maxQueues',
+    ({version, maxQueues}) => {
+      const queues = new Array(maxQueues / 2).fill(null).map((_, index) => ({
         Name: `queue-${index + 1}`,
         ComputeResources: [],
         ComputeSettings: {
@@ -96,100 +151,51 @@ describe('Given a list of queues', () => {
           },
         },
       }))
-
-      mockStore.getState.mockReturnValue({
-        aws: {
-          subnets: [],
-        },
-        app: {
-          version: {
-            full: version,
+      beforeEach(() => {
+        window.sessionStorage.clear()
+        if (version === '3.6.0') {
+          window.sessionStorage.setItem(
+            'additionalFeatures',
+            '["new_resources_limits"]',
+          )
+        }
+        mockStore.getState.mockReturnValue({
+          aws: {
+            subnets: [],
           },
-          wizard: {
-            config: {
-              Scheduling: {
-                SlurmQueues: queues,
+          app: {
+            version: {
+              full: version,
+            },
+            wizard: {
+              config: {
+                Scheduling: {
+                  SlurmQueues: queues,
+                },
               },
             },
           },
-        },
+        })
       })
-    })
-    it('should not allow to add more queues', () => {
-      const {getAllByText} = render(
-        <MockProviders store={mockStore}>
-          <Queues />
-        </MockProviders>,
-      )
-
-      const button = getAllByText('Add queue')[0]
-      fireEvent.click(button)
-      expect(setState).not.toHaveBeenCalledWith(
-        ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'],
-        expect.anything(),
-      )
-    })
-  })
-
-  describe.each([
-    {version: '3.5.0', maxQueues: 10},
-    {version: '3.6.0', maxQueues: 100},
-  ])('when they are less than $maxQueues', ({version, maxQueues}) => {
-    const queues = new Array(maxQueues / 2).fill(null).map((_, index) => ({
-      Name: `queue-${index + 1}`,
-      ComputeResources: [],
-      ComputeSettings: {
-        LocalStorage: {
-          RootVolume: {
-            VolumeType: 'gp3',
-          },
-        },
-      },
-    }))
-    beforeEach(() => {
-      window.sessionStorage.clear()
-      if (version === '3.6.0') {
-        window.sessionStorage.setItem(
-          'additionalFeatures',
-          '["new_resources_limits"]',
+      it('should allow to add more queues', () => {
+        const {getAllByText} = render(
+          <MockProviders store={mockStore}>
+            <Queues />
+          </MockProviders>,
         )
-      }
-      mockStore.getState.mockReturnValue({
-        aws: {
-          subnets: [],
-        },
-        app: {
-          version: {
-            full: version,
-          },
-          wizard: {
-            config: {
-              Scheduling: {
-                SlurmQueues: queues,
-              },
-            },
-          },
-        },
-      })
-    })
-    it('should allow to add more queues', () => {
-      const {getAllByText} = render(
-        <MockProviders store={mockStore}>
-          <Queues />
-        </MockProviders>,
-      )
 
-      const button = getAllByText('Add queue')[0]
-      fireEvent.click(button)
-      expect(setState).toHaveBeenCalled()
-    })
-  })
+        const button = getAllByText('Add queue')[0]
+        fireEvent.click(button)
+        expect(setState).toHaveBeenCalled()
+      })
+    },
+  )
 
   describe.each([
     {version: '3.5.0', maxComputeResources: 5},
-    {version: '3.6.0', maxComputeResources: 40},
+    {version: '3.6.0', maxComputeResources: 50},
   ])(
-    'when the compute resources of a queue are $maxComputeResources',
+    'when the PC version is $version and the compute resources of a queue are $maxComputeResources',
     ({version, maxComputeResources}) => {
       beforeEach(() => {
         window.sessionStorage.clear()
@@ -247,9 +253,9 @@ describe('Given a list of queues', () => {
 
   describe.each([
     {version: '3.5.0', maxComputeResources: 5},
-    {version: '3.6.0', maxComputeResources: 40},
+    {version: '3.6.0', maxComputeResources: 50},
   ])(
-    'when the compute resources of a queue are less then $maxComputeResources',
+    'when the PC version is $version and the compute resources of a queue are less then $maxComputeResources',
     ({version, maxComputeResources}) => {
       beforeEach(() => {
         window.sessionStorage.clear()
@@ -306,7 +312,7 @@ describe('Given a list of queues', () => {
     },
   )
 
-  describe('when the total compute resources of a cluster are 150', () => {
+  describe('when the total compute resources of a cluster are 50', () => {
     beforeEach(() => {
       const queues = new Array(5).fill(null).map((_, index) => ({
         Name: `queue-${index + 1}`,
