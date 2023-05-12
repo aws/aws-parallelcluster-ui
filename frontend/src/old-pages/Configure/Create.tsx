@@ -35,6 +35,7 @@ import {errorsToFlashbarItems} from './errorsToFlashbarItems'
 
 // Constants
 const configPath = ['app', 'wizard', 'clusterConfigYaml']
+const wizardSubmissionLoading = ['app', 'wizard', 'submit', 'loading']
 const clusterLoadingMsgId = 'cluster-loading'
 
 function handleWarnings(resp: any) {
@@ -96,16 +97,19 @@ function handleCreate(
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
   setClusterLoadingMsg(clusterName, editing, dryRun)
+  setState(wizardSubmissionLoading, true)
 
   var errHandler = (err: any) => {
     setState(['app', 'wizard', 'errors', 'create'], err)
     removeClusterLoadingMsg()
+    setState(wizardSubmissionLoading, false)
   }
   var successHandler = (resp: any) => {
     let href = `/clusters/${clusterName}/stack-events`
     handleWarnings(resp)
     setState(['app', 'selectedRegion'], region)
     setState(['app', 'clusters', 'selected'], clusterName)
+    setState(wizardSubmissionLoading, false)
 
     ListClusters()
     clearWizardState()
@@ -144,13 +148,16 @@ function handleDryRun() {
   const selectedRegion = getState(['app', 'selectedRegion'])
   const dryRun = true
   setClusterLoadingMsg(clusterName, editing, dryRun)
+  setState(wizardSubmissionLoading, true)
 
   var errHandler = (err: any) => {
     setState(['app', 'wizard', 'errors', 'create'], err)
     removeClusterLoadingMsg()
+    setState(wizardSubmissionLoading, false)
   }
   var successHandler = (resp: any) => {
     handleWarnings(resp)
+    setState(wizardSubmissionLoading, false)
   }
   setState(['app', 'wizard', 'errors', 'create'], null)
   if (editing)
