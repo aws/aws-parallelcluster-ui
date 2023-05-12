@@ -366,7 +366,7 @@ const useAllocationStrategyOptions = () => {
 function Queue({index}: any) {
   const {t} = useTranslation()
   const queues = useState(queuesPath)
-  const {maxQueues} = useClusterResourcesLimits()
+  const {maxQueues, maxCRPerCluster} = useClusterResourcesLimits()
   const computeResourceAdapter = useComputeResourceAdapter()
   const queue = useState([...queuesPath, index])
   const enablePlacementGroupPath = React.useMemo(
@@ -501,6 +501,20 @@ function Queue({index}: any) {
     [t],
   )
 
+  const totalComputeResources = React.useMemo(
+    () =>
+      queues
+        .map((queue: Queue) => queue.ComputeResources.length)
+        .reduce(
+          (total: number, computeResources: number) => total + computeResources,
+          0,
+        ),
+    [queues],
+  )
+
+  const canAddQueue =
+    queues.length < maxQueues && totalComputeResources < maxCRPerCluster
+
   return (
     <Container
       header={
@@ -508,7 +522,7 @@ function Queue({index}: any) {
           variant="h2"
           actions={
             <SpaceBetween direction="horizontal" size="xs">
-              <Button disabled={queues.length >= maxQueues} onClick={addQueue}>
+              <Button disabled={!canAddQueue} onClick={addQueue}>
                 {t('wizard.queues.addQueueButton.label')}
               </Button>
               {queues.length > 1 && (

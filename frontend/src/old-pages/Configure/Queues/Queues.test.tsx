@@ -361,6 +361,20 @@ describe('Given a list of queues', () => {
         expect.anything(),
       )
     })
+    it('should not allow to add more queues', () => {
+      const {getAllByText} = render(
+        <MockProviders store={mockStore}>
+          <Queues />
+        </MockProviders>,
+      )
+
+      const button = getAllByText('Add queue')[0]
+      fireEvent.click(button)
+      expect(setState).not.toHaveBeenCalledWith(
+        ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues'],
+        expect.anything(),
+      )
+    })
   })
 })
 
