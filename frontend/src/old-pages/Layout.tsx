@@ -27,9 +27,9 @@ import {
   NonCancelableEventHandler,
 } from '@cloudscape-design/components/internal/events'
 import {BreadcrumbGroupProps} from '@cloudscape-design/components/breadcrumb-group/interfaces'
-import BreadcrumbGroup from '@cloudscape-design/components/breadcrumb-group'
 import {useTranslation} from 'react-i18next'
 import map from 'lodash/map'
+import {BreadcrumbGroupNavigate} from './Configure/Components'
 
 type Slug = 'clusters' | 'images' | 'users' | 'clusterCreate' | 'clusterUpdate'
 type BreadcrumbsProps = {
@@ -79,10 +79,10 @@ export function Breadcrumbs({
   )
 
   return (
-    <BreadcrumbGroup
+    <BreadcrumbGroupNavigate
       items={items}
       ariaLabel={t('global.menu.header')}
-      onClick={onClick}
+      onFollow={onClick}
     />
   )
 }

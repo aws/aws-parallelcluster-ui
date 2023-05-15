@@ -10,7 +10,6 @@
 // limitations under the License.
 
 import {
-  BreadcrumbGroup,
   BreadcrumbGroupProps,
   ContentLayout,
   Header,
@@ -26,6 +25,7 @@ import InfoLink from '../../components/InfoLink'
 import Layout from '../Layout'
 import {LogMessagesTable} from './LogMessagesTable'
 import {LogStreamsTable} from './LogStreamsTable'
+import {BreadcrumbGroupNavigate} from '../Configure/Components'
 
 function LogsHelpPanel({clusterName}: {clusterName: string}) {
   const {t} = useTranslation()
@@ -81,7 +81,7 @@ export function Logs() {
   }, [])
 
   return (
-    <Layout breadcrumbs={<BreadcrumbGroup items={breadcrumbItems} />}>
+    <Layout breadcrumbs={<BreadcrumbGroupNavigate items={breadcrumbItems} />}>
       <ContentLayout
         header={
           <Header
