@@ -83,6 +83,12 @@ const months = [
   i18next.t('costMonitoring.costData.chart.months.dec'),
 ]
 
+function buildCostExplorerLink(domain: string, clusterName: string) {
+  const uri = `${domain}/cost-management/home#/cost-explorer?granularity=Monthly&historicalRelativeRange=LAST_12_MONTHS&groupBy=[]&filter=[{"dimension":{"id":"TagKey","displayValue":"Tag"},"operator":"INCLUDES","values":[{"value":"${clusterName}"}],"growableValue":{"value":"parallelcluster:cluster-name","displayValue":"parallelcluster:cluster-name"}}]`
+
+  return encodeURI(uri)
+}
+
 export function CostData({clusterName}: Props) {
   const {t} = useTranslation()
   const defaultRegion = useState(['aws', 'region'])
@@ -112,7 +118,8 @@ export function CostData({clusterName}: Props) {
   )
 
   const domain = consoleDomain(region)
-  const costExplorerHref = `${domain}/cost-management/home#/cost-explorer`
+  const costExplorerHref = buildCostExplorerLink(domain, clusterName)
+
   const budgetsHref = `${domain}/billing/home#/budgets`
 
   const i18nStrings: BarChartProps<XAxisValueType>['i18nStrings'] = useMemo(
