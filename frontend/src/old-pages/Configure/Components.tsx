@@ -46,6 +46,8 @@ import {
   Multiselect,
   MultiselectProps,
   ColumnLayout,
+  BreadcrumbGroupProps,
+  BreadcrumbGroup,
 } from '@cloudscape-design/components'
 
 // Components
@@ -59,6 +61,7 @@ import {
   InstanceType,
   InstanceTypeOption,
 } from './Components.types'
+import {useNavigate} from 'react-router-dom'
 
 // Helper Functions
 function strToOption(str: any) {
@@ -750,6 +753,26 @@ const CheckboxWithHelpPanel = ({
       <InfoLink helpPanel={helpPanel} />
     </SpaceBetween>
   )
+}
+
+export const BreadcrumbGroupNavigate = ({
+  onFollow,
+  ...props
+}: BreadcrumbGroupProps) => {
+  const navigate = useNavigate()
+
+  const handleNavigate = React.useCallback(
+    event => {
+      event.preventDefault()
+      if (onFollow) {
+        onFollow(event)
+      } else {
+        navigate(event.detail.href)
+      }
+    },
+    [navigate, onFollow],
+  )
+  return <BreadcrumbGroup {...props} onFollow={handleNavigate} />
 }
 
 export {
