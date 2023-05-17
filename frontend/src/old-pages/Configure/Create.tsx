@@ -108,7 +108,6 @@ function handleCreate(
     let href = `/clusters/${clusterName}/stack-events`
     handleWarnings(resp)
     setState(['app', 'selectedRegion'], region)
-    setState(['app', 'clusters', 'selected'], clusterName)
     setState(wizardSubmissionLoading, false)
 
     ListClusters()
