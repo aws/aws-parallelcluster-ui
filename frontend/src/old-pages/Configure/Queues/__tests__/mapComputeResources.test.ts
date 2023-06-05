@@ -17,6 +17,7 @@ import {
 
 describe('given a mapper to import the ComputeResources section of the Scheduling config', () => {
   let mockVersion: string
+  let mockRegion: string
 
   describe('when the application supports multiple instance types', () => {
     beforeEach(() => {
@@ -49,9 +50,9 @@ describe('given a mapper to import the ComputeResources section of the Schedulin
             ],
           },
         ]
-        expect(mapComputeResources(mockVersion, mockComputeResources)).toEqual(
-          expected,
-        )
+        expect(
+          mapComputeResources(mockVersion, mockRegion, mockComputeResources),
+        ).toEqual(expected)
       })
     })
     describe('when the configuration was created with the flexible instance types format', () => {
@@ -72,9 +73,9 @@ describe('given a mapper to import the ComputeResources section of the Schedulin
         ]
       })
       it('should leave the configuration as is', () => {
-        expect(mapComputeResources(mockVersion, mockComputeResources)).toEqual(
-          mockComputeResources,
-        )
+        expect(
+          mapComputeResources(mockVersion, mockRegion, mockComputeResources),
+        ).toEqual(mockComputeResources)
       })
     })
   })
@@ -95,9 +96,9 @@ describe('given a mapper to import the ComputeResources section of the Schedulin
     })
 
     it('should leave the configuration as is', () => {
-      expect(mapComputeResources(mockVersion, mockComputeResources)).toEqual(
-        mockComputeResources,
-      )
+      expect(
+        mapComputeResources(mockVersion, mockRegion, mockComputeResources),
+      ).toEqual(mockComputeResources)
     })
   })
 })
