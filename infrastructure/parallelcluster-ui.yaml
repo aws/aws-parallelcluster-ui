@@ -101,6 +101,7 @@ Conditions:
       - !Equals ['3', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
+  InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
 
 Mappings:
   ParallelClusterUI:
@@ -755,14 +756,17 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Action:
+          - !If
+            - InGovCloud
+            - !Ref AWS::NoValue
+            - Action:
               - ce:ListCostAllocationTags
               - ce:UpdateCostAllocationTagsStatus
               - ce:GetCostAndUsage
-            Resource:
-              - !Sub 'arn:aws:ce:us-east-1:${AWS::AccountId}:/*' # CE only available in us-east-1, aws partition, see https://docs.aws.amazon.com/general/latest/gr/billing.html
-            Effect: Allow
-            Sid: CostMonitoringPolicy
+              Resource:
+                - !Sub 'arn:aws:ce:us-east-1:${AWS::AccountId}:/*' # CE only available in us-east-1, aws partition, see https://docs.aws.amazon.com/general/latest/gr/billing.html
+              Effect: Allow
+              Sid: CostMonitoringPolicy
           - Action:
               - pricing:GetProducts
             Resource:
