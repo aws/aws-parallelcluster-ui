@@ -13,24 +13,25 @@ import {AvailableFeature} from '../types'
 
 describe('given a feature flags provider and a list of rules', () => {
   const subject = featureFlagsProvider
+  let region: string | undefined = 'us-west-1'
 
   describe('when the features list is retrieved', () => {
     it('should return the list', async () => {
-      const features = await subject('0.0.0')
+      const features = await subject('0.0.0', region)
       expect(features).toEqual<AvailableFeature[]>([])
     })
   })
 
   describe('when the version is between 3.1.0 and 3.2.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.1.5')
+      const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>(['multiuser_cluster'])
     })
   })
 
   describe('when the version is between 3.2.0 and 3.3.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.2.5')
+      const features = await subject('3.2.5', region)
       expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
@@ -46,7 +47,7 @@ describe('given a feature flags provider and a list of rules', () => {
 
   describe('when the version is between 3.3.0 and 3.4.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.3.2')
+      const features = await subject('3.3.2', region)
       expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
@@ -68,7 +69,7 @@ describe('given a feature flags provider and a list of rules', () => {
 
   describe('when the version is between 3.4.0 and 3.6.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.4.1')
+      const features = await subject('3.4.1', region)
       expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
@@ -92,7 +93,7 @@ describe('given a feature flags provider and a list of rules', () => {
 
   describe('when the version is above and 3.6.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.6.0')
+      const features = await subject('3.6.0', region)
       expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
@@ -122,7 +123,7 @@ describe('given a feature flags provider and a list of rules', () => {
       window.sessionStorage.setItem('additionalFeatures', '["cost_monitoring"]')
     })
     it('should be included in the list of features', async () => {
-      const features = await subject('3.1.5')
+      const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'cost_monitoring',
@@ -135,8 +136,24 @@ describe('given a feature flags provider and a list of rules', () => {
       window.sessionStorage.clear()
     })
     it('should not be included in the list of features', async () => {
-      const features = await subject('3.1.5')
+      const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>(['multiuser_cluster'])
+    })
+  })
+
+  describe('when a feature is not supported in a region', () => {
+    it('should return the list of available features without the unsupported feature', async () => {
+      region = 'us-gov-west-1'
+      const features = await subject('3.6.0', region)
+      expect(features).not.toContain<AvailableFeature[]>(['cost_monitoring'])
+    })
+  })
+
+  describe('when a feature is not supported in a region and the region is undefined', () => {
+    it('should return an empty list', async () => {
+      region = undefined
+      const features = await subject('3.6.0', region)
+      expect(features).not.toContain<AvailableFeature[]>(['cost_monitoring'])
     })
   })
 })

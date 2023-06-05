@@ -14,14 +14,16 @@ import {AvailableFeature} from './types'
 
 export function useFeatureFlag(feature: AvailableFeature): boolean {
   const version = useState(['app', 'version', 'full'])
-  return isFeatureEnabled(version, feature)
+  const region = useState(['aws', 'region'])
+  return isFeatureEnabled(version, region, feature)
 }
 
 export function isFeatureEnabled(
   version: string,
+  region: string,
   feature: AvailableFeature,
 ): boolean {
-  const features = new Set(featureFlagsProvider(version))
+  const features = new Set(featureFlagsProvider(version, region))
 
   return features.has(feature)
 }
