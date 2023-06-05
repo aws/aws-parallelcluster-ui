@@ -35,11 +35,12 @@ function mapComputeResource(
 
 export function mapComputeResources(
   version: string,
+  region: string,
   computeResourcesConfig:
     | SingleInstanceComputeResource[]
     | MultiInstanceComputeResource[],
 ) {
-  if (!isFeatureEnabled(version, 'queues_multiple_instance_types')) {
+  if (!isFeatureEnabled(version, region, 'queues_multiple_instance_types')) {
     return computeResourcesConfig
   }
 

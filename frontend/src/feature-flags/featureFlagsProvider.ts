@@ -34,6 +34,26 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
   '3.6.0': ['rhel8', 'new_resources_limits'],
 }
 
+const featureToUnsupportedRegionsMap: Partial<
+  Record<AvailableFeature, string[]>
+> = {
+  cost_monitoring: ['us-gov-west-1'],
+}
+
+function isSupportedInRegion(
+  feature: AvailableFeature,
+  region?: string,
+): boolean {
+  if (feature in featureToUnsupportedRegionsMap) {
+    if (!region) {
+      return false
+    } else {
+      return !featureToUnsupportedRegionsMap[feature]!.includes(region)
+    }
+  }
+  return true
+}
+
 function composeFlagsListByVersion(currentVersion: string): AvailableFeature[] {
   let features: Set<AvailableFeature> = new Set([])
 
@@ -46,7 +66,10 @@ function composeFlagsListByVersion(currentVersion: string): AvailableFeature[] {
   return Array.from(features)
 }
 
-export function featureFlagsProvider(version: string): AvailableFeature[] {
+export function featureFlagsProvider(
+  version: string,
+  region?: string,
+): AvailableFeature[] {
   const features: AvailableFeature[] = []
   const additionalFeatures = window.sessionStorage.getItem('additionalFeatures')
   const additionalFeaturesParsed = additionalFeatures
@@ -56,4 +79,5 @@ export function featureFlagsProvider(version: string): AvailableFeature[] {
   return features
     .concat(composeFlagsListByVersion(version))
     .concat(additionalFeaturesParsed)
+    .filter(feature => isSupportedInRegion(feature, region))
 }

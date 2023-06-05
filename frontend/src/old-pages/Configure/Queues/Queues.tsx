@@ -68,6 +68,7 @@ import InfoLink from '../../../components/InfoLink'
 // Constants
 const queuesPath = ['app', 'wizard', 'config', 'Scheduling', 'SlurmQueues']
 const queuesErrorsPath = ['app', 'wizard', 'errors', 'queues']
+const defaultRegion = getState(['aws', 'region'])
 
 export function useClusterResourcesLimits(): ClusterResourcesLimits {
   const newResourcesLimits = useFeatureFlag('new_resources_limits')
@@ -203,7 +204,7 @@ function queueValidate(queueIndex: any) {
   }
 
   const version = getState(['app', 'version', 'full'])
-  const isMultiAZActive = isFeatureEnabled(version, 'multi_az')
+  const isMultiAZActive = isFeatureEnabled(version, defaultRegion, 'multi_az')
   if (!queueSubnet) {
     let message: string
     if (isMultiAZActive) {
@@ -219,6 +220,7 @@ function queueValidate(queueIndex: any) {
 
   const isMultiInstanceTypesActive = isFeatureEnabled(
     version,
+    defaultRegion,
     'queues_multiple_instance_types',
   )
   const {validateComputeResources} = !isMultiInstanceTypesActive
@@ -246,6 +248,7 @@ function queueValidate(queueIndex: any) {
 
   const isMemoryBasedSchedulingActive = isFeatureEnabled(
     version,
+    defaultRegion,
     'memory_based_scheduling',
   )
   if (isMemoryBasedSchedulingActive) {

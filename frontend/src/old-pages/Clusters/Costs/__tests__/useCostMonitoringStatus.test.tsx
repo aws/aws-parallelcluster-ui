@@ -41,6 +41,7 @@ jest.mock('../../../../model', () => {
 describe('given a hook to get the cost monitoring status', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockQueryClient.resetQueries()
   })
 
   describe('when PC version is at least 3.2.0', () => {
@@ -48,6 +49,9 @@ describe('given a hook to get the cost monitoring status', () => {
       mockStore.getState.mockReturnValue({
         app: {
           version: {full: '3.2.0'},
+        },
+        aws: {
+          region: 'us-west-1',
         },
       })
     })
@@ -64,6 +68,27 @@ describe('given a hook to get the cost monitoring status', () => {
       mockStore.getState.mockReturnValue({
         app: {
           version: {full: '3.1.5'},
+        },
+        aws: {
+          region: 'us-west-1',
+        },
+      })
+    })
+    it('should not request the cost monitoring status', async () => {
+      renderHook(() => useCostMonitoringStatus(), {wrapper})
+
+      expect(mockGetCostMonitoringStatus).toHaveBeenCalledTimes(0)
+    })
+  })
+
+  describe('when PC version is at least 3.2.0, and the region is us-gov-west-1', () => {
+    beforeEach(() => {
+      mockStore.getState.mockReturnValue({
+        app: {
+          version: {full: '3.2.0'},
+        },
+        aws: {
+          region: 'us-gov-west-1',
         },
       })
     })

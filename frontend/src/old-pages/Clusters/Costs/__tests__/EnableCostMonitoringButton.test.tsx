@@ -61,6 +61,9 @@ describe('given a component to activate cost monitoring for the account', () => 
         app: {
           version: {full: '3.2.0'},
         },
+        aws: {
+          region: 'us-west-1',
+        },
       })
 
       screen = render(
@@ -91,6 +94,9 @@ describe('given a component to activate cost monitoring for the account', () => 
         app: {
           version: {full: '3.2.0'},
         },
+        aws: {
+          region: 'us-west-1',
+        },
       })
       mockGetCostMonitoringStatus.mockResolvedValue(true)
 
@@ -116,6 +122,9 @@ describe('given a component to activate cost monitoring for the account', () => 
       mockStore.getState.mockReturnValue({
         app: {
           version: {full: '3.1.5'},
+        },
+        aws: {
+          region: 'us-west-1',
         },
       })
 
