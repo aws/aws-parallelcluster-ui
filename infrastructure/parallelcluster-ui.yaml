@@ -167,7 +167,7 @@ Resources:
           API_BASE_URL: !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]
           API_VERSION: !Ref Version
           SITE_URL: !Sub
-           - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}
+           - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
            - Api: !Ref ApiGateway
           AUTH_PATH: !If [ UseExistingCognito, !Ref UserPoolAuthDomain, !GetAtt [ Cognito, Outputs.UserPoolAuthDomain ]]
           SECRET_ID: !GetAtt UserPoolClientSecret.SecretName
@@ -185,52 +185,94 @@ Resources:
               - [!Select [2, !Split ['/', !Ref EcrImage]], !Select [3, !Split ['/', !Ref EcrImage]]]
 
   ApiGateway:
-    Type: AWS::ApiGatewayV2::Api
+    Type: AWS::ApiGateway::RestApi
     Properties:
       Name: ParallelClusterUI
       Description: ParallelClusterUI Lambda Proxy
-      ProtocolType: HTTP
-      Tags:
-        'parallelcluster:ui:version': !FindInMap [ParallelClusterUI, Constants, Version]
+      Tags: 
+        - Key: 'parallelcluster:ui:version'
+          Value: !FindInMap [ParallelClusterUI, Constants, Version]
 
-  ApiGatewayRoute:
-    Type: AWS::ApiGatewayV2::Route
+  ApiGatewayProxyResource:
+    Type: AWS::ApiGateway::Resource
     Properties:
-      ApiId: !Ref ApiGateway
-      RouteKey: $default
-      Target: !Sub
-        - 'integrations/${IntegrationId}'
-        - { IntegrationId: !Ref ApiGatewayIntegration }
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: '{proxy+}'
 
-  ApiGatewayIntegration:
-    Type: AWS::ApiGatewayV2::Integration
+  ApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
     Properties:
-      ApiId: !Ref ApiGateway
-      Description: 'ANY integration'
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub
-        - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
-        - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-      PayloadFormatVersion: 2.0
-      TimeoutInMillis: 30000
+      RestApiId: !Ref ApiGateway
+      ResourceId: !Ref ApiGatewayProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
+          - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+
+  ApiGatewayRootMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !GetAtt ApiGateway.RootResourceId
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
+          - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+
+  ApiGatewayLogRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs'
 
   ApiGatewayAccessLog:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 90
 
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayLogRole.Arn
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethod
+    Properties:
+      RestApiId: !Ref ApiGateway
+
   ApiGatewayStage:
-    Type: AWS::ApiGatewayV2::Stage
+    Type: AWS::ApiGateway::Stage
+    DependsOn: ApiGatewayAccount
     Properties: 
-      AccessLogSettings: 
+      AccessLogSetting: 
         DestinationArn: !GetAtt ApiGatewayAccessLog.Arn
         Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","path":"$context.path", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
-      ApiId: !Ref ApiGateway
-      StageName: $default
-      AutoDeploy: True
-      DefaultRouteSettings:
-        ThrottlingBurstLimit: 50 
-        ThrottlingRateLimit: 100
+      RestApiId: !Ref ApiGateway
+      DeploymentId: !Ref ApiGatewayDeployment
+      StageName: pcui
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingBurstLimit: 50 
+          ThrottlingRateLimit: 100
 
   CognitoAppClient:
     Type: AWS::Cognito::UserPoolClient
@@ -246,7 +288,7 @@ Resources:
         - ALLOW_REFRESH_TOKEN_AUTH
       CallbackURLs:
         - !Sub
-          - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/login
+          - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui/login
           - Api: !Ref ApiGateway
       SupportedIdentityProviders:
         - COGNITO
@@ -820,7 +862,7 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-ParallelClusterUISite
     Value: !Sub
-      - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}
+      - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
       - Api: !Ref ApiGateway
   AppClientId:
     Description: The id of the Cognito app client
