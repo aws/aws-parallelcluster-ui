@@ -10,6 +10,11 @@ export API_BASE_URL=https://[API_ID].execute-api.us-east-2.amazonaws.com/prod  #
 export ENV=dev
 ```
 
+If you have boto3 installed and have set your AWS credentials, you can run this script to fetch the necessary environment variables:
+```bash
+python3 scripts/generate_env.py -n $PCUI_STACK_NAME -r $PCUI_REGION && source .env
+```
+
 If you don't have a virtual environment setup already, you can run from the base dir of the project:
 ```bash
 python3 -m venv venv
