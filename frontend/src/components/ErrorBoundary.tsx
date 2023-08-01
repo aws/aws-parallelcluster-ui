@@ -42,7 +42,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
   }
 
   private redirectToHomepage = () => {
-    window.location.href = '/'
+    window.location.href = '/pcui'
   }
 
   public static getDerivedStateFromError(_: Error): State {
