@@ -35,7 +35,17 @@ Parameters:
     Description: (Optional) S3 bucket where CloudFormation files are stored. Change this parameter only when testing changes made to the infrastructure itself.
     Type: String
     Default: ''
-
+  PermissionBoundaryARN:
+    Type: String
+    Description: 'ARN of the IAM PermissionBoundary policy'
+    Default: ''
+    ConstraintDescription: "The value must be a valid ARN in the format: arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/PolicyNameParameter"
+    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
+  IAMRoleAndPolicyPrefix:
+    Type: String
+    Description: 'Prefix for IAM roles and policies'
+    Default: ''
+    MaxLength: 10
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -102,6 +112,7 @@ Conditions:
       - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
   InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
+  HasPermissionBoundary: !Not [!Equals [!Ref PermissionBoundaryARN, '']]
 
 Mappings:
   ParallelClusterUI:
@@ -117,8 +128,10 @@ Resources:
     Properties:
       Parameters:
         AdminUserEmail: !Ref AdminUserEmail
-      TemplateURL: !Sub 
-        - '${Bucket}/parallelcluster-ui-cognito.yaml'
+        PermissionBoundaryARN: !Ref PermissionBoundaryARN
+        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
+      TemplateURL: !Sub
+        - 'https://${Bucket}.s3.amazonaws.com/parallelcluster-ui-cognito.yaml'
         - Bucket: !If 
           - HasDefaultInfrastructure
           - PLACEHOLDER
@@ -130,8 +143,13 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
-        CreateApiUserRole: False
+        PermissionsBoundaryPolicy: !Ref PermissionBoundaryARN
+        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
+        ApiDefinitionS3Uri: s3://kkolur-pcapi/ParallelCluster.openapi.yaml
+        #!Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
+        PoliciesTemplateUri: https://kkolur-pcapi.s3.amazonaws.com/parallelcluster-policies.yaml
+        CreateApiUserRole: True
+        CustomBucket: kkolur-pcapi
         EnableIamAdminAccess: True
         ImageBuilderSubnetId: !If
           - UseNonDockerizedPCAPI
@@ -147,7 +165,8 @@ Resources:
             - NonDefaultVpc
             - !Ref ImageBuilderVpcId
             - !Ref AWS::NoValue
-      TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
+      TemplateURL: https://kkolur-pcapi.s3.amazonaws.com/parallelcluster-api.yaml
+      # !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
       TimeoutInMinutes: 30
 
   ParallelClusterUIFunction:
@@ -358,8 +377,10 @@ Resources:
               Service: lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
+      RoleName: !Sub ${IAMRoleAndPolicyPrefix}UserPoolClientSecretRole
       Policies:
-        - PolicyName: CognitoPermissions
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}CognitoPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -370,7 +391,7 @@ Resources:
                   - !Sub
                     - arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}
                     - { UserPoolId: !If [UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]}
-        - PolicyName: SecretsManagerPermissions
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}SecretsManagerPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -397,6 +418,8 @@ Resources:
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
         - !Sub arn:${AWS::Partition}:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds
+      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
+      RoleName: !Sub ${IAMRoleAndPolicyPrefix}ImageBuilderInstanceRole
       AssumeRolePolicyDocument:
         Statement:
           - Action:
@@ -575,8 +598,10 @@ Resources:
               Service: lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
+      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
+      RoleName: !Sub ${IAMRoleAndPolicyPrefix}EcrImageDeletionLambdaRole
       Policies:
-        - PolicyName: LoggingPolicy
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}LoggingPolicy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -585,7 +610,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
-        - PolicyName: BatchDeletePolicy
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}BatchDeletePolicy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -631,6 +656,8 @@ Resources:
             Action: sts:AssumeRole
             Principal:
               Service: lambda.amazonaws.com
+      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
+      RoleName: !Sub ${IAMRoleAndPolicyPrefix}ParallelClusterUIUserRole
       ManagedPolicyArns:
         # Required for Lambda logging and XRay
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess
