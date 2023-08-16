@@ -41,7 +41,7 @@ export default function SideBar() {
         {
           type: 'link',
           text: t('global.menu.viewLicense'),
-          href: '/license.txt',
+          href: '/pcui/license.txt',
           external: true,
         },
       ]
