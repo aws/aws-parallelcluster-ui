@@ -10,7 +10,7 @@ export const axiosInstance = axios.create({
 
 function getHost() {
   if (process.env.NODE_ENV !== 'production') return 'http://localhost:5001/'
-  return '/'
+  return '/pcui'
 }
 
 export type HTTPMethod = 'get' | 'put' | 'post' | 'patch' | 'delete'

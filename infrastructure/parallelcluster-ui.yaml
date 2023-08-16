@@ -7,6 +7,18 @@ Parameters:
     Description: When specified, the URI of the Docker image for the Lambda of the ParallelCluster UI container
     Type: String
     Default: public.ecr.aws/pcm/parallelcluster-ui:2023.06.0
+  VpcEndpointId:
+    Description: Enter a VPC endpoint to enable private PCUI implementation. When enabled, the API will only accept requests from within the given VPC.
+    Type: String
+    Default: ''
+  LambdaSubnetIds:
+    Description: Comma separated list of subnet IDs to be associated with the PCUI Lambda function. These subnets should be private and associated with your VPC endpoint.
+    Type: CommaDelimitedList
+    Default: ''
+  LambdaSecurityGroupIds:
+    Description: Comma separated list of security groups to be associated with the PCUI Lambda function.
+    Type: CommaDelimitedList
+    Default: ''
   UserPoolId:
     Description: UserPoolId of a previously deployed PCUI Cognito User Pool. Leave blank to create a new one.
     Type: String
@@ -48,6 +60,12 @@ Metadata:
         Parameters:
           - PublicEcrImageUri
       - Label:
+          default: (Optional) Private PCUI
+        Parameters:
+          - VpcEndpointId
+          - LambdaSubnetIds
+          - LambdaSecurityGroupIds
+      - Label:
           default: (Optional) External PCUI Cognito
         Parameters:
           - UserPoolId
@@ -82,6 +100,7 @@ Conditions:
     Fn::And:
       - !Not [!Equals [!Ref ImageBuilderVpcId, ""]]
       - !Not [!Equals [!Ref ImageBuilderSubnetId, ""]]
+  IsPrivate: !Not [!Equals [!Ref VpcEndpointId, ""]]
   HasDefaultInfrastructure: !Equals [!Ref InfrastructureBucket, '']
   UseExistingCognito:
     !And
@@ -133,6 +152,7 @@ Resources:
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
+        VpcEndpointId: !If [ IsPrivate, !Ref VpcEndpointId, !Ref AWS::NoValue ]
         ImageBuilderSubnetId: !If
           - UseNonDockerizedPCAPI
           - !Ref AWS::NoValue
@@ -162,12 +182,18 @@ Resources:
           Value: !FindInMap [ ParallelClusterUI, Constants, Version ]
       TracingConfig:
         Mode: Active
+      VpcConfig: 
+        Fn::If:
+          - IsPrivate
+          - SubnetIds: !Ref LambdaSubnetIds
+            SecurityGroupIds: !Ref LambdaSecurityGroupIds
+          - !Ref AWS::NoValue
       Environment:
         Variables:
           API_BASE_URL: !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]
           API_VERSION: !Ref Version
           SITE_URL: !Sub
-           - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}
+           - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
            - Api: !Ref ApiGateway
           AUTH_PATH: !If [ UseExistingCognito, !Ref UserPoolAuthDomain, !GetAtt [ Cognito, Outputs.UserPoolAuthDomain ]]
           SECRET_ID: !GetAtt UserPoolClientSecret.SecretName
@@ -185,52 +211,121 @@ Resources:
               - [!Select [2, !Split ['/', !Ref EcrImage]], !Select [3, !Split ['/', !Ref EcrImage]]]
 
   ApiGateway:
-    Type: AWS::ApiGatewayV2::Api
+    Type: AWS::ApiGateway::RestApi
     Properties:
       Name: ParallelClusterUI
       Description: ParallelClusterUI Lambda Proxy
-      ProtocolType: HTTP
-      Tags:
-        'parallelcluster:ui:version': !FindInMap [ParallelClusterUI, Constants, Version]
+      Policy:
+        Fn::If:
+          - IsPrivate
+          - Version: "2012-10-17"
+            Statement:
+              - Effect: "Deny"
+                Principal: "*"
+                Action: "execute-api:Invoke"
+                Resource: "execute-api:/*"
+                Condition:
+                  StringNotEquals: 
+                    aws:sourceVpce: !Ref VpcEndpointId
+              - Effect: "Allow"
+                Principal: "*"
+                Action: "execute-api:Invoke"
+                Resource: "execute-api:/*"
+          - Version: "2012-10-17"
+            Statement:
+            - Effect: "Allow"
+              Principal: "*"
+              Action: "execute-api:Invoke"
+              Resource: "execute-api:/*"
+      EndpointConfiguration: 
+        Types: 
+          - !If [ IsPrivate, PRIVATE, REGIONAL ]
+        VpcEndpointIds: 
+          - !If [ IsPrivate, !Ref VpcEndpointId, !Ref AWS::NoValue ]
+      Tags: 
+        - Key: 'parallelcluster:ui:version'
+          Value: !FindInMap [ParallelClusterUI, Constants, Version]
 
-  ApiGatewayRoute:
-    Type: AWS::ApiGatewayV2::Route
+  ApiGatewayProxyResource:
+    Type: AWS::ApiGateway::Resource
     Properties:
-      ApiId: !Ref ApiGateway
-      RouteKey: $default
-      Target: !Sub
-        - 'integrations/${IntegrationId}'
-        - { IntegrationId: !Ref ApiGatewayIntegration }
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: '{proxy+}'
 
-  ApiGatewayIntegration:
-    Type: AWS::ApiGatewayV2::Integration
+  ApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
     Properties:
-      ApiId: !Ref ApiGateway
-      Description: 'ANY integration'
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub
-        - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
-        - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
-      PayloadFormatVersion: 2.0
-      TimeoutInMillis: 30000
+      RestApiId: !Ref ApiGateway
+      ResourceId: !Ref ApiGatewayProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
+          - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+
+  ApiGatewayRootMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !GetAtt ApiGateway.RootResourceId
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
+          - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+
+  ApiGatewayLogRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs'
 
   ApiGatewayAccessLog:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 90
 
+  ApiGatewayAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiGatewayLogRole.Arn
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethod
+    Properties:
+      RestApiId: !Ref ApiGateway
+
   ApiGatewayStage:
-    Type: AWS::ApiGatewayV2::Stage
+    Type: AWS::ApiGateway::Stage
+    DependsOn: ApiGatewayAccount
     Properties: 
-      AccessLogSettings: 
+      AccessLogSetting: 
         DestinationArn: !GetAtt ApiGatewayAccessLog.Arn
         Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","path":"$context.path", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
-      ApiId: !Ref ApiGateway
-      StageName: $default
-      AutoDeploy: True
-      DefaultRouteSettings:
-        ThrottlingBurstLimit: 50 
-        ThrottlingRateLimit: 100
+      RestApiId: !Ref ApiGateway
+      DeploymentId: !Ref ApiGatewayDeployment
+      StageName: pcui
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          ThrottlingBurstLimit: 50 
+          ThrottlingRateLimit: 100
 
   CognitoAppClient:
     Type: AWS::Cognito::UserPoolClient
@@ -246,7 +341,7 @@ Resources:
         - ALLOW_REFRESH_TOKEN_AUTH
       CallbackURLs:
         - !Sub
-          - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/login
+          - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui/login
           - Api: !Ref ApiGateway
       SupportedIdentityProviders:
         - COGNITO
@@ -707,6 +802,11 @@ Resources:
             - ec2:DescribeInstanceTypes
             - ec2:DescribeSubnets
             - ec2:DescribeKeyPairs
+            - ec2:DescribeNetworkInterfaces
+            - ec2:CreateNetworkInterface
+            - ec2:DeleteNetworkInterface
+            - ec2:DescribeInstances
+            - ec2:AttachNetworkInterface
             Resource:
               - '*'
             Effect: Allow
@@ -820,7 +920,7 @@ Outputs:
     Export:
       Name: !Sub ${AWS::StackName}-ParallelClusterUISite
     Value: !Sub
-      - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}
+      - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
       - Api: !Ref ApiGateway
   AppClientId:
     Description: The id of the Cognito app client
