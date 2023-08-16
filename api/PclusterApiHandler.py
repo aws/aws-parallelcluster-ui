@@ -657,7 +657,7 @@ def login():
     id_token = code_resp.json().get("id_token")
     refresh_token = code_resp.json().get("refresh_token", None)
 
-    resp = redirect("/index.html", code=302)
+    resp = redirect("/pcui/index.html", code=302)
     resp.set_cookie("accessToken", access_token, httponly=True, secure=True, samesite="Lax")
     resp.set_cookie("idToken", id_token, httponly=True, secure=True, samesite="Lax")
     if refresh_token is not None:
