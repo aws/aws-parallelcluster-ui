@@ -39,11 +39,11 @@ Parameters:
     Type: String
     Description: 'ARN of the IAM PermissionBoundary policy'
     Default: ''
-    ConstraintDescription: "The value must be a valid ARN in the format: arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/PolicyNameParameter"
+    ConstraintDescription: "The value must be a valid IAM policy ARN in the format: arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/PolicyNameParameter"
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
   IAMRoleAndPolicyPrefix:
     Type: String
-    Description: 'Prefix for IAM roles and policies'
+    Description: 'Prefix for IAM roles and policies name'
     Default: ''
     MaxLength: 10
 Metadata:
@@ -145,11 +145,8 @@ Resources:
       Parameters:
         PermissionsBoundaryPolicy: !Ref PermissionBoundaryARN
         IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
-        ApiDefinitionS3Uri: s3://kkolur-pcapi/ParallelCluster.openapi.yaml
-        #!Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
-        PoliciesTemplateUri: https://kkolur-pcapi.s3.amazonaws.com/parallelcluster-policies.yaml
-        CreateApiUserRole: True
-        CustomBucket: kkolur-pcapi
+        ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
+        CreateApiUserRole: False
         EnableIamAdminAccess: True
         ImageBuilderSubnetId: !If
           - UseNonDockerizedPCAPI
@@ -165,8 +162,7 @@ Resources:
             - NonDefaultVpc
             - !Ref ImageBuilderVpcId
             - !Ref AWS::NoValue
-      TemplateURL: https://kkolur-pcapi.s3.amazonaws.com/parallelcluster-api.yaml
-      # !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
+      TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
       TimeoutInMinutes: 30
 
   ParallelClusterUIFunction:
@@ -378,7 +374,9 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub ${IAMRoleAndPolicyPrefix}UserPoolClientSecretRole
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}UserPoolClientSecretRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       Policies:
         - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}CognitoPermissions
           PolicyDocument:
@@ -419,7 +417,9 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
         - !Sub arn:${AWS::Partition}:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds
       PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub ${IAMRoleAndPolicyPrefix}ImageBuilderInstanceRole
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ImageBuilderInstanceRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       AssumeRolePolicyDocument:
         Statement:
           - Action:
@@ -599,7 +599,9 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub ${IAMRoleAndPolicyPrefix}EcrImageDeletionLambdaRole
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}EcrImageDeletionLambdaRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       Policies:
         - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}LoggingPolicy
           PolicyDocument:
@@ -657,7 +659,9 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
       PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub ${IAMRoleAndPolicyPrefix}ParallelClusterUIUserRole
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ParallelClusterUIUserRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       ManagedPolicyArns:
         # Required for Lambda logging and XRay
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess

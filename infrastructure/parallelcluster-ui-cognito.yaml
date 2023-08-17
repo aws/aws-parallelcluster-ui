@@ -11,11 +11,11 @@ Parameters:
     Type: String
     Description: 'ARN of the IAM PermissionBoundary policy'
     Default: ''
-    ConstraintDescription: "The value must be a valid ARN in the format: arn:.*:iam:.*:policy/PolicyNameParameter"
+    ConstraintDescription: "The value must be a valid IAM policy ARN in the format: arn:.*:iam:.*:policy/PolicyNameParameter"
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
   IAMRoleAndPolicyPrefix:
     Type: String
-    Description: 'Prefix for IAM roles and policies'
+    Description: 'Prefix for IAM roles and policies name'
     Default: ''
     MaxLength: 10
 
@@ -49,7 +49,9 @@ Resources:
             Action:
               - sts:AssumeRole
       PermissionsBoundary: !If [ HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue' ]
-      RoleName: !Sub ${IAMRoleAndPolicyPrefix}SNSRole
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}SNSRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       Policies:
         - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}CognitoSNSPolicy
           PolicyDocument:
