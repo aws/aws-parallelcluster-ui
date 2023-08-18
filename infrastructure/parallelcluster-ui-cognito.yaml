@@ -7,9 +7,21 @@ Parameters:
     Description: Email address of administrative user setup by default.
     Type: String
     MinLength: 1
+  PermissionBoundaryARN:
+    Type: String
+    Description: 'ARN of the IAM PermissionBoundary policy'
+    Default: ''
+    ConstraintDescription: "The value must be a valid IAM policy ARN in the format: arn:.*:iam:.*:policy/PolicyNameParameter"
+    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
+  IAMRoleAndPolicyPrefix:
+    Type: String
+    Description: 'Prefix for IAM roles and policies name'
+    Default: ''
+    MaxLength: 10
 
 Conditions:
   GovCloud: !Equals [!Ref AWS::Region, 'us-gov-west-1']
+  HasPermissionBoundary: !Not [ !Equals [ !Ref PermissionBoundaryARN, '' ] ]
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -36,8 +48,12 @@ Resources:
                 - cognito-idp.amazonaws.com
             Action:
               - sts:AssumeRole
+      PermissionsBoundary: !If [ HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue' ]
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}SNSRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       Policies:
-        - PolicyName: CognitoSNSPolicy
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}CognitoSNSPolicy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
