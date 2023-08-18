@@ -131,7 +131,7 @@ Resources:
         PermissionBoundaryARN: !Ref PermissionBoundaryARN
         IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
       TemplateURL: !Sub
-        - '${Bucket}/parallelcluster-ui-cognito.yaml'
+        - 'https://${Bucket}.s3.amazonaws.com/parallelcluster-ui-cognito.yaml'
         - Bucket: !If 
           - HasDefaultInfrastructure
           - PLACEHOLDER
