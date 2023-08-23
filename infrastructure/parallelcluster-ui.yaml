@@ -47,17 +47,7 @@ Parameters:
     Description: (Optional) S3 bucket where CloudFormation files are stored. Change this parameter only when testing changes made to the infrastructure itself.
     Type: String
     Default: ''
-  PermissionBoundaryARN:
-    Type: String
-    Description: 'ARN of the IAM PermissionBoundary policy'
-    Default: ''
-    ConstraintDescription: "The value must be a valid IAM policy ARN in the format: arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/PolicyNameParameter"
-    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
-  IAMRoleAndPolicyPrefix:
-    Type: String
-    Description: 'Prefix for IAM roles and policies name'
-    Default: ''
-    MaxLength: 10
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -131,7 +121,6 @@ Conditions:
       - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
   InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
-  HasPermissionBoundary: !Not [!Equals [!Ref PermissionBoundaryARN, '']]
 
 Mappings:
   ParallelClusterUI:
@@ -147,9 +136,7 @@ Resources:
     Properties:
       Parameters:
         AdminUserEmail: !Ref AdminUserEmail
-        PermissionBoundaryARN: !Ref PermissionBoundaryARN
-        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
-      TemplateURL: !Sub
+      TemplateURL: !Sub 
         - '${Bucket}/parallelcluster-ui-cognito.yaml'
         - Bucket: !If 
           - HasDefaultInfrastructure
@@ -162,8 +149,6 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        PermissionsBoundaryPolicy: !Ref PermissionBoundaryARN
-        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
@@ -468,12 +453,8 @@ Resources:
               Service: lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub
-        - ${IAMRoleAndPolicyPrefix}UserPoolClientSecretRole-${StackIdSuffix}
-        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       Policies:
-        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}CognitoPermissions
+        - PolicyName: CognitoPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -484,7 +465,7 @@ Resources:
                   - !Sub
                     - arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}
                     - { UserPoolId: !If [UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]}
-        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}SecretsManagerPermissions
+        - PolicyName: SecretsManagerPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -511,10 +492,6 @@ Resources:
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
         - !Sub arn:${AWS::Partition}:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds
-      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub
-        - ${IAMRoleAndPolicyPrefix}ImageBuilderInstanceRole-${StackIdSuffix}
-        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       AssumeRolePolicyDocument:
         Statement:
           - Action:
@@ -693,12 +670,8 @@ Resources:
               Service: lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub
-        - ${IAMRoleAndPolicyPrefix}EcrImageDeletionLambdaRole-${StackIdSuffix}
-        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       Policies:
-        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}LoggingPolicy
+        - PolicyName: LoggingPolicy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -707,7 +680,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
-        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}BatchDeletePolicy
+        - PolicyName: BatchDeletePolicy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -753,10 +726,6 @@ Resources:
             Action: sts:AssumeRole
             Principal:
               Service: lambda.amazonaws.com
-      PermissionsBoundary: !If [HasPermissionBoundary, !Ref PermissionBoundaryARN, !Ref 'AWS::NoValue']
-      RoleName: !Sub
-        - ${IAMRoleAndPolicyPrefix}ParallelClusterUIUserRole-${StackIdSuffix}
-        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       ManagedPolicyArns:
         # Required for Lambda logging and XRay
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess
