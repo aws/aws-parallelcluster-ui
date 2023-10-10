@@ -32,6 +32,12 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
   ],
   '3.4.0': ['multi_az', 'on_node_updated'],
   '3.6.0': ['rhel8', 'new_resources_limits'],
+  '3.7.0': [
+    'ubuntu22',
+    'login_nodes',
+    'amazon_file_cache',
+    'job_exclusive_allocation',
+  ],
 }
 
 const featureToUnsupportedRegionsMap: Partial<

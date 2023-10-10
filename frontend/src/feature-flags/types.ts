@@ -8,6 +8,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
+// We must track here the features that may be under feature flagging in the wizard.
 export type AvailableFeature =
   | 'fsx_ontap'
   | 'fsx_openzsf'
@@ -27,3 +28,7 @@ export type AvailableFeature =
   | 'rhel8'
   | 'cost_monitoring'
   | 'new_resources_limits'
+  | 'ubuntu22'
+  | 'login_nodes'
+  | 'amazon_file_cache'
+  | 'job_exclusive_allocation'
