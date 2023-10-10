@@ -21,7 +21,7 @@ Install dependencies in your virtual environment:
 pip install -r requirements.txt
 ```
 
-When workin on the project, you may need to add a dependency.
+When working on the project, you may need to add a dependency.
 To do that you can the dependency with a specified version to the `requirements.in` file, and compile that file to produce the `requirements.txt`
 After that, make sure to compile it using [pip-tools](https://github.com/jazzband/pip-tools).
 To install pip-tools, just run
@@ -45,11 +45,13 @@ click on the App client and click *Edit* in the *Hosted UI* section, adding `htt
 Then export the following variables:
 
 ```bash
-export SECRET_ID=<the value of the UserPoolClientSecretName output from the Cognito stack>
+export SECRET_ID=<the value of the UserPoolClientSecretName output from the PCUI stack>
 export SITE_URL=http://localhost:5001
 export AUDIENCE=<the value of the Client ID noted in the previous step>
 export AUTH_PATH=<the UserPoolAuthDomain output of the ParallelClusterCognito nested stack>
 ```
+
+Set `DISABLE_AUTH=False` in `api/utils.py` to facilitate live reloading.
 
 Start the API backend by running:
 
