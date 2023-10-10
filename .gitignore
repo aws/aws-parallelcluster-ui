@@ -9,3 +9,6 @@ infrastructure/cognitolambda/node_modules
 public/*
 /frontend/tsconfig.tsbuildinfo
 .idea/
+.ignore
+infrastructure/environments/*
+!infrastructure/environments/demo-*
