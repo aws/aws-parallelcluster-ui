@@ -91,9 +91,9 @@ describe('given a feature flags provider and a list of rules', () => {
     })
   })
 
-  describe('when the version is above and 3.6.0', () => {
+  describe('when the version is between 3.6.0 and 3.7.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.6.0', region)
+      const features = await subject('3.6.1', region)
       expect(features).toEqual<AvailableFeature[]>([
         'multiuser_cluster',
         'fsx_ontap',
@@ -113,6 +113,36 @@ describe('given a feature flags provider and a list of rules', () => {
         'on_node_updated',
         'rhel8',
         'new_resources_limits',
+      ])
+    })
+  })
+
+  describe('when the version is above and 3.7.0', () => {
+    it('should return the list of available features', async () => {
+      const features = await subject('3.7.0', region)
+      expect(features).toEqual<AvailableFeature[]>([
+        'multiuser_cluster',
+        'fsx_ontap',
+        'fsx_openzsf',
+        'lustre_persistent2',
+        'memory_based_scheduling',
+        'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
+        'cost_monitoring',
+        'slurm_accounting',
+        'queues_multiple_instance_types',
+        'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
+        'imds_support',
+        'multi_az',
+        'on_node_updated',
+        'rhel8',
+        'new_resources_limits',
+        'ubuntu22',
+        'login_nodes',
+        'amazon_file_cache',
+        'job_exclusive_allocation',
       ])
     })
   })
