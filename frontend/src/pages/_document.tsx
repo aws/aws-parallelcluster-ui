@@ -14,7 +14,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <link rel="icon" href="/pcui/img/pcluster.svg" />
+        <link rel="icon" href="favicon.ico" />
         <meta name="theme-color" content="#000000" />
         <meta name="description" content="AWS ParallelCluster UI" />
       </Head>

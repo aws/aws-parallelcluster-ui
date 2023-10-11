@@ -394,8 +394,8 @@ function Queue({index}: any) {
   ])
 
   const capacityTypes: [string, string, string][] = [
-    ['ONDEMAND', 'On-Demand', '/pcui/img/od.svg'],
-    ['SPOT', 'Spot', '/pcui/img/spot.svg'],
+    ['ONDEMAND', 'On-Demand', '/img/od.svg'],
+    ['SPOT', 'Spot', '/img/spot.svg'],
   ]
   const capacityTypePath = [...queuesPath, index, 'CapacityType']
   const capacityType: string = useState(capacityTypePath) || 'ONDEMAND'
