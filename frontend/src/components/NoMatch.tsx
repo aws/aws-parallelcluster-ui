@@ -38,7 +38,7 @@ export function NoMatch() {
             <p>{t('noMatch.links')}</p>
             <ul>
               <li>
-                <Link href="/pcui">{t('noMatch.home')}</Link>
+                <Link href="/">{t('noMatch.home')}</Link>
               </li>
             </ul>
           </TextContent>

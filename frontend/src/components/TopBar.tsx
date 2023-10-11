@@ -135,7 +135,7 @@ export default function Topbar() {
       {
         id: 'signout',
         text: t('global.topBar.signOut'),
-        href: '/pcui/logout',
+        href: '/logout',
       },
     ],
     [t],
@@ -146,9 +146,9 @@ export default function Topbar() {
       <TopNavigation
         identity={{
           title: t('global.projectDisplayName'),
-          href: '/pcui',
+          href: '/',
           logo: {
-            src: '/pcui/img/pcluster.svg',
+            src: '/img/pcluster.svg',
             alt: t('global.topBar.logoAltText'),
           },
         }}

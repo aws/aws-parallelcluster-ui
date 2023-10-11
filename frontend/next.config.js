@@ -11,7 +11,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  basePath: '/pcui',
   experimental: {
     images: {
       unoptimized: true,
@@ -48,4 +47,4 @@ const withTM = require("next-transpile-modules")([
   "@cloudscape-design/design-tokens"
 ]);
 
-module.exports = withTM(nextConfig);
+module.exports = withTM(nextConfig);  

@@ -69,7 +69,6 @@ class PClusterJSONEncoder(JSONEncoder):
 
 def run():
     app = utils.build_flask_app(__name__)
-    app.config["APPLICATION_ROOT"] = '/pcui'
     app.json_encoder = PClusterJSONEncoder
     app.url_map.converters["regex"] = RegexConverter
     CSRF(app, CognitoFingerprintGenerator(CLIENT_ID, CLIENT_SECRET, USER_POOL_ID))

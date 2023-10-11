@@ -26,7 +26,7 @@ import {useLoadingState} from '../components/useLoadingState'
 
 export default function App() {
   const {loading, content} = useLoadingState(
-    <BrowserRouter basename='/pcui'>
+    <BrowserRouter>
       <Routes>
         <Route
           path="index.html"
