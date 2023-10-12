@@ -498,6 +498,13 @@ def get_aws_config():
     except:
         pass
 
+    file_caches = []
+    try:
+        file_caches = list(filter(lambda file_cache: (file_cache["Lifecycle"] == "AVAILABLE"),
+                                  fsx.describe_file_caches()["FileCaches"]))
+    except:
+        pass
+
     efs_filesystems = []
     try:
         efs_filesystems = efs.describe_file_systems()["FileSystems"]
@@ -518,6 +525,7 @@ def get_aws_config():
         "region": region,
         "fsx_filesystems": fsx_filesystems,
         "fsx_volumes": fsx_volumes,
+        "file_caches": file_caches,
         "efs_filesystems": efs_filesystems,
         "efa_instance_types": efa_instance_types,
     }
