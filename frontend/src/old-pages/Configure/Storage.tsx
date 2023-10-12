@@ -96,8 +96,11 @@ function storageValidate() {
   if (storages) {
     storages.forEach((storage: Storage, index: number) => {
       const settings = `${storage.StorageType}Settings`
+      //TODO Add idType as an attribute within STORAGE_TYPE_PROPS to avoid nested ternary operations.
       const idType = STORAGE_TYPE_PROPS[storage.StorageType].mountFilesystem
         ? 'FileSystemId'
+        : storage.StorageType == 'FileCache'
+        ? 'FileCacheId'
         : 'VolumeId'
       const useExisting =
         getState(['app', 'wizard', 'storage', 'ui', index, 'useExisting']) ||
@@ -872,12 +875,18 @@ function StorageInstance({index}: any) {
   const useExisting =
     useState([...uiSettingsForStorage, 'useExisting']) ||
     !(STORAGE_TYPE_PROPS[storageType].maxToCreate > 0)
+  //TODO Add idType as an attribute within STORAGE_TYPE_PROPS to avoid nested ternary operations.
   const existingPath = STORAGE_TYPE_PROPS[storageType].mountFilesystem
     ? [...settingsPath, 'FileSystemId']
+    : storageType == 'FileCache'
+    ? [...settingsPath, 'FileCacheId']
     : [...settingsPath, 'VolumeId']
+  //TODO Add idType as an attribute within STORAGE_TYPE_PROPS to avoid nested ternary operations.
   const existingPathError = useState(
     STORAGE_TYPE_PROPS[storageType].mountFilesystem
       ? [...errorsInstancePath, 'FileSystemId']
+      : storageType == 'FileCache'
+      ? [...errorsInstancePath, 'FileCacheId']
       : [...errorsInstancePath, 'VolumeId'],
   )
   const existingId = useState(existingPath) || ''
@@ -887,6 +896,7 @@ function StorageInstance({index}: any) {
   const {t} = useTranslation()
 
   const fsxFilesystems = useState(['aws', 'fsxFilesystems'])
+  const fileCaches = useState(['aws', 'fileCaches'])
   const fsxVolumes = useState(['aws', 'fsxVolumes'])
   const efsFilesystems = useState(['aws', 'efs_filesystems']) || []
 
@@ -1115,6 +1125,29 @@ function StorageInstance({index}: any) {
                     />
                   </FormField>
                 ),
+                FileCache: (
+                  <FormField
+                    label={t('wizard.storage.Fsx.existing.fileCache')}
+                    errorText={existingPathError}
+                  >
+                    <Select
+                      placeholder={t(
+                        'wizard.storage.container.cachePlaceholder',
+                      )}
+                      selectedOption={existingId && idToOption(existingId)}
+                      onChange={({detail}) => {
+                        setState(existingPath, detail.selectedOption.value)
+                      }}
+                      options={fileCaches.lustre.map((x: any) => {
+                        return {
+                          value: x.id,
+                          label: x.id + (x.Name ? ` (${x.Name})` : ''),
+                        }
+                      })}
+                      empty={t('wizard.storage.instance.useExisting.empty')}
+                    />
+                  </FormField>
+                ),
                 Efs: (
                   <FormField
                     label="EFS Filesystem"
@@ -1149,6 +1182,7 @@ function StorageInstance({index}: any) {
             Ebs: <EbsSettings index={index} />,
             FsxOntap: null,
             FsxOpenZfs: null,
+            FileCache: null,
           }[storageType]}
       </SpaceBetween>
     </Container>
@@ -1159,6 +1193,7 @@ const ALL_STORAGES: StorageTypeOption[] = [
   ['FsxLustre', 'Amazon FSx for Lustre (FSX)'],
   ['FsxOntap', 'Amazon FSx for NetApp ONTAP (FSX)'],
   ['FsxOpenZfs', 'Amazon FSx for OpenZFS (FSX)'],
+  ['FileCache', 'Amazon File Cache'],
   ['Efs', 'Amazon Elastic File System (EFS)'],
   ['Ebs', 'Amazon Elastic Block Store (EBS)'],
 ]
@@ -1169,6 +1204,7 @@ function Storage() {
   const uiStorageSettings = useState(['app', 'wizard', 'storage', 'ui'])
   const isFsxOnTapActive = useFeatureFlag('fsx_ontap')
   const isFsxOpenZsfActive = useFeatureFlag('fsx_openzsf')
+  const isFileCacheActive = useFeatureFlag('amazon_file_cache')
   const canEditFilesystems = useDynamicStorage()
 
   const hasAddedStorage = storages?.length > 0
@@ -1179,6 +1215,7 @@ function Storage() {
     FsxLustre: 21,
     FsxOntap: 20,
     FsxOpenZfs: 20,
+    FileCache: 20,
     Efs: 21,
     Ebs: 5,
   }
@@ -1188,6 +1225,9 @@ function Storage() {
       return false
     }
     if (storageType === 'FsxOpenZfs' && !isFsxOpenZsfActive) {
+      return false
+    }
+    if (storageType === 'FileCache' && !isFileCacheActive) {
       return false
     }
     return true

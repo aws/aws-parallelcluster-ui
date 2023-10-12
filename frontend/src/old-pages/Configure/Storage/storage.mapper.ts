@@ -22,6 +22,8 @@ function mapStorageToUiSetting(storage: Storage): UIStorageSettings[0] {
       return {useExisting: !!storage.FsxOntapSettings?.VolumeId}
     case 'FsxOpenZfs':
       return {useExisting: !!storage.FsxOpenZfsSettings?.VolumeId}
+    case 'FileCache':
+      return {useExisting: !!storage.FileCacheSettings?.FileCacheId}
   }
 }
 
@@ -39,6 +41,8 @@ export function mapStorageToExternalFileSystem(
       return storage.FsxOntapSettings?.VolumeId
     case 'FsxOpenZfs':
       return storage.FsxOpenZfsSettings?.VolumeId
+    case 'FileCache':
+      return storage.FileCacheSettings?.FileCacheId
     default:
       return undefined
   }

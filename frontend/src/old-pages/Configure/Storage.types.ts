@@ -19,6 +19,11 @@ export const STORAGE_TYPE_PROPS = {
     maxToCreate: 0,
     maxExistingToAttach: 20,
   },
+  FileCache: {
+    mountFilesystem: false,
+    maxToCreate: 0,
+    maxExistingToAttach: 20,
+  },
   Efs: {
     mountFilesystem: true,
     maxToCreate: 1,
@@ -105,6 +110,10 @@ export interface FsxOpenZfsSettings {
   VolumeId: string
 }
 
+export interface FileCacheSettings {
+  FileCacheId: string
+}
+
 interface CommonSharedStorageDetails {
   Name: string
   MountDir: string
@@ -135,12 +144,18 @@ export interface FsxOpenZfsStorage extends CommonSharedStorageDetails {
   FsxOpenZfsSettings?: FsxOpenZfsSettings
 }
 
+export interface FileCacheStorage extends CommonSharedStorageDetails {
+  StorageType: 'FileCache'
+  FileCacheSettings?: FileCacheSettings
+}
+
 export type Storage =
   | EbsStorage
   | EfsStorage
   | FsxLustreStorage
   | FsxOnTapStorage
   | FsxOpenZfsStorage
+  | FileCacheStorage
 
 export type Storages = Storage[]
 
