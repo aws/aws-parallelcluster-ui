@@ -780,6 +780,7 @@
         "storageTypes": "Storage types",
         "storageTypesPlaceholder": "Select file system types",
         "volumePlaceholder": "Select a volume",
+        "cachePlaceholder": "Select a cache",
         "addStorage": "Add storage",
         "removeStorage": "Remove storage",
         "sourceTitle": "Source {{index}} - {{name}}"
@@ -820,7 +821,8 @@
         "existing": {
           "fsxLustre": "FSx Lustre Filesystem",
           "fsxOpenZfs": "FSx OpenZFS volume",
-          "fsxOnTap": "FSx NetApp ONTAP volume"
+          "fsxOnTap": "FSx NetApp ONTAP volume",
+          "fileCache": "Amazon File Cache"
         },
         "capacity": {
           "label": "Storage capacity (GB)",

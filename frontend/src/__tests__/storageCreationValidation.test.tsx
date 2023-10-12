@@ -10,8 +10,11 @@ describe('Given a function to determine whether we can create a storage of a giv
     })
   })
   describe('when the storage type does not support creation', () => {
-    it('should not allow the creation of a new storage', () => {
+    it('should not allow the creation of a new storage with type FsxOntap', () => {
       expect(canCreateStorage('FsxOntap', [], [])).toBeFalsy()
+    })
+    it('should not allow the creation of a new storage with type FileCache', () => {
+      expect(canCreateStorage('FileCache', [], [])).toBeFalsy()
     })
   })
   describe('when the attached storages are not available', () => {
@@ -60,8 +63,13 @@ describe('Given a function to determine whether we can attach an existing storag
     })
   })
   describe('when the attached storages are not available', () => {
-    it('should allow the attachment of an existing storage', () => {
+    it('should allow the attachment of an existing storage with type Efs', () => {
       expect(canAttachExistingStorage('Efs', null as any, [])).toBeTruthy()
+    })
+    it('should allow the attachment of an existing storage with type FileCache', () => {
+      expect(
+        canAttachExistingStorage('FileCache', null as any, []),
+      ).toBeTruthy()
     })
   })
   describe('when the ui storages details are not available', () => {

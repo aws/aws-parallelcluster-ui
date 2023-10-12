@@ -623,10 +623,12 @@ function LoadAwsConfig(region?: string, callback?: Callback) {
     .then((response: any) => {
       if (response.status === 200) {
         console.log('aws', response.data)
-        const {fsx_filesystems, fsx_volumes, ...data} = response.data
+        const {fsx_filesystems, fsx_volumes, file_caches, ...data} =
+          response.data
         setState(['aws'], {
           fsxFilesystems: extractFsxFilesystems(fsx_filesystems),
           fsxVolumes: extractFsxVolumes(fsx_volumes),
+          fileCaches: extractFileCaches(file_caches),
           ...data,
         })
         GetInstanceTypes(region)
@@ -658,6 +660,23 @@ const extractFsxFilesystems = (filesystems: any) => {
     lustre: mappedFilesystems.filter((fs: any) => fs.type === 'LUSTRE'),
     zfs: mappedFilesystems.filter((fs: any) => fs.type === 'OPENZFS'),
     ontap: mappedFilesystems.filter((fs: any) => fs.type === 'ONTAP'),
+  }
+}
+
+const extractFileCaches = (file_caches: any) => {
+  const mappedFileCaches = file_caches
+    .map((fc: any) => ({
+      id: fc.FileCacheId,
+      name: nameFromFilesystem(fc),
+      type: fc.FileCacheType,
+    }))
+    .map((fc: any) => ({
+      ...fc,
+      displayName: `${fc.id} ${fc.name}`,
+    }))
+
+  return {
+    lustre: mappedFileCaches.filter((fc: any) => fc.type === 'LUSTRE'),
   }
 }
 
