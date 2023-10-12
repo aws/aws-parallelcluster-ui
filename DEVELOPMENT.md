@@ -52,7 +52,9 @@ export AUDIENCE=<the value of the Client ID noted in the previous step>
 export AUTH_PATH=<the UserPoolAuthDomain output of the ParallelClusterCognito nested stack>
 ```
 
-Set `DISABLE_AUTH=False` in `api/utils.py` to facilitate live reloading.
+Set `DISABLE_AUTH=True` in `api/utils.py` to facilitate live reloading.
+Notice that cluster creation (both concrete and dryrun) is expected to fail
+when authentication is disabled.
 
 Start the API backend by running:
 
