@@ -13,7 +13,7 @@
 import {Queue} from '../queues.types'
 import {hasMultipleInstanceTypes} from '../SlurmMemorySettings'
 
-describe('Given a function to validate if mutiple instance types have been selected', () => {
+describe('Given a function to validate if multiple instance types have been selected', () => {
   describe('if at least a resource of a queue has multiple instance types selected', () => {
     const queues: Queue[] = [
       {
