@@ -26,6 +26,7 @@ ENVIRONMENT=$1
 BUCKET=$(aws cloudformation describe-stack-resources \
   --stack-name "${INFRA_BUCKET_STACK_NAME}" \
   --logical-resource-id InfrastructureBucket \
+  --region "${REGION}" \
   --output json \
   --query 'StackResources[0].PhysicalResourceId'\
   | tr -d '"' )
@@ -37,7 +38,7 @@ BUCKET=$(aws cloudformation describe-stack-resources \
 echo Uploading to: "${BUCKET}"
 for FILE in "${FILES[@]}"
 do
-  aws s3 cp "${SCRIPT_DIR}/${FILE}" "s3://${BUCKET}/${FILE}"
+  aws s3 cp --region "${REGION}" "${SCRIPT_DIR}/${FILE}" "s3://${BUCKET}/${FILE}"
 done
 
 BUCKET_URL="https://${BUCKET}.s3.${REGION}.amazonaws.com"
