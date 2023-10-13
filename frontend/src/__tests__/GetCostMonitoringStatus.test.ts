@@ -9,13 +9,14 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {GetCostMonitoringStatus} from '../model'
+import {GetCostMonitoringStatus, notify} from '../model'
 import {
   CostMonitoringStatus,
   CostMonitoringStatusResponse,
 } from '../old-pages/Clusters/Costs/costs.types'
 
 const mockGet = jest.fn()
+const mockNotify = jest.fn()
 
 jest.mock('axios', () => ({
   create: () => ({
@@ -63,6 +64,19 @@ describe('given a GetCostMonitoringStatus command', () => {
       }
 
       mockGet.mockRejectedValueOnce(mockError)
+    })
+
+    it('does not surface the error', async () => {
+      jest.mock('../model', () => {
+        return {
+          notify: (...args: unknown[]) => mockNotify(...args),
+        }
+      })
+      try {
+        await GetCostMonitoringStatus()
+      } catch (e) {
+        expect(mockNotify).toHaveBeenCalledTimes(0)
+      }
     })
 
     it('should re-throw the error', async () => {
