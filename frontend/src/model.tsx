@@ -912,7 +912,7 @@ async function GetCostMonitoringStatus(): Promise<CostMonitoringStatus> {
     return data?.active || false
   } catch (error) {
     if ((error as AxiosError).response) {
-      notify(`Error: ${(error as any).response.data.message}`, 'error')
+      console.log(`Error: ${(error as any).response.data.message}`)
     }
     throw error
   }
