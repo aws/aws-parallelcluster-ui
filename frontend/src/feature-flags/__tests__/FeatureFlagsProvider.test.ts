@@ -143,6 +143,7 @@ describe('given a feature flags provider and a list of rules', () => {
         'login_nodes',
         'amazon_file_cache',
         'job_exclusive_allocation',
+        'memory_based_scheduling_with_multiple_instance_types',
       ])
     })
   })

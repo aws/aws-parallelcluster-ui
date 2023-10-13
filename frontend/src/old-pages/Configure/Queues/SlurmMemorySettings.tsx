@@ -69,29 +69,34 @@ function SlurmMemorySettings() {
   const memoryBasedSchedulingEnabled = useState(
     memoryBasedSchedulingEnabledPath,
   )
+  const isMemoryBasedSchedulingWithMultipleInstanceTypesActive = useFeatureFlag(
+    'memory_based_scheduling_with_multiple_instance_types',
+  )
   const queues = useState(queuesPath)
   const multipleInstancesTypesSelected = useFeatureFlag(
     'queues_multiple_instance_types',
   )
     ? hasMultipleInstanceTypes(queues)
     : false
-
-  const clearSlurmSettingsState = React.useCallback(() => {
+  const cannotEnableMemoryBasedScheduling =
+    multipleInstancesTypesSelected &&
+    !isMemoryBasedSchedulingWithMultipleInstanceTypesActive
+  const clearMemoryBasedSettingsState = React.useCallback(() => {
     clearState(memoryBasedSchedulingEnabledPath)
     if (Object.keys(getState(slurmSettingsPath)).length === 0)
       clearState(slurmSettingsPath)
   }, [])
 
   React.useEffect(() => {
-    if (multipleInstancesTypesSelected) {
-      clearSlurmSettingsState()
+    if (cannotEnableMemoryBasedScheduling) {
+      clearMemoryBasedSettingsState()
     }
-  }, [clearSlurmSettingsState, multipleInstancesTypesSelected])
+  }, [clearMemoryBasedSettingsState, cannotEnableMemoryBasedScheduling])
 
   const toggleMemoryBasedSchedulingEnabled = () => {
     !memoryBasedSchedulingEnabled
       ? setState(memoryBasedSchedulingEnabledPath, true)
-      : clearSlurmSettingsState()
+      : clearMemoryBasedSettingsState()
   }
 
   const scaledownIdleTime = useState(scaledownIdleTimePath)
@@ -126,12 +131,12 @@ function SlurmMemorySettings() {
       <SpaceBetween size={'s'} direction={'vertical'}>
         <Checkbox
           checked={memoryBasedSchedulingEnabled}
-          disabled={multipleInstancesTypesSelected}
+          disabled={cannotEnableMemoryBasedScheduling}
           onChange={toggleMemoryBasedSchedulingEnabled}
         >
           <Trans i18nKey="wizard.queues.slurmMemorySettings.toggle.label" />
         </Checkbox>
-        {multipleInstancesTypesSelected ? (
+        {cannotEnableMemoryBasedScheduling ? (
           <Alert header={t('wizard.queues.slurmMemorySettings.info.header')}>
             {t('wizard.queues.slurmMemorySettings.info.body')}
           </Alert>
