@@ -23,13 +23,16 @@ FILES=(parallelcluster-ui-cognito.yaml parallelcluster-ui.yaml)
 ENVIRONMENT=$1
 . "${SCRIPT_DIR}/environments/${ENVIRONMENT}-variables.sh"
 
-BUCKET=$(aws cloudformation describe-stack-resources \
-  --stack-name "${INFRA_BUCKET_STACK_NAME}" \
-  --logical-resource-id InfrastructureBucket \
-  --region "${REGION}" \
-  --output json \
-  --query 'StackResources[0].PhysicalResourceId'\
-  | tr -d '"' )
+if [[ -n $INFRA_BUCKET_NAME ]]; then
+  BUCKET=$INFRA_BUCKET_NAME
+else
+  BUCKET=$(aws cloudformation describe-stack-resources \
+    --stack-name "${INFRA_BUCKET_STACK_NAME}" \
+    --logical-resource-id InfrastructureBucket \
+    --output json \
+    --query 'StackResources[0].PhysicalResourceId'\
+    | tr -d '"' )
+fi
 
 # The yaml files describing the infrastructure are uploaded to a private S3 bucket
 # and then used to update the CloudFormation stack, where the same bucket is passed as parameters.
