@@ -51,12 +51,17 @@ elif ! [[ $TAG =~ [0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+ ]]; then
   exit 1
 fi
 
+echo "[INFO] Logging in ${ECR_ENDPOINT}"
 aws ecr-public get-login-password --region "$ECR_REGION" | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"
+
+echo "[INFO] Building frontend"
 
 pushd frontend
 if [ ! -d node_modules ]; then
   npm install
 fi
+
+echo "[INFO] Building image"
 docker build --build-arg PUBLIC_URL=/ -t frontend-awslambda .
 popd
 docker build -f Dockerfile.awslambda -t ${ECR_REPO} .
@@ -64,10 +69,12 @@ docker build -f Dockerfile.awslambda -t ${ECR_REPO} .
 ECR_IMAGE_VERSION_TAGGED=${ECR_ENDPOINT}/${ECR_REPO}:${TAG}
 ECR_IMAGE_LATEST_TAGGED=${ECR_ENDPOINT}/${ECR_REPO}:latest
 
+echo "[INFO] Pushing image ${ECR_IMAGE_VERSION_TAGGED} in repository ${ECR_REPO}"
+
 docker tag ${ECR_REPO} ${ECR_IMAGE_VERSION_TAGGED}
 docker push ${ECR_IMAGE_VERSION_TAGGED}
 
 docker tag ${ECR_REPO} ${ECR_IMAGE_LATEST_TAGGED}
 docker push ${ECR_IMAGE_LATEST_TAGGED}
 
-echo "Uploaded: ${ECR_IMAGE_VERSION_TAGGED}, ${ECR_IMAGE_LATEST_TAGGED}"
+echo "[INFO] Uploaded: ${ECR_IMAGE_VERSION_TAGGED}, ${ECR_IMAGE_LATEST_TAGGED}"
