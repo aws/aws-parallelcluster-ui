@@ -1048,12 +1048,12 @@ function StorageInstance({index}: any) {
               {
                 Ebs: (
                   <FormField
-                    label={t('wizard.storage.Ebs.existing')}
+                    label={t('wizard.storage.Ebs.existing.label')}
                     errorText={existingPathError}
                   >
                     <Input
                       placeholder={t(
-                        'wizard.storage.instance.useExisting.placeholder',
+                        'wizard.storage.Ebs.existing.placeholder',
                       )}
                       value={existingId}
                       onChange={({detail}) => {

@@ -891,7 +891,10 @@
         }
       },
       "Ebs": {
-        "existing": "EBS ID",
+        "existing": {
+          "label": "EBS ID",
+          "placeholder": "i.e., vol-1234"
+        },
         "volumeType": {
           "label": "Volume type",
           "placeholder": "Default ({{defaultVolumeType}})"
