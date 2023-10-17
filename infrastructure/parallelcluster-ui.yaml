@@ -731,9 +731,11 @@ Resources:
           - Action:
               - fsx:DescribeFileSystems
               - fsx:DescribeVolumes
+              - fsx:DescribeFileCaches
             Resource:
               - !Sub arn:${AWS::Partition}:fsx:*:${AWS::AccountId}:volume/*
               - !Sub arn:${AWS::Partition}:fsx:*:${AWS::AccountId}:file-system/*
+              - !Sub arn:${AWS::Partition}:fsx:*:${AWS::AccountId}:file-cache/*
             Effect: Allow
             Sid: FsxPolicy
 
