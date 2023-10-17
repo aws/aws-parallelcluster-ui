@@ -52,7 +52,8 @@ elif ! [[ $TAG =~ [0-9]{4}\.(0[1-9]|1[0-2])\.[0-9]+ ]]; then
 fi
 
 echo "[INFO] Logging in ${ECR_ENDPOINT}"
-aws ecr-public get-login-password --region "$ECR_REGION" | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"
+[[ $ECR_ENDPOINT =~ ^public.ecr.aws/.*$ ]] && ECR_COMMAND=ecr-public || ECR_COMMAND=ecr
+aws $ECR_COMMAND get-login-password --region "$ECR_REGION" | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"
 
 echo "[INFO] Building frontend"
 
