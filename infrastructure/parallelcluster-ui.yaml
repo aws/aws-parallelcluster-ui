@@ -253,8 +253,8 @@ Resources:
       UserPoolId: !If [ UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 7
-      AccessTokenValidity: 10
-      IdTokenValidity: 10
+      AccessTokenValidity: 5
+      IdTokenValidity: 5
       TokenValidityUnits:
         AccessToken: "minutes"
         IdToken: "minutes"
