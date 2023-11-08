@@ -7,9 +7,15 @@ Parameters:
     Description: Email address of administrative user setup by default.
     Type: String
     MinLength: 1
+  PermissionsBoundaryPolicy:
+    Type: String
+    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role'
+    Default: ''
+    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
 
 Conditions:
   GovCloud: !Equals [!Ref AWS::Region, 'us-gov-west-1']
+  UsePermissionBoundary: !Not [ !Equals [ !Ref PermissionsBoundaryPolicy, '' ] ]
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -18,9 +24,15 @@ Metadata:
           default: Admin info
         Parameters:
           - AdminUserEmail
+      - Label:
+          default: (Optional) Permissions
+        Parameters:
+          - PermissionsBoundaryPolicy
     ParameterLabels:
       AdminUserEmail:
         default: Initial Admin's Email
+      PermissionsBoundaryPolicy:
+        default: Permissions Boundary
 
 
 Resources:
@@ -44,7 +56,7 @@ Resources:
               - Effect: Allow
                 Action: sns:publish
                 Resource: '*'
-
+      PermissionsBoundary: !If [ UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue' ]
 
   UserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
