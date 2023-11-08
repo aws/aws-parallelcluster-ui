@@ -47,7 +47,16 @@ Parameters:
     Description: (Optional) S3 bucket where CloudFormation files are stored. Change this parameter only when testing changes made to the infrastructure itself.
     Type: String
     Default: ''
-
+  PermissionsBoundaryPolicy:
+    Type: String
+    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster UI infrastructure'
+    Default: ''
+    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
+  PermissionsBoundaryPolicyPCAPI:
+    Type: String
+    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster API infrastructure'
+    Default: ''
+    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -80,6 +89,11 @@ Metadata:
         Parameters:
           - ImageBuilderVpcId
           - ImageBuilderSubnetId
+      - Label:
+          default: (Optional) Permissions Boundaries
+        Parameters:
+          - PermissionsBoundaryPolicy
+          - PermissionsBoundaryPolicyPCAPI
       - Label:
           default: (Debugging only) Infrastructure S3 Bucket
         Parameters:
@@ -121,6 +135,7 @@ Conditions:
       - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
   InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
+  UsePermissionBoundary: !Not [!Equals [!Ref PermissionsBoundaryPolicy, '']]
 
 Mappings:
   ParallelClusterUI:
@@ -136,6 +151,7 @@ Resources:
     Properties:
       Parameters:
         AdminUserEmail: !Ref AdminUserEmail
+        PermissionsBoundaryPolicy: !Ref PermissionsBoundaryPolicy
       TemplateURL: !Sub 
         - '${Bucket}/parallelcluster-ui-cognito.yaml'
         - Bucket: !If 
@@ -149,6 +165,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
+        PermissionsBoundaryPolicy: !Ref PermissionsBoundaryPolicy
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
@@ -294,6 +311,7 @@ Resources:
               - 'sts:AssumeRole'
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs'
+      PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
 
   ApiGatewayAccessLog:
     Type: AWS::Logs::LogGroup
@@ -477,6 +495,7 @@ Resources:
                   - secretsmanager:DeleteSecret
                 Resource:
                   - !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${AWS::StackName}*
+      PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
 
   PrivateEcrRepository:
     DependsOn: ParallelClusterApi
@@ -502,6 +521,7 @@ Resources:
                 - !Sub ec2.${AWS::URLSuffix}
         Version: '2012-10-17'
       Path: /executionServiceEC2Role/
+      PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
 
   ImageBuilderInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -701,6 +721,7 @@ Resources:
                 Resource: !Sub
                   - arn:${AWS::Partition}:imagebuilder:${AWS::Region}:${AWS::AccountId}:image/*${StackIdSuffix}*
                   - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+      PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
 
   EcrImagesRemover:
     Type: Custom::EcrImagesRemover
@@ -740,6 +761,7 @@ Resources:
         - !Ref CostMonitoringAndPricingPolicy
         - !Ref SsmSendPolicy
         - !Ref SsmGetCommandInvocationPolicy
+      PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
 
 
   ParallelClusterUIApiGatewayInvoke:
