@@ -57,6 +57,11 @@ Parameters:
     Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster API infrastructure'
     Default: ''
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
+  IAMRoleAndPolicyPrefix:
+    Type: String
+    Description: 'Prefix applied to the name of every IAM role and policy (max length: 10)'
+    Default: ''
+    MaxLength: 10
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -90,8 +95,9 @@ Metadata:
           - ImageBuilderVpcId
           - ImageBuilderSubnetId
       - Label:
-          default: (Optional) Permissions Boundaries
+          default: (Optional) Permissions
         Parameters:
+          - IAMRoleAndPolicyPrefix
           - PermissionsBoundaryPolicy
           - PermissionsBoundaryPolicyPCAPI
       - Label:
@@ -152,7 +158,8 @@ Resources:
       Parameters:
         AdminUserEmail: !Ref AdminUserEmail
         PermissionsBoundaryPolicy: !Ref PermissionsBoundaryPolicy
-      TemplateURL: !Sub 
+        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
+      TemplateURL: !Sub
         - '${Bucket}/parallelcluster-ui-cognito.yaml'
         - Bucket: !If 
           - HasDefaultInfrastructure
@@ -166,6 +173,7 @@ Resources:
     Properties:
       Parameters:
         PermissionsBoundaryPolicy: !Ref PermissionsBoundaryPolicy
+        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
@@ -301,6 +309,9 @@ Resources:
   ApiGatewayLogRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ApiGatewayLogRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -463,6 +474,9 @@ Resources:
   UserPoolClientSecretRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}UserPoolClientSecretRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -472,7 +486,7 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Policies:
-        - PolicyName: CognitoPermissions
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}UserPoolPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -483,7 +497,7 @@ Resources:
                   - !Sub
                     - arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}
                     - { UserPoolId: !If [UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]}
-        - PolicyName: SecretsManagerPermissions
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}SecretsManagerPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -508,6 +522,9 @@ Resources:
   ImageBuilderInstanceRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ImageBuilderInstanceRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
         - !Sub arn:${AWS::Partition}:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds
@@ -526,6 +543,9 @@ Resources:
   ImageBuilderInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
+      InstanceProfileName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ImageBuilderInstanceProfile-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       Path: /executionServiceEC2Role/
       Roles:
         - !Ref ImageBuilderInstanceRole
@@ -682,6 +702,9 @@ Resources:
   EcrImageDeletionLambdaRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}EcrImageDeletionLambdaRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -691,7 +714,7 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Policies:
-        - PolicyName: LoggingPolicy
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}LogsPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -700,7 +723,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
-        - PolicyName: BatchDeletePolicy
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}EcrPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -741,6 +764,9 @@ Resources:
   ParallelClusterUIUserRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ParallelClusterUIUserRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
@@ -777,6 +803,9 @@ Resources:
   ParallelClusterApiGatewayInvoke:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}ParallelClusterApiGatewayInvoke-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -790,6 +819,9 @@ Resources:
   CognitoPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}CognitoPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId']]]] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -815,6 +847,9 @@ Resources:
   EC2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}EC2Policy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -847,6 +882,9 @@ Resources:
   DescribeFsxPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}DescribeFsxPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -864,6 +902,9 @@ Resources:
   DescribeEfsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}DescribeEfsPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -877,6 +918,9 @@ Resources:
   CostMonitoringAndPricingPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}CostMonitoringAndPricingPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -902,6 +946,9 @@ Resources:
   SsmSendPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}SsmSendPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -924,6 +971,9 @@ Resources:
   SsmGetCommandInvocationPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}SsmGetCommandInvocationPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
