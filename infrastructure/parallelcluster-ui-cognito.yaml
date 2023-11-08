@@ -12,6 +12,11 @@ Parameters:
     Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role'
     Default: ''
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
+  IAMRoleAndPolicyPrefix:
+    Type: String
+    Description: 'Prefix applied to the name of every IAM role and policy (max length: 10)'
+    Default: ''
+    MaxLength: 10
 
 Conditions:
   GovCloud: !Equals [!Ref AWS::Region, 'us-gov-west-1']
@@ -27,10 +32,13 @@ Metadata:
       - Label:
           default: (Optional) Permissions
         Parameters:
+          - IAMRoleAndPolicyPrefix
           - PermissionsBoundaryPolicy
     ParameterLabels:
       AdminUserEmail:
         default: Initial Admin's Email
+      IAMRoleAndPolicyPrefix:
+        default: Prefix for IAM Roles and Policies
       PermissionsBoundaryPolicy:
         default: Permissions Boundary
 
@@ -39,6 +47,9 @@ Resources:
   SNSRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub
+        - ${IAMRoleAndPolicyPrefix}SNSRole-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -49,7 +60,7 @@ Resources:
             Action:
               - sts:AssumeRole
       Policies:
-        - PolicyName: CognitoSNSPolicy
+        - PolicyName: !Sub ${IAMRoleAndPolicyPrefix}SNSPermissions
           PolicyDocument:
             Version: 2012-10-17
             Statement:
