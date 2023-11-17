@@ -87,8 +87,9 @@ six==1.16.0
     #   python-dateutil
 tomli==2.0.1
     # via pytest
-urllib3==1.26.15
+urllib3==1.26.18
     # via
+    #   -r requirements.in
     #   botocore
     #   requests
 werkzeug==2.2.3
