@@ -1,7 +1,7 @@
 TemplateURL: BUCKET_URL_PLACEHOLDER/parallelcluster-ui.yaml
 Parameters:
   - ParameterKey: Version
-    ParameterValue: 3.8.0b1
+    ParameterValue: 3.8.0
   - ParameterKey: InfrastructureBucket
     ParameterValue: BUCKET_URL_PLACEHOLDER
   - ParameterKey: UserPoolId

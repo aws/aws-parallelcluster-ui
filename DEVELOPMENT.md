@@ -6,7 +6,7 @@ To run AWS ParallelCluster UI locally, start by setting the following environmen
 export AWS_ACCESS_KEY_ID=[...]
 export AWS_SECRET_ACCESS_KEY=[...]
 export AWS_DEFAULT_REGION=us-east-2
-export API_VERSION="3.8.0b1"
+export API_VERSION="3.8.0"
 export API_BASE_URL=https://[API_ID].execute-api.us-east-2.amazonaws.com/prod  # get this from ParallelClusterApi stack outputs
 export ENV=dev
 ```
