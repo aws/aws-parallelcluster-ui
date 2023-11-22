@@ -21,8 +21,24 @@ bash ./rollforward_awslambda_image.sh
 
 **NOTE:** The rollforward script should be used only if the rollback script is launched by mistake, the normal procedure to publish a new release after a rollback is by launching the `build_and_release_image.sh --tag YYYY.MM.REVISION` after fixing the code
 
-# How to deploy PCUI image in personal account
+# How to deploy PCUI in personal account
+Create configurations files for your personal environment (una tantum):
 
+```
+bash scripts/setup-env.sh [ENVIRONMENT_NAME]
+```
+
+where *ENVIRONMENT_NAME* could be your login.
+
+Adapt the configurations files `[ENVIRONMENT_NAME]-*` created in `infrastructure/environments` with your data.
+
+Deploy the local PCUI to your environment:
+
+```
+bash scripts/deploy.sh [ENVIRONMENT_NAME]
+```
+
+# How to deploy the PCUI image to a private ECR repository
 Create an ECR *private* repository in your personal account, where PCUI Docker images will be stored for testing:
 
 ```
