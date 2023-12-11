@@ -12,10 +12,8 @@
 const nextConfig = {
   reactStrictMode: true,
   basePath: '/pcui',
-  experimental: {
-    images: {
-      unoptimized: true,
-    },
+  images: {
+    unoptimized: true,
   },
   async rewrites() {
     return [
