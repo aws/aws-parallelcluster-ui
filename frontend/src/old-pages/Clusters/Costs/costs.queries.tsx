@@ -78,7 +78,10 @@ export function useActivateCostMonitoringMutation(
         if (costExplorerCannotBeAccessed) {
           onError('costExplorerCannotBeAccessed')
         } else {
-          onError('genericError', error.response.data.message)
+          onError(
+            'genericError',
+            (error.response.data as {message: string}).message,
+          )
         }
       }
     },
