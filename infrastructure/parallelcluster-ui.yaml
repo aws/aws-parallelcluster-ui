@@ -859,11 +859,6 @@ Resources:
             - ec2:DescribeInstanceTypes
             - ec2:DescribeSubnets
             - ec2:DescribeKeyPairs
-            - ec2:DescribeNetworkInterfaces
-            - ec2:CreateNetworkInterface
-            - ec2:DeleteNetworkInterface
-            - ec2:DescribeInstances
-            - ec2:AttachNetworkInterface
             Resource:
               - '*'
             Effect: Allow
@@ -878,6 +873,27 @@ Resources:
                 ec2:ResourceTag/parallelcluster:version: "*"
             Effect: Allow
             Sid: EC2ManagePolicy
+          - Fn::If:
+            - IsPrivate
+            - Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DeleteNetworkInterface
+                - ec2:AttachNetworkInterface
+              Resource:
+                - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:*
+              Effect: Allow
+              Sid: PrivateDeploymentWritePolicy
+            - !Ref AWS::NoValue
+          - Fn::If:
+            - IsPrivate
+            - Action:
+                - ec2:DescribeNetworkInterfaces
+                - ec2:DescribeInstances
+              Resource:
+                - '*'
+              Effect: Allow
+              Sid: PrivateDeploymentReadPolicy
+            - !Ref AWS::NoValue
 
   DescribeFsxPolicy:
     Type: AWS::IAM::ManagedPolicy
