@@ -195,7 +195,7 @@ Resources:
       TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
       TimeoutInMinutes: 30
 
-  ParallelClusterUIFunction:
+  ParallelClusterUIFun:
     Type: AWS::Lambda::Function
     Properties:
       Role: !GetAtt ParallelClusterUIUserRole.Arn
@@ -219,13 +219,13 @@ Resources:
           API_VERSION: !Ref Version
           SITE_URL: !Sub
            - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
-           - Api: !Ref ApiGateway
+           - Api: !Ref ApiGatewayRestApi
           AUTH_PATH: !If [ UseExistingCognito, !Ref UserPoolAuthDomain, !GetAtt [ Cognito, Outputs.UserPoolAuthDomain ]]
           SECRET_ID: !GetAtt UserPoolClientSecret.SecretName
           AUDIENCE: !Ref CognitoAppClient
           OIDC_PROVIDER: 'Cognito'
       FunctionName: !Sub
-        - ParallelClusterUIFunction-${StackIdSuffix}
+        - ParallelClusterUIFun-${StackIdSuffix}
         - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
       Code:
         ImageUri: !Sub
@@ -235,7 +235,7 @@ Resources:
               - '-'
               - [!Select [2, !Split ['/', !Ref EcrImage]], !Select [3, !Split ['/', !Ref EcrImage]]]
 
-  ApiGateway:
+  ApiGatewayRestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
       Name: ParallelClusterUI
@@ -274,14 +274,14 @@ Resources:
   ApiGatewayProxyResource:
     Type: AWS::ApiGateway::Resource
     Properties:
-      RestApiId: !Ref ApiGateway
-      ParentId: !GetAtt ApiGateway.RootResourceId
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
       PathPart: '{proxy+}'
 
   ApiGatewayMethod:
     Type: AWS::ApiGateway::Method
     Properties:
-      RestApiId: !Ref ApiGateway
+      RestApiId: !Ref ApiGatewayRestApi
       ResourceId: !Ref ApiGatewayProxyResource
       HttpMethod: ANY
       AuthorizationType: NONE
@@ -289,21 +289,21 @@ Resources:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST
         Uri: !Sub
-          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
+          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFun-${StackIdSuffix}/invocations
           - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
 
   ApiGatewayRootMethod:
     Type: AWS::ApiGateway::Method
     Properties:
-      RestApiId: !Ref ApiGateway
-      ResourceId: !GetAtt ApiGateway.RootResourceId
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !GetAtt ApiGatewayRestApi.RootResourceId
       HttpMethod: ANY
       AuthorizationType: NONE
       Integration:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST
         Uri: !Sub
-          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-${StackIdSuffix}/invocations
+          - arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFun-${StackIdSuffix}/invocations
           - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
 
   ApiGatewayLogRole:
@@ -338,16 +338,16 @@ Resources:
     Type: AWS::ApiGateway::Deployment
     DependsOn: ApiGatewayMethod
     Properties:
-      RestApiId: !Ref ApiGateway
+      RestApiId: !Ref ApiGatewayRestApi
 
-  ApiGatewayStage:
+  ApiGatewayRestStage:
     Type: AWS::ApiGateway::Stage
     DependsOn: ApiGatewayAccount
     Properties: 
       AccessLogSetting:
         DestinationArn: !GetAtt ApiGatewayAccessLog.Arn
         Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","path":"$context.path", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
-      RestApiId: !Ref ApiGateway
+      RestApiId: !Ref ApiGatewayRestApi
       DeploymentId: !Ref ApiGatewayDeployment
       StageName: pcui
       MethodSettings:
@@ -371,7 +371,7 @@ Resources:
       CallbackURLs:
         - !Sub
           - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui/login
-          - Api: !Ref ApiGateway
+          - Api: !Ref ApiGatewayRestApi
       SupportedIdentityProviders:
         - COGNITO
       UserPoolId: !If [ UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]
@@ -757,7 +757,7 @@ Resources:
   ParallelClusterUILambdaLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/lambda/${ParallelClusterUIFunction}
+      LogGroupName: !Sub /aws/lambda/${ParallelClusterUIFun}
       RetentionInDays: 90
 
 
@@ -794,11 +794,11 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !GetAtt ParallelClusterUIFunction.Arn
+      FunctionName: !GetAtt ParallelClusterUIFun.Arn
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub
         - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*
-        - { ApiGateway: !Ref ApiGateway }
+        - { ApiGateway: !Ref ApiGatewayRestApi }
 
   ParallelClusterApiGatewayInvoke:
     Type: AWS::IAM::ManagedPolicy
@@ -1004,14 +1004,14 @@ Resources:
 Outputs:
   ParallelClusterUILambdaArn:
     Description: 'ARN of the ParallelCluster UI Lambda function'
-    Value: !GetAtt ParallelClusterUIFunction.Arn
+    Value: !GetAtt ParallelClusterUIFun.Arn
   ParallelClusterUIUrl:
     Description: 'Url to reach the ParallelCluster UI Site.'
     Export:
       Name: !Sub ${AWS::StackName}-ParallelClusterUISite
     Value: !Sub
       - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
-      - Api: !Ref ApiGateway
+      - Api: !Ref ApiGatewayRestApi
   AppClientId:
     Description: The id of the Cognito app client
     Value: !Ref CognitoAppClient
