@@ -49,17 +49,17 @@ Parameters:
     Default: ''
   PermissionsBoundaryPolicy:
     Type: String
-    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster UI infrastructure'
+    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster UI infrastructure.'
     Default: ''
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
   PermissionsBoundaryPolicyPCAPI:
     Type: String
-    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster API infrastructure'
+    Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster API infrastructure. [ParallelCluster >= 3.8.0]'
     Default: ''
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
   IAMRoleAndPolicyPrefix:
     Type: String
-    Description: 'Prefix applied to the name of every IAM role and policy (max length: 10)'
+    Description: 'Prefix applied to the name of every IAM role and policy (max length: 10). [ParallelCluster >= 3.8.0]'
     Default: ''
     MaxLength: 10
 Metadata:
