@@ -142,6 +142,8 @@ Conditions:
       - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
   InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
   UsePermissionBoundary: !Not [!Equals [!Ref PermissionsBoundaryPolicy, '']]
+  UsePermissionBoundaryPCAPI: !Not [!Equals [!Ref PermissionsBoundaryPolicyPCAPI, '']]
+  UseIAMRoleAndPolicyPrefix: !Not [!Equals [!Ref IAMRoleAndPolicyPrefix, '']]
 
 Mappings:
   ParallelClusterUI:
@@ -172,8 +174,8 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        PermissionsBoundaryPolicy: !Ref PermissionsBoundaryPolicy
-        IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
+        PermissionsBoundaryPolicy: !If [ UsePermissionBoundaryPCAPI, !Ref PermissionsBoundaryPolicyPCAPI, !Ref AWS::NoValue ]
+        IAMRoleAndPolicyPrefix: !If [ UseIAMRoleAndPolicyPrefix, !Ref IAMRoleAndPolicyPrefix, !Ref AWS::NoValue ]
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
