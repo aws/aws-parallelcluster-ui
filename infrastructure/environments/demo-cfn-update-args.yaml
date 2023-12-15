@@ -8,8 +8,8 @@ Parameters:
     ParameterValue: BUCKET_URL_PLACEHOLDER
   - ParameterKey: PublicEcrImageUri
     ParameterValue: public.ecr.aws/pcm/parallelcluster-ui:latest
-#   Use the value below if you want to deploy the local image of PCUI.
-#    ParameterValue: DEMO_ACCOUNT_ID.dkr.ecr.DEMO_REGION.amazonaws.com/parallelcluster-ui:latest
+#    Use the value below if you want to deploy the local image of PCUI.
+#    ParameterValue: ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/parallelcluster-ui:latest
   - ParameterKey: UserPoolId
     UsePreviousValue: true
   - ParameterKey: UserPoolAuthDomain

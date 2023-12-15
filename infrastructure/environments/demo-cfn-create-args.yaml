@@ -1,0 +1,38 @@
+TemplateURL: BUCKET_URL_PLACEHOLDER/parallelcluster-ui.yaml
+Parameters:
+  - ParameterKey: AdminUserEmail
+    ParameterValue: my@email.com
+  - ParameterKey: Version
+    ParameterValue: 3.8.0
+  - ParameterKey: InfrastructureBucket
+    ParameterValue: BUCKET_URL_PLACEHOLDER
+  - ParameterKey: PublicEcrImageUri
+    ParameterValue: public.ecr.aws/pcm/parallelcluster-ui:latest
+#    Use the value below if you want to deploy the local image of PCUI.
+#    ParameterValue: ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/parallelcluster-ui:latest
+#  - ParameterKey: UserPoolId
+#    ParameterValue: xxxxxxxxxx_xxxxxxxxxx
+#  - ParameterKey: UserPoolAuthDomain
+#    ParameterValue: https://xxxxxxxxxx.auth.xxxxxxxxxx.amazoncognito.com
+#  - ParameterKey: SNSRole
+#    ParameterValue: arn:aws:iam::xxxxxxxxxx:role/xxxxxxxxxx
+#  - ParameterKey: ImageBuilderVpcId
+#    ParameterValue: vpc-xxxxxxxxxx
+#  - ParameterKey: ImageBuilderSubnetId
+#    ParameterValue: subnet-xxxxxxxxxx
+#  - ParameterKey: VpcEndpointId
+#    ParameterValue: vpce-xxxxxxxxxx
+#  - ParameterKey: LambdaSubnetIds
+#    ParameterValue: "subnet-xxxxxxxxxx,subnet-xxxxxxxxxx,subnet-xxxxxxxxxx"
+#  - ParameterKey: LambdaSecurityGroupIds
+#    ParameterValue: sg-xxxxxxxxxx
+#  - ParameterKey: PermissionsBoundaryPolicy
+#    ParameterValue: arn:aws:iam::xxxxxxxxxx:policy/xxxxxxxxxx
+#  - ParameterKey: PermissionsBoundaryPolicyPCAPI
+#    ParameterValue: arn:aws:iam::xxxxxxxxxx:policy/xxxxxxxxxx
+#  - ParameterKey: IAMRoleAndPolicyPrefix
+#    ParameterValue: xxxxxxxxxx
+Capabilities:
+  - CAPABILITY_AUTO_EXPAND
+  - CAPABILITY_NAMED_IAM
+DisableRollback: false
