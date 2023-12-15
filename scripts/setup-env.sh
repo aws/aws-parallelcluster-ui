@@ -31,15 +31,22 @@ ENVIRONMENT=$1
 
 info "Selected environment: $ENVIRONMENT"
 
-if [[ $(ls $ENVIRONMENTS_DIR/$ENVIRONMENT-*) ]]; then
-  warn "Configuration files for the environment $ENVIRONMENT already exist. Nothing to do."
+if [[ $(ls $ENVIRONMENTS_DIR/$ENVIRONMENT-* 2>/dev/null) ]]; then
+  warn "Configuration files for the environment $ENVIRONMENT already exist in $ENVIRONMENTS_DIR . Nothing to do."
   exit 0
 fi
 
 info "Creating environment files"
-cp "$ENVIRONMENTS_DIR/demo-variables.sh" "$ENVIRONMENTS_DIR/$ENVIRONMENT-variables.sh"
+VARIABLES_FILE="$ENVIRONMENTS_DIR/$ENVIRONMENT-variables.sh"
+CFN_CREATE_FILE="$ENVIRONMENTS_DIR/$ENVIRONMENT-cfn-create-args.yaml"
+CFN_UPDATE_FILE="$ENVIRONMENTS_DIR/$ENVIRONMENT-cfn-update-args.yaml"
+cp "$ENVIRONMENTS_DIR/demo-variables.sh" "$VARIABLES_FILE"
 chmod +x "$ENVIRONMENTS_DIR/$ENVIRONMENT-variables.sh"
-cp "$ENVIRONMENTS_DIR/demo-cfn-update-args.yaml" "$ENVIRONMENTS_DIR/$ENVIRONMENT-cfn-create-args.sh"
-cp "$ENVIRONMENTS_DIR/demo-cfn-update-args.yaml" "$ENVIRONMENTS_DIR/$ENVIRONMENT-cfn-update-args.sh"
+cp "$ENVIRONMENTS_DIR/demo-cfn-create-args.yaml" "$CFN_CREATE_FILE"
+cp "$ENVIRONMENTS_DIR/demo-cfn-update-args.yaml" "$CFN_UPDATE_FILE"
 
-info "Environment files created! Check out $ENVIRONMENTS_DIR"
+info "Environment files created! Check them out and adapt with your values:
+  * $VARIABLES_FILE
+  * $CFN_CREATE_FILE
+  * $CFN_UPDATE_FILE
+"
