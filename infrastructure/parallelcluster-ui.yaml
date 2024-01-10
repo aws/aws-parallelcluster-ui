@@ -8,7 +8,7 @@ Parameters:
     Type: String
     Default: public.ecr.aws/pcm/parallelcluster-ui:2023.12.0
   VpcEndpointId:
-    Description: Enter a VPC endpoint to enable private PCUI implementation. When enabled, the API will only accept requests from within the given VPC.
+    Description: Enter a VPC endpoint with type interface for the execute-api service to enable private PCUI implementation. When enabled, the API will only accept requests from within the given VPC.
     Type: String
     Default: ''
   LambdaSubnetIds:
