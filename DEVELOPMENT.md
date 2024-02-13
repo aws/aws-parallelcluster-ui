@@ -28,18 +28,11 @@ When working on the project, you may need to add/change a dependency.
 
 ### Product Dependencies
 To add a product dependency, you should add the dependency with a specified version to the `requirements.in` file, 
-and generate `requirements.txt` using [pip-tools](https://github.com/jazzband/pip-tools).
-To install pip-tools, just run
-```bash
-pip install pip-tools==6.13.0
-```
+and generate `requirements.txt` using [pip-tools](https://github.com/jazzband/pip-tools),
+which is part of dev dependencies (`requirements-dev.txt`)
 
-To compile the `requirements.in` file, run:
-```bash
-pip-compile
-```
-
-This will produce the `requirements.txt` file (or update it, if it exists already).
+### Dev Dependencies
+To add/change a development dependencies, you can directly change `requirements-dev.txt`.
 
 ## Backend with Cognito
 From the Cognito service page of the AWS account where PCUI has been deployed, click on the user pool
