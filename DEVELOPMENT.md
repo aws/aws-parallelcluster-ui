@@ -20,11 +20,15 @@ python3 -m venv venv
 Install dependencies in your virtual environment:
 ```bash
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
-When working on the project, you may need to add a dependency.
-To do that you can the dependency with a specified version to the `requirements.in` file, and compile that file to produce the `requirements.txt`
-After that, make sure to compile it using [pip-tools](https://github.com/jazzband/pip-tools).
+## Dependencies Management
+When working on the project, you may need to add/change a dependency.
+
+### Product Dependencies
+To add a product dependency, you should add the dependency with a specified version to the `requirements.in` file, 
+and generate `requirements.txt` using [pip-tools](https://github.com/jazzband/pip-tools).
 To install pip-tools, just run
 ```bash
 pip install pip-tools==6.13.0
