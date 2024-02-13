@@ -31,6 +31,10 @@ To add a product dependency, you should add the dependency with a specified vers
 and generate `requirements.txt` using [pip-tools](https://github.com/jazzband/pip-tools),
 which is part of dev dependencies (`requirements-dev.txt`)
 
+When changing a dependency in the frontend project you should add/Change it in `frontend/package.json`,
+re-generate `frontend/package-lock.json` with `npm install` 
+and update the attribution document in `frontend/resources/attributions/npm-python-attributions.txt` accordingly.
+
 ### Dev Dependencies
 To add/change a development dependencies, you can directly change `requirements-dev.txt`.
 
