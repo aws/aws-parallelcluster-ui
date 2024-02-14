@@ -2263,7 +2263,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ******************************
 
 axios
-1.6.4 <https://github.com/axios/axios>
+1.6.7 <https://github.com/axios/axios>
 Copyright (c) 2014-present Matt Zabriskie
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
