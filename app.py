@@ -11,7 +11,7 @@
 import datetime
 
 from flask import Response, request
-from flask.json import JSONEncoder
+from flask.json.provider import DefaultJSONProvider
 from werkzeug.routing import BaseConverter
 
 import api.utils as utils
@@ -56,7 +56,7 @@ class RegexConverter(BaseConverter):
         self.regex = items[0]
 
 
-class PClusterJSONEncoder(JSONEncoder):
+class PClusterJSONEncoder(DefaultJSONProvider):
     """Make the model objects JSON serializable."""
 
     include_nulls = False
@@ -64,13 +64,13 @@ class PClusterJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.date):
             return utils.to_iso_timestr(obj)
-        return JSONEncoder.default(self, obj)
+        return DefaultJSONProvider.default(self, obj)
 
 
 def run():
     app = utils.build_flask_app(__name__)
     app.config["APPLICATION_ROOT"] = '/pcui'
-    app.json_encoder = PClusterJSONEncoder
+    app.json = PClusterJSONEncoder(app)
     app.url_map.converters["regex"] = RegexConverter
     CSRF(app, CognitoFingerprintGenerator(CLIENT_ID, CLIENT_SECRET, USER_POOL_ID))
 
@@ -79,7 +79,7 @@ def run():
         return Response(
             "You are not authorized to perform this action.", 401
         )
-    
+
     @app.errorhandler(404)
     def page_not_found(_error):
         return utils.serve_frontend(app)
