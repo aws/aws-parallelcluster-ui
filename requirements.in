@@ -5,6 +5,7 @@ boto3==1.24.30
 requests==2.31.0
 urllib3==1.26.18
 # Installing cryptography backend since it is the recommended one: https://pypi.org/project/python-jose/
+# This will install unused dependencies ecdsa, rsa, and pyasn1. Please remove from requirements.txt if it is there
 python-jose[cryptography]==3.3.0
 PyYAML==6.0
 pytest==7.2.2
