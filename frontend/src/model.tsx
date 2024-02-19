@@ -226,9 +226,15 @@ function DeleteCluster(clusterName: any, callback?: Callback) {
 async function ListClusters(): Promise<ClusterInfoSummary[]> {
   var url = 'api?path=/v3/clusters'
   try {
-    const {data} = await request('get', url)
-    setState(['clusters', 'list'], data?.clusters)
-    return data?.clusters || []
+    var response = await request('get', url)
+    var clusters = response.data.clusters
+    while ('nextToken' in response.data) {
+      const urlToken = `${url}&nextToken=${response.data.nextToken}`
+      response = await request('get', urlToken)
+      clusters = clusters.concat(response.data.clusters)
+    }
+    setState(['clusters', 'list'], clusters)
+    return clusters || []
   } catch (error) {
     if ((error as any).response) {
       notify(`Error: ${(error as any).response.data.message}`, 'error')
