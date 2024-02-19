@@ -229,10 +229,8 @@ async function ListClusters(): Promise<ClusterInfoSummary[]> {
     var response = await request('get', url)
     var clusters = response.data.clusters
     while ('nextToken' in response.data) {
-      const body = {
-        nextToken: response.data.nextToken,
-      }
-      response = await request('get', url, body)
+      const urlToken = `${url}&nextToken=${response.data.nextToken}`
+      response = await request('get', urlToken)
       clusters = clusters.concat(response.data.clusters)
     }
     setState(['clusters', 'list'], clusters)
