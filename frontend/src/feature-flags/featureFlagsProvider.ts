@@ -11,6 +11,8 @@
 import {AvailableFeature} from './types'
 
 const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
+  // Placing ubuntu1804 here to be counted as a feature flag, so it can be deprecated
+  '3.0.0': ['ubuntu1804'],
   '3.1.0': ['multiuser_cluster'],
   '3.2.0': [
     'fsx_ontap',
@@ -33,12 +35,30 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
   '3.4.0': ['multi_az', 'on_node_updated'],
   '3.6.0': ['rhel8', 'new_resources_limits'],
   '3.7.0': [
-    'ubuntu22',
+    'ubuntu2204',
     'login_nodes',
     'amazon_file_cache',
     'job_exclusive_allocation',
     'memory_based_scheduling_with_multiple_instance_types',
   ],
+}
+
+const featureToDeperecatedVersionMap: Partial<
+  Record<AvailableFeature, string>
+> = {
+  ubuntu1804: '3.7.0',
+}
+
+function isNotDeprecated(
+  feature: AvailableFeature,
+  currentVersion: string,
+): boolean {
+  if (feature in featureToDeperecatedVersionMap) {
+    if (currentVersion >= featureToDeperecatedVersionMap[feature]!) {
+      return false
+    }
+  }
+  return true
 }
 
 const featureToUnsupportedRegionsMap: Partial<
@@ -87,4 +107,5 @@ export function featureFlagsProvider(
     .concat(composeFlagsListByVersion(version))
     .concat(additionalFeaturesParsed)
     .filter(feature => isSupportedInRegion(feature, region))
+    .filter(feature => isNotDeprecated(feature, version))
 }

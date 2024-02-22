@@ -25,7 +25,10 @@ describe('given a feature flags provider and a list of rules', () => {
   describe('when the version is between 3.1.0 and 3.2.0', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.1.5', region)
-      expect(features).toEqual<AvailableFeature[]>(['multiuser_cluster'])
+      expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
+        'multiuser_cluster',
+      ])
     })
   })
 
@@ -33,6 +36,7 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.2.5', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -49,6 +53,7 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.3.2', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -71,6 +76,7 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.4.1', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -95,6 +101,7 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.6.1', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -139,7 +146,7 @@ describe('given a feature flags provider and a list of rules', () => {
         'on_node_updated',
         'rhel8',
         'new_resources_limits',
-        'ubuntu22',
+        'ubuntu2204',
         'login_nodes',
         'amazon_file_cache',
         'job_exclusive_allocation',
@@ -156,6 +163,7 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should be included in the list of features', async () => {
       const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
         'multiuser_cluster',
         'cost_monitoring',
       ])
@@ -168,7 +176,17 @@ describe('given a feature flags provider and a list of rules', () => {
     })
     it('should not be included in the list of features', async () => {
       const features = await subject('3.1.5', region)
-      expect(features).toEqual<AvailableFeature[]>(['multiuser_cluster'])
+      expect(features).toEqual<AvailableFeature[]>([
+        'ubuntu1804',
+        'multiuser_cluster',
+      ])
+    })
+  })
+
+  describe('when a feature has been deprecated', () => {
+    it('should return the list of available features without the unsupported feature', async () => {
+      const features = await subject('3.7.1', region)
+      expect(features).not.toContain<AvailableFeature[]>(['ubuntu1804'])
     })
   })
 
