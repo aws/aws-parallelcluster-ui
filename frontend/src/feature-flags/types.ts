@@ -34,3 +34,4 @@ export type AvailableFeature =
   | 'amazon_file_cache'
   | 'job_exclusive_allocation'
   | 'memory_based_scheduling_with_multiple_instance_types'
+  | 'rhel9'

@@ -68,7 +68,10 @@ function clusterDefaultUser(cluster: any) {
     alinux2: 'ec2-user',
     ubuntu2204: 'ubuntu',
     ubuntu2004: 'ubuntu',
+    ubuntu1804: 'ubuntu',
     centos7: 'centos',
+    rhel8: 'ec2-user',
+    rhel9: 'ec2-user',
   }[os]
 }
 

@@ -41,6 +41,7 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
     'job_exclusive_allocation',
     'memory_based_scheduling_with_multiple_instance_types',
   ],
+  '3.9.0': ['rhel9'],
 }
 
 const featureToDeperecatedVersionMap: Partial<
