@@ -21,10 +21,11 @@ const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
 const SUPPORTED_OSES_LIST: TilesProps.TilesDefinition[] = [
   {value: 'alinux2', label: 'Amazon Linux 2'},
   {value: 'centos7', label: 'CentOS 7'},
-  {value: 'ubuntu1804', label: 'Ubuntu 18.04'},
   {value: 'ubuntu2004', label: 'Ubuntu 20.04'},
 ]
+const UBUNTU18_OS = {value: 'ubuntu1804', label: 'Ubuntu 18.04'}
 const RHEL8_OS = {value: 'rhel8', label: 'Red Hat Enterprise Linux 8'}
+const UBUNTU22_OS = {value: 'ubuntu2204', label: 'Ubuntu 22.04'}
 
 export function OsFormField() {
   const {t} = useTranslation()
@@ -34,6 +35,12 @@ export function OsFormField() {
   let osesList = useFeatureFlag('rhel8')
     ? SUPPORTED_OSES_LIST.concat(RHEL8_OS)
     : SUPPORTED_OSES_LIST
+  osesList = useFeatureFlag('ubuntu2204')
+    ? osesList.concat(UBUNTU22_OS)
+    : osesList
+  osesList = useFeatureFlag('ubuntu1804')
+    ? osesList.concat(UBUNTU18_OS)
+    : osesList
   osesList = editing ? osesList.map(os => ({...os, disabled: true})) : osesList
 
   const handleChange: NonCancelableEventHandler<TilesProps.ChangeDetail> =

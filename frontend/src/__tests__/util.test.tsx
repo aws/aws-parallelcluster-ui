@@ -44,14 +44,6 @@ describe('Given a function to get the default cluster user', () => {
     })
   })
 
-  describe('when the OS is Ubuntu 18.04', () => {
-    const cluster = {config: {Image: {Os: 'ubuntu1804'}}}
-    it('should be ec2-user', () => {
-      const result = clusterDefaultUser(cluster)
-      expect(result).toBe('ubuntu')
-    })
-  })
-
   describe('when the OS is Ubuntu 20.04', () => {
     const cluster = {config: {Image: {Os: 'ubuntu2004'}}}
     it('should be ubuntu', () => {
