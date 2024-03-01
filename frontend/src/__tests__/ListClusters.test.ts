@@ -23,9 +23,8 @@ const mockCluster2: ClusterInfoSummary = {
 const mockGet = jest.fn()
 
 jest.mock('axios', () => ({
-  create: () => ({
-    get: (...args: unknown[]) => mockGet(...args),
-  }),
+  get: (...args: unknown[]) => mockGet(...args),
+  create: (...args: unknown[]) => jest.fn(),
 }))
 
 describe('given a ListClusters command', () => {
