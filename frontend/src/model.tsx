@@ -26,7 +26,7 @@ import {
   LogStreamsResponse,
   LogStreamView,
 } from './types/logs'
-import {AxiosError} from 'axios'
+import axios, {AxiosError} from 'axios'
 import {UserIdentity} from './auth/types'
 import {ConfigObject, ConfigTag, PCVersion} from './types/base'
 import flowRight from 'lodash/flowRight'
@@ -224,13 +224,19 @@ function DeleteCluster(clusterName: any, callback?: Callback) {
 }
 
 async function ListClusters(): Promise<ClusterInfoSummary[]> {
-  var url = 'api?path=/v3/clusters'
+  const region = getState(['app', 'selectedRegion'])
+  var url = '/pcui/api?path=/v3/clusters'
+  url += region ? `&region=${region}` : ''
   try {
-    var response = await request('get', url)
+    // Using axios.get instead of request to pass in params, which can handle the special characters in the token
+    var response = await axios.get(url)
     var clusters = response.data.clusters
     while ('nextToken' in response.data) {
-      const urlToken = `${url}&nextToken=${response.data.nextToken}`
-      response = await request('get', urlToken)
+      response = await axios.get(url, {
+        params: {
+          nextToken: encodeURIComponent(response.data.nextToken),
+        },
+      })
       clusters = clusters.concat(response.data.clusters)
     }
     setState(['clusters', 'list'], clusters)
