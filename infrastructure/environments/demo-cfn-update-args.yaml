@@ -3,7 +3,7 @@ Parameters:
   - ParameterKey: AdminUserEmail
     UsePreviousValue: true
   - ParameterKey: Version
-    ParameterValue: 3.9.0
+    ParameterValue: 3.9.1
   - ParameterKey: InfrastructureBucket
     ParameterValue: BUCKET_URL_PLACEHOLDER
   - ParameterKey: PublicEcrImageUri
