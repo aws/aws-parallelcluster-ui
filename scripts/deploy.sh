@@ -93,12 +93,13 @@ if [[ ! $(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region
   CFN_DEPLOY_COMMAND="create-stack"
   CFN_WAIT_COMMAND="stack-create-complete"
   CFN_CLI_INPUT_YAML_FILE="$INFRASTRUCTURE_DIR/environments/$ENVIRONMENT-cfn-create-args.yaml"
-
+  UPDATE_LAMBDA="false"
 else
   info "The stack $STACK_NAME exists, updating ..."
   CFN_DEPLOY_COMMAND="update-stack"
   CFN_WAIT_COMMAND="stack-update-complete"
   CFN_CLI_INPUT_YAML_FILE="$INFRASTRUCTURE_DIR/environments/$ENVIRONMENT-cfn-update-args.yaml"
+  UPDATE_LAMBDA="true"
 fi
 
 CLI_INPUT_YAML=$(sed "s#BUCKET_URL_PLACEHOLDER#$BUCKET_URL#g" "$CFN_CLI_INPUT_YAML_FILE")
@@ -111,6 +112,13 @@ AWS_PAGER="cat" aws cloudformation $CFN_DEPLOY_COMMAND \
 aws cloudformation wait $CFN_WAIT_COMMAND \
   --stack-name "$STACK_NAME" \
   --region "$REGION"
+
+info "Stack $STACK_NAME deployed"
+
+if [[ $UPDATE_LAMBDA == "true" ]]; then
+  info "Updating Lambda ..."
+  bash "$CURRENT_DIR/build_and_update_lambda.sh" --stack-name "$STACK_NAME" --region "$REGION"
+fi
 
 info "Deployment completed!"
 #  -----------------------------
