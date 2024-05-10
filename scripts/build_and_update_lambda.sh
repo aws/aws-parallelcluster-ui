@@ -50,10 +50,10 @@ function resource_id_from_cf_output {
   echo "$1" | grep "$2" | cut -d " " -f 2
 }
 
-CF_QUERY="StackResources[?LogicalResourceId == 'PrivateEcrRepository' || LogicalResourceId == 'ParallelClusterUIFunction'].{ LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId }"
+CF_QUERY="StackResources[?LogicalResourceId == 'PrivateEcrRepository' || LogicalResourceId == 'ParallelClusterUIFun'].{ LogicalResourceId: LogicalResourceId, PhysicalResourceId: PhysicalResourceId }"
 CF_OUTPUT=`aws cloudformation describe-stack-resources --stack-name "$STACKNAME" --region "$REGION" --query "$CF_QUERY" --output text | tr '\t' ' '`
 
-LAMBDA_NAME="$(resource_id_from_cf_output "$CF_OUTPUT" "ParallelClusterUIFunction")"
+LAMBDA_NAME="$(resource_id_from_cf_output "$CF_OUTPUT" "ParallelClusterUIFun")"
 LAMBDA_ARN=$(aws lambda --region ${REGION} list-functions --query "Functions[?contains(FunctionName, '$LAMBDA_NAME')] | [0].FunctionArn" | xargs echo)
 
 ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
