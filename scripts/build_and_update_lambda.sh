@@ -75,3 +75,4 @@ echo "Pushing private docker container..."
 docker push ${IMAGE}
 echo "Updating lambda..."
 aws lambda --region ${REGION} update-function-code --function-name ${LAMBDA_ARN} --image-uri ${IMAGE} --publish >/dev/null
+echo "Lambda updated"
