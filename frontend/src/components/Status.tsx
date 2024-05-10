@@ -29,7 +29,7 @@ import {
 export type StatusMap = Record<string, StatusIndicatorProps.Type>
 
 export function formatStatus(status?: string): string {
-  return capitalize(status?.replaceAll(/[_-]/g, ' '))
+  return capitalize(status?.toString().replaceAll(/[_-]/g, ' '))
 }
 
 function ClusterStatusIndicator({
