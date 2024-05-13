@@ -6,7 +6,7 @@ Parameters:
   PublicEcrImageUri:
     Description: When specified, the URI of the Docker image for the Lambda of the ParallelCluster UI container
     Type: String
-    Default: public.ecr.aws/pcm/parallelcluster-ui:2024.04.0
+    Default: public.ecr.aws/pcm/parallelcluster-ui:2024.05.0
   VpcEndpointId:
     Description: Enter a VPC endpoint with type interface for the execute-api service to enable private PCUI implementation. When enabled, the API will only accept requests from within the given VPC.
     Type: String
@@ -148,7 +148,7 @@ Conditions:
 Mappings:
   ParallelClusterUI:
     Constants:
-      Version: 2024.04.0 # format YYYY.MM.REVISION
+      Version: 2024.05.0 # format YYYY.MM.REVISION
 
 Resources:
 
