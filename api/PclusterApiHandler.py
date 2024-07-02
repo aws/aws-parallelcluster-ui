@@ -62,8 +62,11 @@ if not JWKS_URL:
     JWKS_URL = os.getenv("JWKS_URL",
                          f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/" ".well-known/jwks.json")
 
+
 def jwt_decode(token, audience=None, access_token=None):
-    return jwt.decode(token, requests.get(JWKS_URL).json(), audience=audience, access_token=access_token)
+    return jwt.decode(
+        token, requests.get(JWKS_URL).json(), audience=audience, access_token=access_token, algorithms=["RS256"]
+    )
 
 
 def setup_api_credentials(role_arn, credential_external_id=None):
