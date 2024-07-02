@@ -12,7 +12,7 @@
     "i18next": "^21.8.13",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "next": "^13.5.1",
+    "next": "^14.1.1",
     "next-transpile-modules": "^10.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -28,7 +28,7 @@
     "test": "jest",
     "lint": "next lint",
     "dev": "next dev",
-    "export": "next build && next export -o build",
+    "export": "next build",
     "prepare": "./scripts/git-secrets-command.sh '--register-aws > /dev/null' && cd .. && husky install frontend/.husky",
     "ts-reignore": "npx ts-migrate reignore . --sources='src/**/*'",
     "ts-validate": "tsc -p tsconfig.json"
