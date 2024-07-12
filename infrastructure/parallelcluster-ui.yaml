@@ -40,7 +40,7 @@ Parameters:
     Type: String
     Default: ''
   ImageBuilderSubnetId:
-    Description: (Optional) Select the subnet to use for building the container images (public subnets only). If not selected, Subnet in the default VPC will be used.
+    Description: (Optional) Select the subnet to use for building the container images. The subnet must be public and auto-assign public IPs. If not selected, the default Subnet will be used.
     Type: String
     Default: ''
   InfrastructureBucket:
