@@ -266,7 +266,7 @@ function CostEstimate({job}: any) {
 }
 
 function JobProperties({job}: any) {
-  console.log(job)
+  console.log("Processing job properties for job", job)
   return (
     <Container>
       <SpaceBetween direction="vertical" size="l">

@@ -879,7 +879,7 @@ function SlurmAccounting(
   request('post', url, args)
     .then((response: any) => {
       if (response.status === 200) {
-        console.log(response.data)
+        console.log("Accounting data retrieved", response.data)
         successCallback && successCallback(response.data)
       }
     })
