@@ -294,7 +294,7 @@ function JobProperties({job}: any) {
           <SpaceBetween direction="vertical" size="l">
             <ValueWithLabel label="Queue">{job.partition}</ValueWithLabel>
             <ValueWithLabel label="Return Code">
-              {getIn(job, ['exit_code', 'return_code'])}
+              {getIn(job, ['exit_code', 'return_code', 'number'])}
             </ValueWithLabel>
             <ValueWithLabel label="Exit Status">
               {
@@ -384,7 +384,7 @@ export default function ClusterAccounting() {
     clusterName,
     'accounting',
     'jobs',
-  ])
+  ]) || []
 
   React.useEffect(() => {
     refreshAccounting({}, null, true)
