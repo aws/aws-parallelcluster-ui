@@ -50,12 +50,16 @@ const featureToDeperecatedVersionMap: Partial<
   ubuntu1804: '3.7.0',
 }
 
+function isVersionGreaterOrEqualThan(version: string, other: string): boolean {
+  return version != null && version.localeCompare(other, undefined, { numeric: true, sensitivity: 'base' }) >= 0
+}
+
 function isNotDeprecated(
   feature: AvailableFeature,
   currentVersion: string,
 ): boolean {
   if (feature in featureToDeperecatedVersionMap) {
-    if (currentVersion >= featureToDeperecatedVersionMap[feature]!) {
+    if (isVersionGreaterOrEqualThan(currentVersion, featureToDeperecatedVersionMap[feature]!)) {
       return false
     }
   }
@@ -86,7 +90,7 @@ function composeFlagsListByVersion(currentVersion: string): AvailableFeature[] {
   let features: Set<AvailableFeature> = new Set([])
 
   for (let version in versionToFeaturesMap) {
-    if (currentVersion >= version) {
+    if (isVersionGreaterOrEqualThan(currentVersion, version)) {
       features = new Set([...features, ...versionToFeaturesMap[version]])
     }
   }
