@@ -24,6 +24,9 @@ export function isFeatureEnabled(
   feature: AvailableFeature,
 ): boolean {
   const features = new Set(featureFlagsProvider(version, region))
-
-  return features.has(feature)
+  const enabled = features.has(feature)
+  if (!enabled) {
+    console.log(`FEATURE FLAG: Feature ${feature} is disabled`)
+  }
+  return enabled
 }
