@@ -27,7 +27,7 @@ export type AllocationStrategy = 'lowest-price' | 'capacity-optimized'
 export type ComputeResourceInstance = {InstanceType: string}
 
 export type MultiInstanceComputeResource = ComputeResource & {
-  Instances: ComputeResourceInstance[]
+  Instances?: ComputeResourceInstance[]
 }
 
 export type Tag = {

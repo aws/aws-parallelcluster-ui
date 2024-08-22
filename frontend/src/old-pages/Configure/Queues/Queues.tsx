@@ -39,7 +39,6 @@ import {
   SecurityGroups,
   IamPoliciesEditor,
   SubnetSelect,
-  OdcrCbSelect,
 } from '../Components'
 import {Trans, useTranslation} from 'react-i18next'
 import {SlurmMemorySettings, validateSlurmSettings} from './SlurmMemorySettings'
@@ -406,23 +405,6 @@ function Queue({index}: any) {
   const subnetsList = useState(subnetPath) || []
   const isMultiAZActive = useFeatureFlag('multi_az')
 
-  const [odcrCbOption, setOdcrCbOption] = React.useState('none')
-  const [odcrCbInput, setOdcrCbInput] = React.useState('')
-
-  const capacityReservationTargetPath = [...queuesPath, index, 'CapacityReservationTarget']
-
-  React.useEffect(() => {
-    if (odcrCbOption === 'none') {
-      clearState(capacityReservationTargetPath)
-    } else {
-      const updateData = {
-        CapacityReservationId: odcrCbOption === 'capacityReservationId' ? odcrCbInput : undefined,
-        CapacityReservationResourceGroupArn: odcrCbOption === 'capacityReservationResourceGroupArn' ? odcrCbInput : undefined,
-      }
-      setState(capacityReservationTargetPath, updateData)
-    }
-  }, [odcrCbOption, odcrCbInput])
-
   React.useEffect(() => {
     if (capacityType === 'CAPACITY_BLOCK') {
       clearState(allocationStrategyPath)
@@ -600,20 +582,6 @@ function Queue({index}: any) {
               {t('wizard.queues.advancedOptions.iamPolicies.label')}
             </Header>
             <IamPoliciesEditor basePath={[...queuesPath, index]} />
-            <Header variant="h3">
-              {t('wizard.queues.advancedOptions.capacityReservationTarget.title')}
-            </Header>
-            <OdcrCbSelect
-                selectedOption={odcrCbOption}
-                onChange={({ detail }) => {
-                  setOdcrCbOption(detail.selectedOption.value)
-                  if (detail.selectedOption.value === 'none') {
-                    setOdcrCbInput('')
-                  }
-                }}
-                inputValue={odcrCbInput}
-                onInputChange={({ detail }) => setOdcrCbInput(detail.value)}
-            />
           </SpaceBetween>
         </ExpandableSection>
       }

@@ -226,6 +226,10 @@ export function ComputeResource({
         CapacityReservationResourceGroupArn: odcrCbOption === 'capacityReservationResourceGroupArn' ? odcrCbInput : undefined,
       }
       setState(capacityReservationTargetPath, updateData)
+
+      if (odcrCbOption === 'capacityReservationId') {
+        clearState(instanceTypePath)
+      }
     }
   }, [odcrCbOption, odcrCbInput])
 
@@ -269,24 +273,26 @@ export function ComputeResource({
             />
           </FormField>
         </SpaceBetween>
-        <FormField
-          label={t('wizard.queues.computeResource.instanceType.label')}
-          errorText={typeError}
-        >
-          <Multiselect
-            selectedOptions={instances.map(instance => ({
-              value: instance.InstanceType,
-              label: instance.InstanceType,
-            }))}
-            placeholder={t(
-              'wizard.queues.computeResource.instanceType.placeholder.multiple',
-            )}
-            tokenLimit={3}
-            onChange={setInstances}
-            options={instanceOptions}
-            filteringType="auto"
-          />
-        </FormField>
+        {odcrCbOption !== 'capacityReservationId' && (
+          <FormField
+            label={t('wizard.queues.computeResource.instanceType.label')}
+            errorText={typeError}
+          >
+            <Multiselect
+              selectedOptions={instances.map(instance => ({
+                value: instance.InstanceType,
+                label: instance.InstanceType,
+              }))}
+              placeholder={t(
+                'wizard.queues.computeResource.instanceType.placeholder.multiple',
+              )}
+              tokenLimit={3}
+              onChange={setInstances}
+              options={instanceOptions}
+              filteringType="auto"
+            />
+          </FormField>
+        )}
         {enableMemoryBasedScheduling && (
           <HelpTextInput
             name={t('wizard.queues.schedulableMemory.name')}
