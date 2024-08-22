@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   ColumnLayout,
   FormField,
@@ -17,6 +18,7 @@ import {clearState, setState, useState} from '../../../store'
 import {
   CheckboxWithHelpPanel,
   HelpTextInput,
+  OdcrCbSelect,
   useInstanceGroups,
 } from '../Components'
 import {
@@ -207,6 +209,26 @@ export function ComputeResource({
       [efaInstances, instanceTypePath, setEnableEFA],
     )
 
+  const [odcrCbOption, setOdcrCbOption] = React.useState('none')
+  const [odcrCbInput, setOdcrCbInput] = React.useState('')
+
+  const capacityReservationTargetPath = useMemo(
+    () => [...path, 'CapacityReservationTarget'],
+    [path],
+  )
+
+  React.useEffect(() => {
+    if (odcrCbOption === 'none') {
+      clearState(capacityReservationTargetPath)
+    } else {
+      const updateData = {
+        CapacityReservationId: odcrCbOption === 'capacityReservationId' ? odcrCbInput : undefined,
+        CapacityReservationResourceGroupArn: odcrCbOption === 'capacityReservationResourceGroupArn' ? odcrCbInput : undefined,
+      }
+      setState(capacityReservationTargetPath, updateData)
+    }
+  }, [odcrCbOption, odcrCbInput])
+
   return (
     <SpaceBetween direction="vertical" size="s">
       <div className={componentsStyle['space-between-wrap']}>
@@ -282,6 +304,17 @@ export function ComputeResource({
         )}
       </ColumnLayout>
       <SpaceBetween direction="vertical" size="s">
+        <OdcrCbSelect
+          selectedOption={odcrCbOption}
+          onChange={({detail}) => {
+            setOdcrCbOption(detail.selectedOption.value)
+            if (detail.selectedOption.value === 'none') {
+              setOdcrCbInput('')
+            }
+          }}
+          inputValue={odcrCbInput}
+          onInputChange={({detail}) => setOdcrCbInput(detail.value)}
+        />
         <CheckboxWithHelpPanel
           checked={multithreadingDisabled}
           disabled={hpcInstanceSelected}

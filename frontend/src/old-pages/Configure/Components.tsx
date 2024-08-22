@@ -10,7 +10,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Fameworks
+// Frameworks
 import React, {
   ReactElement,
   useCallback,
@@ -677,6 +677,62 @@ function IamPoliciesEditor({basePath}: any) {
   )
 }
 
+function OdcrCbSelect({
+  selectedOption,
+  onChange,
+  inputValue,
+  onInputChange,
+}: {
+  selectedOption: string
+  onChange: (event: any) => void
+  inputValue: string
+  onInputChange: (event: any) => void
+}) {
+  const { t } = useTranslation()
+
+  const options = [
+    { label: 'none', value: 'none' },
+    { label: t('wizard.queues.advancedOptions.capacityReservationId.label'), value: 'capacityReservationId' },
+    { label: t('wizard.queues.advancedOptions.capacityReservationResourceGroupArn.label'), value: 'capacityReservationResourceGroupArn' },
+  ]
+
+  const getPlaceholder = () => {
+    if (selectedOption === 'capacityReservationId') {
+      return "cr-<reservation-id>"
+    }
+    if (selectedOption === 'capacityReservationResourceGroupArn') {
+      return "arn:aws:resource-groups:<region>:<account-id>:group/<resource-group-name>"
+    }
+    return ""
+  }
+
+  return (
+    <SpaceBetween direction="vertical" size="xs">
+      <FormField label={t('wizard.queues.advancedOptions.capacityReservationTarget.label')}>
+        <Select
+          selectedOption={
+            options.find(option => option.value === selectedOption) || {
+              label: 'none',
+              value: 'none',
+            }
+          }
+          onChange={onChange}
+          options={options}
+        />
+      </FormField>
+      {(selectedOption === 'capacityReservationId' || selectedOption === 'capacityReservationResourceGroupArn') && (
+        <FormField label={`${t(`wizard.queues.advancedOptions.${selectedOption}.label`)}`}>
+          <Input
+            placeholder={getPlaceholder()}
+            value={inputValue}
+            onChange={onInputChange}
+          />
+        </FormField>
+      )}
+    </SpaceBetween>
+  )
+}
+
 type HelpTextInputProps = {
   name: string
   path: string[]
@@ -788,4 +844,5 @@ export {
   IamPoliciesEditor,
   HelpTextInput,
   CheckboxWithHelpPanel,
+  OdcrCbSelect,
 }

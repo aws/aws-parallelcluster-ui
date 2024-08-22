@@ -1094,6 +1094,19 @@
         },
         "rootVolume": {
           "title": "Root volume"
+        },
+        "capacityType":{
+          "label": "CapacityType"
+        },
+        "capacityReservationTarget": {
+          "title": "Capacity reservations",
+          "label": "CapacityReservationTarget"
+        },
+        "capacityReservationResourceGroupArn": {
+          "label": "CapacityReservationResourceGroupArn"
+        },
+        "capacityReservationId": {
+          "label": "CapacityReservationId"
         }
       },
       "addQueueButton": {

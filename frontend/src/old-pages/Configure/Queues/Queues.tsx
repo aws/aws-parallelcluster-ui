@@ -39,6 +39,7 @@ import {
   SecurityGroups,
   IamPoliciesEditor,
   SubnetSelect,
+  OdcrCbSelect,
 } from '../Components'
 import {Trans, useTranslation} from 'react-i18next'
 import {SlurmMemorySettings, validateSlurmSettings} from './SlurmMemorySettings'
@@ -387,15 +388,16 @@ function Queue({index}: any) {
   const subnetError = useState([...errorsPath, 'subnet'])
   const nameError = useState([...errorsPath, 'name'])
 
-  const allocationStrategy: AllocationStrategy = useState([
-    ...queuesPath,
-    index,
-    'AllocationStrategy',
-  ])
+  const allocationStrategyPath = React.useMemo(
+    () => [...queuesPath, index, 'AllocationStrategy'],
+    [index],
+  )
+  const allocationStrategy: AllocationStrategy = useState(allocationStrategyPath)
 
   const capacityTypes: [string, string, string][] = [
     ['ONDEMAND', 'On-Demand', '/pcui/img/od.svg'],
     ['SPOT', 'Spot', '/pcui/img/spot.svg'],
+    ['CAPACITY_BLOCK', 'Capacity Block', '/pcui/img/cb.svg'],
   ]
   const capacityTypePath = [...queuesPath, index, 'CapacityType']
   const capacityType: string = useState(capacityTypePath) || 'ONDEMAND'
@@ -403,6 +405,29 @@ function Queue({index}: any) {
   const subnetPath = [...queuesPath, index, 'Networking', 'SubnetIds']
   const subnetsList = useState(subnetPath) || []
   const isMultiAZActive = useFeatureFlag('multi_az')
+
+  const [odcrCbOption, setOdcrCbOption] = React.useState('none')
+  const [odcrCbInput, setOdcrCbInput] = React.useState('')
+
+  const capacityReservationTargetPath = [...queuesPath, index, 'CapacityReservationTarget']
+
+  React.useEffect(() => {
+    if (odcrCbOption === 'none') {
+      clearState(capacityReservationTargetPath)
+    } else {
+      const updateData = {
+        CapacityReservationId: odcrCbOption === 'capacityReservationId' ? odcrCbInput : undefined,
+        CapacityReservationResourceGroupArn: odcrCbOption === 'capacityReservationResourceGroupArn' ? odcrCbInput : undefined,
+      }
+      setState(capacityReservationTargetPath, updateData)
+    }
+  }, [odcrCbOption, odcrCbInput])
+
+  React.useEffect(() => {
+    if (capacityType === 'CAPACITY_BLOCK') {
+      clearState(allocationStrategyPath)
+    }
+  }, [capacityType])
 
   const remove = () => {
     setState(
@@ -458,11 +483,11 @@ function Queue({index}: any) {
   const setAllocationStrategy = React.useCallback(
     ({detail}) => {
       setState(
-        [...queuesPath, index, 'AllocationStrategy'],
+        allocationStrategyPath,
         detail.selectedOption.value,
       )
     },
-    [index],
+    [allocationStrategyPath],
   )
 
   const defaultAllocationStrategy = useDefaultAllocationStrategy()
@@ -575,6 +600,20 @@ function Queue({index}: any) {
               {t('wizard.queues.advancedOptions.iamPolicies.label')}
             </Header>
             <IamPoliciesEditor basePath={[...queuesPath, index]} />
+            <Header variant="h3">
+              {t('wizard.queues.advancedOptions.capacityReservationTarget.title')}
+            </Header>
+            <OdcrCbSelect
+                selectedOption={odcrCbOption}
+                onChange={({ detail }) => {
+                  setOdcrCbOption(detail.selectedOption.value)
+                  if (detail.selectedOption.value === 'none') {
+                    setOdcrCbInput('')
+                  }
+                }}
+                inputValue={odcrCbInput}
+                onInputChange={({ detail }) => setOdcrCbInput(detail.value)}
+            />
           </SpaceBetween>
         </ExpandableSection>
       }
@@ -659,7 +698,8 @@ function Queue({index}: any) {
                   options={capacityTypes.map(itemToOption)}
                 />
               </FormField>
-              {isMultiInstanceTypesActive ? (
+              {/* If the type is CAPACITY_BLOCK, do not display the AllocationStrategy */}
+              {isMultiInstanceTypesActive && capacityType !== 'CAPACITY_BLOCK' ? (
                 <FormField
                   label={t('wizard.queues.allocationStrategy.title')}
                   info={
