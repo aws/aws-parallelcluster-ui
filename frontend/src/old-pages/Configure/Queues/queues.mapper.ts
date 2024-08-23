@@ -15,7 +15,7 @@ import {
 } from './queues.types'
 
 function mapComputeResource(
-    computeResource: SingleInstanceComputeResource | MultiInstanceComputeResource,
+  computeResource: SingleInstanceComputeResource | MultiInstanceComputeResource,
 ): MultiInstanceComputeResource {
   // If it's already a MultiInstanceComputeResource and Instances exist, return it directly
   if ('Instances' in computeResource && computeResource.Instances?.length) {

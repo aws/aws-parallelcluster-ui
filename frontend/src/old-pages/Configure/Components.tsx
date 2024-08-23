@@ -692,8 +692,8 @@ function OdcrCbSelect({
 
   const options = [
     { label: 'none', value: 'none' },
-    { label: t('wizard.queues.advancedOptions.capacityReservationId.label'), value: 'capacityReservationId' },
-    { label: t('wizard.queues.advancedOptions.capacityReservationResourceGroupArn.label'), value: 'capacityReservationResourceGroupArn' },
+    { label: t('wizard.queues.computeResource.capacityReservationId.label'), value: 'capacityReservationId' },
+    { label: t('wizard.queues.computeResource.capacityReservationResourceGroupArn.label'), value: 'capacityReservationResourceGroupArn' },
   ]
 
   const getPlaceholder = () => {
@@ -708,7 +708,36 @@ function OdcrCbSelect({
 
   return (
     <SpaceBetween direction="vertical" size="xs">
-      <FormField label={t('wizard.queues.advancedOptions.capacityReservationTarget.label')}>
+      <FormField
+        label={t('wizard.queues.computeResource.capacityReservationTarget.label')}
+        info={
+          <InfoLink
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.queues.computeResource.capacityReservationTarget.help.title')}
+                description={
+                  <>
+                    <p>{t('wizard.queues.computeResource.capacityReservationTarget.help.description')}</p>
+                    <ul>
+                      <li>
+                        <a href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-odcr-v3.html" target="_blank" rel="noopener noreferrer">
+                          {t('wizard.queues.computeResource.capacityReservationTarget.help.odcrLink')}
+                        </a>
+                      </li>
+                      <li>
+                        <a href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-capacity-blocks.html" target="_blank" rel="noopener noreferrer">
+                          {t('wizard.queues.computeResource.capacityReservationTarget.help.capacityBlocksLink')}
+                        </a>
+                      </li>
+                    </ul>
+                    <p>{t('wizard.queues.computeResource.capacityReservationTarget.help.note')}</p>
+                  </>
+                }
+              />
+            }
+          />
+        }
+      >
         <Select
           selectedOption={
             options.find(option => option.value === selectedOption) || {
@@ -721,7 +750,7 @@ function OdcrCbSelect({
         />
       </FormField>
       {(selectedOption === 'capacityReservationId' || selectedOption === 'capacityReservationResourceGroupArn') && (
-        <FormField label={`${t(`wizard.queues.advancedOptions.${selectedOption}.label`)}`}>
+        <FormField label={`${t(`wizard.queues.computeResource.${selectedOption}.label`)}`}>
           <Input
             placeholder={getPlaceholder()}
             value={inputValue}

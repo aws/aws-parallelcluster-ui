@@ -273,6 +273,7 @@ export function ComputeResource({
             />
           </FormField>
         </SpaceBetween>
+        {/* Render the instance type selection field only when 'capacityReservationId' is not selected */}
         {odcrCbOption !== 'capacityReservationId' && (
           <FormField
             label={t('wizard.queues.computeResource.instanceType.label')}
