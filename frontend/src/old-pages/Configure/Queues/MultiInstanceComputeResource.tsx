@@ -386,7 +386,10 @@ export function validateComputeResources(
   computeResources: MultiInstanceComputeResource[],
 ): [boolean, QueueValidationErrors] {
   let errors = computeResources.reduce<QueueValidationErrors>((acc, cr, i) => {
-    if (!cr.Instances || !cr.Instances.length) {
+    const hasCapacityReservationId = cr.CapacityReservationTarget?.CapacityReservationId
+
+    // Skip instance type validation if CapacityReservationId is set
+    if (!hasCapacityReservationId && (!cr.Instances || !cr.Instances.length)) {
       acc[i] = 'instance_types_empty'
     }
     return acc
