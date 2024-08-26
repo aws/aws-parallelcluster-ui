@@ -17,19 +17,29 @@ import {
 function mapComputeResource(
   computeResource: SingleInstanceComputeResource | MultiInstanceComputeResource,
 ): MultiInstanceComputeResource {
-  if ('Instances' in computeResource) {
+  // If it's already a MultiInstanceComputeResource and Instances exist, return it directly
+  if ('Instances' in computeResource && computeResource.Instances?.length) {
     return computeResource
   }
 
-  const {InstanceType, ...otherComputeResourceConfig} = computeResource
+  // If it's of SingleInstanceComputeResource type, convert it to MultiInstanceComputeResource
+  if ('InstanceType' in computeResource) {
+    const {InstanceType, ...otherComputeResourceConfig} = computeResource
 
+    return {
+      ...otherComputeResourceConfig,
+      Instances: [
+        {
+          InstanceType,
+        },
+      ],
+    }
+  }
+
+  // If Instances are cleared or do not exist, return the other configurations
+  const {Instances, ...otherComputeResourceConfig} = computeResource
   return {
     ...otherComputeResourceConfig,
-    Instances: [
-      {
-        InstanceType,
-      },
-    ],
   }
 }
 

@@ -60,7 +60,7 @@ const hasMultipleInstanceTypes = (queues: Queue[]): boolean => {
         computeResources.map(computeResource => computeResource.Instances),
       )
       .flat()
-      .filter(instances => instances.length > 1).length > 0
+      .filter(instances => instances && instances.length > 1).length > 0
   )
 }
 

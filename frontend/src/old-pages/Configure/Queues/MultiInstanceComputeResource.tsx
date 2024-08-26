@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   ColumnLayout,
   FormField,
@@ -17,6 +18,7 @@ import {clearState, setState, useState} from '../../../store'
 import {
   CheckboxWithHelpPanel,
   HelpTextInput,
+  OdcrCbSelect,
   useInstanceGroups,
 } from '../Components'
 import {
@@ -207,6 +209,30 @@ export function ComputeResource({
       [efaInstances, instanceTypePath, setEnableEFA],
     )
 
+  const [odcrCbOption, setOdcrCbOption] = React.useState('none')
+  const [odcrCbInput, setOdcrCbInput] = React.useState('')
+
+  const capacityReservationTargetPath = useMemo(
+    () => [...path, 'CapacityReservationTarget'],
+    [path],
+  )
+
+  React.useEffect(() => {
+    if (odcrCbOption === 'none') {
+      clearState(capacityReservationTargetPath)
+    } else {
+      const updateData = {
+        CapacityReservationId: odcrCbOption === 'capacityReservationId' ? odcrCbInput : undefined,
+        CapacityReservationResourceGroupArn: odcrCbOption === 'capacityReservationResourceGroupArn' ? odcrCbInput : undefined,
+      }
+      setState(capacityReservationTargetPath, updateData)
+
+      if (odcrCbOption === 'capacityReservationId') {
+        clearState(instanceTypePath)
+      }
+    }
+  }, [odcrCbOption, odcrCbInput])
+
   return (
     <SpaceBetween direction="vertical" size="s">
       <div className={componentsStyle['space-between-wrap']}>
@@ -247,24 +273,27 @@ export function ComputeResource({
             />
           </FormField>
         </SpaceBetween>
-        <FormField
-          label={t('wizard.queues.computeResource.instanceType.label')}
-          errorText={typeError}
-        >
-          <Multiselect
-            selectedOptions={instances.map(instance => ({
-              value: instance.InstanceType,
-              label: instance.InstanceType,
-            }))}
-            placeholder={t(
-              'wizard.queues.computeResource.instanceType.placeholder.multiple',
-            )}
-            tokenLimit={3}
-            onChange={setInstances}
-            options={instanceOptions}
-            filteringType="auto"
-          />
-        </FormField>
+        {/* Render the instance type selection field only when 'capacityReservationId' is not selected */}
+        {odcrCbOption !== 'capacityReservationId' && (
+          <FormField
+            label={t('wizard.queues.computeResource.instanceType.label')}
+            errorText={typeError}
+          >
+            <Multiselect
+              selectedOptions={instances.map(instance => ({
+                value: instance.InstanceType,
+                label: instance.InstanceType,
+              }))}
+              placeholder={t(
+                'wizard.queues.computeResource.instanceType.placeholder.multiple',
+              )}
+              tokenLimit={3}
+              onChange={setInstances}
+              options={instanceOptions}
+              filteringType="auto"
+            />
+          </FormField>
+        )}
         {enableMemoryBasedScheduling && (
           <HelpTextInput
             name={t('wizard.queues.schedulableMemory.name')}
@@ -282,6 +311,17 @@ export function ComputeResource({
         )}
       </ColumnLayout>
       <SpaceBetween direction="vertical" size="s">
+        <OdcrCbSelect
+          selectedOption={odcrCbOption}
+          onChange={({detail}) => {
+            setOdcrCbOption(detail.selectedOption.value)
+            if (detail.selectedOption.value === 'none') {
+              setOdcrCbInput('')
+            }
+          }}
+          inputValue={odcrCbInput}
+          onInputChange={({detail}) => setOdcrCbInput(detail.value)}
+        />
         <CheckboxWithHelpPanel
           checked={multithreadingDisabled}
           disabled={hpcInstanceSelected}
@@ -347,7 +387,10 @@ export function validateComputeResources(
   computeResources: MultiInstanceComputeResource[],
 ): [boolean, QueueValidationErrors] {
   let errors = computeResources.reduce<QueueValidationErrors>((acc, cr, i) => {
-    if (!cr.Instances || !cr.Instances.length) {
+    const hasCapacityReservationId = cr.CapacityReservationTarget?.CapacityReservationId
+
+    // Skip instance type validation if CapacityReservationId is set
+    if (!hasCapacityReservationId && (!cr.Instances || !cr.Instances.length)) {
       acc[i] = 'instance_types_empty'
     }
     return acc

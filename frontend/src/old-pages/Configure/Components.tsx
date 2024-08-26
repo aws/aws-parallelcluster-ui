@@ -10,7 +10,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Fameworks
+// Frameworks
 import React, {
   ReactElement,
   useCallback,
@@ -677,6 +677,91 @@ function IamPoliciesEditor({basePath}: any) {
   )
 }
 
+function OdcrCbSelect({
+  selectedOption,
+  onChange,
+  inputValue,
+  onInputChange,
+}: {
+  selectedOption: string
+  onChange: (event: any) => void
+  inputValue: string
+  onInputChange: (event: any) => void
+}) {
+  const { t } = useTranslation()
+
+  const options = [
+    { label: 'none', value: 'none' },
+    { label: t('wizard.queues.computeResource.capacityReservationId.label'), value: 'capacityReservationId' },
+    { label: t('wizard.queues.computeResource.capacityReservationResourceGroupArn.label'), value: 'capacityReservationResourceGroupArn' },
+  ]
+
+  const getPlaceholder = () => {
+    if (selectedOption === 'capacityReservationId') {
+      return "cr-<reservation-id>"
+    }
+    if (selectedOption === 'capacityReservationResourceGroupArn') {
+      return "arn:aws:resource-groups:<region>:<account-id>:group/<resource-group-name>"
+    }
+    return ""
+  }
+
+  return (
+    <SpaceBetween direction="vertical" size="xs">
+      <FormField
+        label={t('wizard.queues.computeResource.capacityReservationTarget.label')}
+        info={
+          <InfoLink
+            helpPanel={
+              <TitleDescriptionHelpPanel
+                title={t('wizard.queues.computeResource.capacityReservationTarget.help.title')}
+                description={
+                  <>
+                    <p>{t('wizard.queues.computeResource.capacityReservationTarget.help.description')}</p>
+                    <ul>
+                      <li>
+                        <a href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-odcr-v3.html" target="_blank" rel="noopener noreferrer">
+                          {t('wizard.queues.computeResource.capacityReservationTarget.help.odcrLink')}
+                        </a>
+                      </li>
+                      <li>
+                        <a href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-capacity-blocks.html" target="_blank" rel="noopener noreferrer">
+                          {t('wizard.queues.computeResource.capacityReservationTarget.help.capacityBlocksLink')}
+                        </a>
+                      </li>
+                    </ul>
+                    <p>{t('wizard.queues.computeResource.capacityReservationTarget.help.note')}</p>
+                  </>
+                }
+              />
+            }
+          />
+        }
+      >
+        <Select
+          selectedOption={
+            options.find(option => option.value === selectedOption) || {
+              label: 'none',
+              value: 'none',
+            }
+          }
+          onChange={onChange}
+          options={options}
+        />
+      </FormField>
+      {(selectedOption === 'capacityReservationId' || selectedOption === 'capacityReservationResourceGroupArn') && (
+        <FormField label={`${t(`wizard.queues.computeResource.${selectedOption}.label`)}`}>
+          <Input
+            placeholder={getPlaceholder()}
+            value={inputValue}
+            onChange={onInputChange}
+          />
+        </FormField>
+      )}
+    </SpaceBetween>
+  )
+}
+
 type HelpTextInputProps = {
   name: string
   path: string[]
@@ -788,4 +873,5 @@ export {
   IamPoliciesEditor,
   HelpTextInput,
   CheckboxWithHelpPanel,
+  OdcrCbSelect,
 }

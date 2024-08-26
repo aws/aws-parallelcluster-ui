@@ -1082,7 +1082,24 @@
             "description": "Prevent multiple threads from running on an EC2 instance core."
           }
         },
-        "enableEfa": "Use EFA"
+        "enableEfa": "Use EFA",
+        "capacityReservationTarget": {
+          "title": "Capacity reservations",
+          "label": "CapacityReservationTarget",
+          "help": {
+            "title": "Capacity Reservations and Capacity Blocks",
+            "description": "Configure your cluster to use Capacity Reservations or Capacity Blocks for better resource management and availability.",
+            "odcrLink": "Launch instances using On-Demand Capacity Reservations (ODCR)",
+            "capacityBlocksLink": "Launch instances using Capacity Blocks",
+            "note": "When selecting CapacityReservationId, the specified instance type will automatically apply."
+          }
+        },
+        "capacityReservationResourceGroupArn": {
+          "label": "CapacityReservationResourceGroupArn"
+        },
+        "capacityReservationId": {
+          "label": "CapacityReservationId"
+        }
       },
       "advancedOptions": {
         "label": "Advanced options",
