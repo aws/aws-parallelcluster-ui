@@ -36,7 +36,7 @@ flask==2.3.3
     # via
     #   -r requirements.in
     #   flask-cors
-flask-cors==5.0.0
+flask-cors==3.0.10
     # via -r requirements.in
 idna==3.4
     # via requests
@@ -84,7 +84,7 @@ python-jose[cryptography]==3.3.0
     # via -r requirements.in
 pyyaml==6.0
     # via -r requirements.in
-requests==2.32.0
+requests==2.31.0
     # via -r requirements.in
 rsa==4.9
     # via python-jose
@@ -93,6 +93,7 @@ s3transfer==0.6.1
 six==1.16.0
     # via
     #   ecdsa
+    #   flask-cors
     #   python-dateutil
 tomli==2.0.1
     # via pytest
@@ -101,7 +102,7 @@ urllib3==1.26.18
     #   -r requirements.in
     #   botocore
     #   requests
-werkzeug==3.0.3
+werkzeug==2.3.8
     # via
     #   -r requirements.in
     #   flask
