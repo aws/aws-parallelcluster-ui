@@ -13,7 +13,7 @@ PC_REGIONS = [
     'ca-central-1','cn-north-1','cn-northwest-1',
     'eu-central-1','eu-west-1','eu-west-2',
     'eu-south-1','eu-west-3','eu-north-1','me-south-1',
-    'sa-east-1','us-gov-east-1','us-gov-west-1'
+    'sa-east-1','us-gov-east-1','us-gov-west-1','il-central-1'
 ]
 
 def is_alphanumeric_with_hyphen(arg: str):

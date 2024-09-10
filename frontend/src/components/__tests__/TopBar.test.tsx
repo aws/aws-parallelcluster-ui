@@ -66,6 +66,7 @@ describe('Given a a function that returns a list of regions to be displayed in t
       ['Europe (Stockholm)', 'eu-north-1'],
     ],
     [['South America (São Paulo)', 'sa-east-1']],
+    [['Israel (il-central-1)', 'il-central-1']],
   ]
 
   describe('when invoking the function with a supported region selected', () => {

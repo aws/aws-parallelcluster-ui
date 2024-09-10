@@ -45,6 +45,7 @@ export function regions(selected: string) {
       ['Europe (Stockholm)', 'eu-north-1'],
     ],
     [['South America (São Paulo)', 'sa-east-1']],
+    [['Israel (il-central-1)', 'il-central-1']],
   ]
 
   const optInRegions = [
