@@ -32,6 +32,8 @@ Parameters:
 #    ParameterValue: arn:aws:iam::xxxxxxxxxx:policy/xxxxxxxxxx
 #  - ParameterKey: IAMRoleAndPolicyPrefix
 #    ParameterValue: xxxxxxxxxx
+#  - ParameterKey: CustomDomain
+#    ParameterValue: xxxxxxxxxx
 Capabilities:
   - CAPABILITY_AUTO_EXPAND
   - CAPABILITY_NAMED_IAM

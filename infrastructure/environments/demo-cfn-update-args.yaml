@@ -32,6 +32,8 @@ Parameters:
     UsePreviousValue: true
   - ParameterKey: IAMRoleAndPolicyPrefix
     UsePreviousValue: true
+  - ParameterKey: CustomDomain
+    UsePreviousValue: true
 Capabilities:
   - CAPABILITY_AUTO_EXPAND
   - CAPABILITY_NAMED_IAM
