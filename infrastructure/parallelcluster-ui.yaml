@@ -62,6 +62,10 @@ Parameters:
     Description: 'Prefix applied to the name of every IAM role and policy (max length: 10). [ParallelCluster >= 3.8.0]'
     Default: ''
     MaxLength: 10
+  CustomDomain:
+    Type: String
+    Description: (Optional) Custom domain name. If omitted, the default domain name will be used.
+    Default: ''
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -100,6 +104,10 @@ Metadata:
           - IAMRoleAndPolicyPrefix
           - PermissionsBoundaryPolicy
           - PermissionsBoundaryPolicyPCAPI
+      - Label:
+          default: (Optional) Custom Domain
+        Parameters:
+          - CustomDomain
       - Label:
           default: (Debugging only) Infrastructure S3 Bucket
         Parameters:
@@ -144,11 +152,13 @@ Conditions:
   UsePermissionBoundary: !Not [!Equals [!Ref PermissionsBoundaryPolicy, '']]
   UsePermissionBoundaryPCAPI: !Not [!Equals [!Ref PermissionsBoundaryPolicyPCAPI, '']]
   UseIAMRoleAndPolicyPrefix: !Not [!Equals [!Ref IAMRoleAndPolicyPrefix, '']]
+  UseCustomDomain: !Not [!Equals [!Ref CustomDomain, '']]
 
 Mappings:
   ParallelClusterUI:
     Constants:
       Version: 2024.07.1 # format YYYY.MM.REVISION
+      CustomDomainBasePath: pcui
 
 Resources:
 
@@ -219,13 +229,22 @@ Resources:
         Variables:
           API_BASE_URL: !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]
           API_VERSION: !Ref Version
-          SITE_URL: !Sub
-           - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
-           - Api: !Ref ApiGatewayRestApi
+          SITE_URL: !If
+            - UseCustomDomain
+            - !Sub
+              - https://${CustomDomain}/${CustomDomainBasePath}
+              - { CustomDomainBasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ] }
+            - !Sub
+              - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}
+              - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
           AUTH_PATH: !If [ UseExistingCognito, !Ref UserPoolAuthDomain, !GetAtt [ Cognito, Outputs.UserPoolAuthDomain ]]
           SECRET_ID: !GetAtt UserPoolClientSecret.SecretName
           AUDIENCE: !Ref CognitoAppClient
           OIDC_PROVIDER: 'Cognito'
+          API_GATEWAY_BASE_PATH: !If
+            - UseCustomDomain
+            - !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ]
+            - !Ref AWS::NoValue
       FunctionName: !Sub
         - ParallelClusterUIFun-${StackIdSuffix}
         - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
@@ -351,7 +370,7 @@ Resources:
         Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","path":"$context.path", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
       RestApiId: !Ref ApiGatewayRestApi
       DeploymentId: !Ref ApiGatewayDeployment
-      StageName: pcui
+      StageName: !If [ UseCustomDomain, prod, pcui ]
       MethodSettings:
         - ResourcePath: '/*'
           HttpMethod: '*'
@@ -371,9 +390,14 @@ Resources:
       ExplicitAuthFlows:
         - ALLOW_REFRESH_TOKEN_AUTH
       CallbackURLs:
-        - !Sub
-          - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui/login
-          - Api: !Ref ApiGatewayRestApi
+        - !If
+          - UseCustomDomain
+          - !Sub
+            - https://${CustomDomain}/${CustomDomainBasePath}/login
+            - { CustomDomainBasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ] }
+          - !Sub
+            - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}/login
+            - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
       SupportedIdentityProviders:
         - COGNITO
       UserPoolId: !If [ UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]
@@ -1011,9 +1035,14 @@ Outputs:
     Description: 'Url to reach the ParallelCluster UI Site.'
     Export:
       Name: !Sub ${AWS::StackName}-ParallelClusterUISite
-    Value: !Sub
-      - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/pcui
-      - Api: !Ref ApiGatewayRestApi
+    Value: !If
+      - UseCustomDomain
+      - !Sub
+        - https://${CustomDomain}/${CustomDomainBasePath}
+        - { CustomDomainBasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ] }
+      - !Sub
+        - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}
+        - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
   AppClientId:
     Description: The id of the Cognito app client
     Value: !Ref CognitoAppClient
