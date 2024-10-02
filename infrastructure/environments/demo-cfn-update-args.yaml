@@ -34,6 +34,12 @@ Parameters:
     UsePreviousValue: true
   - ParameterKey: CustomDomain
     UsePreviousValue: true
+  - ParameterKey: CustomDomainCertificateArn
+    UsePreviousValue: true
+  - ParameterKey: CognitoCustomDomain
+    UsePreviousValue: true
+  - ParameterKey: CognitoCustomDomainCertificateArn
+    UsePreviousValue: true
 Capabilities:
   - CAPABILITY_AUTO_EXPAND
   - CAPABILITY_NAMED_IAM
