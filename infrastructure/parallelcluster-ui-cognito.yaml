@@ -17,10 +17,19 @@ Parameters:
     Description: 'Prefix applied to the name of every IAM role and policy (max length: 10)'
     Default: ''
     MaxLength: 10
+  CustomDomain:
+    Type: String
+    Description: (Optional) Custom domain name. If omitted, the default domain name will be used.
+    Default: ''
+  CustomDomainCertificateArn:
+    Type: String
+    Description: '(Optional) ARN of the ACM Certificate issued for the custom domain. This is required only if `CustomDomain` is specified.'
+    Default: ''
 
 Conditions:
   GovCloud: !Equals [!Ref AWS::Region, 'us-gov-west-1']
   UsePermissionBoundary: !Not [ !Equals [ !Ref PermissionsBoundaryPolicy, '' ] ]
+  UseCustomDomain: !Not [!Equals [!Ref CustomDomain, '']]
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -34,6 +43,11 @@ Metadata:
         Parameters:
           - IAMRoleAndPolicyPrefix
           - PermissionsBoundaryPolicy
+      - Label:
+          default: (Optional) Custom Domain
+        Parameters:
+          - CustomDomain
+          - CustomDomainCertificateArn
     ParameterLabels:
       AdminUserEmail:
         default: Initial Admin's Email
@@ -73,7 +87,14 @@ Resources:
     Type: AWS::Cognito::UserPoolDomain
     Properties:
       UserPoolId: !Ref CognitoUserPool
-      Domain: !Join [ "-", ["pcui-auth", !Select [2, !Split [ "/", !Ref 'AWS::StackId']]]]
+      Domain: !If
+        - UseCustomDomain
+        - !Ref CustomDomain
+        - !Join [ "-", ["pcui-auth", !Select [2, !Split [ "/", !Ref 'AWS::StackId']]]]
+      CustomDomainConfig: !If
+        - UseCustomDomain
+        - { CertificateArn: !Ref CustomDomainCertificateArn }
+        - !Ref AWS::NoValue
 
   CognitoUserPool:
     Type: AWS::Cognito::UserPool
@@ -125,9 +146,19 @@ Outputs:
 
   UserPoolAuthDomain:
     Description: The domain of the authorization server.
-    Value: !Sub
-      - https://${Domain}.${Auth}.${AWS::Region}.amazoncognito.com
-      - {Domain: !Ref UserPoolDomain, Auth: !If [GovCloud, 'auth-fips', 'auth']}
+    Value: !If
+      - UseCustomDomain
+      - !Sub https://${UserPoolDomain}
+      - !Sub
+        - https://${Domain}.${Auth}.${AWS::Region}.amazoncognito.com
+        - {Domain: !Ref UserPoolDomain, Auth: !If [GovCloud, 'auth-fips', 'auth']}
+
+  CustomDomainEndpoint:
+    Condition: UseCustomDomain
+    Description: |
+      The endpoint associated with the custom domain name. 
+      Add an A record in your DNS for the custom domain name pointing to this endpoint.
+    Value: !GetAtt UserPoolDomain.CloudFrontDistribution
 
   UserPoolId:
     Description: Cognito UserPool Id

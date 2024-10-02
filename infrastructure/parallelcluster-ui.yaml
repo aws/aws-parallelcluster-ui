@@ -66,6 +66,18 @@ Parameters:
     Type: String
     Description: (Optional) Custom domain name. If omitted, the default domain name will be used.
     Default: ''
+  CustomDomainCertificateArn:
+    Type: String
+    Description: '(Optional) ARN of the ACM Certificate issued for the custom domain. This is required only if `CustomDomain` is specified.'
+    Default: ''
+  CognitoCustomDomain:
+    Type: String
+    Description: '(Optional) Custom domain name for Cognito. If omitted, the default Cognito domain name will be used.'
+    Default: ''
+  CognitoCustomDomainCertificateArn:
+    Type: String
+    Description: '(Optional) ARN of the ACM Certificate issued for the Cognito custom domain. This is required only if `CognitoCustomDomain` is specified.'
+    Default: ''
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -108,6 +120,9 @@ Metadata:
           default: (Optional) Custom Domain
         Parameters:
           - CustomDomain
+          - CustomDomainCertificateArn
+          - CognitoCustomDomain
+          - CognitoCustomDomainCertificateArn
       - Label:
           default: (Debugging only) Infrastructure S3 Bucket
         Parameters:
@@ -153,6 +168,7 @@ Conditions:
   UsePermissionBoundaryPCAPI: !Not [!Equals [!Ref PermissionsBoundaryPolicyPCAPI, '']]
   UseIAMRoleAndPolicyPrefix: !Not [!Equals [!Ref IAMRoleAndPolicyPrefix, '']]
   UseCustomDomain: !Not [!Equals [!Ref CustomDomain, '']]
+  UseCognitoCustomDomain: !Not [!Equals [!Ref CognitoCustomDomain, '']]
 
 Mappings:
   ParallelClusterUI:
@@ -171,6 +187,8 @@ Resources:
         AdminUserEmail: !Ref AdminUserEmail
         PermissionsBoundaryPolicy: !Ref PermissionsBoundaryPolicy
         IAMRoleAndPolicyPrefix: !Ref IAMRoleAndPolicyPrefix
+        CustomDomain: !Ref CognitoCustomDomain
+        CustomDomainCertificateArn: !Ref CognitoCustomDomainCertificateArn
       TemplateURL: !Sub
         - '${Bucket}/parallelcluster-ui-cognito.yaml'
         - Bucket: !If 
@@ -1026,6 +1044,26 @@ Resources:
             Effect: Allow
             Sid: SsmGetCommandInvocationPolicy
 
+  ApiGatewayCustomDomain:
+    Condition: UseCustomDomain
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+#      CertificateArn: !Ref CustomDomainCertificateArn
+      DomainName: !Ref CustomDomain
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      RegionalCertificateArn: !Ref CustomDomainCertificateArn
+      SecurityPolicy: TLS_1_2
+
+  ApiGatewayCustomDomainMapping:
+    Condition: UseCustomDomain
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ]
+      DomainName: !Ref ApiGatewayCustomDomain
+      RestApiId: !Ref ApiGatewayRestApi
+      Stage: !Ref ApiGatewayRestStage
 
 Outputs:
   ParallelClusterUILambdaArn:
@@ -1043,6 +1081,12 @@ Outputs:
       - !Sub
         - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}
         - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
+  CustomDomainEndpoint:
+    Condition: UseCustomDomain
+    Description: |
+      The endpoint associated with the custom domain name. 
+      Add an A record in your DNS for the PCUI custom domain name pointing to this endpoint.
+    Value: !GetAtt ApiGatewayCustomDomain.RegionalDomainName
   AppClientId:
     Description: The id of the Cognito app client
     Value: !Ref CognitoAppClient
@@ -1052,3 +1096,9 @@ Outputs:
   UserPoolClientSecretName:
     Description: The app client secret name for ParallelCluster UI.
     Value: !GetAtt UserPoolClientSecret.SecretName
+  CognitoCustomDomainEndpoint:
+    Condition: UseCognitoCustomDomain
+    Description: |
+      The endpoint associated with the Cognito custom domain name. 
+      Add an A record in your DNS for the Cognito custom domain name pointing to this endpoint.
+    Value: !GetAtt Cognito.Outputs.CustomDomainEndpoint

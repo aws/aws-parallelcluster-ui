@@ -33,7 +33,13 @@ Parameters:
 #  - ParameterKey: IAMRoleAndPolicyPrefix
 #    ParameterValue: xxxxxxxxxx
 #  - ParameterKey: CustomDomain
-#    ParameterValue: xxxxxxxxxx
+#    ParameterValue: pcui.example.com
+#  - ParameterKey: CustomDomainCertificateArn
+#    ParameterValue: arn:<PARTITION>:acm:<REGION>:<ACCOUNT>:certificate/<CERTIFICATE_ID>
+#  - ParameterKey: CognitoCustomDomain
+#    ParameterValue: auth-pcui.example.com
+#  - ParameterKey: CognitoCustomDomainCertificateArn
+#    ParameterValue: arn:<PARTITION>:acm:<REGION>:<ACCOUNT>:certificate/<CERTIFICATE_ID>
 Capabilities:
   - CAPABILITY_AUTO_EXPAND
   - CAPABILITY_NAMED_IAM
