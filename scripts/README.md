@@ -65,5 +65,5 @@ Build and push the image:
 ./scripts/build_and_release_image.sh \
 --ecr-region us-east-1 \
 --ecr-endpoint $ECR_ENDPOINT \
---tag 2023.10.16
+--tag YYYY.MM.NN
 ```
