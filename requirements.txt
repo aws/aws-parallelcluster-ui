@@ -36,7 +36,7 @@ flask==2.3.3
     # via
     #   -r requirements.in
     #   flask-cors
-flask-cors==3.0.10
+flask-cors==4.0.2
     # via -r requirements.in
 idna==3.4
     # via requests
@@ -93,7 +93,6 @@ s3transfer==0.6.1
 six==1.16.0
     # via
     #   ecdsa
-    #   flask-cors
     #   python-dateutil
 tomli==2.0.1
     # via pytest
