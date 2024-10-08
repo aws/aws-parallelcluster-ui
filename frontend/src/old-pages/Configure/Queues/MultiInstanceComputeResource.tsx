@@ -209,29 +209,35 @@ export function ComputeResource({
       [efaInstances, instanceTypePath, setEnableEFA],
     )
 
-  const [odcrCbOption, setOdcrCbOption] = React.useState('none')
-  const [odcrCbInput, setOdcrCbInput] = React.useState('')
-
-  const capacityReservationTargetPath = useMemo(
-    () => [...path, 'CapacityReservationTarget'],
-    [path],
+  const initialCapacityReservationTarget = useState([...path, 'CapacityReservationTarget']) || {}
+  const [odcrCbOption, setOdcrCbOption] = React.useState(
+    initialCapacityReservationTarget.CapacityReservationId
+      ? 'capacityReservationId'
+      : initialCapacityReservationTarget.CapacityReservationResourceGroupArn
+        ? 'capacityReservationResourceGroupArn'
+        : 'none'
+  )
+  const [odcrCbInput, setOdcrCbInput] = React.useState(
+    initialCapacityReservationTarget.CapacityReservationId ||
+    initialCapacityReservationTarget.CapacityReservationResourceGroupArn ||
+    ''
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (odcrCbOption === 'none') {
-      clearState(capacityReservationTargetPath)
+      clearState([...path, 'CapacityReservationTarget'])
     } else {
       const updateData = {
         CapacityReservationId: odcrCbOption === 'capacityReservationId' ? odcrCbInput : undefined,
         CapacityReservationResourceGroupArn: odcrCbOption === 'capacityReservationResourceGroupArn' ? odcrCbInput : undefined,
       }
-      setState(capacityReservationTargetPath, updateData)
+      setState([...path, 'CapacityReservationTarget'], updateData)
 
       if (odcrCbOption === 'capacityReservationId') {
         clearState(instanceTypePath)
       }
     }
-  }, [odcrCbOption, odcrCbInput])
+  }, [odcrCbOption, odcrCbInput, path, instanceTypePath])
 
   return (
     <SpaceBetween direction="vertical" size="s">
