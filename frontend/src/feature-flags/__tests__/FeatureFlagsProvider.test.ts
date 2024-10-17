@@ -155,7 +155,7 @@ describe('given a feature flags provider and a list of rules', () => {
     })
   })
 
-  for (const version of ["3.9.0", "3.11.0"]) {
+  for (const version of ["3.9.0", "3.11.1"]) {
     describe(`when the version is ${version}`, () => {
       it('should return the list of available features', async () => {
         const features = await subject(version, region)
