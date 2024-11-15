@@ -562,6 +562,30 @@ Resources:
       RepositoryName: !Sub
         - 'parallelcluster-ui-${StackIdSuffix}'
         - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
+      RepositoryPolicyText:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ReadEcrImages
+            Effect: Allow
+            Principal:
+              Service: !Sub lambda.${AWS::URLSuffix}
+            Action:
+              - ecr:BatchGetImage
+              - ecr:GetDownloadUrlForLayer
+            Condition:
+              StringLike:
+                aws:SourceArn: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*
+          - Sid: ReadWriteEcrPolicy
+            Effect: Allow
+            Principal:
+              Service: !Sub lambda.${AWS::URLSuffix}
+            Action:
+              - ecr:DeleteRepositoryPolicy
+              - ecr:GetRepositoryPolicy
+              - ecr:SetRepositoryPolicy
+            Condition:
+              StringLike:
+                aws:SourceArn: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*
 
   ImageBuilderInstanceRole:
     Type: AWS::IAM::Role
