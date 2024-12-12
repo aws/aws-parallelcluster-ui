@@ -27,6 +27,10 @@ Parameters:
     Description: UserPoolAuthDomain of a previously deployed PCUI Cognito User Pool. Leave blank to create a new one.
     Type: String
     Default: ''
+  UserPoolClientIdentityProviders:
+    Description: "Comma separated list of provider names for the identity providers (IdPs) that are supported on this client. The following are supported: COGNITO, Facebook, Google, SignInWithApple, and LoginWithAmazon. You can also specify the names that you configured for the SAML and OIDC IdPs in your user pool, for example MySAMLIdP or MyOIDCIdP."
+    Type: CommaDelimitedList
+    Default: 'COGNITO'
   SNSRole:
     Description: SNSRole ARN of a previously deployed PCUI Cognito Stack. Leave blank to create a new one.
     Type: String
@@ -101,6 +105,7 @@ Metadata:
           - UserPoolId
           - UserPoolAuthDomain
           - SNSRole
+          - UserPoolClientIdentityProviders
       - Label:
           default: ParallelCluster API
         Parameters:
@@ -416,8 +421,7 @@ Resources:
           - !Sub
             - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}/login
             - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
-      SupportedIdentityProviders:
-        - COGNITO
+      SupportedIdentityProviders: !Ref UserPoolClientIdentityProviders
       UserPoolId: !If [ UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 7
