@@ -65,9 +65,9 @@ pushd frontend
 if [ ! -d node_modules ]; then
   npm install
 fi
-docker build --build-arg PUBLIC_URL=/ -t frontend-awslambda .
+docker build --provenance false --build-arg PUBLIC_URL=/ -t frontend-awslambda .
 popd
-docker build -f Dockerfile.awslambda -t ${IMAGE} .
+docker build --provenance false -f Dockerfile.awslambda -t ${IMAGE} .
 
 echo "Logging in to private repo..."
 aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin "${ECR_ENDPOINT}"

@@ -63,9 +63,9 @@ if [ ! -d node_modules ]; then
 fi
 
 echo "[INFO] Building image"
-docker build --build-arg PUBLIC_URL=/ -t frontend-awslambda .
+docker build --provenance false --build-arg PUBLIC_URL=/ -t frontend-awslambda .
 popd
-docker build -f Dockerfile.awslambda -t ${ECR_REPO} .
+docker build --provenance false -f Dockerfile.awslambda -t ${ECR_REPO} .
 
 ECR_IMAGE_VERSION_TAGGED=${ECR_ENDPOINT}/${ECR_REPO}:${TAG}
 ECR_IMAGE_LATEST_TAGGED=${ECR_ENDPOINT}/${ECR_REPO}:latest
