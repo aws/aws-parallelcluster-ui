@@ -438,7 +438,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: python3.9
+      Runtime: python3.12
       MemorySize: 128
       Timeout: 20
       TracingConfig:
@@ -748,7 +748,7 @@ Resources:
               cfnresponse.send(event, context, response_status, response_data, physical_resource_id, reason)
 
       Handler: index.handler
-      Runtime: python3.9
+      Runtime: python3.12
       Role: !GetAtt EcrImageDeletionLambdaRole.Arn
 
   EcrImageDeletionLambdaLogGroup:
