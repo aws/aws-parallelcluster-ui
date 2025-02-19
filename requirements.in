@@ -5,7 +5,7 @@ boto3==1.24.30
 requests==2.32.0
 urllib3==1.26.19
 # Installing cryptography backend since it is the recommended one: https://pypi.org/project/python-jose/
-python-jose[cryptography]==3.3.0
+python-jose[cryptography]==3.4.0
 cryptography==43.0.1
 PyYAML==6.0.2
 pytest==7.2.2
