@@ -26,6 +26,8 @@ Parameters:
     UsePreviousValue: true
   - ParameterKey: LambdaSecurityGroupIds
     UsePreviousValue: true
+  - ParameterKey: AdditionalPoliciesPCAPI
+    UsePreviousValue: true
   - ParameterKey: PermissionsBoundaryPolicy
     UsePreviousValue: true
   - ParameterKey: PermissionsBoundaryPolicyPCAPI

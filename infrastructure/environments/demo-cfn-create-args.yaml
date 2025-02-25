@@ -26,6 +26,8 @@ Parameters:
 #    ParameterValue: "subnet-xxxxxxxxxx,subnet-xxxxxxxxxx,subnet-xxxxxxxxxx"
 #  - ParameterKey: LambdaSecurityGroupIds
 #    ParameterValue: sg-xxxxxxxxxx
+#  - ParameterKey: AdditionalPoliciesPCAPI
+#    ParameterValue: arn:aws:iam::xxxxxxxxxx:policy/xxxxxxxxxx
 #  - ParameterKey: PermissionsBoundaryPolicy
 #    ParameterValue: arn:aws:iam::xxxxxxxxxx:policy/xxxxxxxxxx
 #  - ParameterKey: PermissionsBoundaryPolicyPCAPI
