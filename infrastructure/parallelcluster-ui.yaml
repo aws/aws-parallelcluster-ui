@@ -57,6 +57,13 @@ Parameters:
     Description: 'ARN of the IAM policy to use as permissions boundary for every IAM role created by ParallelCluster API infrastructure. [ParallelCluster >= 3.8.0]'
     Default: ''
     AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
+  AdditionalPoliciesPCAPI:
+    Type: String
+    Description: |
+      (OPTIONAL) ARN of the additional IAM policy to be attached to the default execution role for the ParallelCluster Lambda function. 
+      Only one policy can be specified.
+    Default: ''
+    AllowedPattern: "^(arn:.*:iam::.*:policy\\/([a-zA-Z0-9_-]+))|()$"
   IAMRoleAndPolicyPrefix:
     Type: String
     Description: 'Prefix applied to the name of every IAM role and policy (max length: 10). [ParallelCluster >= 3.8.0]'
@@ -113,6 +120,7 @@ Metadata:
       - Label:
           default: (Optional) Permissions
         Parameters:
+          - AdditionalPoliciesPCAPI
           - IAMRoleAndPolicyPrefix
           - PermissionsBoundaryPolicy
           - PermissionsBoundaryPolicyPCAPI
@@ -169,6 +177,7 @@ Conditions:
   UseIAMRoleAndPolicyPrefix: !Not [!Equals [!Ref IAMRoleAndPolicyPrefix, '']]
   UseCustomDomain: !Not [!Equals [!Ref CustomDomain, '']]
   UseCognitoCustomDomain: !Not [!Equals [!Ref CognitoCustomDomain, '']]
+  UseAdditionalPoliciesPCAPI: !Not [!Equals [!Ref AdditionalPoliciesPCAPI, '']]
 
 Mappings:
   ParallelClusterUI:
@@ -204,6 +213,7 @@ Resources:
       Parameters:
         PermissionsBoundaryPolicy: !If [ UsePermissionBoundaryPCAPI, !Ref PermissionsBoundaryPolicyPCAPI, !Ref AWS::NoValue ]
         IAMRoleAndPolicyPrefix: !If [ UseIAMRoleAndPolicyPrefix, !Ref IAMRoleAndPolicyPrefix, !Ref AWS::NoValue ]
+        ParallelClusterFunctionAdditionalPolicies: !If [ UseAdditionalPoliciesPCAPI, !Ref AdditionalPoliciesPCAPI, !Ref AWS::NoValue ]
         ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
         CreateApiUserRole: False
         EnableIamAdminAccess: True
