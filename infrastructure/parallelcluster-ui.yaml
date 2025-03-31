@@ -263,7 +263,13 @@ Resources:
               - { CustomDomainBasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ] }
             - !Sub
               - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}
-              - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
+              - Api: !If
+                  - IsPrivate
+                  - !Sub
+                    - '${ApiId}-${VpceId}'
+                    - { ApiId: !Ref ApiGatewayRestApi, VpceId: !Ref VpcEndpointId }
+                  - !Ref ApiGatewayRestApi
+                Stage: !Ref ApiGatewayRestStage
           AUTH_PATH: !If [ UseExistingCognito, !Ref UserPoolAuthDomain, !GetAtt [ Cognito, Outputs.UserPoolAuthDomain ]]
           SECRET_ID: !GetAtt UserPoolClientSecret.SecretName
           AUDIENCE: !Ref CognitoAppClient
@@ -424,7 +430,13 @@ Resources:
             - { CustomDomainBasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ] }
           - !Sub
             - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}/login
-            - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
+            - Api: !If
+                - IsPrivate
+                - !Sub
+                  - '${ApiId}-${VpceId}'
+                  - { ApiId: !Ref ApiGatewayRestApi, VpceId: !Ref VpcEndpointId }
+                - !Ref ApiGatewayRestApi
+              Stage: !Ref ApiGatewayRestStage
       SupportedIdentityProviders:
         - COGNITO
       UserPoolId: !If [ UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]
@@ -1102,7 +1114,13 @@ Outputs:
         - { CustomDomainBasePath: !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ] }
       - !Sub
         - https://${Api}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${Stage}
-        - { Api: !Ref ApiGatewayRestApi, Stage: !Ref ApiGatewayRestStage }
+        - Api: !If
+            - IsPrivate
+            - !Sub
+              - '${ApiId}-${VpceId}'
+              - { ApiId: !Ref ApiGatewayRestApi, VpceId: !Ref VpcEndpointId }
+            - !Ref ApiGatewayRestApi
+          Stage: !Ref ApiGatewayRestStage
   CustomDomainEndpoint:
     Condition: UseCustomDomain
     Description: |
