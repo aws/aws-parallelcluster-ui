@@ -13,7 +13,7 @@ concurrency: ci-${{ github.ref }}
 
 jobs:
   frontend-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
@@ -43,7 +43,7 @@ jobs:
         working-directory: ./frontend
 
   backend-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
@@ -62,7 +62,7 @@ jobs:
         run: pytest
 
   update-infrastructure:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     
     needs: [frontend-tests, backend-tests]
 
@@ -80,7 +80,7 @@ jobs:
         run: ./infrastructure/update-environment-infra.sh demo
 
   build-and-deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     
     needs: [update-infrastructure]
 
