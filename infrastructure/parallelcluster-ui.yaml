@@ -855,18 +855,15 @@ Resources:
         # Required for Lambda logging and XRay
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSXRayDaemonWriteAccess
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        # Access to the ParllelCluster API
+        # Access to the ParallelCluster API
         - !Ref ParallelClusterApiGatewayInvoke
         # Required to run ParallelClusterUI functionalities
         - !Ref CognitoPolicy
         - !Ref EC2Policy
-        - !Ref DescribeFsxPolicy
-        - !Ref DescribeEfsPolicy
+        - !Ref StoragePolicy
         - !Ref CostMonitoringAndPricingPolicy
-        - !Ref SsmSendPolicy
-        - !Ref SsmGetCommandInvocationPolicy
+        - !Ref SsmPolicy
       PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
-
 
   ParallelClusterUIApiGatewayInvoke:
     Type: AWS::Lambda::Permission
@@ -973,11 +970,11 @@ Resources:
               Sid: PrivateDeploymentReadPolicy
             - !Ref AWS::NoValue
 
-  DescribeFsxPolicy:
+  StoragePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub
-        - ${IAMRoleAndPolicyPrefix}DescribeFsxPolicy-${StackIdSuffix}
+        - ${IAMRoleAndPolicyPrefix}StoragePolicy-${StackIdSuffix}
         - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
@@ -991,23 +988,13 @@ Resources:
               - !Sub arn:${AWS::Partition}:fsx:*:${AWS::AccountId}:file-system/*
               - !Sub arn:${AWS::Partition}:fsx:*:${AWS::AccountId}:file-cache/*
             Effect: Allow
-            Sid: FsxPolicy
-
-  DescribeEfsPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: !Sub
-        - ${IAMRoleAndPolicyPrefix}DescribeEfsPolicy-${StackIdSuffix}
-        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
+            Sid: FsxRead
           - Action:
               - elasticfilesystem:DescribeFileSystems
             Resource:
               - !Sub arn:${AWS::Partition}:elasticfilesystem:*:${AWS::AccountId}:file-system/*
             Effect: Allow
-            Sid: EfsPolicy
+            Sid: EfsRead
 
   CostMonitoringAndPricingPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -1036,12 +1023,11 @@ Resources:
             Effect: Allow
             Sid: PricingPolicy
 
-
-  SsmSendPolicy:
+  SsmPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub
-        - ${IAMRoleAndPolicyPrefix}SsmSendPolicy-${StackIdSuffix}
+        - ${IAMRoleAndPolicyPrefix}SsmPolicy-${StackIdSuffix}
         - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
       PolicyDocument:
         Version: '2012-10-17'
@@ -1061,16 +1047,6 @@ Resources:
               - !Sub arn:${AWS::Partition}:ssm:*::document/AWS-RunShellScript
             Effect: Allow
             Sid: SsmSendPolicyCommand
-
-  SsmGetCommandInvocationPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: !Sub
-        - ${IAMRoleAndPolicyPrefix}SsmGetCommandInvocationPolicy-${StackIdSuffix}
-        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
           - Action:
             - ssm:GetCommandInvocation
             Resource:
