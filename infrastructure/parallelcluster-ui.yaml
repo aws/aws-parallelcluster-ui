@@ -278,6 +278,7 @@ Resources:
             - UseCustomDomain
             - !FindInMap [ ParallelClusterUI, Constants, CustomDomainBasePath ]
             - !Ref AWS::NoValue
+          SSM_LOG_GROUP_NAME: !Ref SsmLogGroup
       FunctionName: !Sub
         - ParallelClusterUIFun-${StackIdSuffix}
         - { StackIdSuffix: !Select [2, !Split ['/', !Ref 'AWS::StackId']] }
@@ -838,6 +839,12 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${ParallelClusterUIFun}
       RetentionInDays: 90
 
+  SsmLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/ssm/ParallelClusterUI-${AWS::StackName}
+      RetentionInDays: 1
+      LogGroupClass: STANDARD
 
   ParallelClusterUIUserRole:
     Type: AWS::IAM::Role
@@ -861,6 +868,7 @@ Resources:
         - !Ref CognitoPolicy
         - !Ref EC2Policy
         - !Ref StoragePolicy
+        - !Ref LogsPolicy
         - !Ref CostMonitoringAndPricingPolicy
         - !Ref SsmPolicy
       PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
@@ -1053,6 +1061,29 @@ Resources:
               - '*'
             Effect: Allow
             Sid: SsmGetCommandInvocationPolicy
+
+  LogsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub
+        - ${IAMRoleAndPolicyPrefix}LogsPolicy-${StackIdSuffix}
+        - { StackIdSuffix: !Select [ 0, !Split [ '-', !Select [ 2, !Split [ '/', !Ref 'AWS::StackId' ] ] ] ] }
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - logs:GetLogEvents
+            Resource:
+              - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SsmLogGroup}:*"
+              - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SsmLogGroup}:log-stream:*"
+            Effect: Allow
+            Sid: CloudWatchLogsRead
+          - Action:
+              - logs:DeleteLogStream
+            Resource:
+              - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${SsmLogGroup}:log-stream:*/*/aws-runShellScript/stdout"
+            Effect: Allow
+            Sid: CloudWatchLogsDelete
 
   ApiGatewayCustomDomain:
     Condition: UseCustomDomain
