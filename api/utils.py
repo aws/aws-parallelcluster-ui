@@ -11,6 +11,7 @@
 import datetime
 import os
 
+import boto3
 import dateutil
 from flask import Flask, Response, request, send_from_directory
 import requests
@@ -110,3 +111,68 @@ def serve_frontend(app, path=""):
         return proxy_to("http://localhost:3000/" + path)
 
     return send_from_directory(app.static_folder, "index.html")
+
+def read_and_delete_ssm_output_from_cloudwatch(
+        region: str,
+        log_group_name: str,
+        command_id: str,
+        instance_id: str,
+) -> str:
+    logs_client = boto3.client('logs', region_name=region)
+
+    log_stream_name =  f"{command_id}/{instance_id}/aws-runShellScript/stdout"
+
+    logger.info(
+        f"Reading output for SSM command {command_id} from logstream {log_stream_name} in log group {log_group_name}"
+    )
+
+    output_lines = []
+
+    try:
+        next_token = None
+        while True:
+            request_params = dict(
+                logGroupName=log_group_name,
+                logStreamName=log_stream_name,
+                startFromHead=True,
+            )
+            if next_token:
+                request_params['nextToken'] = next_token
+            response = logs_client.get_log_events(**request_params)
+            log_events = response.get('events', [])
+            next_token = response.get('nextForwardToken')
+            next_backward_token = response.get('nextBackwardToken')
+
+            for event in log_events:
+                message = event.get('message', '').strip()
+                if message:
+                    output_lines.append(message)
+            if not next_token or normalize_logs_token(next_token) == normalize_logs_token(next_backward_token):
+                break
+        delete_log_stream(logs_client, log_group_name, log_stream_name)
+    except Exception as ex:
+        logger.error(
+            f"Failed to read output for SSM command {command_id} "
+            f"from logstream {log_stream_name} in log group {log_group_name}: {ex}"
+        )
+        delete_log_stream(logs_client, log_group_name, log_stream_name)
+
+    logger.info(
+        f"Completed reading of output for SSM command {command_id} "
+        f"from logstream {log_stream_name} in log group {log_group_name}"
+    )
+
+    return "\n".join(output_lines)
+
+def normalize_logs_token(token: str) -> str:
+    return token.split('/', 1)[1] if token and '/' in token else token
+
+def delete_log_stream(logs_client, log_group_name: str, log_stream_name: str):
+    try:
+        logs_client.delete_log_stream(
+            logGroupName=log_group_name,
+            logStreamName=log_stream_name,
+        )
+        logger.info(f"Deleted log stream {log_stream_name} in log group {log_group_name}")
+    except Exception as ex:
+        logger.error(f"Failed to delete log stream {log_stream_name} in log group {log_group_name}: {ex}")

@@ -25,7 +25,7 @@ from api.exception.exceptions import RefreshTokenError
 from api.pcm_globals import set_auth_cookies_in_context, logger, auth_cookies
 from api.security.csrf.constants import CSRF_COOKIE_NAME
 from api.security.csrf.csrf import csrf_needed
-from api.utils import disable_auth
+from api.utils import disable_auth, read_and_delete_ssm_output_from_cloudwatch
 from api.validation import validated
 from api.validation.schemas import PCProxyArgs, PCProxyBody
 
@@ -47,6 +47,7 @@ AUTH_URL = os.getenv("AUTH_URL", f"{AUTH_PATH}/login")
 JWKS_URL = os.getenv("JWKS_URL")
 AUDIENCE = os.getenv("AUDIENCE")
 USER_ROLES_CLAIM = os.getenv("USER_ROLES_CLAIM", "cognito:groups")
+SSM_LOG_GROUP_NAME = os.getenv("SSM_LOG_GROUP_NAME")
 
 try:
     if (not USER_POOL_ID or USER_POOL_ID == "") and SECRET_ID:
@@ -264,9 +265,15 @@ def ssm_command(region, instance_id, user, run_command):
         DocumentName="AWS-RunShellScript",
         Comment=f"Run ssm command.",
         Parameters={"commands": [command]},
+        CloudWatchOutputConfig={
+            'CloudWatchLogGroupName': SSM_LOG_GROUP_NAME,
+            'CloudWatchOutputEnabled': True
+        },
     )
 
     command_id = ssm_resp["Command"]["CommandId"]
+
+    logger.info(f"Submitted SSM command {command_id}")
 
     # Wait for command to complete
     time.sleep(0.75)
@@ -282,7 +289,13 @@ def ssm_command(region, instance_id, user, run_command):
     if status["Status"] != "Success":
         raise Exception(status["StandardErrorContent"])
 
-    output = status["StandardOutputContent"]
+    output = read_and_delete_ssm_output_from_cloudwatch(
+        region=region,
+        log_group_name=SSM_LOG_GROUP_NAME,
+        command_id=command_id,
+        instance_id=instance_id,
+    )
+
     return output
 
 
