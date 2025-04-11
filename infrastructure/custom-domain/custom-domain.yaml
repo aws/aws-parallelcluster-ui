@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS ParallelCluster UI - Custom Domain
+
+Parameters:
+  CustomDomainName:
+    Description: Custom domain name.
+    Type: String
+    AllowedPattern: ^(\*\.)?(((?!-)[A-Za-z0-9-]{0,62}[A-Za-z0-9])\.)+((?!-)[A-Za-z0-9-]{1,62}[A-Za-z0-9])$
+    MinLength: 1
+    MaxLength: 253
+
+  HostedZoneId:
+    Description: HostedZoneId
+    Type: AWS::Route53::HostedZone::Id
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Domain
+        Parameters:
+          - CustomDomainName
+      - Label:
+          default: Networking
+        Parameters:
+          - HostedZoneId
+
+Resources:
+  CustomDomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref CustomDomainName
+      DomainValidationOptions:
+        - DomainName: !Ref CustomDomainName
+          HostedZoneId: !Ref HostedZoneId
+      KeyAlgorithm: RSA_2048
+      SubjectAlternativeNames:
+        - !Sub "*.${CustomDomainName}"
+      ValidationMethod: DNS
+
+Outputs:
+  CustomDomainName:
+    Value: !Ref CustomDomainName
+    Description: Custom domain name.
+  CustomDomainCertificate:
+    Value: !Ref CustomDomainCertificate
+    Description: ACM certificate to certify the custom domain name and its subdomains.
