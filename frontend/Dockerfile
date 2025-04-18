@@ -1,4 +1,4 @@
-FROM node:18.20-alpine
+FROM node:22.14-alpine
 WORKDIR /app
 COPY . .
 COPY resources/attributions/npm-python-attributions.txt public/license.txt
