@@ -33,6 +33,7 @@ USER_POOL_ID = os.getenv("USER_POOL_ID")
 AUTH_PATH = os.getenv("AUTH_PATH")
 API_BASE_URL = os.getenv("API_BASE_URL")
 API_VERSION = os.getenv("API_VERSION", "3.1.0")
+DEFAULT_API_VERSION = API_VERSION.split(",")[0]
 API_USER_ROLE = os.getenv("API_USER_ROLE")
 OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
 CLIENT_ID = os.getenv("CLIENT_ID")
@@ -65,8 +66,9 @@ if not JWKS_URL:
 API_BASE_URL_MAPPING = {}
 
 for url in API_BASE_URL.split(","):
-    pair=url.split("=")
-    API_BASE_URL_MAPPING[pair[0]] = pair[1]
+    if url:
+        pair=url.split("=")
+        API_BASE_URL_MAPPING[pair[0]] = pair[1]
 
 
 
@@ -171,7 +173,7 @@ def authenticate(groups):
 
     if (not groups):
         return abort(403)
-        
+
     jwt_roles = set(decoded.get(USER_ROLES_CLAIM, []))
     groups_granted = groups.intersection(jwt_roles)
     if len(groups_granted) == 0:
@@ -197,12 +199,12 @@ def get_scopes_list():
 
 def get_redirect_uri():
   return f"{SITE_URL}/login"
-  
+
 # Local Endpoints
 
 
 def get_version():
-    return {"version": _get_version(request)}
+    return {"version": API_VERSION}
 
 def get_app_config():
   return {
@@ -371,7 +373,7 @@ def sacct():
             user,
             f"sacct {sacct_args} --json "
             + "| jq -c .jobs[0:120]\\|\\map\\({name,user,partition,state,job_id,exit_code\\}\\)",
-        )
+            )
         if type(accounting) is tuple:
             return accounting
     else:
@@ -602,9 +604,9 @@ def _get_identity_from_token(decoded, claims):
         identity["username"] = decoded["username"]
 
     for claim in claims:
-      if claim in decoded:
-        identity["attributes"][claim] = decoded[claim]
-    
+        if claim in decoded:
+            identity["attributes"][claim] = decoded[claim]
+
     return identity
 
 def get_identity():
@@ -741,9 +743,10 @@ def _get_params(_request):
     params.pop("path")
     return params
 
-def _get_version(request):
-    params = _get_params(request)
-    return params.get('version')
+def _get_version(v):
+    if v and str(v) in API_VERSION:
+        return str(v)
+    return DEFAULT_API_VERSION
 
 
 pc = Blueprint('pc', __name__)
@@ -752,7 +755,7 @@ pc = Blueprint('pc', __name__)
 @authenticated({'admin'})
 @validated(params=PCProxyArgs)
 def pc_proxy_get():
-    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request)], request.args.get("path"), _get_params(request))
+    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request.args.get("version"))], request.args.get("path"), _get_params(request))
     return response.json(), response.status_code
 
 @pc.route('/', methods=['POST','PUT','PATCH','DELETE'], strict_slashes=False)
@@ -766,5 +769,5 @@ def pc_proxy():
     except:
         pass
 
-    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request)], request.args.get("path"), _get_params(request), body=body)
+    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request.args.get("version"))], request.args.get("path"), _get_params(request), body=body)
     return response.json(), response.status_code

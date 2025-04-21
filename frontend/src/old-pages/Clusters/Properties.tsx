@@ -45,6 +45,7 @@ export default function ClusterProperties() {
   const clusterName = useState(['app', 'clusters', 'selected'])
   const clusterPath = ['clusters', 'index', clusterName]
   const cluster: ClusterDescription = useState(clusterPath)
+  const version = useState(['app', 'clusters', 'selected'])
   const headNode = useState([...clusterPath, 'headNode'])
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
