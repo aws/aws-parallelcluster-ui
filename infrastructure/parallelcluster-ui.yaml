@@ -1,3 +1,4 @@
+Transform: 'AWS::LanguageExtensions'
 Parameters:
   AdminUserEmail:
     Description: Email address of administrative user to setup by default (only with new Cognito instances).
@@ -161,17 +162,6 @@ Conditions:
       - !Not [!Equals [!Ref SNSRole, ""]]
   UseNewCognito:
     !Not [ Condition: UseExistingCognito]
-  UseNonDockerizedPCAPI:
-    !Not [ Condition: UseDockerizedPCAPI]
-  UseDockerizedPCAPI: !And
-    - !Equals ['3', !Select [ 0, !Split ['.', !Ref Version] ] ] # Check PC version major is 3 and PC version minor is 0-5
-    - !Or
-      - !Equals ['0', !Select [ 1, !Split ['.', !Ref Version] ] ]
-      - !Equals ['1', !Select [ 1, !Split ['.', !Ref Version] ] ]
-      - !Equals ['2', !Select [ 1, !Split ['.', !Ref Version] ] ]
-      - !Equals ['3', !Select [ 1, !Split ['.', !Ref Version] ] ]
-      - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
-      - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
   InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
   UsePermissionBoundary: !Not [!Equals [!Ref PermissionsBoundaryPolicy, '']]
   UsePermissionBoundaryPCAPI: !Not [!Equals [!Ref PermissionsBoundaryPolicyPCAPI, '']]
@@ -208,36 +198,178 @@ Resources:
 
       TimeoutInMinutes: 10
 
-  ParallelClusterApi:
-    Type: AWS::CloudFormation::Stack
+  Fn::ForEach::ParallelClusterApi:
+    - ApiVersion
+    - !Split [",", !Ref Version]
+    - ParallelClusterApi&{ApiVersion}:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+          Parameters:
+            PermissionsBoundaryPolicy: !If [ UsePermissionBoundaryPCAPI, !Ref PermissionsBoundaryPolicyPCAPI, !Ref AWS::NoValue ]
+            IAMRoleAndPolicyPrefix: !If [ UseIAMRoleAndPolicyPrefix, !Ref IAMRoleAndPolicyPrefix, !Ref AWS::NoValue ]
+            ParallelClusterFunctionAdditionalPolicies: !If [ UseAdditionalPoliciesPCAPI, !Ref AdditionalPoliciesPCAPI, !Ref AWS::NoValue ]
+            ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${ApiVersion}/api/ParallelCluster.openapi.yaml
+            CreateApiUserRole: False
+            EnableIamAdminAccess: True
+            VpcEndpointId: !If [ IsPrivate, !Ref VpcEndpointId, !Ref AWS::NoValue ]
+          TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${ApiVersion}/api/parallelcluster-api.yaml
+          TimeoutInMinutes: 30
+          Tags:
+            - Key: 'parallelcluster:api-id'
+              Value: !Ref ApiGatewayRestApi
+
+#  ParallelClusterApi:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      Parameters:
+#        PermissionsBoundaryPolicy: !If [ UsePermissionBoundaryPCAPI, !Ref PermissionsBoundaryPolicyPCAPI, !Ref AWS::NoValue ]
+#        IAMRoleAndPolicyPrefix: !If [ UseIAMRoleAndPolicyPrefix, !Ref IAMRoleAndPolicyPrefix, !Ref AWS::NoValue ]
+#        ParallelClusterFunctionAdditionalPolicies: !If [ UseAdditionalPoliciesPCAPI, !Ref AdditionalPoliciesPCAPI, !Ref AWS::NoValue ]
+#        ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
+#        CreateApiUserRole: False
+#        EnableIamAdminAccess: True
+#        VpcEndpointId: !If [ IsPrivate, !Ref VpcEndpointId, !Ref AWS::NoValue ]
+#        ImageBuilderSubnetId: !If
+#          - UseNonDockerizedPCAPI
+#          - !Ref AWS::NoValue
+#          - Fn::If:
+#              - NonDefaultVpc
+#              - !Ref ImageBuilderSubnetId
+#              - !Ref AWS::NoValue
+#        ImageBuilderVpcId: !If
+#          - UseNonDockerizedPCAPI
+#          - !Ref AWS::NoValue
+#          - Fn::If:
+#            - NonDefaultVpc
+#            - !Ref ImageBuilderVpcId
+#            - !Ref AWS::NoValue
+#      TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
+#      TimeoutInMinutes: 30
+
+  ApiVersionMap:
+    Type: Custom::ApiVersionMap
     Properties:
-      Parameters:
-        PermissionsBoundaryPolicy: !If [ UsePermissionBoundaryPCAPI, !Ref PermissionsBoundaryPolicyPCAPI, !Ref AWS::NoValue ]
-        IAMRoleAndPolicyPrefix: !If [ UseIAMRoleAndPolicyPrefix, !Ref IAMRoleAndPolicyPrefix, !Ref AWS::NoValue ]
-        ParallelClusterFunctionAdditionalPolicies: !If [ UseAdditionalPoliciesPCAPI, !Ref AdditionalPoliciesPCAPI, !Ref AWS::NoValue ]
-        ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
-        CreateApiUserRole: False
-        EnableIamAdminAccess: True
-        VpcEndpointId: !If [ IsPrivate, !Ref VpcEndpointId, !Ref AWS::NoValue ]
-        ImageBuilderSubnetId: !If
-          - UseNonDockerizedPCAPI
-          - !Ref AWS::NoValue
-          - Fn::If:
-              - NonDefaultVpc
-              - !Ref ImageBuilderSubnetId
-              - !Ref AWS::NoValue
-        ImageBuilderVpcId: !If
-          - UseNonDockerizedPCAPI
-          - !Ref AWS::NoValue
-          - Fn::If:
-            - NonDefaultVpc
-            - !Ref ImageBuilderVpcId
-            - !Ref AWS::NoValue
-      TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
-      TimeoutInMinutes: 30
+      ServiceToken: !GetAtt ApiVersionMapFunction.Arn
+      Version: !Ref Version
+      ApiGatewayRestApiId: !Ref ApiGatewayRestApi
+
+  ApiVersionMapFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python3.12
+      TracingConfig:
+        Mode: Active
+      Role: !GetAtt ApiVersionMapFunctionRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          import os
+          import re
+          import time
+        
+          def handler(event, context):
+            response_data = {}
+            response_status = cfnresponse.SUCCESS
+            reason = None
+            try:
+          
+              if event['RequestType'] in ['Create', 'Update']:
+                response_data["Message"] = "Resource creation successful!"
+                cfn = boto3.client('cloudformation')
+                result = ""
+              
+                api_id = event['ResourceProperties'].get('ApiGatewayRestApiId')
+                print(f"ApiGatewayRestApiId: {api_id}")
+                versions = event['ResourceProperties'].get('Version').split(",")
+                print(f"Versions: {versions}")
+          
+                paginator = cfn.get_paginator('list_stacks')
+                for page in paginator.paginate(
+                    StackStatusFilter=['CREATE_COMPLETE', 'UPDATE_COMPLETE', 'CREATE_IN_PROGRESS']
+                ):
+                    for stack in page['StackSummaries']:
+                        try:
+                            # Check if stack name matches the pattern
+                            print(f"Checking stack {stack['StackName']}")
+          
+                            for version in versions:
+                              clean_version = version.replace('.','')
+                              pattern = f'.*-ParallelClusterApi{clean_version}-[^-]*$'
+                              stack_pattern = re.compile(pattern)
+                              match = stack_pattern.match(stack['StackName'])
+                              if not match:
+                                  continue
+                        
+                              # Get stack details including tags
+                              stack_response = cfn.describe_stacks(
+                                  StackName=stack['StackName']
+                              )
+              
+                              stack_tags = stack_response['Stacks'][0].get('Tags', [])
+                              print(f"Match: {match}, tags: {stack_tags}")
+                              # Check if stack has the specific tag and value
+                              for tag in stack_tags:
+                                  if (tag.get('Key') == 'parallelcluster:api-id' and 
+                                      tag.get('Value') == api_id):
+                                      # Get stack outputs
+                                      waiter = cfn.get_waiter('stack_create_complete')
+                                      waiter.wait(StackName=stack['StackName'])
+                                      stack_response = cfn.describe_stacks(
+                                          StackName=stack['StackName']
+                                      )
+                                      print(f"Found stack {stack['StackName']} with outputs: {stack_response['Stacks'][0]['Outputs']}")
+                                      
+                                      for output in stack_response['Stacks'][0]['Outputs']:
+                                          if output['OutputKey'] == 'ParallelClusterApiInvokeUrl':
+                                              # Construct the result string
+                                              result = f"{result}{version}={output['OutputValue']},"
+                                              print(f"Version={version}, ApiURL={output['OutputValue']}")
+                                              break
+              
+                        except Exception as e:
+                            print(f"Error processing stack {stack['StackName']}: {str(e)}")
+                            continue
+                print(f"Result: {result}")
+              
+                response_data = {"ApiVersionMapping": result}
+                cfnresponse.send(event, context,  cfnresponse.SUCCESS, response_data, result)
+      
+            except Exception as e:
+              response_status = cfnresponse.FAILED
+              reason = "Failed {}: {}".format(event["RequestType"], e)
+            cfnresponse.send(event, context,  response_status, response_data, reason)
+
+      Timeout: 300
+      MemorySize: 128
+
+  ApiVersionMapFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: CloudFormationAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:ListStacks
+                  - cloudformation:DescribeStacks
+                Resource: '*'
 
   ParallelClusterUIFun:
     Type: AWS::Lambda::Function
+    DependsOn: ApiVersionMap
     Properties:
       Role: !GetAtt ParallelClusterUIUserRole.Arn
       PackageType: Image
@@ -256,7 +388,7 @@ Resources:
           - !Ref AWS::NoValue
       Environment:
         Variables:
-          API_BASE_URL: !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]
+          API_BASE_URL: !GetAtt ApiVersionMap.ApiVersionMapping
           API_VERSION: !Ref Version
           SITE_URL: !If
             - UseCustomDomain
@@ -580,7 +712,7 @@ Resources:
       PermissionsBoundary: !If [UsePermissionBoundary, !Ref PermissionsBoundaryPolicy, !Ref 'AWS::NoValue']
 
   PrivateEcrRepository:
-    DependsOn: ParallelClusterApi
+    DependsOn: ParallelClusterApi3120
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: !Sub
@@ -899,7 +1031,7 @@ Resources:
             Effect: Allow
             Resource: !Sub
               - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${PCApiGateway}/*/*
-              - { PCApiGateway: !Select [2, !Split ['/', !Select [0, !Split ['.', !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]]]]] }
+              - { PCApiGateway: !Select [2, !Split ['/', !Select [0, !Split ['.', !GetAtt [ ParallelClusterApi3120, Outputs.ParallelClusterApiInvokeUrl ]]]]] }
 
   CognitoPolicy:
     Type: AWS::IAM::ManagedPolicy

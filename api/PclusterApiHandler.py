@@ -38,7 +38,7 @@ OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 SECRET_ID = os.getenv("SECRET_ID")
-SITE_URL = os.getenv("SITE_URL", API_BASE_URL)
+SITE_URL = os.getenv("SITE_URL")
 SCOPES_LIST = os.getenv("SCOPES_LIST")
 REGION = os.getenv("AWS_DEFAULT_REGION")
 TOKEN_URL = os.getenv("TOKEN_URL", f"{AUTH_PATH}/oauth2/token")
@@ -62,6 +62,12 @@ except Exception:
 if not JWKS_URL:
     JWKS_URL = os.getenv("JWKS_URL",
                          f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/" ".well-known/jwks.json")
+API_BASE_URL_MAPPING = {}
+
+for url in API_BASE_URL.split(","):
+    pair=url.split("=")
+    API_BASE_URL_MAPPING[pair[0]] = pair[1]
+
 
 
 def jwt_decode(token, audience=None, access_token=None):
@@ -196,7 +202,7 @@ def get_redirect_uri():
 
 
 def get_version():
-    return {"version": API_VERSION}
+    return {"version": _get_version(request)}
 
 def get_app_config():
   return {
@@ -233,9 +239,9 @@ def ec2_action():
 def get_cluster_config_text(cluster_name, region=None):
     url = f"/v3/clusters/{cluster_name}"
     if region:
-        info_resp = sigv4_request("GET", API_BASE_URL, url, params={"region": region})
+        info_resp = sigv4_request("GET", API_BASE_URL_MAPPING[_get_version(request)], url, params={"region": region})
     else:
-        info_resp = sigv4_request("GET", API_BASE_URL, url)
+        info_resp = sigv4_request("GET", API_BASE_URL_MAPPING[_get_version(request)], url)
     if info_resp.status_code != 200:
         abort(info_resp.status_code)
 
@@ -484,7 +490,7 @@ def get_dcv_session():
 
 
 def get_custom_image_config():
-    image_info = sigv4_request("GET", API_BASE_URL, f"/v3/images/custom/{request.args.get('image_id')}").json()
+    image_info = sigv4_request("GET", API_BASE_URL_MAPPING[_get_version(request)], f"/v3/images/custom/{request.args.get('image_id')}").json()
     configuration = requests.get(image_info["imageConfiguration"]["url"])
     return configuration.text
 
@@ -735,6 +741,10 @@ def _get_params(_request):
     params.pop("path")
     return params
 
+def _get_version(request):
+    params = _get_params(request)
+    return params.get('version')
+
 
 pc = Blueprint('pc', __name__)
 
@@ -742,7 +752,7 @@ pc = Blueprint('pc', __name__)
 @authenticated({'admin'})
 @validated(params=PCProxyArgs)
 def pc_proxy_get():
-    response = sigv4_request(request.method, API_BASE_URL, request.args.get("path"), _get_params(request))
+    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request)], request.args.get("path"), _get_params(request))
     return response.json(), response.status_code
 
 @pc.route('/', methods=['POST','PUT','PATCH','DELETE'], strict_slashes=False)
@@ -756,5 +766,5 @@ def pc_proxy():
     except:
         pass
 
-    response = sigv4_request(request.method, API_BASE_URL, request.args.get("path"), _get_params(request), body=body)
+    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request)], request.args.get("path"), _get_params(request), body=body)
     return response.json(), response.status_code

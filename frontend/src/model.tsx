@@ -103,6 +103,7 @@ function CreateCluster(
   clusterConfig: string,
   region: string,
   selectedRegion: string,
+  version: string,
   dryrun = false,
   successCallback?: Callback,
   errorCallback?: Callback,
@@ -110,6 +111,7 @@ function CreateCluster(
   var url = 'api?path=/v3/clusters'
   url += dryrun ? '&dryrun=true' : ''
   url += region ? `&region=${region}` : ''
+  url += version ? `&version=${version}` : ''
   var body = {
     clusterName: clusterName,
     clusterConfiguration: mapAndApplyTags(clusterConfig),
@@ -159,12 +161,14 @@ function UpdateCluster(
   clusterConfig: any,
   dryrun = false,
   forceUpdate: any,
+  version: any,
   successCallback?: Callback,
   errorCallback?: Callback,
 ) {
   var url = `api?path=/v3/clusters/${clusterName}`
   url += dryrun ? '&dryrun=true' : ''
   url += forceUpdate ? '&forceUpdate=true' : ''
+  url += version ? `&version=${version}` : ''
   var body = {clusterConfiguration: clusterConfig}
   request('put', url, body)
     .then((response: any) => {
