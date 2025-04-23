@@ -459,8 +459,8 @@ async function BuildImage(imageId: string, imageConfig: string) {
   return data
 }
 
-async function ListOfficialImages(region?: string) {
-  const url = `api?path=/v3/images/official${region ? `&region=${region}` : ''}`
+async function ListOfficialImages(region?: string, version?: string) {
+  const url = `api?path=/v3/images/official${region ? `&region=${region}` : ''}${version ? `&version=${version}` : ''}`
   try {
     const {data} = await request('get', url)
     return data?.images || []

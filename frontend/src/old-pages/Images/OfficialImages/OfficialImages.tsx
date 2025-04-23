@@ -9,6 +9,8 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import React, {useMemo} from 'react'
+import {Select, SpaceBetween} from '@cloudscape-design/components'
+
 
 import {ListOfficialImages} from '../../../model'
 import {useCollection} from '@cloudscape-design/collection-hooks'
@@ -25,7 +27,7 @@ import {
 // Components
 import EmptyState from '../../../components/EmptyState'
 import {useQuery} from 'react-query'
-import {useState} from '../../../store'
+import {useState, setState} from '../../../store'
 import {useHelpPanel} from '../../../components/help-panel/HelpPanel'
 import {Trans, useTranslation} from 'react-i18next'
 import TitleDescriptionHelpPanel from '../../../components/help-panel/TitleDescriptionHelpPanel'
@@ -37,6 +39,28 @@ type Image = {
   os: string
   architecture: string
   version: string
+}
+
+function VersionSelect() {
+    const {t} = useTranslation()
+    const versions = useState(['app', 'version', 'full']).split(',')
+    const [selectedVersion, setSelectedVersion] = React.useState(versions[0])
+
+    return (
+        <Select
+            selectedOption={{label: selectedVersion, value: selectedVersion}}
+            onChange={({detail}) => {
+                setSelectedVersion(detail.selectedOption.value)
+                setState(['app', 'officialImages', 'selectedVersion'], detail.selectedOption.value)
+            }}
+            options={versions.map((version: any) => ({
+                label: version,
+                value: version,
+            }))}
+            selectedAriaLabel={t('officialImages.actions.versionSelect.selectedAriaLabel')}
+            placeholder={t('officialImages.actions.versionSelect.placeholder')}
+        />
+    )
 }
 
 function OfficialImagesHelpPanel() {
@@ -103,21 +127,26 @@ function OfficialImagesList({images}: {images: Image[]}) {
     }),
   )
 
-  return (
-    <Table
-      {...collectionProps}
-      resizableColumns
-      trackBy="amiId"
-      header={
-        <Header
-          variant="awsui-h1-sticky"
-          counter={`(${imagesCount})`}
-          description={t('officialImages.header.description')}
-          info={<InfoLink helpPanel={<OfficialImagesHelpPanel />} />}
-        >
-          {t('officialImages.header.title')}
-        </Header>
-      }
+    return (
+        <Table
+            {...collectionProps}
+            resizableColumns
+            trackBy="amiId"
+            header={
+                <Header
+                    variant="awsui-h1-sticky"
+                    counter={`(${imagesCount})`}
+                    description={t('officialImages.header.description')}
+                    info={<InfoLink helpPanel={<OfficialImagesHelpPanel />} />}
+                    actions={
+                        <SpaceBetween direction="horizontal" size="xs">
+                            <VersionSelect />
+                        </SpaceBetween>
+                    }
+                >
+                    {t('officialImages.header.title')}
+                </Header>
+            }
       columnDefinitions={[
         {
           id: 'id',
@@ -168,8 +197,16 @@ function OfficialImagesList({images}: {images: Image[]}) {
 export default function OfficialImages() {
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
-  const {data} = useQuery('OFFICIAL_IMAGES', () => ListOfficialImages(region))
+  const selectedVersion = useState(['app', 'officialImages', 'selectedVersion'])
 
+    const {data} = useQuery(
+        ['OFFICIAL_IMAGES', region, selectedVersion],
+        () => ListOfficialImages(region, selectedVersion),
+        {
+            // Refetch when region or version changes
+            enabled: !!region
+        }
+    )
   useHelpPanel(<OfficialImagesHelpPanel />)
 
   return <OfficialImagesList images={data} />

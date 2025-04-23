@@ -1436,6 +1436,14 @@
         "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/support-policy.html"
       }
     },
+    "actions": {
+      "versionSelect": {
+        "selectedAriaLabel": "Selected version",
+        "versionText": "Version {{version}}",
+        "placeholder": "Select a version"
+      },
+      "refresh": "Refresh"
+    },
     "list": {
       "columns": {
         "id": "ID",
