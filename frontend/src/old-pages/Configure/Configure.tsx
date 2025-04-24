@@ -27,6 +27,7 @@ import {
   HeadNodePropertiesHelpPanel,
   headNodeValidate,
 } from './HeadNode'
+import {Version, versionValidate} from './Version'
 import {Storage, StorageHelpPanel, storageValidate} from './Storage'
 import {
   useClusterResourcesLimits,
@@ -60,6 +61,7 @@ import InfoLink from '../../components/InfoLink'
 import {useFeatureFlag} from '../../feature-flags/useFeatureFlag'
 
 const validators: {[key: string]: (...args: any[]) => boolean} = {
+  version: versionValidate,
   cluster: clusterValidate,
   headNode: headNodeValidate,
   storage: storageValidate,
@@ -89,6 +91,7 @@ function clearWizardState(
   clearErrorsOnly: boolean,
 ) {
   if (!clearErrorsOnly) {
+    clearState(['app', 'wizard', 'version'])
     clearState(['app', 'wizard', 'config'])
     clearState(['app', 'wizard', 'clusterConfigYaml'])
     clearState(['app', 'wizard', 'clusterName'])
@@ -251,6 +254,11 @@ function Configure() {
           refreshing || loadingExistingConfiguration || isSubmittingWizard
         }
         steps={[
+          {
+            title: t('wizard.version.title'),
+            description: t('wizard.version.description'),
+            content: <Version />,
+          },
           {
             title: t('wizard.cluster.title'),
             description: t('wizard.cluster.description'),

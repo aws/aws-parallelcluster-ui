@@ -56,7 +56,7 @@ export default function ClusterTabs() {
 
   return cluster ? (
     <>
-      {!apiVersion.split(",").includes(cluster.version) ? (
+      {!apiVersion.includes(cluster.version) ? (
         <Alert>{t('cluster.editAlert')}</Alert>
       ) : null}
       <Tabs

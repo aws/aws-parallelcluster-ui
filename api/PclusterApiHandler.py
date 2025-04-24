@@ -32,8 +32,8 @@ from api.validation.schemas import PCProxyArgs, PCProxyBody
 USER_POOL_ID = os.getenv("USER_POOL_ID")
 AUTH_PATH = os.getenv("AUTH_PATH")
 API_BASE_URL = os.getenv("API_BASE_URL")
-API_VERSION = os.getenv("API_VERSION", "3.1.0")
-DEFAULT_API_VERSION = API_VERSION.split(",")[0]
+API_VERSION = sorted(os.getenv("API_VERSION", "3.1.0").split(","), key=lambda x: [-int(n) for n in x.split('.')])
+DEFAULT_API_VERSION = API_VERSION[0]
 API_USER_ROLE = os.getenv("API_USER_ROLE")
 OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
 CLIENT_ID = os.getenv("CLIENT_ID")

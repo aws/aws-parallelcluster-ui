@@ -43,7 +43,7 @@ type Image = {
 
 function VersionSelect() {
     const {t} = useTranslation()
-    const versions = useState(['app', 'version', 'full']).split(',')
+    const versions = useState(['app', 'version', 'full'])
     const [selectedVersion, setSelectedVersion] = React.useState(versions[0])
 
     return (
@@ -140,14 +140,18 @@ function OfficialImagesList({images}: {images: Image[]}) {
                     info={<InfoLink helpPanel={<OfficialImagesHelpPanel />} />}
                     actions={
                         <SpaceBetween direction="horizontal" size="xs">
-                            <VersionSelect />
+                            <SpaceBetween direction="horizontal" size="xs">
+                                <span>Select the ParallelCluster Version:</span>
+                                <VersionSelect />
+                            </SpaceBetween>
                         </SpaceBetween>
                     }
                 >
                     {t('officialImages.header.title')}
                 </Header>
             }
-      columnDefinitions={[
+
+            columnDefinitions={[
         {
           id: 'id',
           header: t('officialImages.list.columns.id'),

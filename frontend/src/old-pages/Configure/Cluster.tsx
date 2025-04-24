@@ -52,7 +52,6 @@ import {
 } from './SlurmSettings/SlurmSettings'
 import InfoLink from '../../components/InfoLink'
 import {ClusterNameField} from './Cluster/ClusterNameField'
-import {ClusterVersionField} from './Cluster/ClusterVersionField'
 import {validateClusterNameAndSetErrors} from './Cluster/clusterName.validators'
 import Loading from '../../components/Loading'
 import {ImdsSupportFormField} from './Cluster/ImdsSupportFormField'
@@ -405,7 +404,6 @@ function Cluster() {
       >
         <SpaceBetween direction="vertical" size="m">
           <ClusterNameField />
-          <ClusterVersionField />
           <RegionSelect />
           <OsFormField />
           <CustomAMISettings

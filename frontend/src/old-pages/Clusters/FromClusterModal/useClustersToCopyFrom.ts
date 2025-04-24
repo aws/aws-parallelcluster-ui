@@ -33,17 +33,19 @@ function matchUpToMinor(semVer1: string, semVer2: string) {
 
 function canCopyFromCluster(
   cluster: ClusterInfoSummary,
-  currentVersion: string,
+  possibleVersions: string,
 ) {
   if (cluster.clusterStatus === ClusterStatus.DeleteInProgress) {
     return false
   }
 
-  if (!matchUpToMinor(cluster.version, currentVersion)) {
-    return false
+  for (const version of possibleVersions) {
+    if (matchUpToMinor(cluster.version, version)) {
+      return true
+    }
   }
 
-  return true
+  return false
 }
 
 export function useClustersToCopyFrom() {

@@ -493,6 +493,18 @@
       "collapsedStepsLabel": "Step {{stepNumber}} of {{stepsCount}}",
       "steps": "Steps"
     },
+    "version": {
+      "label": "Cluster Version",
+      "title": "Version",
+      "placeholder": "Select your cluster version",
+      "description": "Select the AWS ParallelCluster version to use for this cluster.",
+      "help": {
+        "main": "Choose the version of AWS ParallelCluster to use for creating and managing your cluster."
+      },
+      "validation": {
+        "versionSelect": "You must select a version."
+      }
+    },
     "cluster": {
       "title": "Cluster",
       "description": "Configure the settings that apply to all cluster resources.",
@@ -526,12 +538,6 @@
         "cannotBeBlank": "Cluster name must not be blank.",
         "alreadyExists": "Cluster with name {{clusterName}} already exists. Choose a unique name.",
         "doesntMatchRegex": "Cluster name '{{clusterName}}' doesn't match the the required format. Enter a name that starts with an alphabetical character and has up to 60 characters. If Slurm accounting is configured, the name can have up to 40 characters. Valid characters: A-Z, a-z, 0-9, and - (hyphen)"
-      },
-      "version": {
-        "label": "Version",
-        "description": "The ParallelCluster version that will be used for the cluster.",
-        "placeholder": "Enter your cluster version",
-        "cannotBeBlank": "Cluster version must not be blank."
       },
       "region": {
         "label": "Region",

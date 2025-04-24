@@ -218,34 +218,6 @@ Resources:
             - Key: 'parallelcluster:api-id'
               Value: !Ref ApiGatewayRestApi
 
-#  ParallelClusterApi:
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      Parameters:
-#        PermissionsBoundaryPolicy: !If [ UsePermissionBoundaryPCAPI, !Ref PermissionsBoundaryPolicyPCAPI, !Ref AWS::NoValue ]
-#        IAMRoleAndPolicyPrefix: !If [ UseIAMRoleAndPolicyPrefix, !Ref IAMRoleAndPolicyPrefix, !Ref AWS::NoValue ]
-#        ParallelClusterFunctionAdditionalPolicies: !If [ UseAdditionalPoliciesPCAPI, !Ref AdditionalPoliciesPCAPI, !Ref AWS::NoValue ]
-#        ApiDefinitionS3Uri: !Sub s3://${AWS::Region}-aws-parallelcluster/parallelcluster/${Version}/api/ParallelCluster.openapi.yaml
-#        CreateApiUserRole: False
-#        EnableIamAdminAccess: True
-#        VpcEndpointId: !If [ IsPrivate, !Ref VpcEndpointId, !Ref AWS::NoValue ]
-#        ImageBuilderSubnetId: !If
-#          - UseNonDockerizedPCAPI
-#          - !Ref AWS::NoValue
-#          - Fn::If:
-#              - NonDefaultVpc
-#              - !Ref ImageBuilderSubnetId
-#              - !Ref AWS::NoValue
-#        ImageBuilderVpcId: !If
-#          - UseNonDockerizedPCAPI
-#          - !Ref AWS::NoValue
-#          - Fn::If:
-#            - NonDefaultVpc
-#            - !Ref ImageBuilderVpcId
-#            - !Ref AWS::NoValue
-#      TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${Version}/api/parallelcluster-api.yaml
-#      TimeoutInMinutes: 30
-
   ApiVersionMap:
     Type: Custom::ApiVersionMap
     Properties:
@@ -275,6 +247,11 @@ Resources:
             reason = None
             try:
           
+              if event['RequestType'] == 'Delete':
+                print("Processing Delete request")
+                cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+                return
+          
               if event['RequestType'] in ['Create', 'Update']:
                 response_data["Message"] = "Resource creation successful!"
                 cfn = boto3.client('cloudformation')
@@ -287,7 +264,7 @@ Resources:
           
                 paginator = cfn.get_paginator('list_stacks')
                 for page in paginator.paginate(
-                    StackStatusFilter=['CREATE_COMPLETE', 'UPDATE_COMPLETE', 'CREATE_IN_PROGRESS']
+                    StackStatusFilter=['CREATE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_IN_PROGRESS', 'UPDATE_ROLLBACK_COMPLETE', 'CREATE_IN_PROGRESS']
                 ):
                     for stack in page['StackSummaries']:
                         try:
@@ -314,11 +291,13 @@ Resources:
                                   if (tag.get('Key') == 'parallelcluster:api-id' and 
                                       tag.get('Value') == api_id):
                                       # Get stack outputs
-                                      waiter = cfn.get_waiter('stack_create_complete')
-                                      waiter.wait(StackName=stack['StackName'])
-                                      stack_response = cfn.describe_stacks(
-                                          StackName=stack['StackName']
-                                      )
+                                      if stack_response['Stacks'][0]['StackStatus'] == 'CREATE_IN_PROGRESS':
+                                        waiter = cfn.get_waiter('stack_create_complete')
+                                        waiter.wait(StackName=stack['StackName'])
+                                        stack_response = cfn.describe_stacks(
+                                            StackName=stack['StackName']
+                                        )
+                            
                                       print(f"Found stack {stack['StackName']} with outputs: {stack_response['Stacks'][0]['Outputs']}")
                                       
                                       for output in stack_response['Stacks'][0]['Outputs']:
@@ -334,7 +313,7 @@ Resources:
                 print(f"Result: {result}")
               
                 response_data = {"ApiVersionMapping": result}
-                cfnresponse.send(event, context,  cfnresponse.SUCCESS, response_data, result)
+                cfnresponse.send(event, context,  cfnresponse.SUCCESS, response_data)
       
             except Exception as e:
               response_status = cfnresponse.FAILED

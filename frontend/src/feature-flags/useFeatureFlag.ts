@@ -13,7 +13,7 @@ import {featureFlagsProvider} from './featureFlagsProvider'
 import {AvailableFeature} from './types'
 
 export function useFeatureFlag(feature: AvailableFeature): boolean {
-  const version = useState(['app', 'version', 'full'])
+  const version = useState(['app', 'wizard', 'version'])
   const region = useState(['aws', 'region'])
   return isFeatureEnabled(version, region, feature)
 }
