@@ -136,16 +136,16 @@ function OfficialImagesList({images}: {images: Image[]}) {
                 <Header
                     variant="awsui-h1-sticky"
                     counter={`(${imagesCount})`}
-                    description={t('officialImages.header.description')}
-                    info={<InfoLink helpPanel={<OfficialImagesHelpPanel />} />}
-                    actions={
-                        <SpaceBetween direction="horizontal" size="xs">
+                    description={
+                        <SpaceBetween direction="vertical" size="xs">
+                            {t('officialImages.header.description')}
                             <SpaceBetween direction="horizontal" size="xs">
                                 <span>Select the ParallelCluster Version:</span>
                                 <VersionSelect />
                             </SpaceBetween>
                         </SpaceBetween>
                     }
+                    info={<InfoLink helpPanel={<OfficialImagesHelpPanel />} />}
                 >
                     {t('officialImages.header.title')}
                 </Header>
