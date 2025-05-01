@@ -93,12 +93,13 @@ export default function Actions() {
 
   const editConfiguration = React.useCallback(() => {
     setState(['app', 'wizard', 'clusterName'], clusterName)
-    setState(['app', 'wizard', 'page'], 'cluster')
+    setState(['app', 'wizard', 'page'], 'version')
     setState(['app', 'wizard', 'editing'], true)
+    setState(['app', 'wizard', 'version'], clusterVersion)
 
     navigate('/configure')
     loadTemplateFromCluster(clusterName)
-  }, [clusterName, navigate])
+  }, [clusterName, navigate, clusterVersion])
 
   const deleteCluster = React.useCallback(() => {
     console.log(`Deleting: ${clusterName}`)

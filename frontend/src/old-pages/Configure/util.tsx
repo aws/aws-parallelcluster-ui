@@ -10,7 +10,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {setState, getState, clearState} from '../../store'
+import {setState, getState, clearState, useState} from '../../store'
 import {DescribeCluster, GetConfiguration, LoadAwsConfig} from '../../model'
 import {getIn, setIn} from '../../util'
 import {mapComputeResources} from './Queues/queues.mapper'
@@ -169,13 +169,15 @@ const wizardLoadingPath = ['app', 'wizard', 'source', 'loading']
 
 function loadTemplateFromCluster(clusterName: string) {
   setState(wizardLoadingPath, true)
-  DescribeCluster(clusterName).then(data => {
-    const version = data.version
-    GetConfiguration(clusterName, (configuration: any) => {
-      setState(['app', 'wizard', 'version'], version)
-      loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
-    })
+  const clusterPath = ['clusters', 'index', clusterName]
+  const version = getState([...clusterPath, 'version'])
+
+  console.log("GOT HERE")
+  GetConfiguration(clusterName, (configuration: any) => {
+    setState(['app', 'wizard', 'version'], version)
+    loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
   })
+
 }
 
 export {loadTemplate, subnetName, loadTemplateFromCluster}

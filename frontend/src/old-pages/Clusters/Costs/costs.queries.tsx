@@ -42,7 +42,6 @@ export function useCostMonitoringDataQuery(clusterName: string) {
 
 export function useCostMonitoringStatus() {
   const isCostMonitoringActive = useFeatureFlag('cost_monitoring')
-  console.log("UseCostMonitoringStatus")
   return useQuery(
     COST_MONITORING_STATUS_QUERY_KEY,
     () => GetCostMonitoringStatus(),
