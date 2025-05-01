@@ -55,3 +55,12 @@ def mock_csrf_needed(mocker, app):
 @pytest.fixture
 def mock_disable_auth(mocker):
     mocker.patch.object(api.utils, 'DISABLE_AUTH', True)
+
+from api import PclusterApiHandler
+@patch.dict('os.environ', {'API_BASE_URL': 'https://mocked-url.com'})
+def test_api_base_url():
+    # Re-import or reload the module to pick up the new environment variable
+    import importlib
+    importlib.reload(PclusterApiHandler)
+
+    assert PclusterApiHandler.API_BASE_URL == 'https://mocked-url.com'
