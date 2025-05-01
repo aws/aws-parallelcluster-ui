@@ -64,11 +64,11 @@ if not JWKS_URL:
     JWKS_URL = os.getenv("JWKS_URL",
                          f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/" ".well-known/jwks.json")
 API_BASE_URL_MAPPING = {}
-
-for url in API_BASE_URL.split(","):
-    if url:
-        pair=url.split("=")
-        API_BASE_URL_MAPPING[pair[0]] = pair[1]
+if API_BASE_URL:
+    for url in API_BASE_URL.split(","):
+        if url:
+            pair=url.split("=")
+            API_BASE_URL_MAPPING[pair[0]] = pair[1]
 
 
 
