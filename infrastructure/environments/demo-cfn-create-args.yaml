@@ -3,7 +3,7 @@ Parameters:
   - ParameterKey: AdminUserEmail
     ParameterValue: my@email.com
   - ParameterKey: Version
-    ParameterValue: 3.12.0
+    ParameterValue: 3.13.0,3.11.0
   - ParameterKey: InfrastructureBucket
     ParameterValue: BUCKET_URL_PLACEHOLDER
   - ParameterKey: PublicEcrImageUri
