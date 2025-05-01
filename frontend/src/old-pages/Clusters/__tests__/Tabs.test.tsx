@@ -40,8 +40,11 @@ describe('Given a cluster and a list of tabs', () => {
           clusters: {
             selected: 'foo',
           },
+          wizard: {
+            version: '3.5.0',
+          },
           version: {
-            full: '3.5.0',
+            full: ['3.5.0', '3.6.0'],
           },
         },
         clusters: {
@@ -72,8 +75,11 @@ describe('Given a cluster and a list of tabs', () => {
           clusters: {
             selected: 'foo',
           },
+          wizard: {
+            version: '3.5.0',
+          },
           version: {
-            full: '3.5.0',
+            full: ['3.5.0', '3.6.0'],
           },
         },
         clusters: {

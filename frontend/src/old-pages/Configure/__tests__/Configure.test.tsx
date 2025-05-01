@@ -30,6 +30,7 @@ describe('Given a configure component (wizard)', () => {
             source: {
               loading: true,
             },
+            version: '3.12.0'
           },
         },
       })
@@ -57,6 +58,7 @@ describe('Given a configure component (wizard)', () => {
             source: {
               loading: false,
             },
+            version: '3.12.0'
           },
         },
       })

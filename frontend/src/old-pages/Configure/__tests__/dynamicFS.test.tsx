@@ -12,10 +12,11 @@ describe('Given a PCluster version', () => {
       mockStore.getState.mockReturnValue({
         app: {
           version: {
-            full: '3.3.0',
+            full: ['3.3.0'],
           },
           wizard: {
             editing: true,
+            version: '3.3.0',
           },
         },
       })
@@ -33,11 +34,9 @@ describe('Given a PCluster version', () => {
       it('should let the user add or remove filesystems', () => {
         mockStore.getState.mockReturnValue({
           app: {
-            version: {
-              full: '3.2.0',
-            },
             wizard: {
               editing: false,
+              version: '3.2.0',
             },
           },
         })
@@ -55,11 +54,9 @@ describe('Given a PCluster version', () => {
       it('should block the user from creating or removing filesystems', () => {
         mockStore.getState.mockReturnValue({
           app: {
-            version: {
-              full: '3.2.0',
-            },
             wizard: {
               editing: true,
+              version: '3.2.0',
             },
           },
         })

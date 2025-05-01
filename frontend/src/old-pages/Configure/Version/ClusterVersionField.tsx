@@ -43,7 +43,7 @@ export function ClusterVersionField({ hideLabel = false }: ClusterVersionFieldPr
   const editing = !!useState(editingPath)
   const versions = useState(['app', 'version', 'full'])
 
-  const options = versions.map((version: any) => ({
+  const options = (versions || []).map((version: string) => ({
     label: version,
     value: version
   }))
