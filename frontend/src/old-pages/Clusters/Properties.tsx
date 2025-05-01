@@ -39,16 +39,21 @@ import InfoLink from '../../components/InfoLink'
 import {useClusterPoll} from '../../components/useClusterPoll'
 import {ValueWithLabel} from '../../components/ValueWithLabel'
 import {EnableCostMonitoringButton} from './Costs/EnableCostMonitoringButton'
+import {DescribeCluster, GetConfiguration} from "../../model";
 
 export default function ClusterProperties() {
   const {t} = useTranslation()
   const clusterName = useState(['app', 'clusters', 'selected'])
   const clusterPath = ['clusters', 'index', clusterName]
   const cluster: ClusterDescription = useState(clusterPath)
-  const version = useState(['app', 'clusters', 'selected'])
   const headNode = useState([...clusterPath, 'headNode'])
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
+
+  DescribeCluster(clusterName).then(data => {
+    const version = data.version
+      setState(['app', 'wizard', 'version'], version)
+  })
 
   function isSsmPolicy(p: any) {
     return p.hasOwnProperty('Policy') && p.Policy === ssmPolicy(region)

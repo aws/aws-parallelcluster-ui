@@ -30,7 +30,7 @@ describe('given a GetVersion command', () => {
   describe('when the PC version can be retrieved successfully', () => {
     beforeEach(() => {
       const mockResponse = {
-        version: '3.5.0',
+        version: ['3.5.0', '3.6.0'],
       }
 
       mockGet.mockResolvedValueOnce({data: mockResponse})
@@ -39,13 +39,13 @@ describe('given a GetVersion command', () => {
     it('should return the PC version', async () => {
       const data = await GetVersion()
 
-      expect(data).toEqual<PCVersion>({full: '3.5.0'})
+      expect(data).toEqual<PCVersion>({full: ['3.5.0', '3.6.0']})
     })
 
     it('should store the PC version', async () => {
       await GetVersion()
 
-      expect(setState).toHaveBeenCalledWith(['app', 'version'], {full: '3.5.0'})
+      expect(setState).toHaveBeenCalledWith(['app', 'version'], {full: ['3.5.0', '3.6.0']})
     })
   })
 

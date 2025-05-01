@@ -76,7 +76,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
           someKey: 'some-value',
         },
         app: {
-          version: {full: '3.5.0'},
+          version: {full: ['3.5.0', '3.7.0']},
           appConfig: {
             someKey: 'some-value',
           },

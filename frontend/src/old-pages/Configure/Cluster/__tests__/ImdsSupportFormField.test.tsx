@@ -54,9 +54,10 @@ describe('given a component to select the IMDS supported version', () => {
         mockStore.getState.mockReturnValue({
           app: {
             version: {
-              full: '3.3.0',
+              full: ['3.3.0'],
             },
             wizard: {
+              version: '3.3.0',
               config: {Imds: null},
             },
           },
@@ -81,9 +82,10 @@ describe('given a component to select the IMDS supported version', () => {
         mockStore.getState.mockReturnValue({
           app: {
             version: {
-              full: '3.3.0',
+              full: ['3.3.0'],
             },
             wizard: {
+              version: '3.3.0',
               config: {
                 Imds: {ImdsSupport: 'v2.0'},
               },
@@ -126,9 +128,10 @@ describe('given a component to select the IMDS supported version', () => {
         mockStore.getState.mockReturnValue({
           app: {
             version: {
-              full: '3.3.0',
+              full: ['3.3.0'],
             },
             wizard: {
+              version: '3.3.0',
               editing: true,
             },
           },
@@ -160,7 +163,10 @@ describe('given a component to select the IMDS supported version', () => {
       mockStore.getState.mockReturnValue({
         app: {
           version: {
-            full: '3.2.0',
+            full: ['3.2.0'],
+          },
+          wizard: {
+            version: '3.2.0',
           },
         },
       })

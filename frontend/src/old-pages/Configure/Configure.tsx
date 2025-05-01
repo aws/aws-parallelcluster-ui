@@ -64,8 +64,8 @@ const validators: {[key: string]: (...args: any[]) => boolean} = {
   version: versionValidate,
   cluster: clusterValidate,
   headNode: headNodeValidate,
-  storage: storageValidate,
   queues: queuesValidate,
+  storage: storageValidate,
   create: createValidate,
 }
 const validate = (page: string): boolean => validators[page]()

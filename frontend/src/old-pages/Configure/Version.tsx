@@ -6,6 +6,7 @@ import {ClusterVersionField} from './Version/ClusterVersionField'
 import InfoLink from '../../components/InfoLink'
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import {getState, setState, clearState, useState} from '../../store'
+import {useHelpPanel} from "../../components/help-panel/HelpPanel";
 
 const errorsPath = ['app', 'wizard', 'errors', 'version']
 
@@ -25,11 +26,20 @@ function versionValidate() {
 
 function Version() {
     const {t} = useTranslation()
+    const editing = useState(['app', 'wizard', 'editing'])
+
+    useHelpPanel(<VersionHelpPanel />)
 
     useEffect(() => {
-        // Clear any existing version when the component mounts
-        setState(['app', 'wizard', 'version'], null)
-    }, [])
+        // Get the current version
+        const currentVersion = getState(['app', 'wizard', 'version'])
+
+        // Clear version only if we're not editing and there's no version set,
+        // or if we're explicitly not in editing mode
+        if (!editing && (currentVersion === undefined || currentVersion === null)) {
+            setState(['app', 'wizard', 'version'], null)
+        }
+    }, [editing])
 
     return (
         <SpaceBetween direction="vertical" size="l">

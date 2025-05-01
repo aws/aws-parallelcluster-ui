@@ -45,7 +45,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
         mockStore.getState.mockReturnValue({
           app: {
             version: {
-              full: '3.5.0',
+              full: ['3.5.0'],
             },
           },
           clusters: {
@@ -82,7 +82,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
           mockStore.getState.mockReturnValue({
             app: {
               version: {
-                full: '3.5.0',
+                full: ['3.5.0', '3.6.0'],
               },
             },
             clusters: {
@@ -111,7 +111,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
           mockStore.getState.mockReturnValue({
             app: {
               version: {
-                full: '3.5.0',
+                full: ['3.5.0'],
               },
             },
             clusters: {
@@ -144,7 +144,7 @@ describe('given a hook to list the clusters that can be copied from', () => {
           mockStore.getState.mockReturnValue({
             app: {
               version: {
-                full: '3.5.0',
+                full: ['3.5.0'],
               },
             },
             clusters: {

@@ -8,6 +8,7 @@ const mockRequest = executeRequest as jest.Mock
 
 describe('given a CreateCluster command and a cluster configuration', () => {
   const clusterName = 'any-name'
+  const clusterVersion = 'some-version'
   const clusterConfiguration = 'Imds:\n  ImdsSupport: v2.0'
   const mockRegion = 'some-region'
   const mockSelectedRegion = 'some-region'
@@ -37,11 +38,12 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         clusterConfiguration,
         mockRegion,
         mockSelectedRegion,
+        clusterVersion,
       )
       expect(mockRequest).toHaveBeenCalledTimes(1)
       expect(mockRequest).toHaveBeenCalledWith(
         'post',
-        'api?path=/v3/clusters&region=some-region',
+        'api?path=/v3/clusters&region=some-region&version=some-version',
         expectedBody,
         expect.any(Object),
         expect.any(Object),
@@ -55,6 +57,7 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         clusterConfiguration,
         mockRegion,
         mockSelectedRegion,
+        clusterVersion,
         false,
         mockSuccessCallback,
       )
@@ -71,12 +74,13 @@ describe('given a CreateCluster command and a cluster configuration', () => {
           clusterConfiguration,
           mockRegion,
           mockSelectedRegion,
+          clusterVersion,
           mockDryRun,
         )
         expect(mockRequest).toHaveBeenCalledTimes(1)
         expect(mockRequest).toHaveBeenCalledWith(
           'post',
-          'api?path=/v3/clusters&dryrun=true&region=some-region',
+          'api?path=/v3/clusters&dryrun=true&region=some-region&version=some-version',
           expect.any(Object),
           expect.any(Object),
           expect.any(Object),
@@ -106,6 +110,7 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         clusterConfiguration,
         mockRegion,
         mockSelectedRegion,
+        clusterVersion,
         false,
         undefined,
         mockErrorCallback,
@@ -128,6 +133,7 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         'Imds:\n  ImdsSupport: v2.0',
         mockRegion,
         mockSelectedRegion,
+        clusterVersion,
       )
 
       expect(mockRequest).toHaveBeenCalledWith(
@@ -154,6 +160,7 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         'Imds:\n  ImdsSupport: v2.0\nTags:\n  - Key: foo\n    Value: bar',
         mockRegion,
         mockSelectedRegion,
+        clusterVersion,
       )
 
       expect(mockRequest).toHaveBeenCalledWith(
@@ -180,6 +187,7 @@ describe('given a CreateCluster command and a cluster configuration', () => {
         "Imds:\n  ImdsSupport: v2.0\nTags:\n  - Key: parallelcluster-ui\n    Value: 'true'",
         mockRegion,
         mockSelectedRegion,
+        clusterVersion,
       )
 
       expect(mockRequest).not.toHaveBeenCalledWith(
