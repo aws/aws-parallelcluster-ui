@@ -33,7 +33,7 @@ USER_POOL_ID = os.getenv("USER_POOL_ID")
 AUTH_PATH = os.getenv("AUTH_PATH")
 API_BASE_URL = os.getenv("API_BASE_URL")
 API_VERSION = os.getenv("API_VERSION", "3.1.0")
-DEFAULT_API_VERSION = API_VERSION.split(",")[0]
+DEFAULT_API_VERSION = '3.12.0'
 API_USER_ROLE = os.getenv("API_USER_ROLE")
 OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
 CLIENT_ID = os.getenv("CLIENT_ID")
@@ -65,10 +65,10 @@ if not JWKS_URL:
                          f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/" ".well-known/jwks.json")
 API_BASE_URL_MAPPING = {}
 
-for url in API_BASE_URL.split(","):
-    if url:
-        pair=url.split("=")
-        API_BASE_URL_MAPPING[pair[0]] = pair[1]
+# for url in API_BASE_URL.split(","):
+#     if url:
+#         pair=url.split("=")
+#         API_BASE_URL_MAPPING[pair[0]] = pair[1]
 
 
 
@@ -241,9 +241,9 @@ def ec2_action():
 def get_cluster_config_text(cluster_name, region=None):
     url = f"/v3/clusters/{cluster_name}"
     if region:
-        info_resp = sigv4_request("GET", API_BASE_URL_MAPPING[_get_version(request)], url, params={"region": region})
+        info_resp = sigv4_request("GET", API_BASE_URL_MAPPING['3.12.0'], url, params={"region": region})
     else:
-        info_resp = sigv4_request("GET", API_BASE_URL_MAPPING[_get_version(request)], url)
+        info_resp = sigv4_request("GET", API_BASE_URL_MAPPING['3.12.0'], url)
     if info_resp.status_code != 200:
         abort(info_resp.status_code)
 
@@ -492,7 +492,7 @@ def get_dcv_session():
 
 
 def get_custom_image_config():
-    image_info = sigv4_request("GET", API_BASE_URL_MAPPING[_get_version(request)], f"/v3/images/custom/{request.args.get('image_id')}").json()
+    image_info = sigv4_request("GET", API_BASE_URL_MAPPING['3.12.0'], f"/v3/images/custom/{request.args.get('image_id')}").json()
     configuration = requests.get(image_info["imageConfiguration"]["url"])
     return configuration.text
 
@@ -744,8 +744,7 @@ def _get_params(_request):
     return params
 
 def _get_version(v):
-    if v and str(v) in API_VERSION:
-        return str(v)
+
     return DEFAULT_API_VERSION
 
 
@@ -755,7 +754,7 @@ pc = Blueprint('pc', __name__)
 @authenticated({'admin'})
 @validated(params=PCProxyArgs)
 def pc_proxy_get():
-    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request.args.get("version"))], request.args.get("path"), _get_params(request))
+    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version('3.12.0')], request.args.get("path"), _get_params(request))
     return response.json(), response.status_code
 
 @pc.route('/', methods=['POST','PUT','PATCH','DELETE'], strict_slashes=False)
@@ -769,5 +768,5 @@ def pc_proxy():
     except:
         pass
 
-    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version(request.args.get("version"))], request.args.get("path"), _get_params(request), body=body)
+    response = sigv4_request(request.method, API_BASE_URL_MAPPING[_get_version('3.12.0')], request.args.get("path"), _get_params(request), body=body)
     return response.json(), response.status_code
