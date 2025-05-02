@@ -48,6 +48,7 @@ function VersionSelect() {
 
     return (
         <Select
+            expandToViewport={true}
             selectedOption={{label: selectedVersion, value: selectedVersion}}
             onChange={({detail}) => {
                 setSelectedVersion(detail.selectedOption.value)
