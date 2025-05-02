@@ -59,7 +59,7 @@ describe('given a component to activate cost monitoring for the account', () => 
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {full: '3.2.0'},
+          wizard: {version: '3.2.0'},
         },
         aws: {
           region: 'us-west-1',
@@ -92,7 +92,7 @@ describe('given a component to activate cost monitoring for the account', () => 
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {full: '3.2.0'},
+          wizard: {version: '3.2.0'},
         },
         aws: {
           region: 'us-west-1',
@@ -121,7 +121,7 @@ describe('given a component to activate cost monitoring for the account', () => 
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {full: '3.1.5'},
+          wizard: {version: '3.1.5'},
         },
         aws: {
           region: 'us-west-1',

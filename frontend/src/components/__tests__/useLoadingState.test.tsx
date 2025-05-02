@@ -109,7 +109,7 @@ describe('given a hook to load all the data necessary for the app to boot', () =
       mockStore.getState.mockReturnValue({
         identity: null,
         app: {
-          version: {full: '3.5.0'},
+          wizard: {version: '3.5.0'},
           appConfig: {
             someKey: 'some-value',
           },
@@ -131,7 +131,9 @@ describe('given a hook to load all the data necessary for the app to boot', () =
           someKey: 'some-value',
         },
         app: {
-          version: {full: '3.5.0'},
+          wizard: {
+            version: '3.5.0',
+          },
           appConfig: null,
         },
       })
