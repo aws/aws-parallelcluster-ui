@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import {ClusterStatus} from '../../types/clusters'
-import React from 'react'
+import React, {useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {setState, useState, ssmPolicy, consoleDomain} from '../../store'
@@ -45,6 +45,9 @@ export default function Actions() {
 
   const apiVersion = useState(['app', 'version', 'full'])
   const clusterVersion = useState([...clusterPath, 'version'])
+  const versionSupported = useMemo(() => {
+    return new Set(apiVersion).has(clusterVersion);
+  }, [apiVersion, clusterVersion]);
 
   const fleetStatus = useState([...clusterPath, 'computeFleetStatus'])
   const clusterStatus = useState([...clusterPath, 'clusterStatus'])
@@ -75,7 +78,7 @@ export default function Actions() {
     clusterStatus === ClusterStatus.DeleteInProgress ||
     clusterStatus === ClusterStatus.UpdateInProgress ||
     clusterStatus === ClusterStatus.CreateFailed ||
-    !apiVersion.includes(clusterVersion)
+    !versionSupported
   const isStartFleetDisabled = fleetStatus !== 'STOPPED'
   const isStopFleetDisabled = fleetStatus !== 'RUNNING'
   const isDeleteDisabled =
