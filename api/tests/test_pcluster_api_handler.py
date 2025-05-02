@@ -1,5 +1,5 @@
 from unittest import mock
-from api.PclusterApiHandler import login
+from api.PclusterApiHandler import login, get_base_url
 
 
 @mock.patch("api.PclusterApiHandler.requests.post")
@@ -27,3 +27,11 @@ def test_login_with_no_access_token_returns_401(mocker, app):
         login()
 
         mock_abort.assert_called_once_with(401)
+
+def test_get_base_url(monkeypatch):
+    monkeypatch.setattr('api.PclusterApiHandler.API_VERSION', ['3.12.0', '3.11.0'])
+    monkeypatch.setattr('api.PclusterApiHandler.API_BASE_URL', '3.12.0=https://example.com,3.11.0=https://example1.com,')
+    monkeypatch.setattr('api.PclusterApiHandler.API_BASE_URL_MAPPING', {'3.12.0': 'https://example.com', '3.11.0': 'https://example1.com'})
+
+    assert 'https://example.com' == get_base_url('3.12.0')
+
