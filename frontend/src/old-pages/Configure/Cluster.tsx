@@ -405,7 +405,7 @@ function Cluster() {
       >
         <SpaceBetween direction="vertical" size="m">
           <ClusterNameField />
-          <ClusterVersionField />
+          {/*<ClusterVersionField />*/}
           <RegionSelect />
           <OsFormField />
           <CustomAMISettings
