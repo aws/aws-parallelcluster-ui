@@ -74,8 +74,8 @@ export default function Actions() {
     clusterStatus === ClusterStatus.CreateInProgress ||
     clusterStatus === ClusterStatus.DeleteInProgress ||
     clusterStatus === ClusterStatus.UpdateInProgress ||
-    clusterStatus === ClusterStatus.CreateFailed ||
-    !apiVersion.split(",").includes(clusterVersion)
+    clusterStatus === ClusterStatus.CreateFailed
+    // !apiVersion.split(",").includes(clusterVersion)
   const isStartFleetDisabled = fleetStatus !== 'STOPPED'
   const isStopFleetDisabled = fleetStatus !== 'RUNNING'
   const isDeleteDisabled =

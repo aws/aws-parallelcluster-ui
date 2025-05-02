@@ -56,9 +56,9 @@ export default function ClusterTabs() {
 
   return cluster ? (
     <>
-      {!apiVersion.split(",").includes(cluster.version) ? (
-        <Alert>{t('cluster.editAlert')}</Alert>
-      ) : null}
+      {/*{!apiVersion.split(",").includes(cluster.version) ? (*/}
+      {/*  <Alert>{t('cluster.editAlert')}</Alert>*/}
+      {/*) : null}*/}
       <Tabs
         tabs={[
           {
