@@ -1,5 +1,10 @@
 from unittest import mock
-from api.PclusterApiHandler import login, get_base_url
+from api.PclusterApiHandler import login, get_base_url, create_url_map
+
+class MockRequest:
+    cookies = {'int_value': 100}
+    args = {'version': '3.12.0'}
+    json = {'username': 'user@email.com'}
 
 
 @mock.patch("api.PclusterApiHandler.requests.post")
@@ -33,5 +38,8 @@ def test_get_base_url(monkeypatch):
     monkeypatch.setattr('api.PclusterApiHandler.API_BASE_URL', '3.12.0=https://example.com,3.11.0=https://example1.com,')
     monkeypatch.setattr('api.PclusterApiHandler.API_BASE_URL_MAPPING', {'3.12.0': 'https://example.com', '3.11.0': 'https://example1.com'})
 
-    assert 'https://example.com' == get_base_url('3.12.0')
+    assert 'https://example.com' == get_base_url(MockRequest())
+
+def test_create_url_map():
+    assert {'3.12.0': 'https://example.com', '3.11.0': 'https://example1.com'} == create_url_map('3.12.0=https://example.com,3.11.0=https://example1.com,')
 

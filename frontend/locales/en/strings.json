@@ -496,7 +496,7 @@
     "version": {
       "label": "Cluster Version",
       "title": "Version",
-      "placeholder": "Select your cluster version",
+      "placeholder": "Cluster version",
       "description": "Select the AWS ParallelCluster version to use for this cluster.",
       "help": {
         "main": "Choose the version of AWS ParallelCluster to use for creating and managing your cluster."
