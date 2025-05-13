@@ -21,6 +21,7 @@ import {
   Header,
   Input,
   Modal,
+  Select,
   SpaceBetween,
 } from '@cloudscape-design/components'
 
@@ -61,6 +62,8 @@ export default function ImageBuildDialog() {
   const errors = useState([...imageBuildPath, 'errors'])
   const imageId = useState([...imageBuildPath, 'imageId'])
   const pending = useState([...imageBuildPath, 'pending'])
+  const versions = useState(['app', 'version', 'full'])
+  const [selectedVersion, setSelectedVersion] = React.useState(versions[0])
 
   let validated = useState([...buildImageErrorsPath, 'validated'])
 
@@ -85,7 +88,7 @@ export default function ImageBuildDialog() {
     setState([...imageBuildPath, 'pending'], true)
     if (buildImageValidate(missingImageIdError)) {
       try {
-        await BuildImage(imageId, imageConfig)
+        await BuildImage(imageId, imageConfig, selectedVersion)
         handleClose()
       } catch (error: unknown) {
         if ((error as AxiosError).response) {
@@ -173,14 +176,24 @@ export default function ImageBuildDialog() {
           />
         </FormField>
         <Flashbar items={flashbarItems} />
-        {
+        <SpaceBetween direction="vertical" size="xs">
+          <FormField
+              label={t('customImages.dialogs.buildImage.versionLabel')}
+          >
+            <Select
+                selectedOption={{ label: selectedVersion, value: selectedVersion }}
+                onChange={({ detail }) => setSelectedVersion(detail.selectedOption.value)}
+                options={versions.map((version: any) => ({ label: version, value: version }))}
+                placeholder={t('customImages.dialogs.buildImage.versionPlaceholder')}
+            />
+          </FormField>
           <ConfigView
-            config={imageConfig}
-            onChange={({detail}: any) => {
-              setState([...imageBuildPath, 'config'], detail.value)
-            }}
+              config={imageConfig}
+              onChange={({detail}: any) => {
+                setState([...imageBuildPath, 'config'], detail.value)
+              }}
           />
-        }
+        </SpaceBetween>
       </SpaceBetween>
     </Modal>
   )

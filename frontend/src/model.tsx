@@ -448,8 +448,9 @@ function GetCustomImageConfiguration(imageId: any, callback?: Callback) {
     })
 }
 
-async function BuildImage(imageId: string, imageConfig: string) {
+async function BuildImage(imageId: string, imageConfig: string, version: string) {
   var url = 'api?path=/v3/images/custom'
+  url += version ? `&version=${version}` : ''
   var body = {imageId: imageId, imageConfiguration: imageConfig}
   const {data} = await request('post', url, body)
   notify(`Successfully queued build for ${imageId}.`, 'success')

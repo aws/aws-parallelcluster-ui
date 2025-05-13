@@ -101,7 +101,7 @@
     "ariaLabel": "Info"
   },
   "cluster": {
-    "editAlert": "This cluster cannot be edited as it was created using a different version of AWS ParallelCluster.",
+    "editAlert": "This cluster cannot be edited as it was created using an incompatible version of AWS ParallelCluster.",
     "tabs": {
       "details": "Details",
       "instances": "Instances",
@@ -1419,6 +1419,8 @@
     },
     "dialogs": {
       "buildImage": {
+        "versionLabel": "Version",
+        "versionPlaceholder": "Select version",
         "closeAriaLabel": "Close",
         "title": "Image configuration",
         "cancel": "Cancel",
