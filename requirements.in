@@ -1,4 +1,4 @@
-Flask-Cors==4.0.2
+Flask-Cors==6.0.0
 Flask==2.3.3
 Werkzeug==3.0.6
 boto3==1.24.30
