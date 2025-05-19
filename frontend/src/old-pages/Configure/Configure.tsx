@@ -116,8 +116,6 @@ function Configure() {
   const [refreshing, setRefreshing] = React.useState(false)
   let navigate = useNavigate()
 
-  setState(['app', 'wizard', 'version'], null)
-
   const clusterPath = ['clusters', 'index', clusterName]
   const fleetStatus: ComputeFleetStatus = useState([
     ...clusterPath,

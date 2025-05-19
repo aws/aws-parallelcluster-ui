@@ -122,10 +122,6 @@ function loadTemplateLazy(config: any, callback?: () => void) {
   setState(['app', 'wizard', 'loaded'], true)
   setState(['app', 'wizard', 'config'], config)
 
-  // if (version) {
-  //   setState(['app', 'wizard', 'version'], version)
-  // }
-
   if (keypairs.length > 0 && !keypairNames.has(getIn(config, keypairPath)))
     setState(['app', 'wizard', 'config', ...keypairPath], keypairs[0].KeyName)
   setState(['app', 'wizard', 'page'], 'version')
@@ -169,15 +165,14 @@ const wizardLoadingPath = ['app', 'wizard', 'source', 'loading']
 
 function loadTemplateFromCluster(clusterName: string) {
   setState(wizardLoadingPath, true)
-  const clusterPath = ['clusters', 'index', clusterName]
-  const version = getState([...clusterPath, 'version'])
 
-  console.log("GOT HERE")
-  GetConfiguration(clusterName, (configuration: any) => {
-    setState(['app', 'wizard', 'version'], version)
-    loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
+  DescribeCluster(clusterName).then(data => {
+    const version = data.version
+    GetConfiguration(clusterName, (configuration: any) => {
+      setState(['app', 'wizard', 'version'], version)
+      loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
+    })
   })
-
 }
 
 export {loadTemplate, subnetName, loadTemplateFromCluster}

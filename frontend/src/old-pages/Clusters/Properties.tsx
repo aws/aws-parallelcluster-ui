@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import {ClusterStatus, ClusterDescription} from '../../types/clusters'
-import React, {PropsWithChildren, ReactElement} from 'react'
+import React from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {findFirst, clusterDefaultUser} from '../../util'
 import {useState, setState, ssmPolicy} from '../../store'
@@ -39,7 +39,6 @@ import InfoLink from '../../components/InfoLink'
 import {useClusterPoll} from '../../components/useClusterPoll'
 import {ValueWithLabel} from '../../components/ValueWithLabel'
 import {EnableCostMonitoringButton} from './Costs/EnableCostMonitoringButton'
-import {DescribeCluster, GetConfiguration} from "../../model";
 
 export default function ClusterProperties() {
   const {t} = useTranslation()
@@ -49,11 +48,6 @@ export default function ClusterProperties() {
   const headNode = useState([...clusterPath, 'headNode'])
   const defaultRegion = useState(['aws', 'region'])
   const region = useState(['app', 'selectedRegion']) || defaultRegion
-
-  DescribeCluster(clusterName).then(data => {
-    const version = data.version
-      setState(['app', 'wizard', 'version'], version)
-  })
 
   function isSsmPolicy(p: any) {
     return p.hasOwnProperty('Policy') && p.Policy === ssmPolicy(region)

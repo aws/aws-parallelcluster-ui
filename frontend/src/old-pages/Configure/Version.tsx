@@ -34,9 +34,8 @@ function Version() {
         // Get the current version
         const currentVersion = getState(['app', 'wizard', 'version'])
 
-        // Clear version only if we're not editing and there's no version set,
-        // or if we're explicitly not in editing mode
-        if (!editing && (currentVersion === undefined || currentVersion === null)) {
+        // Clear version only if we're not editing
+        if (!editing) {
             setState(['app', 'wizard', 'version'], null)
         }
     }, [editing])
