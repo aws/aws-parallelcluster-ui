@@ -898,8 +898,9 @@ Resources:
               - execute-api:Invoke
             Effect: Allow
             Resource: !Sub
-              - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${PCApiGateway}/*/*
-              - { PCApiGateway: !Select [2, !Split ['/', !Select [0, !Split ['.', !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]]]]] }
+              - arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${PCApiGateway}/${PCApiStage}/*
+              - PCApiGateway: !Select [2, !Split ['/', !Select [0, !Split ['.', !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]]]]]
+                PCApiStage: !Select [3, !Split ['/', !GetAtt [ ParallelClusterApi, Outputs.ParallelClusterApiInvokeUrl ]]]
 
   CognitoPolicy:
     Type: AWS::IAM::ManagedPolicy
