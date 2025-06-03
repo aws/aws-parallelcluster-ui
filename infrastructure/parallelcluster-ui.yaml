@@ -36,7 +36,7 @@ Parameters:
     Description: Version of AWS ParallelCluster to deploy.
     Type: String
     AllowedPattern: "^([0-9]+)\\.([0-9]+)\\.([0-9]+)(,([0-9]+)\\.([0-9]+)\\.([0-9]+))*$"
-    ConstraintDescription: Please specify a valid ParallelCluster version.
+    ConstraintDescription: Please specify a comma separated list of valid ParallelCluster versions.
   ImageBuilderVpcId:
     Description: (Optional) Select the VPC to use for building the container images. If not selected, default VPC will be used.
     Type: String
@@ -240,7 +240,15 @@ Resources:
           import os
           import re
           import time
-        
+          
+          def get_partition(region):
+            if region.startswith('us-gov-'):
+              return 'aws-us-gov'
+            elif region.startswith('cn-'):
+              return 'aws-cn'
+            else:
+              return 'aws'
+      
           def handler(event, context):
             response_data = {}
             response_status = cfnresponse.SUCCESS
@@ -255,7 +263,13 @@ Resources:
               if event['RequestType'] in ['Create', 'Update']:
                 response_data["Message"] = "Resource creation successful!"
                 cfn = boto3.client('cloudformation')
+          
+                sts_client = boto3.client('sts')
+                caller_identity = sts_client.get_caller_identity()
+                account_id = caller_identity['Account']
+
                 result = ""
+                api_gateway_arns = []
               
                 api_id = event['ResourceProperties'].get('ApiGatewayRestApiId')
                 print(f"ApiGatewayRestApiId: {api_id}")
@@ -304,7 +318,12 @@ Resources:
                                           if output['OutputKey'] == 'ParallelClusterApiInvokeUrl':
                                               # Construct the result string
                                               result = f"{result}{version}={output['OutputValue']},"
-                                              print(f"Version={version}, ApiURL={output['OutputValue']}")
+          
+                                              parsed_url = urlparse(output['OutputValue']).hostname.split('.')[0]
+                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}/{parsed_url}/*/*")
+                                              print(f"API arn: {parsed_url}")          
+          
+                                              print(f"Version={version}, ApiURL={output['OutputValue']}, ")
                                               break
               
                         except Exception as e:
@@ -312,7 +331,7 @@ Resources:
                             continue
                 print(f"Result: {result}")
               
-                response_data = {"ApiVersionMapping": result}
+                response_data = {"ApiVersionMapping": result, "ApiArns":  ','.join(api_gateway_arns)}
                 cfnresponse.send(event, context,  cfnresponse.SUCCESS, response_data)
       
             except Exception as e:
@@ -320,7 +339,7 @@ Resources:
               reason = "Failed {}: {}".format(event["RequestType"], e)
 
       Timeout: 300
-      MemorySize: 128
+      MemorySize: 256
 
   ApiVersionMapFunctionRole:
     Type: AWS::IAM::Role
@@ -996,6 +1015,7 @@ Resources:
         - { ApiGateway: !Ref ApiGatewayRestApi }
 
   ParallelClusterApiGatewayInvoke:
+    DependsOn: ApiVersionMap
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub
@@ -1007,7 +1027,7 @@ Resources:
           - Action:
               - execute-api:Invoke
             Effect: Allow
-            Resource: !Sub "arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
+            Resource: !Split [",", !GetAtt ApiVersionMap.ApiArns]
 
   CognitoPolicy:
     Type: AWS::IAM::ManagedPolicy
