@@ -96,9 +96,7 @@ function handleCreate(
   const dryRun = false
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
-  const clusterPath = ['clusters', 'index', clusterName]
-  const version = getState([...clusterPath, 'version'])
-  const cluster = getState(clusterPath)
+  const version = getState(['app', 'wizard', 'version'])
   setClusterLoadingMsg(clusterName, editing, dryRun)
   setState(wizardSubmissionLoading, true)
 
