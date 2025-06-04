@@ -240,6 +240,7 @@ Resources:
           import os
           import re
           import time
+          from urllib.parse import urlparse
           
           def get_partition(region):
             if region.startswith('us-gov-'):
@@ -320,7 +321,7 @@ Resources:
                                               result = f"{result}{version}={output['OutputValue']},"
           
                                               parsed_url = urlparse(output['OutputValue']).hostname.split('.')[0]
-                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}/{parsed_url}/*/*")
+                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}:{parsed_url}/*/*")
                                               print(f"API arn: {parsed_url}")          
           
                                               print(f"Version={version}, ApiURL={output['OutputValue']}, ")
