@@ -35,8 +35,8 @@ Parameters:
   Version:
     Description: Version of AWS ParallelCluster to deploy.
     Type: String
-    AllowedPattern: "^([0-9]+)\\.([0-9]+)\\.([0-9]+)(,([0-9]+)\\.([0-9]+)\\.([0-9]+))*$"
-    ConstraintDescription: Please specify a comma separated list of valid ParallelCluster versions. (Must be 3.6.0 and above)
+    AllowedPattern: '^(?!.*(\d+\.\d+\.\d+).*\1)([0-9]+\.[0-9]+\.[0-9]+)(,[0-9]+\.[0-9]+\.[0-9]+)*$'
+    ConstraintDescription: Please specify a comma separated list of valid ParallelCluster versions without duplicates. (Must be 3.6.0 and above)
   ImageBuilderVpcId:
     Description: (Optional) Select the VPC to use for building the container images. If not selected, default VPC will be used.
     Type: String
@@ -320,8 +320,9 @@ Resources:
                                               # Construct the result string
                                               result = f"{result}{version}={output['OutputValue']},"
           
-                                              parsed_url = urlparse(output['OutputValue']).hostname.split('.')[0]
-                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}:{parsed_url}/*/*")
+                                              gateway = urlparse(output['OutputValue']).hostname.split('.')[0]
+                                              stage = output['OutputValue'].split('/')[3]
+                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}:{gateway}/{stage}/*")
                                               print(f"API arn: {parsed_url}")          
           
                                               print(f"Version={version}, ApiURL={output['OutputValue']}, ")
