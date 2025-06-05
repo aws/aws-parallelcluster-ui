@@ -32,3 +32,26 @@ def size_not_exceeding(data, size):
     byte_size = len(bytes_)
     if byte_size > size:
         raise ValidationError(f'Request body exceeded max size of {size} bytes')
+
+def is_safe_path(arg: str):
+    """
+    Validates if a given path is safe from path traversal attacks.
+
+    This function checks for the presence of directory traversal patterns
+    (../ or ..\) in the provided path string. These patterns are commonly
+    used in path traversal attacks to access files outside the intended
+    directory.
+
+    Args:
+    arg (str): The path string to validate.
+        Examples:
+        - "/v3/clusters" (safe)
+        - "v3/clusters" (safe)
+         "/v3/../../stage/v3/clusters" (safe)
+        - "../stage/v3/clusters" (unsafe)
+
+    Returns:
+    bool: True if the path is safe (no traversal patterns)
+          False if the path contains traversal patterns
+    """
+    return not re.search(r'\.\.[\\/]', arg)
