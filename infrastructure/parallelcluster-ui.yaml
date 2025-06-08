@@ -318,15 +318,17 @@ Resources:
                                       for output in stack_response['Stacks'][0]['Outputs']:
                                           if output['OutputKey'] == 'ParallelClusterApiInvokeUrl':
                                               # Construct the result string
-                                              result = f"{result}{version}={output['OutputValue']},"
+                                              api_url = output['OutputValue']
+                                              result = f"{result}{version}={api_url},"
           
-                                              gateway = urlparse(output['OutputValue']).hostname.split('.')[0]
-                                              stage = output['OutputValue'].split('/')[3]
-                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}:{gateway}/{stage}/*")
-                                              print(f"API arn: {parsed_url}")          
+                                              gateway = urlparse(api_url).hostname.split('.')[0]
+                                              stage = api_url.split('/')[3]
+                                              api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}:{gateway}/{stage}/*")        
           
-                                              print(f"Version={version}, ApiURL={output['OutputValue']}, ")
+                                              print(f"Version={version}, ApiURL={api_url, ")
                                               break
+                                      
+                                      result = result[:-1]
               
                         except Exception as e:
                             print(f"Error processing stack {stack['StackName']}: {str(e)}")
@@ -365,6 +367,9 @@ Resources:
                   - cloudformation:ListStacks
                   - cloudformation:DescribeStacks
                 Resource: '*'
+                Condition:
+                  StringEquals:
+                    "aws:ResourceTag/parallelcluster:api-id": !Ref ApiGatewayRestApi
 
   ParallelClusterUIFun:
     Type: AWS::Lambda::Function
