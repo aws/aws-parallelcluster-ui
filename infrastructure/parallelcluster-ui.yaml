@@ -325,14 +325,13 @@ Resources:
                                               stage = api_url.split('/')[3]
                                               api_gateway_arns.append(f"arn:{get_partition(os.environ['AWS_REGION'])}:execute-api:{os.environ['AWS_REGION']}:{account_id}:{gateway}/{stage}/*")        
           
-                                              print(f"Version={version}, ApiURL={api_url, ")
+                                              print(f"Version={version}, ApiURL={api_url}")
                                               break
-                                      
-                                      result = result[:-1]
               
                         except Exception as e:
                             print(f"Error processing stack {stack['StackName']}: {str(e)}")
                             continue
+                result = result[:-1]
                 print(f"Result: {result}")
               
                 response_data = {"ApiVersionMapping": result, "ApiArns":  ','.join(api_gateway_arns)}
@@ -365,8 +364,12 @@ Resources:
               - Effect: Allow
                 Action:
                   - cloudformation:ListStacks
-                  - cloudformation:DescribeStacks
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*"
                 Condition:
                   StringEquals:
                     "aws:ResourceTag/parallelcluster:api-id": !Ref ApiGatewayRestApi
