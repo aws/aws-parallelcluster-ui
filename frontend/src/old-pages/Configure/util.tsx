@@ -10,8 +10,8 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {setState, getState, clearState} from '../../store'
-import {GetConfiguration, LoadAwsConfig} from '../../model'
+import {setState, getState, clearState, useState} from '../../store'
+import {DescribeCluster, GetConfiguration, LoadAwsConfig} from '../../model'
 import {getIn, setIn} from '../../util'
 import {mapComputeResources} from './Queues/queues.mapper'
 import {mapStorageToUiSettings} from './Storage/storage.mapper'
@@ -25,7 +25,7 @@ function loadTemplateLazy(config: any, callback?: () => void) {
   const keypairs = getState(['aws', 'keypairs']) || []
   const keypairNames = new Set(keypairs.map((kp: any) => kp.KeyName))
   const keypairPath = ['HeadNode', 'Ssh', 'KeyName']
-  const version = getState(['app', 'version', 'full'])
+  const version = getState(['app', 'wizard', 'version'])
   const defaultRegion = getState(['aws', 'region'])
   if (getIn(config, ['Image', 'CustomAmi']))
     setState(['app', 'wizard', 'customAMI', 'enabled'], true)
@@ -124,7 +124,7 @@ function loadTemplateLazy(config: any, callback?: () => void) {
 
   if (keypairs.length > 0 && !keypairNames.has(getIn(config, keypairPath)))
     setState(['app', 'wizard', 'config', ...keypairPath], keypairs[0].KeyName)
-  setState(['app', 'wizard', 'page'], 'cluster')
+  setState(['app', 'wizard', 'page'], 'version')
 
   console.log('config: ', getState(['app', 'wizard', 'config']))
 
@@ -165,8 +165,13 @@ const wizardLoadingPath = ['app', 'wizard', 'source', 'loading']
 
 function loadTemplateFromCluster(clusterName: string) {
   setState(wizardLoadingPath, true)
-  GetConfiguration(clusterName, (configuration: any) => {
-    loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
+
+  DescribeCluster(clusterName).then(data => {
+    const version = data.version
+    GetConfiguration(clusterName, (configuration: any) => {
+      setState(['app', 'wizard', 'version'], version)
+      loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
+    })
   })
 }
 

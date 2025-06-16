@@ -15,18 +15,17 @@ import i18n from 'i18next'
 import {mock} from 'jest-mock-extended'
 import {I18nextProvider, initReactI18next} from 'react-i18next'
 import {Provider} from 'react-redux'
-import {setState as mockSetState} from '../../../../store'
 import {OsFormField} from '../OsFormField'
 
-jest.mock('../../../../store', () => {
-  const originalModule = jest.requireActual('../../../../store')
 
-  return {
-    __esModule: true, // Use it when dealing with esModules
-    ...originalModule,
-    setState: jest.fn(),
-  }
-})
+const mockUseState = jest.fn()
+const mockSetState = jest.fn()
+
+jest.mock('../../../../store', () => ({
+  ...(jest.requireActual('../../../../store') as any),
+  setState: (...args: unknown[]) => mockSetState(...args),
+  useState: (...args: unknown[]) => mockUseState(...args),
+}))
 
 i18n.use(initReactI18next).init({
   resources: {},
@@ -72,6 +71,7 @@ describe('given a component to select an Operating System', () => {
       mockStore.getState.mockReturnValue({
         app: {wizard: {editing: true}},
       })
+      mockUseState.mockReturnValue('3.6.0')
     })
 
     describe('when user selects an option', () => {
@@ -93,9 +93,7 @@ describe('given a component to select an Operating System', () => {
 
   describe('when the version is >= 3.6.0', () => {
     beforeEach(() => {
-      mockStore.getState.mockReturnValue({
-        app: {version: {full: '3.6.0'}},
-      })
+      mockUseState.mockReturnValue('3.6.0')
     })
 
     describe('when the user choose between supported oses', () => {
@@ -115,9 +113,7 @@ describe('given a component to select an Operating System', () => {
 
   describe('when the version is < 3.6.0', () => {
     beforeEach(() => {
-      mockStore.getState.mockReturnValue({
-        app: {version: {full: '3.3.0'}},
-      })
+      mockUseState.mockReturnValue('3.3.0')
     })
 
     describe('when the user choose between supported oses', () => {

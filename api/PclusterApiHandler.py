@@ -32,13 +32,14 @@ from api.validation.schemas import PCProxyArgs, PCProxyBody
 USER_POOL_ID = os.getenv("USER_POOL_ID")
 AUTH_PATH = os.getenv("AUTH_PATH")
 API_BASE_URL = os.getenv("API_BASE_URL")
-API_VERSION = os.getenv("API_VERSION", "3.1.0")
+API_VERSION = sorted(set(os.getenv("API_VERSION", "3.1.0").strip().split(",")), key=lambda x: [-int(n) for n in x.split('.')])
+# Default version must be highest version so that it can be used for read operations due to backwards compatibility
+DEFAULT_API_VERSION = API_VERSION[0]
 API_USER_ROLE = os.getenv("API_USER_ROLE")
 OIDC_PROVIDER = os.getenv("OIDC_PROVIDER")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 SECRET_ID = os.getenv("SECRET_ID")
-SITE_URL = os.getenv("SITE_URL", API_BASE_URL)
 SCOPES_LIST = os.getenv("SCOPES_LIST")
 REGION = os.getenv("AWS_DEFAULT_REGION")
 TOKEN_URL = os.getenv("TOKEN_URL", f"{AUTH_PATH}/oauth2/token")
@@ -48,6 +49,7 @@ JWKS_URL = os.getenv("JWKS_URL")
 AUDIENCE = os.getenv("AUDIENCE")
 USER_ROLES_CLAIM = os.getenv("USER_ROLES_CLAIM", "cognito:groups")
 SSM_LOG_GROUP_NAME = os.getenv("SSM_LOG_GROUP_NAME")
+ARG_VERSION="version"
 
 try:
     if (not USER_POOL_ID or USER_POOL_ID == "") and SECRET_ID:
@@ -62,6 +64,19 @@ except Exception:
 if not JWKS_URL:
     JWKS_URL = os.getenv("JWKS_URL",
                          f"https://cognito-idp.{REGION}.amazonaws.com/{USER_POOL_ID}/" ".well-known/jwks.json")
+
+def create_url_map(url_list):
+    url_map = {}
+    if url_list:
+        for url in url_list.split(","):
+            if url:
+                pair=url.split("=")
+                url_map[pair[0]] = pair[1]
+    return url_map
+
+API_BASE_URL_MAPPING = create_url_map(API_BASE_URL)
+SITE_URL = os.getenv("SITE_URL", API_BASE_URL_MAPPING.get(DEFAULT_API_VERSION))
+
 
 
 def jwt_decode(token, audience=None, access_token=None):
@@ -165,7 +180,7 @@ def authenticate(groups):
 
     if (not groups):
         return abort(403)
-        
+
     jwt_roles = set(decoded.get(USER_ROLES_CLAIM, []))
     groups_granted = groups.intersection(jwt_roles)
     if len(groups_granted) == 0:
@@ -191,7 +206,7 @@ def get_scopes_list():
 
 def get_redirect_uri():
   return f"{SITE_URL}/login"
-  
+
 # Local Endpoints
 
 
@@ -233,9 +248,9 @@ def ec2_action():
 def get_cluster_config_text(cluster_name, region=None):
     url = f"/v3/clusters/{cluster_name}"
     if region:
-        info_resp = sigv4_request("GET", API_BASE_URL, url, params={"region": region})
+        info_resp = sigv4_request("GET", get_base_url(request), url, params={"region": region})
     else:
-        info_resp = sigv4_request("GET", API_BASE_URL, url)
+        info_resp = sigv4_request("GET", get_base_url(request), url)
     if info_resp.status_code != 200:
         abort(info_resp.status_code)
 
@@ -365,7 +380,7 @@ def sacct():
             user,
             f"sacct {sacct_args} --json "
             + "| jq -c .jobs[0:120]\\|\\map\\({name,user,partition,state,job_id,exit_code\\}\\)",
-        )
+            )
         if type(accounting) is tuple:
             return accounting
     else:
@@ -484,7 +499,7 @@ def get_dcv_session():
 
 
 def get_custom_image_config():
-    image_info = sigv4_request("GET", API_BASE_URL, f"/v3/images/custom/{request.args.get('image_id')}").json()
+    image_info = sigv4_request("GET", get_base_url(request), f"/v3/images/custom/{request.args.get('image_id')}").json()
     configuration = requests.get(image_info["imageConfiguration"]["url"])
     return configuration.text
 
@@ -596,9 +611,9 @@ def _get_identity_from_token(decoded, claims):
         identity["username"] = decoded["username"]
 
     for claim in claims:
-      if claim in decoded:
-        identity["attributes"][claim] = decoded[claim]
-    
+        if claim in decoded:
+            identity["attributes"][claim] = decoded[claim]
+
     return identity
 
 def get_identity():
@@ -735,6 +750,12 @@ def _get_params(_request):
     params.pop("path")
     return params
 
+def get_base_url(request):
+    version = request.args.get(ARG_VERSION)
+    if version and str(version) in API_VERSION:
+        return API_BASE_URL_MAPPING[str(version)]
+    return API_BASE_URL_MAPPING[DEFAULT_API_VERSION]
+
 
 pc = Blueprint('pc', __name__)
 
@@ -742,7 +763,7 @@ pc = Blueprint('pc', __name__)
 @authenticated({'admin'})
 @validated(params=PCProxyArgs)
 def pc_proxy_get():
-    response = sigv4_request(request.method, API_BASE_URL, request.args.get("path"), _get_params(request))
+    response = sigv4_request(request.method, get_base_url(request), request.args.get("path"), _get_params(request))
     return response.json(), response.status_code
 
 @pc.route('/', methods=['POST','PUT','PATCH','DELETE'], strict_slashes=False)
@@ -756,5 +777,5 @@ def pc_proxy():
     except:
         pass
 
-    response = sigv4_request(request.method, API_BASE_URL, request.args.get("path"), _get_params(request), body=body)
+    response = sigv4_request(request.method, get_base_url(request), request.args.get("path"), _get_params(request), body=body)
     return response.json(), response.status_code

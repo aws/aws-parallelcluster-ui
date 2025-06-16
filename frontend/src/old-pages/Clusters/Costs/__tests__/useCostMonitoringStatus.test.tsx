@@ -15,6 +15,7 @@ import {useCostMonitoringStatus} from '../costs.queries'
 import {mock} from 'jest-mock-extended'
 import {Store} from '@reduxjs/toolkit'
 import {Provider} from 'react-redux'
+import {GetCostMonitoringStatus} from "../../../../model";
 
 const mockQueryClient = new QueryClient({
   defaultOptions: {queries: {retry: false}},
@@ -27,6 +28,15 @@ const wrapper: React.FC<PropsWithChildren<any>> = ({children}) => (
 )
 
 const mockGetCostMonitoringStatus = jest.fn()
+
+const mockUseState = jest.fn()
+const mockSetState = jest.fn()
+
+jest.mock('../../../../store', () => ({
+  ...(jest.requireActual('../../../../store') as any),
+  setState: (...args: unknown[]) => mockSetState(...args),
+  useState: (...args: unknown[]) => mockUseState(...args),
+}))
 
 jest.mock('../../../../model', () => {
   const originalModule = jest.requireActual('../../../../model')
@@ -48,12 +58,13 @@ describe('given a hook to get the cost monitoring status', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {full: '3.2.0'},
+          version: {full: ['3.2.0', '3.1.5']},
         },
         aws: {
           region: 'us-west-1',
         },
       })
+      mockUseState.mockReturnValue('3.2.0')
     })
 
     it('should request the cost monitoring status', async () => {
@@ -65,15 +76,9 @@ describe('given a hook to get the cost monitoring status', () => {
 
   describe('when PC version is less than 3.2.0', () => {
     beforeEach(() => {
-      mockStore.getState.mockReturnValue({
-        app: {
-          version: {full: '3.1.5'},
-        },
-        aws: {
-          region: 'us-west-1',
-        },
-      })
+      mockUseState.mockReturnValue('3.1.5')
     })
+
     it('should not request the cost monitoring status', async () => {
       renderHook(() => useCostMonitoringStatus(), {wrapper})
 
@@ -85,7 +90,7 @@ describe('given a hook to get the cost monitoring status', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {full: '3.2.0'},
+          wizard: {version: '3.2.0'},
         },
         aws: {
           region: 'us-gov-west-1',

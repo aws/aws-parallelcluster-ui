@@ -48,7 +48,7 @@ describe('given a modal to select a cluster to copy from', () => {
           },
         ],
       },
-      app: {version: {full: '3.5.0'}},
+      app: {version: {full: ['3.5.0']}},
     })
     screen = render(
       <MockProviders>

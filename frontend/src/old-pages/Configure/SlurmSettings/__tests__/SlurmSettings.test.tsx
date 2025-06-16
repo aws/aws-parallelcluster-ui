@@ -38,9 +38,13 @@ describe('given a component to configure the SlurmSettings', () => {
       mockStore.getState.mockReturnValue({
         app: {
           version: {
-            full: '3.3.0',
+            full: ['3.3.0'],
           },
+          wizard: {
+            version: '3.3.0'
+          }
         },
+
       })
       screen = render(
         <MockProviders>
@@ -63,7 +67,7 @@ describe('given a component to configure the SlurmSettings', () => {
       mockStore.getState.mockReturnValue({
         app: {
           version: {
-            full: '3.2.0',
+            full: ['3.2.0'],
           },
         },
       })
