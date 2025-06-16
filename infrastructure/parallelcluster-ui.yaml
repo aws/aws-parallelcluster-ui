@@ -215,7 +215,7 @@ Resources:
           TemplateURL: !Sub https://${AWS::Region}-aws-parallelcluster.s3.${AWS::Region}.amazonaws.com/parallelcluster/${ApiVersion}/api/parallelcluster-api.yaml
           TimeoutInMinutes: 30
           Tags:
-            - Key: 'parallelcluster:api-id'
+            - Key: 'parallelcluster-ui:api-id'
               Value: !Ref ApiGatewayRestApi
 
   ApiVersionMap:
@@ -303,7 +303,7 @@ Resources:
                               print(f"Match: {match}, tags: {stack_tags}")
                               # Check if stack has the specific tag and value
                               for tag in stack_tags:
-                                  if (tag.get('Key') == 'parallelcluster:api-id' and 
+                                  if (tag.get('Key') == 'parallelcluster-ui:api-id' and 
                                       tag.get('Value') == api_id):
                                       # Get stack outputs
                                       if stack_response['Stacks'][0]['StackStatus'] == 'CREATE_IN_PROGRESS':
@@ -372,7 +372,7 @@ Resources:
                   - !Sub "arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*"
                 Condition:
                   StringEquals:
-                    "aws:ResourceTag/parallelcluster:api-id": !Ref ApiGatewayRestApi
+                    "aws:ResourceTag/parallelcluster-ui:api-id": !Ref ApiGatewayRestApi
 
   ParallelClusterUIFun:
     Type: AWS::Lambda::Function
