@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, validate, INCLUDE, validates_schema
 
 from api.validation.validators import aws_region_validator, is_alphanumeric_with_hyphen, \
-    valid_api_log_levels_predicate, size_not_exceeding
+    valid_api_log_levels_predicate, size_not_exceeding, is_safe_path
 
 
 class EC2ActionSchema(Schema):
@@ -119,7 +119,7 @@ class PriceEstimateSchema(Schema):
 PriceEstimate = PriceEstimateSchema(unknown=INCLUDE)
 
 class PCProxyArgsSchema(Schema):
-    path = fields.String(required=True, validate=validate.Length(max=512))
+    path = fields.String(required=True, validate=validate.And(is_safe_path, validate.Length(max=512)))
 
 PCProxyArgs = PCProxyArgsSchema(unknown=INCLUDE)
 

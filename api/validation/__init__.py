@@ -30,7 +30,7 @@ def validated(*, body: Schema = None, params: Schema = None, cookies: Schema = N
         def decorated(*pargs, **kwargs):
             errors = __validate_request(request, body_schema=body, params_schema=params, cookies_schema=cookies, raise_on_missing_body=raise_on_missing_body)
             if errors:
-                raise ValidationError(f'Input validation failed for {request.path}', data=errors)
+                raise ValidationError(f'Input validation failed for requested resource {request.path}', data=errors)
             return func(*pargs, **kwargs)
 
         return decorated
