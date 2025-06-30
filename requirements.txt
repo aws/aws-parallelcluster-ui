@@ -34,7 +34,7 @@ flask==2.3.3
     # via
     #   -r requirements.in
     #   flask-cors
-flask-cors==4.0.2
+flask-cors==6.0.0
     # via -r requirements.in
 idna==3.7
     # via requests
@@ -101,3 +101,4 @@ werkzeug==3.0.6
     # via
     #   -r requirements.in
     #   flask
+    #   flask-cors
