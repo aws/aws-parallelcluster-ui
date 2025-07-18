@@ -581,13 +581,7 @@ def get_instance_types():
         ec2 = boto3.client("ec2", config=config)
     else:
         ec2 = boto3.client("ec2")
-    filters = [
-        {"Name": "current-generation", "Values": ["true"]},
-        {"Name": "instance-type",
-         "Values": [
-             "c5*", "c6*", "c7*", "g4*", "g5*", "g6*", "hpc*", "p3*", "p4*", "p5*", "t2*", "t3*", "m6*", "m7*", "r*"
-         ]},
-    ]
+    filters = [{"Name": "current-generation", "Values": ["true"]}]
     instance_paginator = ec2.get_paginator("describe_instance_types")
     instances_paginator = instance_paginator.paginate(Filters=filters)
     instance_types = []
