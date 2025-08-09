@@ -1272,8 +1272,15 @@ Outputs:
     Condition: UseCustomDomain
     Description: |
       The endpoint associated with the custom domain name. 
-      Add an A record in your DNS for the PCUI custom domain name pointing to this endpoint.
+      Add an A alias record in your DNS for the PCUI custom domain name pointing to this endpoint.
+      https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-api-gateway.html#routing-to-api-gateway-config
     Value: !GetAtt ApiGatewayCustomDomain.RegionalDomainName
+  CustomDomainRegionalHostedZoneId:
+    Condition: UseCustomDomain
+    Description: |
+      The region-specific Amazon Route 53 Hosted Zone ID of the regional endpoint.
+      You need this while creating Route53 alias
+    Value: !GetAtt ApiGatewayCustomDomain.RegionalHostedZoneId
   AppClientId:
     Description: The id of the Cognito app client
     Value: !Ref CognitoAppClient
