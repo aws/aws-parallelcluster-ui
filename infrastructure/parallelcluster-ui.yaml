@@ -163,7 +163,7 @@ Conditions:
       - !Equals ['3', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['4', !Select [ 1, !Split ['.', !Ref Version] ] ]
       - !Equals ['5', !Select [ 1, !Split ['.', !Ref Version] ] ]
-  InGovCloud: !Equals ['us-gov-west-1', !Ref "AWS::Region"]
+  InGovCloud: !Equals [!Ref 'AWS::Partition', 'aws-us-gov']
   UsePermissionBoundary: !Not [!Equals [!Ref PermissionsBoundaryPolicy, '']]
   UsePermissionBoundaryPCAPI: !Not [!Equals [!Ref PermissionsBoundaryPolicyPCAPI, '']]
   UseIAMRoleAndPolicyPrefix: !Not [!Equals [!Ref IAMRoleAndPolicyPrefix, '']]
