@@ -203,7 +203,7 @@ function queueValidate(queueIndex: any) {
     clearState([...errorsPath, 'customAmi'])
   }
 
-  const version = getState(['app', 'version', 'full'])
+  const version = getState(['app', 'wizard', 'version'])
   const isMultiAZActive = isFeatureEnabled(version, defaultRegion, 'multi_az')
   if (!queueSubnet) {
     let message: string

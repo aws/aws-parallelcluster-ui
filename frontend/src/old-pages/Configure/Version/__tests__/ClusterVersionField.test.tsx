@@ -17,7 +17,8 @@ import {mock} from 'jest-mock-extended'
 import {I18nextProvider, initReactI18next} from 'react-i18next'
 import {Provider} from 'react-redux'
 import {setState as mockSetState} from '../../../../store'
-import {ClusterNameField} from '../ClusterNameField'
+import {ClusterVersionField} from '../ClusterVersionField'
+import wrapper from "@cloudscape-design/components/test-utils/dom";
 
 jest.mock('../../../../store', () => {
   const originalModule = jest.requireActual('../../../../store')
@@ -41,37 +42,44 @@ const MockProviders = (props: any) => (
   </Provider>
 )
 
-describe('given a component to set the ClusterName', () => {
+describe('given a component to select the cluster version', () => {
   let screen: RenderResult
 
   beforeEach(() => {
-    ;(mockSetState as jest.Mock).mockClear()
+    (mockSetState as jest.Mock).mockClear()
+    // Mock the versions available in the store
+    mockStore.getState.mockReturnValue({
+      app: {
+        version: {
+          full: ['3.12.0', '3.11.0', '3.7.0']
+        }
+      }
+    })
   })
 
-  describe('when user fills in the cluster name', () => {
+  describe('when user selects a version', () => {
     beforeEach(() => {
       screen = render(
         <MockProviders>
-          <ClusterNameField />
+          <ClusterVersionField />
         </MockProviders>,
       )
 
-      fireEvent.change(
-        screen.getByPlaceholderText('wizard.cluster.clusterName.placeholder'),
-        {target: {value: 'some-name'}},
-      )
+      const selectComponent = wrapper(screen.container).findSelect()!
+      selectComponent.openDropdown()
+      selectComponent.selectOptionByValue('3.12.0')
     })
 
-    it('should store the ClusterName in the cluster config', () => {
+    it('should store the ClusterVersion in the wizard config', () => {
       expect(mockSetState).toHaveBeenCalledTimes(1)
       expect(mockSetState).toHaveBeenCalledWith(
-        ['app', 'wizard', 'clusterName'],
-        'some-name',
+          ['app', 'wizard', 'version'],
+          '3.12.0',
       )
     })
   })
 
-  describe('when user is editing a cluster', () => {
+  describe('when user is editing a version', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {wizard: {editing: true}},
@@ -82,14 +90,15 @@ describe('given a component to set the ClusterName', () => {
       beforeEach(() => {
         screen = render(
           <MockProviders>
-            <ClusterNameField />
+            <ClusterVersionField />
           </MockProviders>,
         )
 
       })
 
       it('should be disabled', () => {
-        expect(mockSetState).toHaveBeenCalledTimes(0)
+        const selectComponent = wrapper(screen.container).findSelect()!
+        expect(selectComponent.isDisabled()).toBe(true)
       })
     })
   })

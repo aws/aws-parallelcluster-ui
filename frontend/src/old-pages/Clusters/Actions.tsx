@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import {ClusterStatus} from '../../types/clusters'
-import React from 'react'
+import React, {useMemo} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {setState, useState, ssmPolicy, consoleDomain} from '../../store'
@@ -45,6 +45,9 @@ export default function Actions() {
 
   const apiVersion = useState(['app', 'version', 'full'])
   const clusterVersion = useState([...clusterPath, 'version'])
+  const versionSupported = useMemo(() => {
+    return new Set(apiVersion).has(clusterVersion);
+  }, [apiVersion, clusterVersion]);
 
   const fleetStatus = useState([...clusterPath, 'computeFleetStatus'])
   const clusterStatus = useState([...clusterPath, 'clusterStatus'])
@@ -75,7 +78,7 @@ export default function Actions() {
     clusterStatus === ClusterStatus.DeleteInProgress ||
     clusterStatus === ClusterStatus.UpdateInProgress ||
     clusterStatus === ClusterStatus.CreateFailed ||
-    clusterVersion !== apiVersion
+    !versionSupported
   const isStartFleetDisabled = fleetStatus !== 'STOPPED'
   const isStopFleetDisabled = fleetStatus !== 'RUNNING'
   const isDeleteDisabled =
@@ -93,12 +96,13 @@ export default function Actions() {
 
   const editConfiguration = React.useCallback(() => {
     setState(['app', 'wizard', 'clusterName'], clusterName)
-    setState(['app', 'wizard', 'page'], 'cluster')
+    setState(['app', 'wizard', 'page'], 'version')
     setState(['app', 'wizard', 'editing'], true)
+    setState(['app', 'wizard', 'version'], clusterVersion)
 
     navigate('/configure')
     loadTemplateFromCluster(clusterName)
-  }, [clusterName, navigate])
+  }, [clusterName, navigate, clusterVersion])
 
   const deleteCluster = React.useCallback(() => {
     console.log(`Deleting: ${clusterName}`)

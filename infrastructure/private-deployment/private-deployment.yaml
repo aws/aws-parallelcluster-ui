@@ -1,0 +1,206 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS ParallelCluster UI - Resources for Private Deployment
+
+Parameters:
+  Vpc:
+    Description: VPC ID to create the VPC Endpoint in.
+    Type: AWS::EC2::VPC::Id
+  PrivateSubnetOne:
+    Description: Subnet ID of the first private subnet that will be used by the PCUI lambda.
+    Type: AWS::EC2::Subnet::Id
+  PrivateSubnetTwo:
+    Description: Subnet ID of the seconds private subnet that will be used by the PCUI lambda.
+    Type: AWS::EC2::Subnet::Id
+  PrivateSubnetThree:
+    Description: Subnet ID of the seconds private subnet that will be used by the PCUI lambda.
+    Type: AWS::EC2::Subnet::Id
+  DcvInstanceAmiId:
+    Description: |
+      AMI for the DCV node. Must be a DCV AMI, e.g. DCV-AmazonLinux2-x86_64-*.
+      DCV AMI can be retrieved with the command:
+      aws ec2 describe-images 
+      --filters "Name=owner-alias,Values=amazon" "Name=name,Values=DCV-AmazonLinux2-x86_64-*" "Name=creation-date,Values=2024-10-*" "Name=architecture,Values=x86_64" "Name=is-public,Values=true" 
+      --query 'Images[].{Name:Name,ImageId:ImageId}' 
+      --output table
+    Type: String
+  DcvInstanceKeypair:
+    Description: EC2 Keypair for the client node.
+    Type: AWS::EC2::KeyPair::KeyName
+  DcvInstanceType:
+    Description: Instance type for the DCV instance. Must have a NVIDIA GPU.
+    Type: String
+    Default: g4dn.xlarge
+  DcvInstancePublicSubnet:
+    Description: Subnet ID of the public subnet where the client instance will run.
+    Type: AWS::EC2::Subnet::Id
+  DcvSessionUser:
+    Description: Username for the DCV session.
+    Type: String
+    Default: ec2-user
+    MinLength: 3
+    MaxLength: 64
+  DcvSessionPassword:
+    Description: Password for the DCV session.
+    Type: String
+    Default: password
+    MinLength: 3
+    MaxLength: 64
+    NoEcho: true
+  AllowedDcvSourcePrefixList:
+    Description: Allowed prefix list for DCV traffic source.
+    Type: String
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Networking
+        Parameters:
+          - Vpc
+          - PrivateSubnetOne
+          - PrivateSubnetTwo
+          - PrivateSubnetThree
+      - Label:
+          default: DCV Instance
+        Parameters:
+          - DcvInstanceAmiId
+          - DcvInstanceType
+          - DcvInstanceKeypair
+          - DcvInstancePublicSubnet
+      - Label:
+          default: DCV Session
+        Parameters:
+          - DcvSessionUser
+          - DcvSessionPassword
+
+Mappings:
+  Dcv:
+    Constants:
+      Port: 8443
+
+Resources:
+  VpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      ServiceName: !Sub "com.amazonaws.${AWS::Region}.execute-api"
+      SubnetIds:
+        - !Ref PrivateSubnetOne
+        - !Ref PrivateSubnetTwo
+        - !Ref PrivateSubnetThree
+      VpcEndpointType: Interface
+      VpcId: !Ref Vpc
+
+  VpcEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for the VPC Endpoint.
+      VpcId: !Ref Vpc
+
+  DcvSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for the DCV instance.
+      VpcId: !Ref Vpc
+
+  PCUILambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for the PCUI Lambda.
+      VpcId: !Ref Vpc
+
+  DcvSecurityGroupIngressFromPrefixList:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow DCV traffic from the prefix list.
+      GroupId: !Ref DcvSecurityGroup
+      SourcePrefixListId: !Ref AllowedDcvSourcePrefixList
+      IpProtocol: TCP
+      FromPort: !FindInMap [ Dcv, Constants, Port ]
+      ToPort: !FindInMap [ Dcv, Constants, Port ]
+
+  VpcEndpointSecurityGroupIngressFromDcv:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow HTTPS traffic from the DCV Security Group.
+      GroupId: !Ref VpcEndpointSecurityGroup
+      SourceSecurityGroupId: !Ref DcvSecurityGroup
+      IpProtocol: TCP
+      FromPort: 443
+      ToPort: 443
+
+  VpcEndpointSecurityGroupIngressFromPCUILambda:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow HTTPS traffic from the PCUI Lambda Security Group.
+      GroupId: !Ref VpcEndpointSecurityGroup
+      SourceSecurityGroupId: !Ref PCUILambdaSecurityGroup
+      IpProtocol: TCP
+      FromPort: 443
+      ToPort: 443
+
+  DcvInstance:
+    Type: AWS::EC2::Instance
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT10M
+    Properties:
+      ImageId: !Ref DcvInstanceAmiId
+      InstanceType: !Ref DcvInstanceType
+      KeyName: !Ref DcvInstanceKeypair
+      SecurityGroupIds:
+        - Ref: DcvSecurityGroup
+      SubnetId: !Ref DcvInstancePublicSubnet
+      Tags:
+        - Key: Name
+          Value: PCUI-DcvInstance
+      UserData:
+        Fn::Base64:
+          !Sub
+          - |
+            #!/bin/bash -e
+
+            # Create DCV session for ec2-user
+            # Ref: https://www.ni-sp.com/support/how-to-install-nice-dcv-on-aws-ec2/
+            echo "${DcvSessionPassword}" | sudo passwd ${DcvSessionUser} --stdin
+            sudo -u ${DcvSessionUser} dcv create-session session1
+  
+            # Install Chromium Browser
+            # Ref: https://stackoverflow.com/questions/72077341/how-do-you-install-chrome-on-amazon-linux-2
+            sudo amazon-linux-extras install epel -y
+            sudo yum install -y chromium
+            
+            /opt/aws/bin/cfn-signal -e "$?" --stack "${AWS::StackName}" --resource DcvInstance --region "${AWS::Region}"
+
+          - DcvSessionUser: !Ref DcvSessionUser
+            DcvSessionPassword: !Ref DcvSessionPassword
+
+Outputs:
+  VpcEndpoint:
+    Value: !Ref VpcEndpoint
+    Description: The VPC Endpoint.
+  VpcEndpointSecurityGroup:
+    Value: !Ref VpcEndpointSecurityGroup
+    Description: The Security Group attached to the VPC Endpoint.
+  VpcEndpointSubnetOne:
+    Value: !Ref PrivateSubnetOne
+    Description: The first subnet of the VPc Endpoint.
+  VpcEndpointSubnetTwo:
+    Value: !Ref PrivateSubnetTwo
+    Description: The second subnet of the VPc Endpoint.
+  VpcEndpointSubnetThree:
+    Value: !Ref PrivateSubnetThree
+    Description: The third subnet of the VPc Endpoint.
+  PCUILambdaSecurityGroup:
+    Value: !Ref PCUILambdaSecurityGroup
+    Description: The security group for PCUI Lambda.
+  DcvInstance:
+    Value: !Ref DcvInstance
+    Description: The EC2 instance running DCV server.
+  DcvInstanceIp:
+    Value: !GetAtt DcvInstance.PublicIp
+    Description: The public IP of the DCV instance.
+  DcvInstancePort:
+    Value: !FindInMap [ Dcv, Constants, Port ]
+    Description: The port to connect to the DCV instance.

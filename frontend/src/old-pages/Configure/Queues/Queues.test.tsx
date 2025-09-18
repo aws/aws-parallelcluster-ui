@@ -97,10 +97,8 @@ describe('Given a list of queues', () => {
             subnets: [],
           },
           app: {
-            version: {
-              full: version,
-            },
             wizard: {
+              version: version,
               config: {
                 Scheduling: {
                   SlurmQueues: queues,
@@ -150,10 +148,8 @@ describe('Given a list of queues', () => {
             subnets: [],
           },
           app: {
-            version: {
-              full: version,
-            },
             wizard: {
+              version: version,
               config: {
                 Scheduling: {
                   SlurmQueues: queues,
@@ -189,10 +185,8 @@ describe('Given a list of queues', () => {
             subnets: [],
           },
           app: {
-            version: {
-              full: version,
-            },
             wizard: {
+              version: version,
               config: {
                 Scheduling: {
                   SlurmQueues: [
@@ -241,10 +235,8 @@ describe('Given a list of queues', () => {
             subnets: [],
           },
           app: {
-            version: {
-              full: version,
-            },
             wizard: {
+              version: version,
               config: {
                 Scheduling: {
                   SlurmQueues: [
@@ -305,10 +297,8 @@ describe('Given a list of queues', () => {
           subnets: [],
         },
         app: {
-          version: {
-            full: '3.6.0',
-          },
           wizard: {
+            version: '3.6.0',
             config: {
               Scheduling: {
                 SlurmQueues: queues,
@@ -380,10 +370,8 @@ describe('Given a queue', () => {
       subnets: [],
     },
     app: {
-      version: {
-        full: '3.4.0',
-      },
       wizard: {
+        version: '3.4.0',
         config: {
           HeadNode: {
             Networking: {
@@ -474,10 +462,8 @@ describe('Given a queue', () => {
           subnets: [],
         },
         app: {
-          version: {
-            full: '3.4.0',
-          },
           wizard: {
+            version: '3.6.0',
             config: {
               Scheduling: {
                 SlurmQueues: [
@@ -529,10 +515,8 @@ describe('Given a queue', () => {
           subnets: [],
         },
         app: {
-          version: {
-            full: '3.4.0',
-          },
           wizard: {
+            version: '3.4.0',
             config: {
               Scheduling: {
                 SlurmQueues: [

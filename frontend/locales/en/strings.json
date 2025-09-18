@@ -101,7 +101,7 @@
     "ariaLabel": "Info"
   },
   "cluster": {
-    "editAlert": "This cluster cannot be edited as it was created using a different version of AWS ParallelCluster.",
+    "editAlert": "This cluster cannot be edited as it was created using an incompatible version of AWS ParallelCluster.",
     "tabs": {
       "details": "Details",
       "instances": "Instances",
@@ -492,6 +492,18 @@
       "stepNumberLabel": "Step {{stepNumber}}",
       "collapsedStepsLabel": "Step {{stepNumber}} of {{stepsCount}}",
       "steps": "Steps"
+    },
+    "version": {
+      "label": "Cluster Version",
+      "title": "Version",
+      "placeholder": "Cluster version",
+      "description": "Select the AWS ParallelCluster version to use for this cluster.",
+      "help": {
+        "main": "Choose the version of AWS ParallelCluster to use for creating and managing your cluster."
+      },
+      "validation": {
+        "versionSelect": "You must select a version."
+      }
     },
     "cluster": {
       "title": "Cluster",
@@ -1407,6 +1419,8 @@
     },
     "dialogs": {
       "buildImage": {
+        "versionLabel": "Version",
+        "versionPlaceholder": "Select version",
         "closeAriaLabel": "Close",
         "title": "Image configuration",
         "cancel": "Cancel",
@@ -1429,6 +1443,14 @@
         "title": "AWS ParallelCluster support policy",
         "href": "https://docs.aws.amazon.com/parallelcluster/latest/ug/support-policy.html"
       }
+    },
+    "actions": {
+      "versionSelect": {
+        "selectedAriaLabel": "Selected version",
+        "versionText": "Version {{version}}",
+        "placeholder": "Select a version"
+      },
+      "refresh": "Refresh"
     },
     "list": {
       "columns": {

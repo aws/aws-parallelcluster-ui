@@ -58,7 +58,7 @@ export type Region = string
 export type Version = `${string}.${string}.${string}`
 
 export interface PCVersion {
-  full: Version
+  full: Version[]
 }
 
 // Token to use for paginated requests.

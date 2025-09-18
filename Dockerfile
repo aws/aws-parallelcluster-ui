@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.8-alpine
+FROM tiangolo/uwsgi-nginx-flask:python3.12-alpine
 
 ENV PYTHONUNBUFFERED=1
 ENV STATIC_URL /static

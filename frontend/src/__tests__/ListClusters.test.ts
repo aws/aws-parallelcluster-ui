@@ -14,7 +14,7 @@ const mockCluster1: ClusterInfoSummary = {
 const mockCluster2: ClusterInfoSummary = {
   clusterName: 'test-cluster-2',
   clusterStatus: ClusterStatus.CreateComplete,
-  version: '3.8.0',
+  version: '3.9.0',
   cloudformationStackArn: 'arn',
   region: 'region',
   cloudformationStackStatus: CloudFormationStackStatus.CreateComplete,

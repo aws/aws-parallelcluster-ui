@@ -103,6 +103,7 @@ function CreateCluster(
   clusterConfig: string,
   region: string,
   selectedRegion: string,
+  version: string,
   dryrun = false,
   successCallback?: Callback,
   errorCallback?: Callback,
@@ -110,6 +111,7 @@ function CreateCluster(
   var url = 'api?path=/v3/clusters'
   url += dryrun ? '&dryrun=true' : ''
   url += region ? `&region=${region}` : ''
+  url += version ? `&version=${version}` : ''
   var body = {
     clusterName: clusterName,
     clusterConfiguration: mapAndApplyTags(clusterConfig),
@@ -159,12 +161,14 @@ function UpdateCluster(
   clusterConfig: any,
   dryrun = false,
   forceUpdate: any,
+  version: any,
   successCallback?: Callback,
   errorCallback?: Callback,
 ) {
   var url = `api?path=/v3/clusters/${clusterName}`
   url += dryrun ? '&dryrun=true' : ''
   url += forceUpdate ? '&forceUpdate=true' : ''
+  url += version ? `&version=${version}` : ''
   var body = {clusterConfiguration: clusterConfig}
   request('put', url, body)
     .then((response: any) => {
@@ -444,8 +448,9 @@ function GetCustomImageConfiguration(imageId: any, callback?: Callback) {
     })
 }
 
-async function BuildImage(imageId: string, imageConfig: string) {
+async function BuildImage(imageId: string, imageConfig: string, version: string) {
   var url = 'api?path=/v3/images/custom'
+  url += version ? `&version=${version}` : ''
   var body = {imageId: imageId, imageConfiguration: imageConfig}
   const {data} = await request('post', url, body)
   notify(`Successfully queued build for ${imageId}.`, 'success')
@@ -455,8 +460,8 @@ async function BuildImage(imageId: string, imageConfig: string) {
   return data
 }
 
-async function ListOfficialImages(region?: string) {
-  const url = `api?path=/v3/images/official${region ? `&region=${region}` : ''}`
+async function ListOfficialImages(region?: string, version?: string) {
+  const url = `api?path=/v3/images/official${region ? `&region=${region}` : ''}${version ? `&version=${version}` : ''}`
   try {
     const {data} = await request('get', url)
     return data?.images || []

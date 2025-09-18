@@ -96,6 +96,7 @@ function handleCreate(
   const dryRun = false
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
+  const version = getState(['app', 'wizard', 'version'])
   setClusterLoadingMsg(clusterName, editing, dryRun)
   setState(wizardSubmissionLoading, true)
 
@@ -122,6 +123,7 @@ function handleCreate(
       clusterConfig,
       dryRun,
       forceUpdate,
+      version,
       successHandler,
       errHandler,
     )
@@ -131,6 +133,7 @@ function handleCreate(
       clusterConfig,
       region,
       selectedRegion,
+      version,
       dryRun,
       successHandler,
       errHandler,
@@ -145,6 +148,7 @@ function handleDryRun() {
   const clusterConfig = getState(configPath) || ''
   const region = getState(['app', 'wizard', 'config', 'Region'])
   const selectedRegion = getState(['app', 'selectedRegion'])
+  const version = getState(['app', 'wizard', 'version'])
   const dryRun = true
   setClusterLoadingMsg(clusterName, editing, dryRun)
   setState(wizardSubmissionLoading, true)
@@ -163,6 +167,7 @@ function handleDryRun() {
     UpdateCluster(
       clusterName,
       clusterConfig,
+      version,
       dryRun,
       forceUpdate,
       successHandler,
@@ -174,6 +179,7 @@ function handleDryRun() {
       clusterConfig,
       region,
       selectedRegion,
+      version,
       dryRun,
       successHandler,
       errHandler,

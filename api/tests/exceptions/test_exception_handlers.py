@@ -47,11 +47,11 @@ def test_unauthenticated_error_handler(client, app, monkeypatch):
 def test_validation_error_handler(client, app, monkeypatch):
     with app.test_request_context('/'):
         app.preprocess_request()
-        response, status_code = validation_error_handler(ValidationError('Input validation failed for /manager/ec2_action', data={'field': ['validation-error']}))
+        response, status_code = validation_error_handler(ValidationError('Input validation failed for requested resource /manager/ec2_action', data={'field': ['validation-error']}))
 
     assert status_code == 400
     assert response.json == {
-        'code': 400, 'message': 'Input validation failed for /manager/ec2_action',
+        'code': 400, 'message': 'Input validation failed for requested resource /manager/ec2_action',
         'validation_errors': {'field': ['validation-error']}
     }
 

@@ -198,8 +198,8 @@ describe('Given a Lustre storage component', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.3.0',
+          wizard: {
+            version: '3.3.0',
           },
         },
       })
@@ -238,8 +238,8 @@ describe('Given a Lustre storage component', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.2.0',
+          wizard: {
+            version: '3.2.0',
           },
         },
       })
@@ -284,8 +284,8 @@ describe('given a component to display an Efs storage instance', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.3.0',
+          wizard: {
+            version: '3.3.0',
           },
         },
       })
@@ -324,8 +324,8 @@ describe('given a component to display an Efs storage instance', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.2.0',
+          wizard: {
+            version: '3.2.0',
           },
         },
       })
@@ -370,8 +370,8 @@ describe('given a component to display an Ebs storage instance', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.2.0',
+          wizard: {
+            version: '3.2.0',
           },
         },
       })
@@ -410,8 +410,8 @@ describe('given a component to display an Ebs storage instance', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.1.0',
+          wizard: {
+            version: '3.1.0',
           },
         },
       })
@@ -448,10 +448,8 @@ describe('given a component to display an Ebs storage instance', () => {
     beforeEach(() => {
       mockStore.getState.mockReturnValue({
         app: {
-          version: {
-            full: '3.2.0',
-          },
           wizard: {
+            version: '3.2.0',
             config: {
               SharedStorage: [
                 {

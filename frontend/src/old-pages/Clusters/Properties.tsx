@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 import {ClusterStatus, ClusterDescription} from '../../types/clusters'
-import React, {PropsWithChildren, ReactElement} from 'react'
+import React from 'react'
 import {Trans, useTranslation} from 'react-i18next'
 import {findFirst, clusterDefaultUser} from '../../util'
 import {useState, setState, ssmPolicy} from '../../store'
