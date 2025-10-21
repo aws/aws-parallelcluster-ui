@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
