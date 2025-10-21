@@ -5,6 +5,9 @@ on:
   #By default, a workflow only runs when a pull_request event's activity type is opened, synchronize, or reopened.
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   frontend-tests:
     runs-on: ubuntu-latest
