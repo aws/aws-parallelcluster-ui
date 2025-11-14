@@ -27,7 +27,7 @@ Parameters:
     Default: ''
 
 Conditions:
-  GovCloud: !Equals [!Ref AWS::Region, 'us-gov-west-1']
+  GovCloud: !Equals [!Ref 'AWS::Partition', 'aws-us-gov']
   UsePermissionBoundary: !Not [ !Equals [ !Ref PermissionsBoundaryPolicy, '' ] ]
   UseCustomDomain: !Not [!Equals [!Ref CustomDomain, '']]
 
