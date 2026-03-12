@@ -1277,6 +1277,9 @@ Outputs:
   AppClientId:
     Description: The id of the Cognito app client
     Value: !Ref CognitoAppClient
+  UserPoolId:
+    Description: The id of Cognito user pool
+    Value: !If [ UseExistingCognito, !Ref UserPoolId, !GetAtt [ Cognito, Outputs.UserPoolId ]]
   UserPoolClientSecretArn:
     Description: The app client secret ARN for ParallelCluster UI.
     Value: !GetAtt UserPoolClientSecret.SecretArn
