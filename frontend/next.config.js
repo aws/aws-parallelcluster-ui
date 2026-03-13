@@ -17,6 +17,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  transpilePackages: [
+    "@cloudscape-design/components",
+    "@cloudscape-design/component-toolkit",
+    "@cloudscape-design/design-tokens"
+  ],
   async rewrites() {
     return [
       /**
@@ -42,10 +47,4 @@ const nextConfig = {
   },
 }
 
-const withTM = require("next-transpile-modules")([
-  "@cloudscape-design/components",
-  "@cloudscape-design/component-toolkit",
-  "@cloudscape-design/design-tokens"
-]);
-
-module.exports = withTM(nextConfig);
+module.exports = nextConfig;

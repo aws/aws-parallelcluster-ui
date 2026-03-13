@@ -92,7 +92,7 @@ six==1.16.0
     # via
     #   ecdsa
     #   python-dateutil
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   -r requirements.in
     #   botocore
