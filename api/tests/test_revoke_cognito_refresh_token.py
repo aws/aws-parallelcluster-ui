@@ -23,9 +23,7 @@ def test_revoke_cognito_refresh_token_success(mock_requests):
 
     revoke_cognito_refresh_token('refresh-token')
 
-    mock_requests.post.has_calls(call(ANY, {'token': 'refresh-token'}, ANY, {'Content-Type': 'application/x-www-form-urlencoded'}))
-
-
+    mock_requests.post.assert_has_calls([call(ANY, {'token': 'refresh-token'}, ANY, {'Content-Type': 'application/x-www-form-urlencoded'})])
 
 
 def test_revoke_cognito_refresh_token_failing(mock_requests, mock_logger, caplog):
@@ -33,5 +31,5 @@ def test_revoke_cognito_refresh_token_failing(mock_requests, mock_logger, caplog
 
     revoke_cognito_refresh_token('refresh-token')
 
-    mock_requests.post.has_calls(call(ANY, {'token': 'refresh-token'}, ANY, {'Content-Type': 'application/x-www-form-urlencoded'}))
+    mock_requests.post.assert_has_calls([call(ANY, {'token': 'refresh-token'}, ANY, {'Content-Type': 'application/x-www-form-urlencoded'})])
     assert caplog.text.strip() == "WARNING  pcluster-manager:logger.py:27 {'message': 'Unable to revoke cognito refresh token'}"
