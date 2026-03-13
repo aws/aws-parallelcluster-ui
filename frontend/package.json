@@ -65,8 +65,7 @@
     "ws": ">=8.17.1"
   },
   "overrides": {
-    "@babel/helpers": "^7.26.0",
-    "@babel/runtime": "^7.27.0"
+    "@babel/helpers": "^7.26.0"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
