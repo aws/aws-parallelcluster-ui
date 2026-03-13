@@ -49,7 +49,7 @@ jobs:
       - name: Setup Python version 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.12'
           cache: 'pip'
 
       - name: Install python dependencies
