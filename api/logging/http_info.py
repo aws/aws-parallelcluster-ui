@@ -36,9 +36,20 @@ def __get_http_info(r: Union[Request,Response]) -> dict:
     return details
 
 
+SENSITIVE_HEADERS = [
+    'Cookie',
+    'Set-Cookie',
+    'X-CSRF-Token',
+    'Authorization',
+]
+
+
 def __filter_headers(headers: dict):
-    """ utility function to remove sensitive information from request headers """
+    """ utility function to remove sensitive information from request/response headers """
     _headers = dict(headers)
-    _headers.pop('Cookie', None)
-    _headers.pop('X-CSRF-Token', None)
+    _lower_to_key = {k.lower(): k for k in _headers}
+    for header in SENSITIVE_HEADERS:
+        key = _lower_to_key.get(header.lower())
+        if key:
+            _headers.pop(key)
     return _headers

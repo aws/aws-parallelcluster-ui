@@ -125,3 +125,64 @@ def test_log_response_body_and_headers():
     }
 
     mock_logger.info.assert_called_once_with(expected_details)
+
+
+class MockRequestWithSensitiveHeaders:
+    headers = {
+        'Content-Type': 'application/json',
+        'Cookie': 'accessToken=eyJsecrettoken',
+        'Set-Cookie': 'accessToken=eyJsecrettoken; Secure; HttpOnly',
+        'X-CSRF-Token': 'csrf-secret-value',
+        'Authorization': 'Bearer eyJsecrettoken',
+    }
+    args = {}
+    json = None
+    path = '/fake-path'
+    environ = {}
+
+
+def test_log_filters_sensitive_headers():
+    """
+    Given headers containing sensitive values (Cookie, Set-Cookie, X-CSRF-Token, Authorization)
+      When logging request body and headers
+        Then sensitive headers should be stripped from the log output
+    """
+    mock_logger = MagicMock(wraps=DefaultLogger(True))
+    log_request_body_and_headers(mock_logger, MockRequestWithSensitiveHeaders())
+
+    logged_details = mock_logger.info.call_args[0][0]
+    logged_headers = logged_details['headers']
+
+    assert 'Content-Type' in logged_headers
+    assert 'Cookie' not in logged_headers
+    assert 'Set-Cookie' not in logged_headers
+    assert 'X-CSRF-Token' not in logged_headers
+    assert 'Authorization' not in logged_headers
+
+
+class MockRequestWithMixedCaseHeaders:
+    headers = {
+        'Content-Type': 'application/json',
+        'cookie': 'accessToken=eyJsecrettoken',
+        'SET-COOKIE': 'accessToken=eyJsecrettoken; Secure; HttpOnly',
+        'x-csrf-token': 'csrf-secret-value',
+        'AUTHORIZATION': 'Bearer eyJsecrettoken',
+    }
+    args = {}
+    json = None
+    path = '/fake-path'
+    environ = {}
+
+
+def test_log_filters_sensitive_headers_case_insensitive():
+    mock_logger = MagicMock(wraps=DefaultLogger(True))
+    log_request_body_and_headers(mock_logger, MockRequestWithMixedCaseHeaders())
+
+    logged_details = mock_logger.info.call_args[0][0]
+    logged_headers = logged_details['headers']
+
+    assert 'Content-Type' in logged_headers
+    assert 'cookie' not in logged_headers
+    assert 'SET-COOKIE' not in logged_headers
+    assert 'x-csrf-token' not in logged_headers
+    assert 'AUTHORIZATION' not in logged_headers
