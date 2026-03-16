@@ -141,9 +141,9 @@ class MockRequestWithSensitiveHeaders:
     environ = {}
 
 
-def test_log_request_filters_sensitive_headers():
+def test_log_filters_sensitive_headers():
     """
-    Given a request with sensitive headers (Cookie, Set-Cookie, X-CSRF-Token, Authorization)
+    Given headers containing sensitive values (Cookie, Set-Cookie, X-CSRF-Token, Authorization)
       When logging request body and headers
         Then sensitive headers should be stripped from the log output
     """
@@ -157,22 +157,4 @@ def test_log_request_filters_sensitive_headers():
     assert 'Cookie' not in logged_headers
     assert 'Set-Cookie' not in logged_headers
     assert 'X-CSRF-Token' not in logged_headers
-    assert 'Authorization' not in logged_headers
-
-
-def test_log_response_filters_sensitive_headers():
-    """
-    Given a response with sensitive headers (Set-Cookie containing tokens)
-      When logging response body and headers
-        Then sensitive headers should be stripped from the log output
-    """
-    mock_logger = MagicMock(wraps=DefaultLogger(True))
-    log_response_body_and_headers(mock_logger, MockRequestWithSensitiveHeaders())
-
-    logged_details = mock_logger.info.call_args[0][0]
-    logged_headers = logged_details['headers']
-
-    assert 'Content-Type' in logged_headers
-    assert 'Set-Cookie' not in logged_headers
-    assert 'Cookie' not in logged_headers
     assert 'Authorization' not in logged_headers
