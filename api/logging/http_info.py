@@ -47,6 +47,9 @@ SENSITIVE_HEADERS = [
 def __filter_headers(headers: dict):
     """ utility function to remove sensitive information from request/response headers """
     _headers = dict(headers)
+    _lower_to_key = {k.lower(): k for k in _headers}
     for header in SENSITIVE_HEADERS:
-        _headers.pop(header, None)
+        key = _lower_to_key.get(header.lower())
+        if key:
+            _headers.pop(key)
     return _headers

@@ -158,3 +158,31 @@ def test_log_filters_sensitive_headers():
     assert 'Set-Cookie' not in logged_headers
     assert 'X-CSRF-Token' not in logged_headers
     assert 'Authorization' not in logged_headers
+
+
+class MockRequestWithMixedCaseHeaders:
+    headers = {
+        'Content-Type': 'application/json',
+        'cookie': 'accessToken=eyJsecrettoken',
+        'SET-COOKIE': 'accessToken=eyJsecrettoken; Secure; HttpOnly',
+        'x-csrf-token': 'csrf-secret-value',
+        'AUTHORIZATION': 'Bearer eyJsecrettoken',
+    }
+    args = {}
+    json = None
+    path = '/fake-path'
+    environ = {}
+
+
+def test_log_filters_sensitive_headers_case_insensitive():
+    mock_logger = MagicMock(wraps=DefaultLogger(True))
+    log_request_body_and_headers(mock_logger, MockRequestWithMixedCaseHeaders())
+
+    logged_details = mock_logger.info.call_args[0][0]
+    logged_headers = logged_details['headers']
+
+    assert 'Content-Type' in logged_headers
+    assert 'cookie' not in logged_headers
+    assert 'SET-COOKIE' not in logged_headers
+    assert 'x-csrf-token' not in logged_headers
+    assert 'AUTHORIZATION' not in logged_headers
