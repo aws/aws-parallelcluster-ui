@@ -12,7 +12,7 @@ COMMON_SECURITY_HEADERS = {
 }
 
 CSP_HEADER = {
-    'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src data:; img-src 'self' data:; child-src blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'none';"
+    'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src data:; img-src 'self' data:; child-src blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; upgrade-insecure-requests;"
 }
 
 

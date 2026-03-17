@@ -18,7 +18,7 @@ SECURITY_HEADERS = [
 
 CSP_HEADER = {
     'key': 'Content-Security-Policy',
-    'default': "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src data:; img-src 'self' data:; child-src blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'none';"
+    'default': "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src data:; img-src 'self' data:; child-src blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; upgrade-insecure-requests;"
 }
 
 def add_security_headers(response: Response):
