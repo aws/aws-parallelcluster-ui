@@ -28,8 +28,10 @@ cryptography==44.0.1
     # via
     #   -r requirements.in
     #   python-jose
-ecdsa==0.19.1
-    # via python-jose
+ecdsa==0.19.2
+    # via
+    #   -r requirements.in
+    #   python-jose
 flask==2.3.3
     # via
     #   -r requirements.in
