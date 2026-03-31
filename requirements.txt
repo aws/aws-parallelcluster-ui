@@ -29,7 +29,9 @@ cryptography==44.0.1
     #   -r requirements.in
     #   python-jose
 ecdsa==0.19.2
-    # via python-jose
+    # via
+    #   -r requirements.in
+    #   python-jose
 flask==2.3.3
     # via
     #   -r requirements.in
@@ -97,7 +99,7 @@ urllib3==2.6.3
     #   -r requirements.in
     #   botocore
     #   requests
-werkzeug==3.0.6
+werkzeug==3.1.6
     # via
     #   -r requirements.in
     #   flask
