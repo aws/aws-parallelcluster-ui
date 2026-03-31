@@ -7,7 +7,7 @@ urllib3==2.6.3
 # Installing cryptography backend since it is the recommended one: https://pypi.org/project/python-jose/
 python-jose[cryptography]==3.4.0
 ecdsa==0.19.2
-cryptography==44.0.1
+cryptography==46.0.6
 PyYAML==6.0.2
 pytest==7.2.2
 pytest-mock==3.8.2
