@@ -29,7 +29,9 @@ cryptography==44.0.1
     #   -r requirements.in
     #   python-jose
 ecdsa==0.19.2
-    # via python-jose
+    # via
+    #   -r requirements.in
+    #   python-jose
 flask==2.3.3
     # via
     #   -r requirements.in
@@ -82,7 +84,7 @@ python-jose[cryptography]==3.4.0
     # via -r requirements.in
 pyyaml==6.0.2
     # via -r requirements.in
-requests==2.32.4
+requests==2.33.0
     # via -r requirements.in
 rsa==4.9
     # via python-jose
