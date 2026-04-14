@@ -28,6 +28,7 @@ from api.security.csrf.csrf import csrf_needed
 from api.utils import disable_auth, read_and_delete_ssm_output_from_cloudwatch
 from api.validation import validated
 from api.validation.schemas import PCProxyArgs, PCProxyBody
+from api.validation.validators import _SHELL_METACHARACTERS
 
 USER_POOL_ID = os.getenv("USER_POOL_ID")
 AUTH_PATH = os.getenv("AUTH_PATH")
@@ -368,6 +369,10 @@ def sacct():
     cluster_name = request.args.get("cluster_name")
     region = request.args.get("region")
     body = request.json
+
+    for k, v in body.items():
+        if _SHELL_METACHARACTERS.search(str(k)) or _SHELL_METACHARACTERS.search(str(v)):
+            return {"message": "Invalid characters in request body."}, 400
 
     price_guess = None
     sacct_args = " ".join(f"--{k} {v}" for k, v in body.items())

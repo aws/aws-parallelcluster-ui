@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, validate, INCLUDE, validates_schema
 
 from api.validation.validators import aws_region_validator, is_alphanumeric_with_hyphen, \
-    valid_api_log_levels_predicate, size_not_exceeding, is_safe_path
+    valid_api_log_levels_predicate, size_not_exceeding, is_safe_path, has_no_shell_metacharacters
 
 
 class EC2ActionSchema(Schema):
@@ -53,7 +53,7 @@ GetInstanceTypes = GetInstanceTypesSchema(unknown=INCLUDE)
 
 
 class GetDcvSessionSchema(Schema):
-    user = fields.String(validate=validate.Length(max=64))
+    user = fields.String(validate=validate.And(has_no_shell_metacharacters, validate.Length(max=64)))
     instance_id = fields.String(required=True, validate=validate.Length(max=60))
     region = fields.String(validate=aws_region_validator)
 
@@ -61,7 +61,7 @@ GetDcvSession = GetDcvSessionSchema(unknown=INCLUDE)
 
 
 class QueueStatusSchema(Schema):
-    user = fields.String(validate=validate.Length(max=64))
+    user = fields.String(validate=validate.And(has_no_shell_metacharacters, validate.Length(max=64)))
     instance_id = fields.String(required=True, validate=validate.Length(max=60))
     region = fields.String(required=True, validate=aws_region_validator)
 
@@ -69,25 +69,25 @@ QueueStatus = QueueStatusSchema(unknown=INCLUDE)
 
 
 class ScontrolJobSchema(Schema):
-    user = fields.String(validate=validate.Length(max=64))
+    user = fields.String(validate=validate.And(has_no_shell_metacharacters, validate.Length(max=64)))
     instance_id = fields.String(required=True, validate=validate.Length(max=60))
-    job_id = fields.String(required=True, validate=validate.Length(max=256))
+    job_id = fields.String(required=True, validate=validate.And(has_no_shell_metacharacters, validate.Length(max=256)))
     region = fields.String(required=True, validate=aws_region_validator)
 
 ScontrolJob = ScontrolJobSchema(unknown=INCLUDE)
 
 
 class CancelJobSchema(Schema):
-    user = fields.String(validate=validate.Length(max=64))
+    user = fields.String(validate=validate.And(has_no_shell_metacharacters, validate.Length(max=64)))
     instance_id = fields.String(required=True, validate=validate.Length(max=60))
-    job_id = fields.String(required=True, validate=validate.Length(max=256))
+    job_id = fields.String(required=True, validate=validate.And(has_no_shell_metacharacters, validate.Length(max=256)))
     region = fields.String(required=True, validate=aws_region_validator)
 
 CancelJob = CancelJobSchema(unknown=INCLUDE)
 
 
 class SacctSchema(Schema):
-    user = fields.String(validate=validate.Length(max=64))
+    user = fields.String(validate=validate.And(has_no_shell_metacharacters, validate.Length(max=64)))
     instance_id = fields.String(required=True, validate=validate.Length(max=60))
     cluster_name = fields.String(required=True, validate=validate.And(is_alphanumeric_with_hyphen, validate.Length(max=60)))
     region = fields.String(required=True, validate=aws_region_validator)
