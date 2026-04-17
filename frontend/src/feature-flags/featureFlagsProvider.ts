@@ -11,8 +11,8 @@
 import {AvailableFeature} from './types'
 
 const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
-  // Placing ubuntu1804 here to be counted as a feature flag, so it can be deprecated
-  '3.0.0': ['ubuntu1804'],
+  // Placing alinux2, ubuntu1804, centos7, ubuntu2004 here to be counted as feature flags, so they can be deprecated
+  '3.0.0': ['alinux2', 'ubuntu1804', 'centos7', 'ubuntu2004'],
   '3.1.0': ['multiuser_cluster'],
   '3.2.0': [
     'fsx_ontap',
@@ -41,13 +41,18 @@ const versionToFeaturesMap: Record<string, AvailableFeature[]> = {
     'job_exclusive_allocation',
     'memory_based_scheduling_with_multiple_instance_types',
   ],
-  '3.9.0': ['rhel9'],
+  '3.8.0': ['rocky8'],
+  '3.9.0': ['rhel9', 'rocky9'],
+  '3.10.0': ['alinux2023'],
+  '3.13.0': ['ubuntu2404'],
 }
 
 const featureToDeperecatedVersionMap: Partial<
   Record<AvailableFeature, string>
 > = {
   ubuntu1804: '3.7.0',
+  centos7: '3.10.0',
+  ubuntu2004: '3.14.0',
 }
 
 function isVersionGreaterOrEqualThan(version: string, other: string): boolean {

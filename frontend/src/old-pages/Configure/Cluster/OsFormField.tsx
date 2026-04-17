@@ -13,36 +13,56 @@ import {FormField, Tiles, TilesProps} from '@cloudscape-design/components'
 import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/events'
 import {useCallback} from 'react'
 import {useTranslation} from 'react-i18next'
+import {AvailableFeature} from '../../../feature-flags/types'
 import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 import {setState, useState} from '../../../store'
 
 const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
 
-const SUPPORTED_OSES_LIST: TilesProps.TilesDefinition[] = [
-  {value: 'alinux2', label: 'Amazon Linux 2'},
-  {value: 'centos7', label: 'CentOS 7'},
-  {value: 'ubuntu2004', label: 'Ubuntu 20.04'},
+interface OsDefinition extends TilesProps.TilesDefinition {
+  feature: AvailableFeature
+}
+
+const ALL_OSES: OsDefinition[] = [
+  {value: 'alinux2', label: 'Amazon Linux 2', feature: 'alinux2'},
+  {value: 'alinux2023', label: 'Amazon Linux 2023', feature: 'alinux2023'},
+  {value: 'centos7', label: 'CentOS 7', feature: 'centos7'},
+  {value: 'ubuntu1804', label: 'Ubuntu 18.04', feature: 'ubuntu1804'},
+  {value: 'ubuntu2004', label: 'Ubuntu 20.04', feature: 'ubuntu2004'},
+  {value: 'ubuntu2204', label: 'Ubuntu 22.04', feature: 'ubuntu2204'},
+  {value: 'ubuntu2404', label: 'Ubuntu 24.04', feature: 'ubuntu2404'},
+  {value: 'rhel8', label: 'Red Hat Enterprise Linux 8', feature: 'rhel8'},
+  {value: 'rhel9', label: 'Red Hat Enterprise Linux 9', feature: 'rhel9'},
+  {value: 'rocky8', label: 'Rocky Linux 8', feature: 'rocky8'},
+  {value: 'rocky9', label: 'Rocky Linux 9', feature: 'rocky9'},
 ]
-const UBUNTU18_OS = {value: 'ubuntu1804', label: 'Ubuntu 18.04'}
-const RHEL8_OS = {value: 'rhel8', label: 'Red Hat Enterprise Linux 8'}
-const UBUNTU22_OS = {value: 'ubuntu2204', label: 'Ubuntu 22.04'}
-const RHEL9_OS = {value: 'rhel9', label: 'Red Hat Enterprise Linux 9'}
+
+function useAvailableOses(): TilesProps.TilesDefinition[] {
+  const flags: Record<string, boolean> = {
+    alinux2: useFeatureFlag('alinux2'),
+    alinux2023: useFeatureFlag('alinux2023'),
+    centos7: useFeatureFlag('centos7'),
+    ubuntu1804: useFeatureFlag('ubuntu1804'),
+    ubuntu2004: useFeatureFlag('ubuntu2004'),
+    ubuntu2204: useFeatureFlag('ubuntu2204'),
+    ubuntu2404: useFeatureFlag('ubuntu2404'),
+    rhel8: useFeatureFlag('rhel8'),
+    rhel9: useFeatureFlag('rhel9'),
+    rocky8: useFeatureFlag('rocky8'),
+    rocky9: useFeatureFlag('rocky9'),
+  }
+
+  return ALL_OSES
+    .filter(os => flags[os.feature])
+    .map(({feature: _, ...rest}) => rest)
+}
 
 export function OsFormField() {
   const {t} = useTranslation()
   const editing = useState(['app', 'wizard', 'editing'])
   const selectedOsValue = useState(osPath) || 'alinux2'
 
-  let osesList = useFeatureFlag('rhel8')
-    ? SUPPORTED_OSES_LIST.concat(RHEL8_OS)
-    : SUPPORTED_OSES_LIST
-  osesList = useFeatureFlag('ubuntu1804')
-    ? osesList.concat(UBUNTU18_OS)
-    : osesList
-  osesList = useFeatureFlag('ubuntu2204')
-    ? osesList.concat(UBUNTU22_OS)
-    : osesList
-  osesList = useFeatureFlag('rhel9') ? osesList.concat(RHEL9_OS) : osesList
+  let osesList = useAvailableOses()
   osesList = editing ? osesList.map(os => ({...os, disabled: true})) : osesList
 
   const handleChange: NonCancelableEventHandler<TilesProps.ChangeDetail> =

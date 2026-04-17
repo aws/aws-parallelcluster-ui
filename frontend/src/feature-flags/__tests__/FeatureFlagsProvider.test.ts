@@ -26,7 +26,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
       ])
     })
@@ -36,7 +39,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.2.5', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -53,7 +59,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.3.2', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -76,7 +85,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.4.1', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -101,7 +113,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features', async () => {
       const features = await subject('3.6.1', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -124,10 +139,13 @@ describe('given a feature flags provider and a list of rules', () => {
     })
   })
 
-  describe('when the version is between 3.7.0 and 3.9.0', () => {
+  describe('when the version is between 3.7.0 and 3.8.0', () => {
     it('should return the list of available features', async () => {
-      const features = await subject('3.8.0', region)
+      const features = await subject('3.7.1', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
         'fsx_ontap',
         'fsx_openzsf',
@@ -155,11 +173,85 @@ describe('given a feature flags provider and a list of rules', () => {
     })
   })
 
-  for (const version of ["3.9.0", "3.12.0"]) {
+  describe('when the version is between 3.8.0 and 3.9.0', () => {
+    it('should return the list of available features', async () => {
+      const features = await subject('3.8.0', region)
+      expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
+        'centos7',
+        'ubuntu2004',
+        'multiuser_cluster',
+        'fsx_ontap',
+        'fsx_openzsf',
+        'lustre_persistent2',
+        'memory_based_scheduling',
+        'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
+        'cost_monitoring',
+        'slurm_accounting',
+        'queues_multiple_instance_types',
+        'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
+        'imds_support',
+        'multi_az',
+        'on_node_updated',
+        'rhel8',
+        'new_resources_limits',
+        'ubuntu2204',
+        'login_nodes',
+        'amazon_file_cache',
+        'job_exclusive_allocation',
+        'memory_based_scheduling_with_multiple_instance_types',
+        'rocky8',
+      ])
+    })
+  })
+
+  describe('when the version is between 3.9.0 and 3.10.0', () => {
+    it('should return the list of available features', async () => {
+      const features = await subject('3.9.0', region)
+      expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
+        'centos7',
+        'ubuntu2004',
+        'multiuser_cluster',
+        'fsx_ontap',
+        'fsx_openzsf',
+        'lustre_persistent2',
+        'memory_based_scheduling',
+        'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
+        'cost_monitoring',
+        'slurm_accounting',
+        'queues_multiple_instance_types',
+        'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
+        'imds_support',
+        'multi_az',
+        'on_node_updated',
+        'rhel8',
+        'new_resources_limits',
+        'ubuntu2204',
+        'login_nodes',
+        'amazon_file_cache',
+        'job_exclusive_allocation',
+        'memory_based_scheduling_with_multiple_instance_types',
+        'rocky8',
+        'rhel9',
+        'rocky9',
+      ])
+    })
+  })
+
+  for (const version of ["3.10.0", "3.12.0"]) {
     describe(`when the version is ${version}`, () => {
       it('should return the list of available features', async () => {
         const features = await subject(version, region)
         expect(features).toEqual<AvailableFeature[]>([
+          'alinux2',
+          'ubuntu2004',
           'multiuser_cluster',
           'fsx_ontap',
           'fsx_openzsf',
@@ -183,11 +275,89 @@ describe('given a feature flags provider and a list of rules', () => {
           'amazon_file_cache',
           'job_exclusive_allocation',
           'memory_based_scheduling_with_multiple_instance_types',
+          'rocky8',
           'rhel9',
+          'rocky9',
+          'alinux2023',
         ])
       })
     })
   }
+
+  describe('when the version is 3.13.0', () => {
+    it('should return the list of available features', async () => {
+      const features = await subject('3.13.0', region)
+      expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
+        'ubuntu2004',
+        'multiuser_cluster',
+        'fsx_ontap',
+        'fsx_openzsf',
+        'lustre_persistent2',
+        'memory_based_scheduling',
+        'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
+        'cost_monitoring',
+        'slurm_accounting',
+        'queues_multiple_instance_types',
+        'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
+        'imds_support',
+        'multi_az',
+        'on_node_updated',
+        'rhel8',
+        'new_resources_limits',
+        'ubuntu2204',
+        'login_nodes',
+        'amazon_file_cache',
+        'job_exclusive_allocation',
+        'memory_based_scheduling_with_multiple_instance_types',
+        'rocky8',
+        'rhel9',
+        'rocky9',
+        'alinux2023',
+        'ubuntu2404',
+      ])
+    })
+  })
+
+  describe('when the version is 3.14.0', () => {
+    it('should return the list of available features', async () => {
+      const features = await subject('3.14.0', region)
+      expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
+        'multiuser_cluster',
+        'fsx_ontap',
+        'fsx_openzsf',
+        'lustre_persistent2',
+        'memory_based_scheduling',
+        'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
+        'cost_monitoring',
+        'slurm_accounting',
+        'queues_multiple_instance_types',
+        'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
+        'imds_support',
+        'multi_az',
+        'on_node_updated',
+        'rhel8',
+        'new_resources_limits',
+        'ubuntu2204',
+        'login_nodes',
+        'amazon_file_cache',
+        'job_exclusive_allocation',
+        'memory_based_scheduling_with_multiple_instance_types',
+        'rocky8',
+        'rhel9',
+        'rocky9',
+        'alinux2023',
+        'ubuntu2404',
+      ])
+    })
+  })
 
 
   describe('when an additional feature has been enabled through the browser session storage', () => {
@@ -198,7 +368,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should be included in the list of features', async () => {
       const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
         'cost_monitoring',
       ])
@@ -212,7 +385,10 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should not be included in the list of features', async () => {
       const features = await subject('3.1.5', region)
       expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
         'ubuntu1804',
+        'centos7',
+        'ubuntu2004',
         'multiuser_cluster',
       ])
     })
@@ -222,6 +398,21 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should return the list of available features without the unsupported feature', async () => {
       const features = await subject('3.7.1', region)
       expect(features).not.toContain<AvailableFeature[]>(['ubuntu1804'])
+    })
+
+    it('should deprecate centos7 at version 3.10.0', async () => {
+      const features = await subject('3.10.0', region)
+      expect(features).not.toContain('centos7')
+    })
+
+    it('should keep centos7 at version 3.9.0', async () => {
+      const features = await subject('3.9.0', region)
+      expect(features).toContain('centos7')
+    })
+
+    it('should deprecate ubuntu2004 at version 3.14.0', async () => {
+      const features = await subject('3.14.0', region)
+      expect(features).not.toContain('ubuntu2004')
     })
   })
 
