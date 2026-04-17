@@ -323,11 +323,39 @@ describe('given a feature flags provider and a list of rules', () => {
   })
 
   describe('when the version is 3.14.0', () => {
-    it('should return the list of available features without ubuntu2004', async () => {
+    it('should return the list of available features', async () => {
       const features = await subject('3.14.0', region)
-      expect(features).not.toContain('ubuntu2004')
-      expect(features).toContain('ubuntu2404')
-      expect(features).toContain('alinux2023')
+      expect(features).toEqual<AvailableFeature[]>([
+        'alinux2',
+        'multiuser_cluster',
+        'fsx_ontap',
+        'fsx_openzsf',
+        'lustre_persistent2',
+        'memory_based_scheduling',
+        'slurm_queue_update_strategy',
+        'ebs_deletion_policy',
+        'cost_monitoring',
+        'slurm_accounting',
+        'queues_multiple_instance_types',
+        'dynamic_fs_mount',
+        'efs_deletion_policy',
+        'lustre_deletion_policy',
+        'imds_support',
+        'multi_az',
+        'on_node_updated',
+        'rhel8',
+        'new_resources_limits',
+        'ubuntu2204',
+        'login_nodes',
+        'amazon_file_cache',
+        'job_exclusive_allocation',
+        'memory_based_scheduling_with_multiple_instance_types',
+        'rocky8',
+        'rhel9',
+        'rocky9',
+        'alinux2023',
+        'ubuntu2404',
+      ])
     })
   })
 
