@@ -66,12 +66,16 @@ function clusterDefaultUser(cluster: any) {
   // @ts-expect-error TS(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
   return {
     alinux2: 'ec2-user',
+    alinux2023: 'ec2-user',
     ubuntu2204: 'ubuntu',
+    ubuntu2404: 'ubuntu',
     ubuntu2004: 'ubuntu',
     ubuntu1804: 'ubuntu',
     centos7: 'centos',
     rhel8: 'ec2-user',
     rhel9: 'ec2-user',
+    rocky8: 'rocky',
+    rocky9: 'rocky',
   }[os]
 }
 

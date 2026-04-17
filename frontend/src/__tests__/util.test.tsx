@@ -91,4 +91,36 @@ describe('Given a function to get the default cluster user', () => {
       expect(result).toBe('ec2-user')
     })
   })
+
+  describe('when the OS is Amazon Linux 2023', () => {
+    const cluster = {config: {Image: {Os: 'alinux2023'}}}
+    it('should be ec2-user', () => {
+      const result = clusterDefaultUser(cluster)
+      expect(result).toBe('ec2-user')
+    })
+  })
+
+  describe('when the OS is Ubuntu 24.04', () => {
+    const cluster = {config: {Image: {Os: 'ubuntu2404'}}}
+    it('should be ubuntu', () => {
+      const result = clusterDefaultUser(cluster)
+      expect(result).toBe('ubuntu')
+    })
+  })
+
+  describe('when the OS is Rocky Linux 8', () => {
+    const cluster = {config: {Image: {Os: 'rocky8'}}}
+    it('should be rocky', () => {
+      const result = clusterDefaultUser(cluster)
+      expect(result).toBe('rocky')
+    })
+  })
+
+  describe('when the OS is Rocky Linux 9', () => {
+    const cluster = {config: {Image: {Os: 'rocky9'}}}
+    it('should be rocky', () => {
+      const result = clusterDefaultUser(cluster)
+      expect(result).toBe('rocky')
+    })
+  })
 })
