@@ -33,7 +33,7 @@ Parameters:
     Type: String
     Default: ''
   Version:
-    Description: Version of AWS ParallelCluster to deploy.
+    Description: 'Version of AWS ParallelCluster to deploy. Warning: deploying an end-of-life (EOL) version is not recommended as it will no longer receive bug fixes or security patches. For the list of currently supported versions, see the ParallelCluster support policy: https://docs.aws.amazon.com/parallelcluster/latest/ug/support-policy.html'
     Type: String
     AllowedPattern: '^(?!.*(\d+\.\d+\.\d+).*\1)([0-9]+\.[0-9]+\.[0-9]+)(,[0-9]+\.[0-9]+\.[0-9]+)*$'
     ConstraintDescription: Please specify a comma separated list of valid ParallelCluster versions without duplicates. (Must be 3.6.0 and above)
