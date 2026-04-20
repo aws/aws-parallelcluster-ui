@@ -33,7 +33,11 @@ Parameters:
     Type: String
     Default: ''
   Version:
+<<<<<<< Updated upstream
     Description: 'Version of AWS ParallelCluster to deploy. Warning: deploying an end-of-life (EOL) version is not recommended as it will no longer receive bug fixes or security patches. For the list of currently supported versions, see the ParallelCluster support policy: https://docs.aws.amazon.com/parallelcluster/latest/ug/support-policy.html'
+=======
+    Description: 'Version of AWS ParallelCluster to deploy. We recommend using a supported version of ParallelCluster to ensure you continue receiving the latest bug fixes, security patches and support. You can find the list of currently supported versions in the ParallelCluster support policy: https://docs.aws.amazon.com/parallelcluster/latest/ug/support-policy.html'
+>>>>>>> Stashed changes
     Type: String
     AllowedPattern: '^(?!.*(\d+\.\d+\.\d+).*\1)([0-9]+\.[0-9]+\.[0-9]+)(,[0-9]+\.[0-9]+\.[0-9]+)*$'
     ConstraintDescription: Please specify a comma separated list of valid ParallelCluster versions without duplicates. (Must be 3.6.0 and above)
