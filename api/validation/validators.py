@@ -5,21 +5,6 @@ import re
 
 from api.logging import VALID_LOG_LEVELS
 
-# Characters that have special meaning in shell and can be used for command injection.
-# Blocking these prevents: command chaining (;), piping (|), backgrounding (&),
-# variable/command substitution ($, `), subshells ((, )), redirection (>, <),
-# and quote manipulation (', ", \) that could break out of command strings.
-_SHELL_METACHARACTERS = re.compile(r"[;|&$`()><'\"\\\n\r\x00]")
-
-
-def has_no_shell_metacharacters(arg: str):
-    """
-    Validates that a string does not contain shell metacharacters.
-    Used to prevent OS command injection in inputs that are interpolated
-    into shell commands executed via SSM.
-    """
-    return not _SHELL_METACHARACTERS.search(str(arg))
-
 # PC available regions
 PC_REGIONS = [
     'us-east-2','us-east-1','us-west-1','us-west-2',
