@@ -56,7 +56,7 @@ markupsafe==2.1.2
     # via
     #   jinja2
     #   werkzeug
-marshmallow==3.19.0
+marshmallow==3.26.2
     # via -r requirements.in
 packaging==23.1
     # via
