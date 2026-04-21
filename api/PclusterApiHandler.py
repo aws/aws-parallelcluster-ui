@@ -12,6 +12,7 @@ import functools
 import json
 import os
 import re
+import shlex
 import time
 
 import boto3
@@ -273,7 +274,7 @@ def ssm_command(region, instance_id, user, run_command):
     else:
         ssm = boto3.client("ssm")
 
-    command = f"runuser -l {user} -c '{run_command}'"
+    command = f"runuser -l {shlex.quote(user)} -c {shlex.quote(run_command)}"
 
     ssm_resp = ssm.send_command(
         InstanceIds=[instance_id],
@@ -370,7 +371,7 @@ def sacct():
     body = request.json
 
     price_guess = None
-    sacct_args = " ".join(f"--{k} {v}" for k, v in body.items())
+    sacct_args = " ".join(f"--{shlex.quote(str(k))} {shlex.quote(str(v))}" for k, v in body.items())
     sacct_args += " --allusers" if "user" not in body else ""
 
     if "jobs" not in body:
@@ -411,7 +412,7 @@ def scontrol_job():
         return {"message": "You must specify a job id."}, 400
 
     job_data = (
-        ssm_command(request.args.get("region"), instance_id, user, f"scontrol show job {job_id} -o").strip().split(" ")
+        ssm_command(request.args.get("region"), instance_id, user, f"scontrol show job {shlex.quote(job_id)} -o").strip().split(" ")
     )
     if isinstance(job_data, tuple):
         return job_data
@@ -439,7 +440,7 @@ def cancel_job():
     user = request.args.get("user", "ec2-user")
     instance_id = request.args.get("instance_id")
     job_id = request.args.get("job_id")
-    ssm_command(request.args.get("region"), instance_id, user, f"scancel {job_id}")
+    ssm_command(request.args.get("region"), instance_id, user, f"scancel {shlex.quote(job_id)}")
     return {"status": "success"}
 
 
@@ -456,7 +457,8 @@ def get_dcv_session():
     else:
         ssm = boto3.client("ssm")
 
-    command = f"runuser -l {user} -c '{dcv_command} {session_directory}'"
+    inner_command = f"{dcv_command} {shlex.quote(session_directory)}"
+    command = f"runuser -l {shlex.quote(user)} -c {shlex.quote(inner_command)}"
 
     ssm_resp = ssm.send_command(
         InstanceIds=[instance_id],
