@@ -93,3 +93,21 @@ To run frontend tests:
 ```
 npm test
 ```
+
+### CloudFormation template unit tests
+
+The `infrastructure/test/` directory contains unit tests for the CloudFormation templates using [cloud-radar](https://github.com/DontShaveTheYak/cloud-radar).
+
+#### Prerequisites
+
+Install the test dependencies (from the `infrastructure/` directory):
+
+```bash
+pip install -r test/requirements.txt
+```
+
+#### Running the tests
+
+```bash
+pytest test/ -v
+```
