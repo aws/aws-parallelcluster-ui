@@ -3,7 +3,7 @@ Flask==2.3.3
 Werkzeug==3.0.6
 boto3==1.42.91
 requests==2.33.1
-urllib3==2.6.3
+urllib3==2.7.0
 # Installing cryptography backend since it is the recommended one: https://pypi.org/project/python-jose/
 python-jose[cryptography]==3.5.0
 ecdsa==0.19.2
