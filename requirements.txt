@@ -4,8 +4,6 @@
 #
 #    pip-compile requirements.in
 #
-attrs==23.1.0
-    # via pytest
 blinker==1.7.0
     # via flask
 boto3==1.42.91
@@ -94,7 +92,7 @@ six==1.16.0
     # via
     #   ecdsa
     #   python-dateutil
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -r requirements.in
     #   botocore
