@@ -1,6 +1,6 @@
 """Helper functions for parallelcluster-ui cloud-radar tests."""
 
-from typing import Any, List, Tuple
+from typing import Any, Iterator, List, Tuple
 
 
 def policy_statements(policy: Any) -> List[dict]:
@@ -26,3 +26,16 @@ def iam_roles_with_boundary(stack) -> List[Tuple[str, dict]]:
         if "PermissionsBoundary" in properties:
             results.append((name, definition))
     return results
+
+
+def arns_from_resource(value: Any, path: str) -> Iterator[Tuple[str, str]]:
+    """Yield (path, arn) for every ARN found in a resource property value."""
+    if isinstance(value, str):
+        if value.startswith("arn:"):
+            yield path, value
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            yield from arns_from_resource(item, f"{path}.{key}")
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            yield from arns_from_resource(item, f"{path}[{index}]")
