@@ -155,7 +155,7 @@ Resources:
                   - cognito-idp:UpdateGroup
                   - cognito-idp:DeleteGroup
                 Resource:
-                  - !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*
+                  - !Sub arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*
         - PolicyName: ImageBuilderPolicy
           PolicyDocument:
             Version: 2012-10-17
@@ -202,7 +202,7 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
-                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:e2e/test1-AUsDgk
+                Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:e2e/test1-AUsDgk
 
 Outputs:
   PrivateDeployRole:
