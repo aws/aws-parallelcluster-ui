@@ -12,3 +12,4 @@ public/*
 .ignore
 infrastructure/environments/*
 !infrastructure/environments/demo-*
+.python-version
