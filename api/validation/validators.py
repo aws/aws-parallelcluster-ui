@@ -34,7 +34,7 @@ def size_not_exceeding(data, size):
         raise ValidationError(f'Request body exceeded max size of {size} bytes')
 
 def is_safe_path(arg: str):
-    """
+    r"""
     Validates if a given path is safe from path traversal attacks.
 
     This function checks for the presence of directory traversal patterns

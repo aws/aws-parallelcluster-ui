@@ -229,7 +229,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: python3.12
+      Runtime: python3.14
       TracingConfig:
         Mode: Active
       Role: !GetAtt ApiVersionMapFunctionRole.Arn
@@ -601,7 +601,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: python3.12
+      Runtime: python3.14
       MemorySize: 128
       Timeout: 20
       TracingConfig:
@@ -911,7 +911,7 @@ Resources:
               cfnresponse.send(event, context, response_status, response_data, physical_resource_id, reason)
 
       Handler: index.handler
-      Runtime: python3.12
+      Runtime: python3.14
       Role: !GetAtt EcrImageDeletionLambdaRole.Arn
 
   EcrImageDeletionLambdaLogGroup:
