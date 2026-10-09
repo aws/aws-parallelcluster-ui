@@ -3525,7 +3525,7 @@ THE SOFTWARE.
 ******************************
 
 js-yaml
-4.1.0 <https://github.com/nodeca/js-yaml>
+4.3.2 <https://github.com/nodeca/js-yaml>
 (The MIT License)
 
 Copyright (C) 2011-2015 by Vitaly Puzrin
@@ -3552,7 +3552,7 @@ THE SOFTWARE.
 ******************************
 
 lodash
-4.17.21 <https://github.com/lodash/lodash>
+4.18.1 <https://github.com/lodash/lodash>
 Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
 
 Based on Underscore.js, copyright Jeremy Ashkenas,
@@ -5921,7 +5921,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 cryptography
-42.0.2
+50.0.2
 BSD License
 Copyright (c) Individual contributors.
 All rights reserved.
@@ -6412,7 +6412,7 @@ MIT License
 
 
 pyasn1
-0.5.0
+0.6.4
 BSD License
 Copyright (c) 2005-2020, Ilya Etingof <etingof@gmail.com>
 All rights reserved.
@@ -7090,7 +7090,7 @@ SOFTWARE.
 
 
 urllib3
-1.26.18
+2.8.0
 MIT License
 MIT License
 
