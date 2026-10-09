@@ -49,11 +49,11 @@ jobs:
       - name: Setup Python version
         uses: actions/setup-python@v7
         with:
-          python-version: '3.12'
+          python-version: '3.14'
           cache: 'pip'
 
       - name: Install python dependencies
-        run: pip3 install -r requirements.txt
+        run: pip3 install -r requirements.txt -r requirements-dev.txt
 
       - name: Run backend tests
         run: pytest

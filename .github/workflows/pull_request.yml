@@ -46,14 +46,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: Setup Python version 3.8
+      - name: Setup Python version 3.14
         uses: actions/setup-python@v7
         with:
-          python-version: '3.12'
+          python-version: '3.14'
           cache: 'pip'
 
       - name: Install python dependencies
-        run: if [ -f requirements.txt ]; then pip3 install -r requirements.txt ; fi
+        run: pip3 install -r requirements.txt -r requirements-dev.txt
 
       - name: Run backend tests
         run: pytest

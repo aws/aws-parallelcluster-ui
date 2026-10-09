@@ -1,1 +1,3 @@
-pip-tools==6.13.0
+pip-tools==7.6.2
+pytest==9.1.1
+pytest-mock==3.16.0
