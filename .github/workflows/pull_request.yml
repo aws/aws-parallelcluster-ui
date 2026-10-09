@@ -53,7 +53,7 @@ jobs:
           cache: 'pip'
 
       - name: Install python dependencies
-        run: if [ -f requirements.txt ]; then pip3 install -r requirements.txt ; fi
+        run: pip3 install -r requirements.txt -r requirements-dev.txt
 
       - name: Run backend tests
         run: pytest
