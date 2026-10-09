@@ -62,7 +62,7 @@ packaging==26.3
     # via
     #   marshmallow
     #   pytest
-pluggy==1.0.0
+pluggy==1.6.0
     # via pytest
 pyasn1==0.6.4
     # via
@@ -70,7 +70,9 @@ pyasn1==0.6.4
     #   rsa
 pycparser==2.21
     # via cffi
-pytest==7.4.4
+pygments==2.21.0
+    # via pytest
+pytest==9.1.1
     # via
     #   -r requirements.in
     #   pytest-mock
