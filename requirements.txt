@@ -36,7 +36,7 @@ flask==2.3.3
     #   flask-cors
 flask-cors==6.0.2
     # via -r requirements.in
-idna==3.7
+idna==3.20
     # via requests
 iniconfig==2.0.0
     # via pytest
@@ -58,7 +58,7 @@ markupsafe==2.1.2
     #   werkzeug
 marshmallow==3.26.2
     # via -r requirements.in
-packaging==23.1
+packaging==26.3
     # via
     #   marshmallow
     #   pytest
