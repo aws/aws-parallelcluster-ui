@@ -1,6 +1,6 @@
 Flask-Cors==6.0.2
 Flask==2.3.3
-Werkzeug==3.0.6
+Werkzeug==3.1.9
 boto3==1.42.91
 requests==2.33.1
 urllib3==2.8.0

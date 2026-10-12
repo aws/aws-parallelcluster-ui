@@ -5337,7 +5337,7 @@ SOFTWARE.
 
 
 Werkzeug
-2.3.8
+3.1.9
 BSD License
 Copyright 2007 Pallets
 
