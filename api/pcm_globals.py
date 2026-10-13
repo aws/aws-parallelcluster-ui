@@ -1,7 +1,7 @@
 from contextvars import ContextVar
 
 from flask import g, Response
-from flask.scaffold import Scaffold
+from flask.sansio.scaffold import Scaffold
 from werkzeug.local import LocalProxy
 
 from api.logging.logger import DefaultLogger
