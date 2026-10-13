@@ -1,5 +1,5 @@
 from flask import Response
-from flask.scaffold import Scaffold
+from flask.sansio.scaffold import Scaffold
 from flask_cors import CORS
 
 CORP_HEADERS = [
