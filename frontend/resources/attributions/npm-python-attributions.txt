@@ -5810,7 +5810,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 certifi
-2023.7.22
+2026.10.23
 Mozilla Public License 2.0 (MPL 2.0)
 This package contains a modified version of ca-bundle.crt:
 
