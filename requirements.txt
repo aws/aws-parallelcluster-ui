@@ -59,7 +59,7 @@ marshmallow==3.26.2
     # via -r requirements.in
 packaging==26.3
     # via marshmallow
-pyasn1==0.6.4
+pyasn1==0.6.5
     # via
     #   python-jose
     #   rsa
