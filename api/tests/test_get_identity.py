@@ -2,7 +2,7 @@ from unittest.mock import call, ANY
 
 import pytest
 
-from jose import ExpiredSignatureError
+from jwt import ExpiredSignatureError
 
 import api
 from api.PclusterApiHandler import get_identity
