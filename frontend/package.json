@@ -23,11 +23,11 @@
   },
   "scripts": {
     "start": "next start",
-    "build": "next build",
+    "build": "next build --webpack",
     "test": "jest",
     "lint": "eslint src",
     "dev": "next dev",
-    "export": "next build",
+    "export": "next build --webpack",
     "prepare": "./scripts/git-secrets-command.sh '--register-aws > /dev/null' && cd .. && husky install frontend/.husky",
     "ts-reignore": "npx ts-migrate reignore . --sources='src/**/*'",
     "ts-validate": "tsc -p tsconfig.json"
