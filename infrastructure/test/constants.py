@@ -13,6 +13,7 @@ CFN_TEMPLATES = [
     # Templates used for production
     "parallelcluster-ui.yaml",
     "parallelcluster-ui-cognito.yaml",
+    "parallelcluster-ui-policies.yaml",
 
     # Templates used for testing
     "github-env-setup.yml",

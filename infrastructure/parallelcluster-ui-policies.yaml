@@ -1,0 +1,339 @@
+# Keep the policies in sync with the "IAM permissions for ParallelCluster UI" page of the AWS ParallelCluster User Guide.
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS ParallelCluster UI policies
+
+Resources:
+  DeploymentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Role to deploy the AWS ParallelCluster UI stack
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:root'
+            Action: sts:AssumeRole
+          - Effect: Allow
+            Principal:
+              Service: !Sub 'cloudformation.${AWS::URLSuffix}'
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref DeploymentCorePolicy
+        - !Ref DeploymentCognitoPolicy
+        - !Ref DeploymentImageBuilderPolicy
+
+  # CloudFormation, S3, IAM, Lambda, EC2, API Gateway, CloudWatch Logs and custom domain permissions.
+  DeploymentCorePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Permissions to deploy the AWS ParallelCluster UI stack and the ParallelCluster API stacks
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: CloudFormationRead
+            Effect: Allow
+            Action:
+              - cloudformation:DescribeStackEvents
+              - cloudformation:DescribeStackResource
+              - cloudformation:DescribeStackResources
+              - cloudformation:DescribeStacks
+              - cloudformation:GetStackPolicy
+              - cloudformation:GetTemplate
+              - cloudformation:GetTemplateSummary
+              - cloudformation:ListStackResources
+              - cloudformation:ListStacks
+              - cloudformation:ValidateTemplate
+            Resource:
+              - '*'
+          - Sid: CloudFormationWrite
+            Effect: Allow
+            Action:
+              - cloudformation:CreateChangeSet
+              - cloudformation:CreateStack
+              - cloudformation:DeleteChangeSet
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeChangeSet
+              - cloudformation:ExecuteChangeSet
+              - cloudformation:TagResource
+              - cloudformation:UpdateStack
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*/*'
+          - Sid: CloudFormationTransforms
+            Effect: Allow
+            Action:
+              - cloudformation:CreateChangeSet
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/Include'
+              - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/LanguageExtensions'
+              - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31'
+          - Sid: S3Templates
+            Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:s3:::parallelcluster-ui-release-artifacts-*/*'
+              - !Sub 'arn:${AWS::Partition}:s3:::*-aws-parallelcluster/parallelcluster/*'
+          - Sid: IAM
+            Effect: Allow
+            Action:
+              - iam:AddRoleToInstanceProfile
+              - iam:AttachRolePolicy
+              - iam:CreateInstanceProfile
+              - iam:CreatePolicy
+              - iam:CreatePolicyVersion
+              - iam:CreateRole
+              - iam:DeleteInstanceProfile
+              - iam:DeletePolicy
+              - iam:DeletePolicyVersion
+              - iam:DeleteRole
+              - iam:DeleteRolePolicy
+              - iam:DetachRolePolicy
+              - iam:GetInstanceProfile
+              - iam:GetPolicy
+              - iam:GetPolicyVersion
+              - iam:GetRole
+              - iam:GetRolePolicy
+              - iam:ListAttachedRolePolicies
+              - iam:ListEntitiesForPolicy
+              - iam:ListPolicyVersions
+              - iam:ListRolePolicies
+              - iam:PutRolePolicy
+              - iam:RemoveRoleFromInstanceProfile
+              - iam:TagInstanceProfile
+              - iam:TagPolicy
+              - iam:TagRole
+              - iam:UntagRole
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:instance-profile/*'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*'
+          - Sid: IAMPassRole
+            Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*'
+            Condition:
+              StringEquals:
+                iam:PassedToService:
+                  - apigateway.amazonaws.com
+                  - cognito-idp.amazonaws.com
+                  - ec2.amazonaws.com
+                  - imagebuilder.amazonaws.com
+                  - lambda.amazonaws.com
+          - Sid: Lambda
+            Effect: Allow
+            Action:
+              - lambda:AddPermission
+              - lambda:CreateFunction
+              - lambda:DeleteFunction
+              - lambda:DeleteLayerVersion
+              - lambda:GetFunction
+              - lambda:GetFunctionCodeSigningConfig
+              - lambda:GetFunctionConfiguration
+              - lambda:GetFunctionRecursionConfig
+              - lambda:GetLayerVersion
+              - lambda:GetPolicy
+              - lambda:GetRuntimeManagementConfig
+              - lambda:InvokeFunction
+              - lambda:ListTags
+              - lambda:PublishLayerVersion
+              - lambda:RemovePermission
+              - lambda:TagResource
+              - lambda:UntagResource
+              - lambda:UpdateFunctionCode
+              - lambda:UpdateFunctionConfiguration
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
+              - !Sub 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:layer:*'
+          - Sid: EC2Read
+            Effect: Allow
+            Action:
+              - ec2:DescribeImages
+              - ec2:DescribeInstances
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcs
+            Resource:
+              - '*'
+          - Sid: APIGateway
+            Effect: Allow
+            Action:
+              - apigateway:AddCertificateToDomain
+              - apigateway:DELETE
+              - apigateway:GET
+              - apigateway:PATCH
+              - apigateway:POST
+              - apigateway:PUT
+              - apigateway:RemoveCertificateFromDomain
+              - apigateway:UpdateRestApiPolicy
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}::/account'
+              - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}::/domainnames'
+              - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}::/domainnames/*'
+              - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}::/restapis'
+              - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}::/restapis/*'
+              - !Sub 'arn:${AWS::Partition}:apigateway:${AWS::Region}::/tags/*'
+          - Sid: Logs
+            Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:DeleteLogGroup
+              - logs:DeleteRetentionPolicy
+              - logs:DescribeIndexPolicies
+              - logs:DescribeLogGroups
+              - logs:DescribeResourcePolicies
+              - logs:GetDataProtectionPolicy
+              - logs:ListTagsForResource
+              - logs:PutRetentionPolicy
+              - logs:TagLogGroup
+              - logs:TagResource
+              - logs:UntagLogGroup
+              - logs:UntagResource
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*'
+          - Sid: CustomDomain
+            Effect: Allow
+            Action:
+              - acm:DescribeCertificate
+              - cloudfront:UpdateDistribution
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:acm:*:${AWS::AccountId}:certificate/*'
+              - !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/*'
+
+  # Permissions to manage the Cognito user pool.
+  DeploymentCognitoPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Permissions to manage the Cognito user pool of the AWS ParallelCluster UI
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: CognitoCreate
+            Effect: Allow
+            Action:
+              - cognito-idp:CreateUserPool
+              - cognito-idp:DescribeUserPoolDomain
+            Resource:
+              - '*'
+          - Sid: CognitoManage
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminAddUserToGroup
+              - cognito-idp:AdminCreateUser
+              - cognito-idp:AdminDeleteUser
+              - cognito-idp:AdminGetUser
+              - cognito-idp:AdminListGroupsForUser
+              - cognito-idp:AdminRemoveUserFromGroup
+              - cognito-idp:CreateGroup
+              - cognito-idp:CreateUserPoolClient
+              - cognito-idp:CreateUserPoolDomain
+              - cognito-idp:DeleteGroup
+              - cognito-idp:DeleteUserPool
+              - cognito-idp:DeleteUserPoolClient
+              - cognito-idp:DeleteUserPoolDomain
+              - cognito-idp:DescribeUserPool
+              - cognito-idp:DescribeUserPoolClient
+              - cognito-idp:GetGroup
+              - cognito-idp:GetUserPoolMfaConfig
+              - cognito-idp:ListTagsForResource
+              - cognito-idp:ListUserPoolClientSecrets
+              - cognito-idp:SetUserPoolMfaConfig
+              - cognito-idp:TagResource
+              - cognito-idp:UntagResource
+              - cognito-idp:UpdateGroup
+              - cognito-idp:UpdateUserPool
+              - cognito-idp:UpdateUserPoolClient
+              - cognito-idp:UpdateUserPoolDomain
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*'
+
+  # Permissions to build the ParallelCluster UI container image with Image Builder and store it in ECR.
+  DeploymentImageBuilderPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Permissions to build the AWS ParallelCluster UI container image
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: IAMServiceLinkedRole
+            Effect: Allow
+            Action:
+              - iam:CreateServiceLinkedRole
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/aws-service-role/*'
+            Condition:
+              StringEquals:
+                iam:AWSServiceName: imagebuilder.amazonaws.com
+          - Sid: ECR
+            Effect: Allow
+            Action:
+              - ecr:BatchGetImage
+              - ecr:BatchGetRepositoryScanningConfiguration
+              - ecr:CreateRepository
+              - ecr:DeleteRepository
+              - ecr:DeleteRepositoryPolicy
+              - ecr:DescribeImages
+              - ecr:DescribeRepositories
+              - ecr:GetDownloadUrlForLayer
+              - ecr:GetLifecyclePolicy
+              - ecr:GetRepositoryPolicy
+              - ecr:ListTagsForResource
+              - ecr:SetRepositoryPolicy
+              - ecr:TagResource
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:ecr:${AWS::Region}:${AWS::AccountId}:repository/parallelcluster-ui-*'
+          - Sid: ImageBuilder
+            Effect: Allow
+            Action:
+              - imagebuilder:CancelImageCreation
+              - imagebuilder:CreateContainerRecipe
+              - imagebuilder:CreateImage
+              - imagebuilder:CreateImagePipeline
+              - imagebuilder:CreateInfrastructureConfiguration
+              - imagebuilder:DeleteContainerRecipe
+              - imagebuilder:DeleteImage
+              - imagebuilder:DeleteImagePipeline
+              - imagebuilder:DeleteInfrastructureConfiguration
+              - imagebuilder:GetComponent
+              - imagebuilder:GetContainerRecipe
+              - imagebuilder:GetDistributionConfiguration
+              - imagebuilder:GetImage
+              - imagebuilder:GetImagePipeline
+              - imagebuilder:GetImageRecipe
+              - imagebuilder:GetInfrastructureConfiguration
+              - imagebuilder:GetWorkflow
+              - imagebuilder:TagResource
+              - imagebuilder:UntagResource
+              - imagebuilder:UpdateImagePipeline
+              - imagebuilder:UpdateInfrastructureConfiguration
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:imagebuilder:${AWS::Region}:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:imagebuilder:${AWS::Region}:aws:component/*'
+          - Sid: ImageBuilderRead
+            Effect: Allow
+            Action:
+              - autoscaling:DescribeAutoScalingGroups
+              - inspector2:BatchGetAccountStatus
+            Resource:
+              - '*'
+          - Sid: EC2SecurityGroup
+            Effect: Allow
+            Action:
+              - ec2:AuthorizeSecurityGroupEgress
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:CreateSecurityGroup
+              - ec2:CreateTags
+              - ec2:DeleteSecurityGroup
+              - ec2:RevokeSecurityGroupEgress
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
+
+Outputs:
+  RoleArn:
+    Description: ARN of the role to assume, or to pass as CloudFormation service role, to deploy the ParallelCluster UI stack
+    Value: !GetAtt DeploymentRole.Arn
