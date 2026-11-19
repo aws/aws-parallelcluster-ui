@@ -4,12 +4,11 @@ Werkzeug==3.1.9
 boto3==1.42.91
 requests==2.33.1
 urllib3==2.8.0
-# Installing cryptography backend since it is the recommended one: https://pypi.org/project/python-jose/
-python-jose[cryptography]==3.5.0
-ecdsa==0.19.2
+# Installing the crypto extra since RS256 signatures require the cryptography library: https://pyjwt.readthedocs.io/en/stable/installation.html
+PyJWT[crypto]==2.15.1
 cryptography==50.0.2
 PyYAML==6.0.3
 itsdangerous==2.2.0
 marshmallow==3.26.2
-certifi==2026.2.25
+certifi==2026.10.23
 jinja2==3.1.6

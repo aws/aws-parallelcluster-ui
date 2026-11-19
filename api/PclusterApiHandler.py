@@ -8,7 +8,9 @@
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 # OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 # limitations under the License.
+import base64
 import functools
+import hashlib
 import json
 import os
 import re
@@ -20,7 +22,7 @@ import botocore
 import requests
 import yaml
 from flask import abort, redirect, request, Blueprint
-from jose import jwt
+import jwt
 
 from api.exception.exceptions import RefreshTokenError
 from api.pcm_globals import set_auth_cookies_in_context, logger, auth_cookies
@@ -81,9 +83,14 @@ SITE_URL = os.getenv("SITE_URL", API_BASE_URL_MAPPING.get(DEFAULT_API_VERSION))
 
 
 def jwt_decode(token, audience=None, access_token=None):
-    return jwt.decode(
-        token, requests.get(JWKS_URL).json(), audience=audience, access_token=access_token, algorithms=["RS256"]
-    )
+    signing_key = jwt.PyJWKClient(JWKS_URL).get_signing_key_from_jwt(token)
+    claims = jwt.decode(token, signing_key.key, audience=audience, algorithms=["RS256"])
+    # PyJWT does not validate at_hash (OIDC Core 3.1.3.6), so we validate it as python-jose did.
+    if "at_hash" in claims:
+        digest = hashlib.sha256((access_token or "").encode()).digest()
+        if not access_token or claims["at_hash"] != base64.urlsafe_b64encode(digest[:16]).decode().rstrip("="):
+            raise jwt.InvalidTokenError("at_hash claim does not match access_token.")
+    return claims
 
 
 def setup_api_credentials(role_arn, credential_external_id=None):
