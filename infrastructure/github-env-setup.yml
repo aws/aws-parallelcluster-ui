@@ -68,7 +68,7 @@ Resources:
                   - ecr:DescribeRepositories
                   - cloudformation:DescribeStackResources
                 Resource:
-                  - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction*
+                  - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFun*
                   - !Sub arn:${AWS::Partition}:ecr:${AWS::Region}:${AWS::AccountId}:repository/*
                   - !Sub arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*/*
               - Effect: Allow
@@ -79,6 +79,7 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
+                  - ecr:BatchGetImage
                   - ecr:CompleteLayerUpload
                   - ecr:UploadLayerPart
                   - ecr:InitiateLayerUpload
@@ -161,7 +162,7 @@ Resources:
                 Action:
                   - lambda:UpdateFunctionConfiguration
                 Resource:
-                  - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFunction-*
+                  - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ParallelClusterUIFun*
               - Effect: Allow
                 Action:
                   - cognito-idp:UpdateGroup
