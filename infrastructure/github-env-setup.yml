@@ -11,6 +11,10 @@ Parameters:
     Description: Arn for the GitHub OIDC Provider. If left empty a new OIDCProvider will be created.
     Default: ""
     Type: String
+  PoliciesStackName:
+    Description: Name of the stack deployed from parallelcluster-ui-policies.yaml, whose exported managed policies are attached to the role used to update the infrastructure.
+    Default: parallelcluster-ui-policies
+    Type: String
 
 Conditions:
   CreateOIDCProvider: !Equals 
@@ -53,6 +57,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - lambda:UpdateFunctionCode
+                  - lambda:UpdateFunctionConfiguration
                   - ecr:DescribeRepositories
                   - cloudformation:DescribeStackResources
                 Resource:
@@ -89,6 +94,10 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       Description: "Role used to update the infrastructure of a private environment (for example, demo)"
+      ManagedPolicyArns:
+        - Fn::ImportValue: !Sub ${PoliciesStackName}-DeploymentCorePolicyArn
+        - Fn::ImportValue: !Sub ${PoliciesStackName}-DeploymentCognitoPolicyArn
+        - Fn::ImportValue: !Sub ${PoliciesStackName}-DeploymentImageBuilderPolicyArn
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
