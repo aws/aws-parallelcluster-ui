@@ -337,3 +337,18 @@ Outputs:
   RoleArn:
     Description: ARN of the role to assume, or to pass as CloudFormation service role, to deploy the ParallelCluster UI stack
     Value: !GetAtt DeploymentRole.Arn
+  DeploymentCorePolicyArn:
+    Description: ARN of the managed policy with the core permissions to deploy the ParallelCluster UI stack
+    Value: !Ref DeploymentCorePolicy
+    Export:
+      Name: !Sub ${AWS::StackName}-DeploymentCorePolicyArn
+  DeploymentCognitoPolicyArn:
+    Description: ARN of the managed policy with the Cognito permissions to deploy the ParallelCluster UI stack
+    Value: !Ref DeploymentCognitoPolicy
+    Export:
+      Name: !Sub ${AWS::StackName}-DeploymentCognitoPolicyArn
+  DeploymentImageBuilderPolicyArn:
+    Description: ARN of the managed policy with the Image Builder permissions to deploy the ParallelCluster UI stack
+    Value: !Ref DeploymentImageBuilderPolicy
+    Export:
+      Name: !Sub ${AWS::StackName}-DeploymentImageBuilderPolicyArn
