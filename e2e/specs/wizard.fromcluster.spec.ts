@@ -13,6 +13,8 @@ import { visitAndLogin } from '../test-utils/login';
 import { fillWizard } from '../test-utils/wizard';
 
 const CLUSTER_TO_COPY_FROM = 'DO-NOT-DELETE'
+// Must match the ParallelCluster version of the cluster to copy from.
+const CLUSTER_TO_COPY_FROM_VERSION = '3.16.3'
 
 test.describe('environment: @demo', () => {
   test.describe('given an already existing cluster', () => {
@@ -27,7 +29,7 @@ test.describe('environment: @demo', () => {
         await page.getByRole('option', { name: CLUSTER_TO_COPY_FROM }).click();
         await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
 
-        await fillWizard(page)
+        await fillWizard(page, { version: CLUSTER_TO_COPY_FROM_VERSION })
       });
     })
   })

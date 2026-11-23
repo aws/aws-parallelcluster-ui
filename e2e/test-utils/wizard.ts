@@ -17,6 +17,7 @@ const DEFAULT_CONFIG: Config = {
 
 interface Config {
   clusterName: string;
+  version?: string;
   region?: string;
   vpc?: RegExp | string;
 }
@@ -27,11 +28,24 @@ export async function fillWizard(page: Page, config: Partial<Config> = {}) {
     ...config,
   }
 
+  await fillVersionSection(page, configWithDefaults)
   await fillClusterSection(page, configWithDefaults)
   await fillHeadNodeSection(page, configWithDefaults)
   await fillQueuesSection(page, configWithDefaults)
   await fillStorageSection(page, configWithDefaults)
   await performDryRun(page, configWithDefaults)
+}
+
+export async function fillVersionSection(page: Page, config: Config) {
+  await expect(page.getByRole('heading', { name: 'Version', exact: true })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Cluster version' }).click();
+  const versionOption = config.version
+    ? page.getByRole('option', { name: config.version, exact: true })
+    : page.getByRole('option').first()
+  await versionOption.click();
+
+  await page.getByRole('button', { name: 'Next' }).click();
 }
 
 export async function fillClusterSection(page: Page, config: Config) {
