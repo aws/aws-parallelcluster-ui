@@ -48,3 +48,36 @@ jobs:
         name: test-results
         path: e2e/test-results/
         retention-days: 30
+  # Publishes the outcome of the E2E tests as a CloudWatch metric, so that a
+  # CloudWatch alarm can make failures visible.
+  publish-metric:
+    name: Publish E2E Outcome Metric
+    needs: e2e-tests
+    # A cancelled or skipped test run says nothing about the health of the branch: it must
+    # publish no data point at all, so that the alarm keeps the state it already had.
+    if: >-
+      ${{ always()
+      && (needs.e2e-tests.result == 'success'
+      || needs.e2e-tests.result == 'failure') }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v6
+      with:
+        aws-region: eu-west-1
+        role-to-assume: ${{ secrets.ACTION_E2E_TESTS_ROLE }}
+        role-session-name: GitHub_${{ github.event.repository.name }}_E2EMetrics
+    - name: Publish E2E Outcome Metric
+      env:
+        METRIC_VALUE: ${{ needs.e2e-tests.result == 'failure' && 1 || 0 }}
+        GH_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        GH_REF_NAME: ${{ github.ref_name }}
+      run: |
+        aws cloudwatch put-metric-data \
+          --region eu-west-1 \
+          --namespace ParallelCluster \
+          --metric-name PCUIE2ETestFailure \
+          --unit Count \
+          --value "${METRIC_VALUE}" \
+          --dimensions "Organization=${GH_REPOSITORY_OWNER},Branch=${GH_REF_NAME}"
+      timeout-minutes: 5
