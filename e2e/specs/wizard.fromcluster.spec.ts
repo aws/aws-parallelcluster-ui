@@ -11,8 +11,9 @@
 import { test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
 import { fillWizard } from '../test-utils/wizard';
+import { ENVIRONMENT_CONFIG } from '../configs/environment';
 
-const CLUSTER_TO_COPY_FROM = 'DO-NOT-DELETE'
+const CLUSTER_TO_COPY_FROM = ENVIRONMENT_CONFIG.CLUSTER_NAME
 // Must match the ParallelCluster version of the cluster to copy from.
 const CLUSTER_TO_COPY_FROM_VERSION = '3.16.3'
 

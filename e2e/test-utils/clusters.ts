@@ -10,10 +10,9 @@
 // limitations under the License.
 
 import { Page } from "@playwright/test";
+import { ENVIRONMENT_CONFIG } from "../configs/environment";
 
-const DEFAULT_CLUSTER_TO_SELECT = 'DO-NOT-DELETE'
-
-export async function selectCluster(page: Page, clusterName: string = DEFAULT_CLUSTER_TO_SELECT) {
+export async function selectCluster(page: Page, clusterName: string = ENVIRONMENT_CONFIG.CLUSTER_NAME) {
   await page.getByRole('row', { name: clusterName })
     .getByRole('radio')
     .click();

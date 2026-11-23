@@ -10,11 +10,12 @@
 // limitations under the License.
 
 import { expect, Page } from "@playwright/test";
+import { ENVIRONMENT_CONFIG } from "../configs/environment";
 
 const NON_ZERO_MESSAGES_COUNT = /Messages.*\([1-9][0-9]*\+\)/
 
-export async function visitClusterLogsPage(page: Page) {
-  await expect(page.getByRole('heading', { name: 'Cluster DO-NOT-DELETE logs', exact: true })).toBeVisible()
+export async function visitClusterLogsPage(page: Page, clusterName: string = ENVIRONMENT_CONFIG.CLUSTER_NAME) {
+  await expect(page.getByRole('heading', { name: `Cluster ${clusterName} logs`, exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Log streams' })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Messages' })).toBeVisible()
 
