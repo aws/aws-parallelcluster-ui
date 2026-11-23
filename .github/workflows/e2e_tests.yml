@@ -27,7 +27,7 @@ jobs:
         role-to-assume: ${{ secrets.ACTION_E2E_TESTS_ROLE }}
 
     - name: Retrieve test user email and password
-      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+      uses: aws-actions/aws-secretsmanager-get-secrets@v4
       with:
         secret-ids: |
           e2e/test1
