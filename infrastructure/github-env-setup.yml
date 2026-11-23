@@ -11,11 +11,23 @@ Parameters:
     Description: Arn for the GitHub OIDC Provider. If left empty a new OIDCProvider will be created.
     Default: ""
     Type: String
+  E2ETestAlarmAction:
+    Description: >-
+      ARN of the action to trigger when the end-to-end tests fail.
+      Leave empty to create the alarm without any action.
+    Type: String
+    Default: ''
+
+Mappings:
+  Constants:
+    E2ETestMetric:
+      Namespace: ParallelCluster
 
 Conditions:
   CreateOIDCProvider: !Equals 
     - !Ref OIDCProviderArn
     - ""
+  HasE2ETestAlarmAction: !Not [!Equals [!Ref E2ETestAlarmAction, '']]
 
 Resources:
   InfrastructureBucket:
@@ -203,6 +215,45 @@ Resources:
               - Effect: Allow
                 Action: secretsmanager:GetSecretValue
                 Resource: !Sub arn:${AWS::Partition}:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:e2e/test1-AUsDgk
+        - PolicyName: E2ETestMetricPublish
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: cloudwatch:PutMetricData
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !FindInMap [Constants, E2ETestMetric, Namespace]
+                    aws:RequestedRegion: !Ref AWS::Region
+                Sid: PutE2ETestMetric
+
+  E2ETestFailureAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: PCUIE2ETestFailure
+      AlarmDescription: !Sub >-
+        The end-to-end tests of ParallelCluster UI failed.
+        The failing run is in https://github.com/${GitHubOrg}/${RepositoryName}/actions/workflows/e2e_tests.yml
+      Namespace: !FindInMap [Constants, E2ETestMetric, Namespace]
+      MetricName: PCUIE2ETestFailure
+      Dimensions:
+        - Name: Organization
+          Value: !Ref GitHubOrg
+        - Name: Branch
+          Value: main
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 1
+      DatapointsToAlarm: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      # The E2E tests only run after a deployment to demo, not regularly.
+      TreatMissingData: ignore
+      AlarmActions: !If
+        - HasE2ETestAlarmAction
+        - [!Ref E2ETestAlarmAction]
+        - !Ref AWS::NoValue
 
 Outputs:
   PrivateDeployRole:
@@ -211,3 +262,5 @@ Outputs:
     Value: !GetAtt PrivateInfrastructureUpdateRole.Arn
   E2ETestExecutionRole:
     Value: !GetAtt E2ETestExecution.Arn
+  E2ETestFailureAlarm:
+    Value: !GetAtt E2ETestFailureAlarm.Arn
