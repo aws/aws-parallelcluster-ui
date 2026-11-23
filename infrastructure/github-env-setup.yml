@@ -227,6 +227,13 @@ Resources:
                     cloudwatch:namespace: !FindInMap [Constants, E2ETestMetric, Namespace]
                     aws:RequestedRegion: !Ref AWS::Region
                 Sid: PutE2ETestMetric
+        - PolicyName: DemoStackRead
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: cloudformation:DescribeStacks
+                Resource: !Sub arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/parallelcluster-ui-demo/*
 
   E2ETestFailureAlarm:
     Type: AWS::CloudWatch::Alarm
