@@ -16,6 +16,7 @@ import {getIn, setIn} from '../../util'
 import {mapComputeResources} from './Queues/queues.mapper'
 import {mapStorageToUiSettings} from './Storage/storage.mapper'
 import {Storages} from './Storage.types'
+import {getDefaultOs} from './Cluster/defaultOs'
 // @ts-expect-error TS(7016) FIXME: Could not find a declaration file for module 'js-y... Remove this comment to see the full error message
 import {load} from 'js-yaml'
 
@@ -31,7 +32,11 @@ function loadTemplateLazy(config: any, callback?: () => void) {
     setState(['app', 'wizard', 'customAMI', 'enabled'], true)
 
   if (!getIn(config, ['Image', 'Os']) && !getIn(config, ['Image', 'CustomAmi']))
-    config = setIn(config, ['Image', 'Os'], 'alinux2')
+    config = setIn(
+      config,
+      ['Image', 'Os'],
+      getDefaultOs(version, defaultRegion),
+    )
 
   if (!getIn(config, ['Scheduling', 'Scheduler']))
     config = setIn(config, ['Scheduling', 'Scheduler'], 'slurm')
@@ -170,7 +175,9 @@ function loadTemplateFromCluster(clusterName: string) {
     const version = data.version
     GetConfiguration(clusterName, (configuration: any) => {
       setState(['app', 'wizard', 'version'], version)
-      loadTemplate(load(configuration), () => setState(wizardLoadingPath, false))
+      loadTemplate(load(configuration), () =>
+        setState(wizardLoadingPath, false),
+      )
     })
   })
 }

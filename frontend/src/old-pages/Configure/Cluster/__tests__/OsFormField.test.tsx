@@ -17,7 +17,6 @@ import {I18nextProvider, initReactI18next} from 'react-i18next'
 import {Provider} from 'react-redux'
 import {OsFormField} from '../OsFormField'
 
-
 const mockSetState = jest.fn()
 
 let mockStateValues: Record<string, any> = {}
@@ -233,6 +232,50 @@ describe('given a component to select an Operating System', () => {
       it('should have Ubuntu 24.04 as an available option', () => {
         expect(screen.getByLabelText('Ubuntu 24.04')).toBeTruthy()
       })
+    })
+  })
+
+  describe('when the version is >= 3.16.0', () => {
+    beforeEach(() => {
+      mockStateValues['app.wizard.version'] = '3.16.0'
+    })
+
+    describe('when the user choose between supported oses', () => {
+      beforeEach(() => {
+        screen = render(
+          <MockProviders>
+            <OsFormField />
+          </MockProviders>,
+        )
+      })
+
+      it('should not have Amazon Linux 2 (deprecated in 3.16.0)', () => {
+        expect(screen.queryByText('Amazon Linux 2')).toBeNull()
+      })
+
+      it('should select Amazon Linux 2023 by default', () => {
+        expect(
+          (screen.getByLabelText('Amazon Linux 2023') as HTMLInputElement)
+            .checked,
+        ).toBe(true)
+      })
+    })
+  })
+
+  describe('when the version does not support Amazon Linux 2023', () => {
+    beforeEach(() => {
+      mockStateValues['app.wizard.version'] = '3.9.0'
+      screen = render(
+        <MockProviders>
+          <OsFormField />
+        </MockProviders>,
+      )
+    })
+
+    it('should select Amazon Linux 2 by default', () => {
+      expect(
+        (screen.getByLabelText('Amazon Linux 2') as HTMLInputElement).checked,
+      ).toBe(true)
     })
   })
 })

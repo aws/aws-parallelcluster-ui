@@ -55,6 +55,7 @@ import {NonCancelableEventHandler} from '@cloudscape-design/components/internal/
 import TitleDescriptionHelpPanel from '../../components/help-panel/TitleDescriptionHelpPanel'
 import InfoLink from '../../components/InfoLink'
 import {subnetName} from './util'
+import {getDefaultOs} from './Cluster/defaultOs'
 import {
   ActionsEditorProps,
   InstanceGroup,
@@ -242,7 +243,9 @@ function CustomAMISettings({basePath, appPath, errorsPath, validate}: any) {
     useState([...appPath, 'customAMI', 'enabled']) || false
 
   const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
-  const os = useState(osPath) || 'alinux2'
+  const version = useState(['app', 'wizard', 'version'])
+  const region = useState(['aws', 'region'])
+  const os = useState(osPath) || getDefaultOs(version, region)
 
   const {t} = useTranslation()
 
@@ -688,49 +691,81 @@ function OdcrCbSelect({
   inputValue: string
   onInputChange: (event: any) => void
 }) {
-  const { t } = useTranslation()
+  const {t} = useTranslation()
 
   const options = [
-    { label: 'none', value: 'none' },
-    { label: t('wizard.queues.computeResource.capacityReservationId.label'), value: 'capacityReservationId' },
-    { label: t('wizard.queues.computeResource.capacityReservationResourceGroupArn.label'), value: 'capacityReservationResourceGroupArn' },
+    {label: 'none', value: 'none'},
+    {
+      label: t('wizard.queues.computeResource.capacityReservationId.label'),
+      value: 'capacityReservationId',
+    },
+    {
+      label: t(
+        'wizard.queues.computeResource.capacityReservationResourceGroupArn.label',
+      ),
+      value: 'capacityReservationResourceGroupArn',
+    },
   ]
 
   const getPlaceholder = () => {
     if (selectedOption === 'capacityReservationId') {
-      return "cr-<reservation-id>"
+      return 'cr-<reservation-id>'
     }
     if (selectedOption === 'capacityReservationResourceGroupArn') {
-      return "arn:aws:resource-groups:<region>:<account-id>:group/<resource-group-name>"
+      return 'arn:aws:resource-groups:<region>:<account-id>:group/<resource-group-name>'
     }
-    return ""
+    return ''
   }
 
   return (
     <SpaceBetween direction="vertical" size="xs">
       <FormField
-        label={t('wizard.queues.computeResource.capacityReservationTarget.label')}
+        label={t(
+          'wizard.queues.computeResource.capacityReservationTarget.label',
+        )}
         info={
           <InfoLink
             helpPanel={
               <TitleDescriptionHelpPanel
-                title={t('wizard.queues.computeResource.capacityReservationTarget.help.title')}
+                title={t(
+                  'wizard.queues.computeResource.capacityReservationTarget.help.title',
+                )}
                 description={
                   <>
-                    <p>{t('wizard.queues.computeResource.capacityReservationTarget.help.description')}</p>
+                    <p>
+                      {t(
+                        'wizard.queues.computeResource.capacityReservationTarget.help.description',
+                      )}
+                    </p>
                     <ul>
                       <li>
-                        <a href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-odcr-v3.html" target="_blank" rel="noopener noreferrer">
-                          {t('wizard.queues.computeResource.capacityReservationTarget.help.odcrLink')}
+                        <a
+                          href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-odcr-v3.html"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t(
+                            'wizard.queues.computeResource.capacityReservationTarget.help.odcrLink',
+                          )}
                         </a>
                       </li>
                       <li>
-                        <a href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-capacity-blocks.html" target="_blank" rel="noopener noreferrer">
-                          {t('wizard.queues.computeResource.capacityReservationTarget.help.capacityBlocksLink')}
+                        <a
+                          href="https://docs.aws.amazon.com/parallelcluster/latest/ug/launch-instances-capacity-blocks.html"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t(
+                            'wizard.queues.computeResource.capacityReservationTarget.help.capacityBlocksLink',
+                          )}
                         </a>
                       </li>
                     </ul>
-                    <p>{t('wizard.queues.computeResource.capacityReservationTarget.help.note')}</p>
+                    <p>
+                      {t(
+                        'wizard.queues.computeResource.capacityReservationTarget.help.note',
+                      )}
+                    </p>
                   </>
                 }
               />
@@ -749,8 +784,11 @@ function OdcrCbSelect({
           options={options}
         />
       </FormField>
-      {(selectedOption === 'capacityReservationId' || selectedOption === 'capacityReservationResourceGroupArn') && (
-        <FormField label={`${t(`wizard.queues.computeResource.${selectedOption}.label`)}`}>
+      {(selectedOption === 'capacityReservationId' ||
+        selectedOption === 'capacityReservationResourceGroupArn') && (
+        <FormField
+          label={`${t(`wizard.queues.computeResource.${selectedOption}.label`)}`}
+        >
           <Input
             placeholder={getPlaceholder()}
             value={inputValue}

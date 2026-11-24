@@ -245,7 +245,7 @@ describe('given a feature flags provider and a list of rules', () => {
     })
   })
 
-  for (const version of ["3.10.0", "3.12.0"]) {
+  for (const version of ['3.10.0', '3.12.0']) {
     describe(`when the version is ${version}`, () => {
       it('should return the list of available features', async () => {
         const features = await subject(version, region)
@@ -359,7 +359,6 @@ describe('given a feature flags provider and a list of rules', () => {
     })
   })
 
-
   describe('when an additional feature has been enabled through the browser session storage', () => {
     beforeEach(() => {
       window.sessionStorage.clear()
@@ -413,6 +412,16 @@ describe('given a feature flags provider and a list of rules', () => {
     it('should deprecate ubuntu2004 at version 3.14.0', async () => {
       const features = await subject('3.14.0', region)
       expect(features).not.toContain('ubuntu2004')
+    })
+
+    it('should keep alinux2 at version 3.15.0', async () => {
+      const features = await subject('3.15.0', region)
+      expect(features).toContain('alinux2')
+    })
+
+    it('should deprecate alinux2 at version 3.16.0', async () => {
+      const features = await subject('3.16.0', region)
+      expect(features).not.toContain('alinux2')
     })
   })
 

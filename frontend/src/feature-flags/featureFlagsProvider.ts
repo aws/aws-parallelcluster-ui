@@ -53,10 +53,17 @@ const featureToDeperecatedVersionMap: Partial<
   ubuntu1804: '3.7.0',
   centos7: '3.10.0',
   ubuntu2004: '3.14.0',
+  alinux2: '3.16.0',
 }
 
 function isVersionGreaterOrEqualThan(version: string, other: string): boolean {
-  return version != null && version.localeCompare(other, undefined, { numeric: true, sensitivity: 'base' }) >= 0
+  return (
+    version != null &&
+    version.localeCompare(other, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    }) >= 0
+  )
 }
 
 function isNotDeprecated(
@@ -64,7 +71,12 @@ function isNotDeprecated(
   currentVersion: string,
 ): boolean {
   if (feature in featureToDeperecatedVersionMap) {
-    if (isVersionGreaterOrEqualThan(currentVersion, featureToDeperecatedVersionMap[feature]!)) {
+    if (
+      isVersionGreaterOrEqualThan(
+        currentVersion,
+        featureToDeperecatedVersionMap[feature]!,
+      )
+    ) {
       return false
     }
   }

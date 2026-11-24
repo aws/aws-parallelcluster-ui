@@ -16,6 +16,7 @@ import {useTranslation} from 'react-i18next'
 import {AvailableFeature} from '../../../feature-flags/types'
 import {useFeatureFlag} from '../../../feature-flags/useFeatureFlag'
 import {setState, useState} from '../../../store'
+import {getDefaultOs} from './defaultOs'
 
 const osPath = ['app', 'wizard', 'config', 'Image', 'Os']
 
@@ -52,15 +53,17 @@ function useAvailableOses(): TilesProps.TilesDefinition[] {
     rocky9: useFeatureFlag('rocky9'),
   }
 
-  return ALL_OSES
-    .filter(os => flags[os.feature])
-    .map(({feature: _, ...rest}) => rest)
+  return ALL_OSES.filter(os => flags[os.feature]).map(
+    ({feature: _, ...rest}) => rest,
+  )
 }
 
 export function OsFormField() {
   const {t} = useTranslation()
   const editing = useState(['app', 'wizard', 'editing'])
-  const selectedOsValue = useState(osPath) || 'alinux2'
+  const version = useState(['app', 'wizard', 'version'])
+  const region = useState(['aws', 'region'])
+  const selectedOsValue = useState(osPath) || getDefaultOs(version, region)
 
   let osesList = useAvailableOses()
   osesList = editing ? osesList.map(os => ({...os, disabled: true})) : osesList
