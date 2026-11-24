@@ -22,7 +22,7 @@ export async function addUser(page: Page, email: string) {
 }
 
 export async function deleteUser(page: Page, email: string) {
-  selectUser(page, email)
+  await selectUser(page, email)
   await page.getByRole('button', { name: 'Remove' }).first().click();
   await page.getByRole('button', { name: 'Delete' }).first().click();
 }
