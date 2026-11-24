@@ -10,7 +10,7 @@
 
 import { expect, test } from '@playwright/test';
 import { visitAndLogin } from '../test-utils/login';
-import { addUser, deleteUser, findUser, generateUserEmail, selectUser } from '../test-utils/users';
+import { addUser, deleteUser, findUser, generateUserEmail, selectUser, waitForUserListed } from '../test-utils/users';
 import { LOGIN_CONFIG } from '../configs/login';
 
 test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () => {
@@ -23,8 +23,7 @@ test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () =
     test('the user can add a new PCUI user with a valid email', async ({ page }) => {
       const email = generateUserEmail()
       await addUser(page, email)
-      await findUser(page, email)
-      await expect(page.getByText(email)).toBeVisible()
+      await waitForUserListed(page, email)
       await deleteUser(page, email)
     });
 
@@ -34,9 +33,10 @@ test.describe('Given an endpoint where AWS ParallelCluster UI is deployed', () =
     });
 
     test('the user can delete an existing user', async ({ page }) => {
-      const email = "to-be-deleted@test.com"
+      // Unique per run, since the same test runs in parallel for every browser.
+      const email = generateUserEmail()
       await addUser(page, email)
-      await findUser(page, email)
+      await waitForUserListed(page, email)
       await deleteUser(page, email)
       await expect(page.getByText("No users match the filters.")).toBeVisible()
     });

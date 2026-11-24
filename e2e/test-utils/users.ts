@@ -9,7 +9,7 @@
 // OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 
 export function generateUserEmail() {
   return `user${Math.random().toString(20).substring(2, 8)}@${Math.random().toString(20).substring(2, 6)}.com`
@@ -34,4 +34,16 @@ export async function selectUser(page: Page, email: string) {
 export async function findUser(page: Page, email: string) {
   await page.getByPlaceholder('Find users').click();
   await page.getByPlaceholder('Find users').fill(email);
+}
+
+/**
+ * Waits until the given user is listed, refreshing the list if needed:
+ * the list loaded when opening the page may complete after the user is created and not include it.
+ */
+export async function waitForUserListed(page: Page, email: string) {
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Refresh' }).click();
+    await findUser(page, email);
+    await expect(page.getByRole('row', { name: email })).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 30000 });
 }
