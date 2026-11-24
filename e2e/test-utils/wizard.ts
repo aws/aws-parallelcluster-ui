@@ -54,7 +54,9 @@ export async function fillClusterSection(page: Page, config: Config) {
   await page.getByPlaceholder('Enter your cluster name').fill(config.clusterName);
 
   if (config.region) {
-    await page.getByLabel("Region").click();
+    // The Region form field is named "Region <selected region or placeholder>",
+    // while the disabled region selector in the top navigation is named just "Region".
+    await page.getByRole('button', { name: /^Region\s+\S/ }).click();
     await page.getByRole('option', { name: config.region }).click();
   }
 
