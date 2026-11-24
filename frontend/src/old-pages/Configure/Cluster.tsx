@@ -145,6 +145,18 @@ function itemToOption(
   return {label, value}
 }
 
+/**
+ * Returns the part of the wizard state to keep when the region changes,
+ * i.e. what is necessary to continue with the experience.
+ * The version must be kept because it drives the feature flags (e.g. supported OSes, multiple instance types).
+ */
+export function wizardStateToKeepOnRegionChange(
+  wizardState: Record<string, unknown> | undefined,
+) {
+  const {page, source, clusterName, errors, version} = wizardState || {}
+  return {page, source, clusterName, errors, version}
+}
+
 function RegionSelect() {
   const {t} = useTranslation()
   const region =
@@ -163,15 +175,10 @@ function RegionSelect() {
       const chosenRegion = detail.selectedOption.value
       if (!chosenRegion) return
 
-      /**
-       * Clear wizard state
-       *
-       * We keep the part of the state that is necessary
-       * to continue with the experience
-       */
-      const {page, source, clusterName, errors} =
-        getState(['app', 'wizard']) || {}
-      setState(['app', 'wizard'], {page, source, clusterName, errors})
+      setState(
+        ['app', 'wizard'],
+        wizardStateToKeepOnRegionChange(getState(['app', 'wizard'])),
+      )
 
       initWizardState(config, chosenRegion, isMultipleInstanceTypesActive)
 
