@@ -46,6 +46,7 @@ import {useHelpPanel} from '../../components/help-panel/HelpPanel'
 import {useCallback} from 'react'
 import {SelectProps} from '@cloudscape-design/components/select/interfaces'
 import {OsFormField} from './Cluster/OsFormField'
+import {getDefaultOs} from './Cluster/defaultOs'
 import {
   slurmAccountingValidateAndSetErrors,
   SlurmSettings,
@@ -243,7 +244,13 @@ function initWizardState(
   setState([...configPath, 'HeadNode', 'InstanceType'], 't2.micro')
   setState([...configPath, 'Scheduling', 'Scheduler'], 'slurm')
   setState([...configPath, 'Region'], region)
-  setState([...configPath, 'Image', 'Os'], 'alinux2')
+  setState(
+    [...configPath, 'Image', 'Os'],
+    getDefaultOs(
+      getState(['app', 'wizard', 'version']),
+      getState(['aws', 'region']),
+    ),
+  )
   setState(
     [...configPath, 'Scheduling', 'SlurmQueues'],
     [
