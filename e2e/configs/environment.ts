@@ -11,5 +11,5 @@
 export const ENVIRONMENT_CONFIG = {
   URL: process.env.E2E_TEST_URL || 'https://pcui-demo.nuraghe.team',
   // Existing cluster used by the tests that need one (cluster logs, create cluster from an existing one).
-  CLUSTER_NAME: process.env.E2E_TEST_CLUSTER_NAME || 'DO-NOT-DELETE',
+  CLUSTER_NAME: process.env.E2E_TEST_CLUSTER_NAME || 'cluster-e2e-tests-DO-NOT-DELETE',
 }
